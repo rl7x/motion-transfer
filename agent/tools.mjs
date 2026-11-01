@@ -10,6 +10,7 @@ export function createCartridgeTools({signal,timeoutMs=10_000}={}){
     stdio:['pipe','pipe','pipe'],
   });
   let pending=null,sequence=0,buffer='',closed=false,failure=null,lastState=null,stderrBytes=0;
+  child.stdout.setEncoding('utf8');
   function stop(error){failure??=error;closed=true;child.kill('SIGKILL');if(pending){pending.reject(error);pending=null;}}
   const aborted=()=>stop(Error('Cartridge experiment cancelled'));
   signal?.addEventListener('abort',aborted,{once:true});if(signal?.aborted)aborted();
@@ -33,7 +34,7 @@ export function createCartridgeTools({signal,timeoutMs=10_000}={}){
       }catch(error){stop(error);}
     }
   });
-  const exited=new Promise(resolve=>child.once('exit',()=>{closed=true;signal?.removeEventListener('abort',aborted);if(pending){pending.reject(failure??Error('Cartridge tool process exited'));pending=null;}resolve();}));
+  const exited=new Promise(resolve=>child.once('close',()=>{closed=true;signal?.removeEventListener('abort',aborted);if(pending){pending.reject(failure??Error('Cartridge tool process exited'));pending=null;}resolve();}));
   async function request(name,args,{signal:callSignal}={}){
       const input=JSON.stringify({id:++sequence,name,args});
       if(Buffer.byteLength(input)>(name==='$open'?2*1024*1024:32_768))throw Error('Tool request exceeds its input limit');

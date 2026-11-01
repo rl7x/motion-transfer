@@ -40,6 +40,20 @@ test('checkpoint replay reconstructs private mutable globals and host storage, i
   await assert.rejects(createInvestigationSession(bytes,wrong),/identity mismatch/);
 });
 
+test('large journals retain Unicode evidence across worker input and output chunks',async()=>{
+  let tools=createCartridgeTools();let saved;
+  try{
+    await tools.open();saved=tools.sessionState;
+    const text='状態を観測して仮説を検証する。'.repeat(20);
+    // Metadata-only fixture expands the wire payload beyond one pipe chunk.
+    saved.annotations=Array.from({length:64},(_,index)=>({id:`note-${index}`,functionIndex:11,inferredName:'仮説',hypothesis:text,confidence:'low',status:'unresolved',evidenceIds:[],nameSource:'injected-offline-fixture'}));
+    await tools.close();tools=createCartridgeTools();await tools.open(saved);
+    assert.equal(tools.sessionState.annotations.at(-1).hypothesis,text);
+    const result=(await tools.run('session_observe',{branchId:'main',watches:[]})).result;
+    assert.equal(result.frame,0);assert.equal(tools.sessionState.annotations[0].inferredName,'仮説');
+  }finally{await tools.close();}
+});
+
 test('a worker journal can restore a real cartridge and keep experimental branches isolated',async()=>{
   let tools=createCartridgeTools();let saved,checkpoint;
   try{

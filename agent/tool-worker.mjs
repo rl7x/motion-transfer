@@ -93,6 +93,7 @@ async function execute(name, args) {
 }
 
 let buffer='';
+process.stdin.setEncoding('utf8');
 for await(const chunk of process.stdin){
   buffer+=chunk.toString('utf8');
   if(Buffer.byteLength(buffer)>2*1024*1024)throw Error('Worker input limit exceeded');
