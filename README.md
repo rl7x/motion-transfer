@@ -72,6 +72,14 @@ Muse Spark generated the adapter in one request for an estimated $0.014. The fro
 npm run verify:transfer
 ```
 
-This rechecks the saved adapter and real browser integration without API calls. It needs Chrome, or an installed Playwright Chromium with `BROWSER_CHANNEL=chromium`. Live remix generation and sharing remain to be built.
+This rechecks the saved adapter and real browser integration without API calls. It needs Chrome, or an installed Playwright Chromium with `BROWSER_CHANNEL=chromium`.
+
+## Remix a playable child
+
+The preview includes a natural-language remix form. With `MODEL_API_KEY` in the server's `.env`, request a shorter/longer dash, backward dashing, or fresh-press activation. Meta writes a new adapter around the unchanged recovered component. The server compiles it, checks the complete inherited mapping, and runs the emitted game in Chrome before saving it. Unsupported or failed requests leave the parent playable.
+
+An accepted child has a content-addressed `/play/<id>` URL, parent lineage, downloadable source/report, and an isolated player. Remix that child to keep its earlier changes. Games and cost reservations persist in ignored `reports/remixes/` across local server restarts. The first live backward/fresh-press remix cost an estimated **$0.0058745**, passed 12 mapping cases and six browser checks, and was played through the actual form and buttons.
+
+Generation is serialized, capped at **$0.03 per request** and **$0.10 total** in the persistent local journal, and never automatically retried. Running the preview does not itself call Meta. Local playable links need this server to be available; public hosting is still to be built. See [remix/README.md](remix/README.md) for the supported scope and API.
 
 To generate a new candidate deliberately, see [transfer/README.md](transfer/README.md). Generation is capped at an estimated $0.05; conformance alone does not publish a candidate to the preview.

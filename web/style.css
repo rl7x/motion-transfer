@@ -51,9 +51,26 @@ button kbd { margin-left: 5px; }
 .evidence .eyebrow { margin: 0; font-size: 9px; letter-spacing: 1px; }
 .evidence p:not(.eyebrow) { font-size: 13px; margin: 10px 0; }
 .evidence small { font-size: 10px; color: #929b93; line-height: 1.7; }
+.remix-panel { margin-top: 24px; padding: 24px; border: 1px solid #4f603d; border-radius: 12px; background: #181d17; }
+.remix-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.remix-heading .eyebrow { margin-top: 0; }
+.remix-panel p, .remix-panel label { font-size: 11px; color: #aeb7ad; line-height: 1.8; }
+.remix-panel .mapping { color: #c3ed89; }
+.remix-panel label { display: block; margin: 20px 0 8px; }
+.prompt-row { display: flex; align-items: stretch; gap: 10px; }
+textarea { flex: 1; min-width: 0; resize: vertical; font: inherit; font-size: 12px; line-height: 1.8; padding: 12px 14px; color: #f0ece2; background: #101510; border: 1px solid #4b554c; border-radius: 6px; }
+textarea:focus { outline: 2px solid #c3ed89; outline-offset: 2px; }
+#remix-submit { background: #c3ed89; color: #202a17; font-size: 12px; }
+.examples { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.examples button { font-size: 10px; background: transparent; color: #aeb7ad; }
+#remix-steps { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; font-size: 10px; color: #929b93; }
+#remix-steps li { border: 1px solid #394634; border-radius: 4px; padding: 5px 8px; }
+#remix-steps li.current { color: #c3ed89; border-color: #8aaa65; }
+#remix-budget { font-size: 10px; color: #929b93; margin-bottom: 0; }
 details { color: #959f92; font-size: 11px; line-height: 1.9; margin: 16px 0; }
 summary { cursor: pointer; }
 details p { max-width: 900px; }
 footer { color: #929b93; font-size: 9px; line-height: 1.9; margin-top: 28px; padding-top: 18px; border-top: 1px solid #34383b; display: flex; justify-content: space-between; gap: 20px; }
 @media (max-width: 900px) { .games { grid-template-columns: 1fr; } .pipeline { max-width: none; } .intro { gap: 24px; } .card-heading { padding: 18px; } }
 @media (max-width: 600px) { main { padding: 24px 16px; } .intro { grid-template-columns: 1fr; padding-top: 30px; gap: 12px; } h1 { letter-spacing: -2px; } .pipeline { display: none; } .edition { max-width: 100px; text-align: right; line-height: 1.7; } .evidence { grid-template-columns: 1fr; } .evidence > div + div { border-left: 0; border-top: 1px solid #34383b; } footer { flex-direction: column; gap: 8px; } .pill { font-size: 8px; padding: 6px; letter-spacing: 0; } h2 { font-size: 17px; } .toolbar { gap: 6px; } button { padding: 9px 7px; } button kbd { margin-left: 2px; } }
+@media (max-width:600px) { .remix-panel { padding: 18px; } .remix-heading { align-items: flex-start; flex-direction: column; } .prompt-row { flex-direction: column; } #remix-submit { padding: 12px; } }
