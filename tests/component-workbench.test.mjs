@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {mkdtemp,readFile,rm} from 'node:fs/promises';
+import {mkdtemp,readFile,rm,writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createComponentWorkbench} from '../agent/component-workbench.mjs';
@@ -53,6 +53,10 @@ test('freezing precedes independent acceptance and accepted source uses the exis
     const root=join(directory,'sessions',session.id,'components',submitted.candidateId);
     assert.equal(await readFile(join(root,'component.ts'),'utf8'),source);
     const provenance=JSON.parse(await readFile(join(root,'provenance.json'),'utf8'));assert.equal(provenance.sourceSha256,digest(source));
+    const receipt=JSON.parse(await readFile(join(root,'publication.json'),'utf8'));assert.equal(receipt.candidateId,submitted.candidateId);
+    await saveInvestigationEvidence(directory,session.snapshot(),{model:'injected-local-fixture'});
+    await writeFile(join(root,'contract.json'),'changed fixture');
+    await assert.rejects(saveInvestigationEvidence(directory,session.snapshot()),/integrity mismatch/);
   }finally{await rm(directory,{recursive:true,force:true});}
 });
 
