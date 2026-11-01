@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "records": [
+    {
+      "id": "neutral-after-left",
+      "file": "neutral-after-left.json",
+      "sha256": "8c58f97e6a624b25f78fa984f31193424409f7847ae11f004ae78e033a1d7d23",
+      "title": "A neutral dash after a left dash",
+      "runId": "cdcbf0ec-eb85-4cb1-b678-448295f0eab5"
+    }
+  ]
+}

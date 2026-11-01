@@ -50,7 +50,7 @@
   <section class="transfer-explanation" aria-label="What changes with the transfer">
     <div><p class="eyebrow">WHAT CARRIES OVER</p><p id="carries-over">The recovered dash.</p></div>
     <div><p class="eyebrow">WHAT STAYS WITH THE RECIPIENT</p><p id="recipient-keeps">Its own rules and world.</p></div>
-    <div><p class="eyebrow">THE COMPONENT STAYS THE SAME</p><p>Two adapters. One unchanged dash.</p><a href="#comparison-details">Compare the recorded behavior ↓</a></div>
+    <div><p class="eyebrow">THE COMPONENT STAYS THE SAME</p><p>Different adapters. One unchanged dash.</p><a href="#comparison-details">Compare the recorded behavior ↓</a></div>
   </section>
   <section class="proof-section" aria-labelledby="proof-heading">
     <div class="section-heading"><div><p class="eyebrow">EVIDENCE / BEHAVIOR THAT SURVIVES THE MOVE</p><h2 id="proof-heading">Same burst. Same recharge. Different rules around it.</h2></div></div>
@@ -61,6 +61,7 @@
   <section class="lab-section" aria-labelledby="lab-heading">
     <div class="section-heading"><div><p class="eyebrow">LIVE / LET META CHOOSE THE EXPERIMENT</p><h2 id="lab-heading">Find out what the dash really does.</h2></div><span class="pill neutral" id="lab-mode">NO MODEL REQUEST ON LOAD</span></div>
       <p>Meta inspects the compiled cartridge and chooses contrasting inputs. See its hypothesis, the experiment, and the actual observations.</p>
+    <p><button id="view-investigation" type="button">View recorded investigation · no model call ↗</button></p>
     <form id="investigation-form" class="lab-form"><label for="investigation-question">What should Meta investigate?</label><div class="prompt-row"><select id="investigation-question"><option value="held">Does holding dash differ from tapping it?</option><option value="neutral">What happens with no direction after a left dash?</option></select><button id="investigation-submit" type="submit" disabled>Investigate with Meta ↗</button></div></form>
     <p class="saved-note" id="lab-budget">Reading investigation availability…</p>
     <p id="lab-progress" role="status" aria-live="polite">Fresh model activity starts only when you submit. Saved recovery above remains unchanged.</p>

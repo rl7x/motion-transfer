@@ -6,12 +6,14 @@ import { hookedJujumpSource, jujumpObservationSource } from '../runtime/jujump-b
 import { buildDonorFrame } from './donor-frame.mjs';
 import { loadSavedRoadster } from '../roadster/saved.mjs';
 import { buildRoadsterFrame } from '../roadster/build.mjs';
+import { savedInvestigations } from '../lab/saved.mjs';
 
 export async function experienceAssets({allowUnverified=false,adapter,roadster}={}) {
   if(roadster===undefined)roadster=await loadSavedRoadster({optional:true});
   const component=await loadRecoveredMotion(),recipient=await loadJujump(),jujump=await loadJujumpTransfer({allowUnverified});
   const assets=new Map();
   const json=(path,data)=>assets.set(path,['application/json',JSON.stringify(data)]);
+  for(const record of await savedInvestigations())json('/api/investigations/saved/'+record.id,record.job);
   assets.set('/donor/play',['text/html',await buildDonorFrame()]);
   assets.set('/assets/jujump-game.js',['text/javascript',recipient.source+'\n'+jujumpObservationSource()]);
   assets.set('/assets/jujump-game-transfer.js',['text/javascript',hookedJujumpSource(recipient.source)+'\n'+jujumpObservationSource()]);
