@@ -1,58 +1,84 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Motion Transfer</title>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Motion Transfer · Give an ability a new home</title>
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <main>
-    <header><a class="wordmark" href="/">MOTION <span>/</span> TRANSFER</a><span class="edition">LOCAL EXPERIMENT 01</span></header>
-    <section class="intro">
-      <div><p class="eyebrow">ONE BEHAVIOR. ANOTHER WORLD.</p><h1>A dash with<br><em>a new home.</em></h1><p>A dash recovered from Dashy Dango’s compiled cartridge.<br>Transferred into PAKU PAKU. Try both. Feel the difference.</p></div>
-      <aside class="pipeline" aria-label="What is being transferred"><div><span class="step">01</span><p>THE DONOR<strong>Dashy Dango</strong><small>Compiled WASM-4 cartridge</small></p></div><div><span class="step">02</span><p>THE COMPONENT<strong>A recovered dash</strong><small>Timing and cooldown verified against the donor</small></p></div><div><span class="step">03</span><p>THE TRANSFER<strong>PAKU PAKU + dash</strong><small>Meta generates the integration adapter</small></p></div></aside>
-    </section>
-    <section class="games">
-      <article class="game-card">
-        <div class="card-heading"><div><p class="eyebrow">THE RECIPIENT</p><h2>PAKU PAKU</h2></div><span class="pill neutral">ORIGINAL</span></div>
-        <iframe id="original-game" src="/play?mode=original" title="Original PAKU PAKU" allow="autoplay"></iframe>
-        <div class="toolbar"><button data-turn="original-game">Start / turn <kbd>Space</kbd></button><button class="quiet" data-reset="original-game" aria-label="Reset original game">Reset ↻</button></div>
-        <p class="controls">Eat the dots. Avoid the ghost.<br>Tap the game or press <kbd>Space</kbd> to reverse direction.</p>
-        <p class="card-note">The familiar rules, before the transfer.</p>
-      </article>
-      <article class="game-card transferred">
-        <div class="card-heading"><div><p class="eyebrow">THE HYBRID</p><h2 id="hybrid-title">PAKU PAKU <span>+ DASH</span></h2></div><span class="pill" id="transfer-status" role="status">CHECKING TRANSFER</span></div>
-        <div class="play-area"><iframe id="transfer-game" data-src="/play?mode=transfer" title="PAKU PAKU with recovered dash" allow="autoplay" hidden></iframe><div id="transfer-placeholder">Loading the verified adapter…</div></div>
-        <div class="toolbar"><button data-turn="transfer-game" data-transfer-control disabled>Start / turn <kbd>Space</kbd></button><button class="dash-button" data-dash data-transfer-control disabled>Hold to dash <kbd>D</kbd></button><button class="quiet" data-reset="transfer-game" data-transfer-control disabled aria-label="Reset transferred game">↻</button></div>
-        <p class="controls" id="transfer-controls">Same maze, pellets, and ghost. One new ability.<br>Focus the game and hold <kbd>D</kbd>, or hold the dash button.</p>
-        <p class="card-note"><span class="status-dot"></span><span id="dash-state" aria-live="off">READY TO PLAY</span></p>
-      </article>
-    </section>
-    <section class="remix-panel" aria-label="Remix this game">
-      <div class="remix-heading"><div><p class="eyebrow">MAKE THE NEXT VERSION</p><h2>Change the way it dashes.</h2></div><button id="share-remix" type="button">Copy playable link ↗</button></div>
-      <p id="remix-summary">The recovered component stays frozen. Meta edits its adapter.</p>
-      <p class="mapping" id="parent-mapping">Reading the current mapping…</p>
-      <p><a id="source-download">Download source and report ↗</a></p>
-      <p id="remix-lineage" hidden><a href="/">Original transfer</a> → <a id="parent-link" hidden>Parent version</a> → this remix</p>
-      <form id="remix-form">
-        <label for="remix-prompt">Describe a change to dash distance, activation, or direction.</label>
-        <div class="prompt-row"><textarea id="remix-prompt" name="prompt" rows="2" maxlength="600" required placeholder="Make the dash go backward and require a fresh press each time."></textarea><button id="remix-submit" type="submit" disabled>Remix with Meta ↗</button></div>
-      </form>
-      <div class="examples"><button type="button" data-example="Make the dash go backward and require a fresh press each time.">Backward + fresh press</button><button type="button" data-example="Double the current dash distance, keeping everything else the same.">Twice the distance</button><button type="button" data-example="Use a shorter 15-pixel dash, keeping everything else the same.">Short dash</button></div>
-      <ol id="remix-steps" aria-label="Remix progress"></ol>
-      <p id="remix-progress" role="status" aria-live="polite">New versions must pass mapping and playable browser checks. Unsupported requests leave this version unchanged.</p>
-      <p id="remix-budget">Reading local remix availability…</p>
-    </section>
-    <section class="evidence" aria-label="Transfer evidence">
-      <div><p class="eyebrow">CHECKED, THEN PLAYABLE</p><p id="check-count">Verification pending</p><small>Behavior checks + real browser integration</small></div>
-      <div><p class="eyebrow">ADAPTER GENERATED BY</p><p id="model">—</p><small><span id="generation-cost">—</span> estimated adapter generation cost</small></div>
-      <div><p class="eyebrow">FROZEN ARTIFACT</p><p><a id="artifact-id" href="/artifact/receipt.json">—</a></p><small><a id="adapter-source" href="/artifact/adapter.ts">Adapter</a> · <a href="/artifact/component.ts">Component</a> · <a id="artifact-checks" href="/artifact/browser.json">Checks</a></small></div>
-    </section>
-    <details><summary>What was recovered, and what was built by hand?</summary><p>Meta reconstructed the standalone dash from selected bytecode and measured donor traces. A human selected the relevant functions, memory watches, and experiment cases. Meta then generated this adapter to call the frozen component inside PAKU PAKU.</p><p>The recipient choice, movement and collision hooks, input recording, and verification harness were built by hand. Both versions use the same normalized 60 Hz clock and seed. The original transfer maps the 60-pixel dash to 30 recipient pixels while keeping its timing. Collision contacts retain PAKU PAKU’s dot-then-ghost update order.</p><p>Remixes change the adapter’s input mapping or distance scale. Their checks cover the displayed interpretation of the request, preserved recipient play, and unchanged component timers; a changed mapping has its own report. Links persist across local server restarts. Public hosting is still to be built.</p></details>
-    <footer><span>PAKU PAKU by Kenta Cho / ABA Games · <a href="https://github.com/abagames/crisp-game-lib-11-games">Source</a> · <a href="/licenses">MIT notices</a></span><span>Compiled behavior → recovered source → playable transfer</span></footer>
-  </main>
-  <script type="module" src="/preview.js"></script>
-  <script type="module" src="/remix.js"></script>
-</body>
-</html>
+<main>
+  <header><a class="wordmark" href="/">MOTION <span>/</span> TRANSFER</a><span class="edition">COMPILED → RECOVERED → REUSED</span></header>
+  <section class="intro">
+    <div><p class="eyebrow">SOFTWARE HAS ABILITIES WORTH KEEPING.</p><h1>Extract an ability from<br>compiled software.<br><em>Give it a new home.</em></h1><p>Play a real cartridge. Meet its recovered dash.<br>Give that same ability to a different game.</p></div>
+    <aside class="ability-card" aria-label="Recovered ability">
+      <div class="ability-heading"><span class="ability-icon" aria-hidden="true">↠</span><span class="pill">SAVED RECOVERY</span></div>
+      <p class="eyebrow">EXTRACTED FROM DASHY DANGO</p><h2>Dash</h2><p>A burst of movement with its own direction,<br>duration, and recharge.</p>
+      <div class="ability-rules"><span><strong>~0.13s</strong> burst of movement</span><span><strong>~0.42s</strong> to recharge</span></div>
+      <p class="ability-origin">Recovered by Meta models. Reused as a standalone component.</p>
+      <div class="ability-links"><a href="/component/export" download="recovered-dash.json">Get the component ↗</a><a href="#recovery-details">See recovery evidence ↓</a></div>
+      <p class="saved-note">This is a saved recovery. Choosing a destination makes no model request.</p>
+    </aside>
+  </section>
+  <section class="destination-section" aria-labelledby="destination-heading">
+    <div class="section-heading"><div><p class="eyebrow">01 / CHOOSE ITS NEW HOME</p><h2 id="destination-heading">One recovered ability. Different worlds.</h2></div><span class="shared-tag" id="shared-component">Checking component identity…</span></div>
+    <div class="destinations" id="destinations" aria-label="Working transfer destinations"></div>
+    <p class="selection-note" id="selection-note" role="status">Reading saved, verified destinations…</p>
+  </section>
+  <section class="games" aria-label="Donor, recipient before transfer, recipient after transfer">
+    <article class="game-card donor-card">
+      <div class="card-heading"><div><p class="eyebrow">02 / FEEL THE ORIGINAL ABILITY</p><h2>Dashy Dango</h2></div><span class="pill neutral">COMPILED DONOR</span></div>
+      <iframe id="donor-game" title="Compiled Dashy Dango donor" sandbox="allow-scripts" allow="autoplay"></iframe>
+      <div class="toolbar donor-toolbar"><button data-donor="left" aria-label="Move donor left">←</button><button data-donor="up" aria-label="Move donor up">↑</button><button data-donor="down" aria-label="Move donor down">↓</button><button data-donor="right" aria-label="Move donor right">→</button><button class="dash-button" data-donor="dash">Start / dash <kbd>X</kbd></button><button class="quiet" data-reset="donor-game" aria-label="Reset donor">↻</button></div>
+      <p class="controls">Focus the game. Arrow keys move; <kbd>X</kbd> starts and dashes. Or use the buttons above.</p>
+      <p class="card-note" id="donor-state">The original compiled cartridge, running locally.</p>
+    </article>
+    <article class="game-card">
+      <div class="card-heading"><div><p class="eyebrow">03 / BEFORE THE TRANSFER</p><h2 id="recipient-title">Recipient</h2></div><span class="pill neutral">BEFORE</span></div>
+      <iframe id="original-game" title="Recipient before transfer" allow="autoplay"></iframe>
+      <div class="toolbar"><button data-turn="original-game" disabled>Start / turn <kbd>Space</kbd></button><button class="quiet" data-reset="original-game" aria-label="Reset recipient before transfer">↻</button></div>
+      <p class="controls" id="original-controls">Loading the recipient…</p>
+      <p class="card-note">The recipient's own rules, without the recovered ability.</p>
+    </article>
+    <article class="game-card transferred">
+      <div class="card-heading"><div><p class="eyebrow">04 / THE SAME ABILITY, REHOMED</p><h2 id="hybrid-title">Recipient + dash</h2></div><span class="pill" id="transfer-status" role="status">LOADING</span></div>
+      <div class="play-area"><iframe id="transfer-game" data-src="/play?mode=transfer" title="Recipient after transfer" allow="autoplay" hidden></iframe><div id="transfer-placeholder">Loading the saved transfer…</div></div>
+      <div class="toolbar"><button data-turn="transfer-game" data-transfer-control disabled>Start / turn <kbd>Space</kbd></button><button class="dash-button" data-dash data-transfer-control disabled>Hold to dash <kbd>D</kbd></button><button class="quiet" data-reset="transfer-game" data-transfer-control disabled aria-label="Reset recipient after transfer">↻</button></div>
+      <p class="controls" id="transfer-controls">Loading the transferred ability…</p>
+      <p class="card-note"><span class="status-dot"></span><span id="dash-state">READY TO PLAY</span></p>
+    </article>
+  </section>
+  <section class="transfer-explanation" aria-label="What changes with the transfer">
+    <div><p class="eyebrow">WHAT CARRIES OVER</p><p id="carries-over">The recovered dash.</p></div>
+    <div><p class="eyebrow">WHAT STAYS WITH THE RECIPIENT</p><p id="recipient-keeps">Its own rules and world.</p></div>
+    <div><p class="eyebrow">THE COMPONENT STAYS THE SAME</p><p>Two adapters. One unchanged dash.</p><a href="#comparison-details">Compare the recorded behavior ↓</a></div>
+  </section>
+  <section class="proof-section" aria-labelledby="proof-heading">
+    <div class="section-heading"><div><p class="eyebrow">EVIDENCE / BEHAVIOR THAT SURVIVES THE MOVE</p><h2 id="proof-heading">Same burst. Same recharge. Different rules around it.</h2></div></div>
+    <p class="proof-intro">These are recorded executions, not an animation of what should happen.</p>
+    <div id="trace-comparison" class="trace-comparison" aria-live="polite">Loading the measured comparison…</div>
+    <details id="comparison-details"><summary>How to read this comparison</summary><p>Controlled free-space inputs hold dash from tick 11. The graphs count dash travel only, excluding ordinary movement. Recipient distances are divided by their documented 0.5 scale so timing and displacement can be compared in donor units. Position fixtures keep the recipients alive; collisions and ordinary play have separate checks.</p><div id="airborne-comparison"></div><p><a href="/evidence/transfer-comparison.json">Download the actual comparison traces ↗</a> · <a id="artifact-checks" href="/artifact/browser.json">Current destination report ↗</a></p></details>
+  </section>
+  <details class="recovery-details" id="recovery-details">
+    <summary><span>How was this dash recovered?</span><span class="detail-label">SAVED EVIDENCE + SUPPORTED RULES</span></summary>
+    <div class="recovery-grid"><div><h3>From compiled instructions to reusable source</h3><p>Meta models received selected WebAssembly instructions and measured donor traces. They reconstructed a standalone controller, which was checked against the actual cartridge. The component runs without the donor's binary, renderer, or assets.</p><p id="recovery-verdict">Loading saved recovery results…</p><p><a href="/evidence/recovery-history.json">Generation and repair history</a> · <a href="/evidence/evidence.json">Binary and numeric evidence</a> · <a href="/evidence/evaluation-acceptance.json">Acceptance results</a></p></div><div><h3>What is supported?</h3><ul><li>An eight-tick dash covering 60 donor pixels.</li><li>Direction stays fixed during the dash.</li><li>Recharge lasts 25 inactive ticks; holding dash can retrigger it.</li><li>Initial readiness takes 10 ticks. Timing runs at 60 updates per second.</li></ul><p>Verified for the default donor configuration and source body width 8. Combat, scoring, visuals, and full-game equivalence are outside this recovery's claim.</p></div></div>
+    <details><summary>Human assistance and adapter policies</summary><p>A human selected the motion boundary, bytecode functions, memory watches, and experiments, and authored the checks. Meta Wonder generated the controller; Meta Spark repaired a failed case before fresh acceptance inputs were used. The frozen controller has no manual source repairs.</p><p>PAKU PAKU's adapter was generated by Meta; its host hooks were written by hand. JUJUMP's separate adapter and host hooks were written by hand. Both call the exact same frozen component on every logical update. No new recovery runs when you choose a destination.</p><p>PAKU PAKU preserves its dot-then-ghost collision order, with swept player hitboxes and no collision segment across wraparound. JUJUMP keeps gravity active and sweeps dash movement through the original upward platform-overlap resolution. Contact can reset recipient velocity without resetting the dash's timers.</p><p><a href="/artifact/adapter.ts">PAKU PAKU adapter</a> · <a href="/jujump/adapter.ts">JUJUMP adapter</a> · <a href="/evidence/contract.json">Recovered contract</a> · <a href="/evidence/provenance.json">Component identity</a></p></details>
+  </details>
+  <section class="remix-area" aria-labelledby="remix-heading">
+    <div class="section-heading"><div><p class="eyebrow">05 / THEN MAKE IT YOURS</p><h2 id="remix-heading">Adapt the ability after the transfer.</h2></div><button id="share-transfer">Copy playable link ↗</button></div>
+    <p id="jujump-remix-note" hidden>JUJUMP plays the saved dash transfer. Live edits are currently supported in PAKU PAKU: distance, held or fresh-press activation, and forward or backward dashing.</p>
+    <details id="remix-details"><summary>Remix this PAKU PAKU transfer with Meta <span>FRESH MODEL ACTIVITY ON SUBMIT</span></summary>
+      <section class="remix-panel" id="remix-panel" aria-label="Remix this game">
+        <div class="remix-heading"><h3>Change the way it dashes.</h3><button id="share-remix" type="button">Copy this version ↗</button></div>
+        <p id="remix-summary">The recovered component stays frozen. Meta edits its adapter.</p><p class="mapping" id="parent-mapping">Reading the current mapping…</p>
+        <p><a id="source-download">Download source and report ↗</a></p><p id="remix-lineage" hidden><a href="/">Original transfer</a> → <a id="parent-link" hidden>Parent version</a> → this remix</p>
+        <form id="remix-form"><label for="remix-prompt">Describe a change to dash distance, activation, or direction.</label><div class="prompt-row"><textarea id="remix-prompt" name="prompt" rows="2" maxlength="600" required placeholder="Make the dash go backward and require a fresh press each time."></textarea><button id="remix-submit" type="submit" disabled>Remix with Meta ↗</button></div></form>
+        <div class="examples"><button type="button" data-example="Make the dash go backward and require a fresh press each time.">Backward + fresh press</button><button type="button" data-example="Double the current dash distance, keeping everything else the same.">Twice the distance</button><button type="button" data-example="Use a shorter 15-pixel dash, keeping everything else the same.">Short dash</button></div>
+        <ol id="remix-steps" aria-label="Remix progress"></ol><p id="remix-progress" role="status" aria-live="polite">Each child must pass mapping and playable-browser checks. Unsupported requests leave this version unchanged.</p><p id="remix-budget">Reading local remix availability…</p>
+      </section>
+    </details>
+  </section>
+  <details class="artifact-details"><summary>Current transfer source, identity, and checks</summary><div class="evidence"><div><p class="eyebrow">CHECKED BEHAVIOR</p><p id="check-count">Loading…</p></div><div><p class="eyebrow">ADAPTER AUTHOR</p><p id="model">—</p><small><span id="generation-cost">—</span> adapter generation cost</small></div><div><p class="eyebrow">SAVED VERSION</p><p><a id="artifact-id" href="/artifact/receipt.json">—</a></p><small><a id="adapter-source" href="/artifact/adapter.ts">Adapter source</a> · <a href="/artifact/component.ts">Frozen component source</a></small></div></div></details>
+  <footer><span>Dashy Dango by willGuimont · PAKU PAKU &amp; JUJUMP by Kenta Cho / ABA Games · <a href="/licenses">PAKU notices</a> · <a href="/jujump/licenses">JUJUMP notices</a></span><span>Local preview · one recovered dash, two new homes</span></footer>
+</main>
+<script type="module" src="/preview.js"></script><script type="module" src="/remix.js"></script><script type="module" src="/evidence.js"></script>
+</body></html>

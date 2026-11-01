@@ -31,7 +31,7 @@ export async function buildDonorFrame() {
         return result;
       };
       const style=document.createElement('style');
-      style.textContent='wasm4-virtual-gamepad{display:none!important}.content{top:0!important;left:50%!important;transform:translateX(-50%);width:min(100vw,100vh)!important;height:min(100vw,100vh)!important}';
+      style.textContent='wasm4-virtual-gamepad{display:none!important}.content{position:absolute!important;margin:0!important;top:0!important;left:50%!important;transform:translateX(-50%);width:min(100vw,100vh)!important;height:min(100vw,100vh)!important}';
       app.shadowRoot.append(style);
       const actions={dash:1,left:16,right:32,up:64,down:128};
       const set=(button,pressed)=>{

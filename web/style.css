@@ -74,3 +74,70 @@ footer { color: #929b93; font-size: 9px; line-height: 1.9; margin-top: 28px; pad
 @media (max-width: 900px) { .games { grid-template-columns: 1fr; } .pipeline { max-width: none; } .intro { gap: 24px; } .card-heading { padding: 18px; } }
 @media (max-width: 600px) { main { padding: 24px 16px; } .intro { grid-template-columns: 1fr; padding-top: 30px; gap: 12px; } h1 { letter-spacing: -2px; } .pipeline { display: none; } .edition { max-width: 100px; text-align: right; line-height: 1.7; } .evidence { grid-template-columns: 1fr; } .evidence > div + div { border-left: 0; border-top: 1px solid #34383b; } footer { flex-direction: column; gap: 8px; } .pill { font-size: 8px; padding: 6px; letter-spacing: 0; } h2 { font-size: 17px; } .toolbar { gap: 6px; } button { padding: 9px 7px; } button kbd { margin-left: 2px; } }
 @media (max-width:600px) { .remix-panel { padding: 18px; } .remix-heading { align-items: flex-start; flex-direction: column; } .prompt-row { flex-direction: column; } #remix-submit { padding: 12px; } }
+
+/* The transfer experience shares the existing local player and remix controls. */
+.intro { grid-template-columns: 1.25fr 1fr; padding: 30px 0; gap: 48px; }
+h1 { font-size: clamp(35px,4.2vw,57px); letter-spacing: -2.5px; line-height: 1.08; }
+.ability-card { background: #1a2117; border: 1px solid #51663d; border-radius: 14px; padding: 22px 26px; }
+.ability-heading, .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.ability-icon { font-size: 40px; line-height: 1; color: #c3ed89; }
+.ability-card h2 { font: 500 34px system-ui,sans-serif; letter-spacing: -1px; }
+.ability-card > p:not(.eyebrow) { font-size: 11px; line-height: 1.8; color: #c1cab7; }
+.ability-rules { display: flex; gap: 22px; border-block: 1px solid #3c4d31; padding: 12px 0; font-size: 10px; color: #a8b59e; }
+.ability-rules strong { display: block; color: #d7efb8; font-size: 16px; font-weight: 500; margin-bottom: 4px; }
+.ability-origin { margin-bottom: 12px; }
+.ability-links { display: flex; flex-wrap: wrap; gap: 14px; font-size: 10px; }
+.ability-card .saved-note { margin-bottom: 0; color: #9fac93; font-size: 10px !important; }
+.section-heading h2 { font: 500 22px system-ui,sans-serif; letter-spacing: -.5px; }
+.section-heading .eyebrow { margin-top: 0; }
+.shared-tag { font-size: 9px; color: #b8c6ab; border: 1px solid #394734; padding: 8px; border-radius: 4px; white-space: nowrap; }
+.destinations { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-top: 16px; }
+button.destination { display: grid; grid-template-columns: 1fr auto; gap: 4px 20px; text-align: left; padding: 16px 20px; background: #181c1c; border-color: #3c4541; }
+.destination .eyebrow { grid-column: 1/-1; margin: 0; font-size: 9px; }
+.destination strong { font-size: 22px; font-weight: 500; letter-spacing: 1px; }
+.destination-action { color: #c3ed89; align-self: center; font-size: 12px; }
+.destination small { grid-column: 1/-1; color: #99a490; font-size: 10px; margin-top: 4px; }
+button.destination[aria-pressed="true"] { border-color: #adc981; background: #20291b; box-shadow: inset 3px 0 #c3ed89; }
+.selection-note { color: #99a98e; font-size: 10px; line-height: 1.8; min-height: 18px; margin: 12px 0 22px; }
+.games { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; }
+.games iframe, .games .play-area { aspect-ratio: auto; height: 260px; }
+.card-heading { padding: 17px 16px; gap: 8px; }
+.card-heading h2 { font-size: 15px; letter-spacing: .5px; }
+.card-heading .eyebrow { font-size: 8px; letter-spacing: 1px; }
+.card-heading .pill { font-size: 8px; padding: 6px 7px; letter-spacing: .5px; }
+.donor-card { border-color: #515654; }
+button { min-height: 42px; }
+.toolbar { margin: 14px 14px 10px; gap: 6px; flex-wrap: wrap; }
+.toolbar button { padding: 8px; font-size: 9px; }
+.donor-toolbar button { min-width: 34px; padding: 7px; }
+.controls, .card-note { margin-inline: 16px; font-size: 10px; }
+.transfer-explanation { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin: 22px 0 36px; }
+.transfer-explanation > div { border-left: 1px solid #405036; padding-left: 16px; }
+.transfer-explanation p:not(.eyebrow), .transfer-explanation a { font-size: 11px; line-height: 1.8; color: #c3cbbd; }
+.transfer-explanation a { color: #b2c29f; font-size: 10px; }
+.proof-section { border: 1px solid #343e34; padding: 24px; border-radius: 12px; }
+.proof-intro { font-size: 11px; color: #aab6a0; line-height: 1.8; }
+.trace-comparison { font-size: 11px; color: #b8c8ad; line-height: 1.8; margin-top: 18px; }
+.trace-comparison svg { display: block; width: 100%; height: auto; background: #141a13; border-radius: 8px; }
+.trace-comparison { overflow-x: auto; }
+.trace-metrics { display: flex; flex-wrap: wrap; gap: 8px 26px; color: #d3e3c4; margin-top: 12px; }
+.trace-caption { font-size: 10px; color: #9ba991; }
+.airborne-result { border-left: 2px solid #9ec2ed; padding-left: 16px; }
+.recovery-details { border: 1px solid #343e34; border-radius: 12px; padding: 18px 24px; margin-top: 18px; }
+.recovery-details > summary { display: flex; justify-content: space-between; gap: 12px; color: #d3dcca; font-size: 13px; }
+.detail-label { font-size: 9px; color: #99ad8b; }
+.recovery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+h3 { font-size: 13px; font-weight: 500; color: #d4e2c9; margin-top: 22px; }
+.recovery-grid li { margin-bottom: 4px; }
+.remix-area { margin-top: 36px; }
+#remix-details { border: 1px solid #48563e; border-radius: 12px; padding: 18px 22px; margin-top: 16px; }
+#remix-details > summary { color: #d3e9bc; font-size: 12px; }
+#remix-details > summary span { color: #a1b092; font-size: 9px; margin-left: 16px; }
+#remix-details .remix-panel { border: 0; background: transparent; padding: 0; margin-top: 18px; }
+#jujump-remix-note { font-size: 12px; line-height: 1.9; color: #b6c3ab; padding: 18px; border: 1px solid #3e4c34; border-radius: 8px; }
+.artifact-details { margin-top: 24px; }
+#share-transfer { font-size: 10px; white-space: nowrap; }
+@media(max-width:1100px) { .intro { gap: 24px; } .card-heading { align-items: flex-start; flex-direction: column; } .games .toolbar { gap: 5px; } .games button kbd { display: none; } }
+@media(max-width:900px) { .games { grid-template-columns: 1fr; } .card-heading { flex-direction: row; } .games .toolbar kbd { display: inline; } .transfer-explanation { grid-template-columns: 1fr; gap: 12px; } .intro { grid-template-columns: 1fr 1fr; } h1 { font-size: 40px; } .ability-card { padding: 20px; } }
+@media(max-width:600px) { .intro { grid-template-columns: 1fr; padding: 24px 0; } h1 { font-size: 36px; letter-spacing: -1.7px; } .section-heading { align-items: flex-start; flex-direction: column; gap: 8px; } .section-heading h2 { font-size: 21px; } button.destination { grid-template-columns: 1fr; padding: 14px; gap: 8px; } .destination-action { font-size: 10px; } .destination strong { font-size: 19px; } .destinations { gap: 10px; } .games button { min-height: 44px; } .donor-toolbar { flex-wrap: wrap; } .donor-toolbar button { min-width: 38px; } .proof-section { padding: 18px 14px; } .recovery-details { padding: 18px; } .recovery-grid { grid-template-columns: 1fr; gap: 0; } .recovery-details > summary { flex-direction: column; } #remix-details { padding: 18px 14px; } #remix-details > summary span { display: block; margin-left: 0; margin-top: 8px; } .shared-tag { font-size: 8px; } }
+@media(max-width:600px) { .trace-comparison svg { min-width: 640px; } }

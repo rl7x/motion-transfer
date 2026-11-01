@@ -15,9 +15,10 @@ async function status(){
 }
 function showParent(){
   const artifact=window.currentArtifact;
-  if(!artifact)return;
+  if(!artifact){submit.disabled=true;return;}
   const {intent}=artifact;
   document.querySelector('#parent-mapping').textContent=`Current: ${60*intent.unitScale}px · ${intent.activation==='held'?'hold to repeat':'fresh press'} · ${intent.direction==='facing'?'forward':'backward'}`;
+  document.querySelector('#remix-lineage').hidden=!artifact.parentArtifactId;
   if(artifact.parentArtifactId){
     const parent=document.querySelector('#parent-link');parent.href='/play/'+artifact.parentArtifactId;parent.hidden=false;
     document.querySelector('#remix-lineage').hidden=false;

@@ -25,12 +25,12 @@ export async function experienceAssets({allowUnverified=false,adapter}={}) {
   const destinations=[];
   if(adapter?.receipt)destinations.push({id:'paku-paku',name:'PAKU PAKU',kind:'A one-dimensional maze',componentId:component.provenance.id,
     before:'/play?mode=original',after:'/play?mode=transfer',artifactId:adapter.receipt.id,aspect:2,
-    keeps:'Turning, pellets, ghosts, power cookies, and wraparound.',carries:'The same eight-tick dash and recharge, mapped to 30 lane pixels.',
+    keeps:'Turning, pellets, ghosts, power cookies, and wraparound.',carries:'A quick burst in your chosen direction, with the same duration and recharge as the donor.',
     control:'Tap or Space to turn. Hold D to dash.',action:'Start / turn',liveEdits:['distance','activation','direction'],
     report:'/artifact/browser.json',source:'/artifact/adapter.ts',author:'Meta-generated adapter; human-built host hooks'});
   if(jujump?.verified)destinations.push({id:'jujump',name:'JUJUMP',kind:'A platformer with gravity',componentId:component.provenance.id,
     before:'/jujump/play?mode=original',after:'/jujump/play?mode=transfer',artifactId:jujump.id,aspect:1,
-    keeps:'Gravity, weakening air jumps, platform landing, and scrolling.',carries:'The same eight-tick dash and recharge, mapped to 30 horizontal pixels. You keep falling while dashing.',
+    keeps:'Gravity, weakening air jumps, platform landing, and scrolling.',carries:'The same burst and recharge, now across the air. Gravity keeps pulling you down while you dash.',
     control:'Tap or Space to jump and change direction. Hold D to dash.',action:'Start / jump',liveEdits:[],
     report:'/jujump/report.json',source:'/jujump/adapter.ts',author:JUJUMP_POLICY.authorship});
   json('/api/destinations',{componentId:component.provenance.id,destinations});
