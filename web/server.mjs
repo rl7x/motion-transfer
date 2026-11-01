@@ -3,8 +3,11 @@ import { readFile } from 'node:fs/promises';
 import { loadPakuPaku } from '../recipients/paku-paku/load.mjs';
 import { clockedPakuRuntime, pakuObservationSource, hookedPakuSource } from '../runtime/paku-browser.mjs';
 import { loadRecoveredMotion } from '../component/load.mjs';
+import { loadPakuTransfer } from '../transfer/saved-paku.mjs';
+import { PAKU_POLICY } from '../transfer/paku-policy.mjs';
 
 export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapter } = {}) {
+  if (adapter === undefined) adapter = await loadPakuTransfer({ optional: true });
   const recipient = await loadPakuPaku();
   const recovered = await loadRecoveredMotion();
   const assets = new Map([
@@ -14,7 +17,13 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
     ['/assets/game-transfer.js', ['text/javascript', hookedPakuSource(recipient.source) + '\n' + pakuObservationSource()]],
     ['/assets/component.js', ['text/javascript', recovered.javascript]],
     ['/assets/transfer-output.js', ['text/javascript', await readFile(new URL('../transfer/output.mjs', import.meta.url), 'utf8')]],
-    ['/api/transfer-config', ['application/json', JSON.stringify({ motion: recovered.contract.defaults, unitScale: 0.5, componentId: recovered.provenance.id })]],
+    ['/api/transfer-config', ['application/json', JSON.stringify({ motion: recovered.contract.defaults, unitScale: PAKU_POLICY.unitScale, componentId: recovered.provenance.id })]],
+    ['/api/transfer', ['application/json', JSON.stringify(adapter?.receipt ? {
+      status: 'verified', id: adapter.receipt.id, componentId: recovered.provenance.id,
+      model: adapter.receipt.model, estimatedGenerationCostUsd: adapter.receipt.estimatedGenerationCostUsd,
+      conformanceChecks: adapter.conformance.results.length, browserChecks: adapter.browser.results.length,
+      policy: PAKU_POLICY,
+    } : { status: adapter ? 'candidate' : 'unavailable' })]],
     ['/licenses', ['text/plain', recipient.licenses.join('\n\n----------------\n\n')]],
     ['/api/recipient', ['application/json', JSON.stringify(recipient.manifest)]],
   ]);
@@ -22,8 +31,16 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
     ['/', 'index.html', 'text/html'], ['/style.css', 'style.css', 'text/css'],
     ['/play', 'play.html', 'text/html'], ['/assets/clock.js', 'clock.js', 'text/javascript'],
     ['/assets/boot.js', 'boot.js', 'text/javascript'], ['/assets/port.js', 'port.js', 'text/javascript'],
+    ['/preview.js', 'preview.js', 'text/javascript'],
   ]) assets.set(path, [type, await readFile(new URL(file, import.meta.url), 'utf8')]);
-  if (adapter) assets.set('/assets/adapter.js', ['text/javascript', adapter.javascript]);
+  if (adapter) {
+    assets.set('/assets/adapter.js', ['text/javascript', adapter.javascript]);
+    assets.set('/artifact/adapter.ts', ['text/plain', adapter.source]);
+    assets.set('/artifact/component.ts', ['text/plain', recovered.source]);
+    if (adapter.receipt) for (const key of ['receipt', 'conformance', 'browser']) {
+      assets.set(`/artifact/${key}.json`, ['application/json', JSON.stringify(adapter[key], null, 2)]);
+    }
+  }
   const server = createServer((request, response) => {
     const url = new URL(request.url, 'http://localhost');
     const path = url.pathname;
