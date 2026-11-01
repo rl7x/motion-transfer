@@ -14,6 +14,7 @@
     "verify:transfer": "node scripts/verify-paku-transfer.mjs",
     "verify:jujump": "node scripts/verify-jujump.mjs",
     "export:jujump": "node scripts/export-jujump.mjs",
+    "verify:integration": "node scripts/verify-integration.mjs",
     "verify:roadster": "node scripts/verify-roadster.mjs",
     "compare:transfers": "node scripts/compare-transfers.mjs",
     "tools:smoke": "node scripts/tools-smoke.mjs",

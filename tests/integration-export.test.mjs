@@ -6,7 +6,7 @@ import { buildJujumpIntegration } from '../integration/jujump.mjs';
 import { projectZip } from '../integration/archive.mjs';
 import { loadJujumpAdapter } from '../transfer/jujump.mjs';
 import { verifyJujumpBrowser } from '../evaluator/jujump-browser.mjs';
-import { extractIntegration, serveIntegration, integrationBrowser, exec, cleanEnv } from './helpers/integration-browser.mjs';
+import { extractIntegration, serveIntegration, integrationBrowser, exec, cleanEnv } from '../evaluator/integration-harness.mjs';
 
 test('the deterministic ZIP preserves exact component identity and detects edits after extraction', async () => {
   const project = await buildJujumpIntegration(), again = await buildJujumpIntegration();
