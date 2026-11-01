@@ -50,10 +50,28 @@ npm run recover:motion -- --prepare-only
 npm run recover:motion
 ```
 
-The first command prepares binary and numeric trace evidence locally. The second asks Meta to generate a standalone controller, then checks it against independent donor rollouts. It has a $0.30 estimated budget and at most two synthesis calls. Passing candidates are exported with source, contract, evaluations, and provenance. See [component/README.md](component/README.md). Recipient integration is still to be implemented.
+The first command prepares binary and numeric trace evidence locally. The second asks Meta to generate a standalone controller, then checks it against independent donor rollouts. It has a $0.30 estimated budget and at most two synthesis calls. Passing candidates are exported with source, contract, evaluations, and provenance. See [component/README.md](component/README.md).
 
 The first [recovered dash component](components/dashy-dango-dash/README.md) is saved with its source and evaluation history. Verify it locally without API calls:
 
 ```sh
 npm run verify:motion
 ```
+
+## Play the first transfer
+
+```sh
+npm run dev:transfer
+```
+
+Open `http://127.0.0.1:4173` to play Kenta Cho's **PAKU PAKU** beside a version using the recovered Dashy Dango dash. Tap or press Space to turn; hold D to dash in the transferred version. Both use the same normalized 60 Hz clock. The original recipient source stays pinned unchanged.
+
+Muse Spark generated the adapter in one request for an estimated $0.014. The frozen component supplies the motion and timers; the human-built host supplies controls and collision hooks. The [saved transfer](transfers/paku-paku/README.md) includes the model submission, evidence, conformance and browser results, and a receipt binding those results to the code. The preview makes no model requests.
+
+```sh
+npm run verify:transfer
+```
+
+This rechecks the saved adapter and real browser integration without API calls. It needs Chrome, or an installed Playwright Chromium with `BROWSER_CHANNEL=chromium`. Live remix generation and sharing remain to be built.
+
+To generate a new candidate deliberately, see [transfer/README.md](transfer/README.md). Generation is capped at an estimated $0.05; conformance alone does not publish a candidate to the preview.
