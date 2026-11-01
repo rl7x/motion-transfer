@@ -23,24 +23,32 @@ export async function buildDonorFrame() {
       const app=document.querySelector('wasm4-app');
       for(let tries=0;!app?.runtime?.wasm&&tries<500;tries++)await new Promise(resolve=>setTimeout(resolve,10));
       if(!app?.runtime?.wasm)throw Error('Donor cartridge did not load');
-      let tick=0;
+      let tick=0,pendingRelease=0;
+      const baseUpdate=app.runtime.update.bind(app.runtime);
+      app.runtime.update=(...args)=>{
+        const result=baseUpdate(...args);
+        app.inputState.gamepad[0]&=~pendingRelease;pendingRelease=0;
+        return result;
+      };
       const style=document.createElement('style');
       style.textContent='wasm4-virtual-gamepad{display:none!important}.content{top:0!important;left:50%!important;transform:translateX(-50%);width:min(100vw,100vh)!important;height:min(100vw,100vh)!important}';
       app.shadowRoot.append(style);
       const actions={dash:1,left:16,right:32,up:64,down:128};
       const set=(button,pressed)=>{
         const mask=actions[button];if(!mask)return;
-        if(pressed)app.inputState.gamepad[0]|=mask;else app.inputState.gamepad[0]&=~mask;
+        if(pressed){pendingRelease&=~mask;app.inputState.gamepad[0]|=mask;}
+        else pendingRelease|=mask; // A short touch must reach at least one 60 Hz update.
       };
       window.addEventListener('message',event=>{
         if(event.source===parent&&channel&&event.data?.channel===channel&&event.data.type==='donor-control'
           &&typeof event.data.pressed==='boolean')set(event.data.button,event.data.pressed);
       });
-      window.addEventListener('blur',()=>{app.inputState.gamepad[0]=0;});
+      window.addEventListener('blur',()=>{app.inputState.gamepad[0]=0;pendingRelease=0;});
       window.donorSnapshot=()=>{
         try{return{status:'playing',...donorObserver.observeDonorMotion({data:app.runtime.data,frame:tick,provenance:{cartridgeSha256:${JSON.stringify(target.sha256)}}})};}
         catch{return{status:'title'};}
       };
+      if(new URL(location.href).searchParams.get('test')==='1')window.donorInput=()=>({buttons:app.inputState.gamepad[0],pendingRelease});
       if(new URL(location.href).searchParams.get('test')==='1')window.donorAdvance=(count=1)=>{
         for(let i=0;i<count;i++){app.runtime.setGamepad(0,app.inputState.gamepad[0]);app.runtime.update();tick++;}
         app.runtime.composite();return window.donorSnapshot();
