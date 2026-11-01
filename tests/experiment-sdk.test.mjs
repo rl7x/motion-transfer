@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {createCartridgeTools} from '../agent/tools.mjs';
 import {digest} from '../component/build.mjs';
+import {evidenceHistory} from '../agent/evidence.mjs';
 
 const source=`
 const overview=await sdk.static.inspectWasm({view:'overview',startLine:1,lineCount:5});
@@ -30,6 +31,9 @@ test('one program executes real sweeps and conditionally chooses a follow-up fro
     const state=tools.sessionState.experimentWorkbench;assert.equal(state.programs[0].source,source);assert.equal(state.programs[0].interpreter.name,'quickjs-emscripten');
     assert.ok(state.programs[0].operations.some(operation=>operation.name==='read_experiment'&&operation.status==='completed'));
     assert.equal(tools.sessionState.findings[0].evidenceIds[0],result.output.evidenceId);assert.equal(tools.sessionState.branches.length,1);
+    const history=evidenceHistory({question:'Offline image replay.',session:tools.sessionState,toolCalls:[{name:'run_experiment_program',ok:true,result,images:output.images.map(({dataUrl,...metadata})=>metadata)}]});
+    const image=history.flatMap(item=>item.content??[]).filter(item=>item.type==='input_image');assert.equal(image.length,1);assert.equal(image[0].image_url,output.images[0].dataUrl);
+    assert.ok(JSON.stringify(history).includes(output.images[0].pngSha256));
     const usage=structuredClone(state.usage);assert.equal((await tools.run('run_experiment_program',args)).result.programId,result.programId);assert.deepEqual(tools.sessionState.experimentWorkbench.usage,usage);
   }finally{await tools.close();}
 });
