@@ -6,6 +6,26 @@
 - Prefer simple implementations; avoid unrelated refactors.
 - Run relevant checks and report what passed, failed, or was not run.
 
+## Commits
+
+When I ask you to commit, write the message the way I would.
+
+- One line: a type prefix, then lowercase, first person, past tense.
+- Say what I did in plain speech. Skip area tags and a message body unless I ask for one.
+- Match the change. If I only added a target, the message is about adding that target.
+
+Use these prefixes:
+
+- `feat:` for a new capability or target.
+- `fix:` for a bug fix.
+- `chore:` for a small maintenance change, including a small readme edit.
+
+```text
+feat: i added dashy dango
+chore: i updated the readme
+fix: i fixed the broken link
+```
+
 ## Pull requests
 
 Use this exact title format:
