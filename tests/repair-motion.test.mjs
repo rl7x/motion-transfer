@@ -65,6 +65,7 @@ test('focused repair carries all costs and turns old acceptance into regressions
   assert.equal(report.status, 'accepted');
   assert.equal(report.acceptedAttempt, 3);
   assert.equal(report.acceptanceSeed, 54321);
+  assert.equal(report.repairExtension.priorAcceptanceSeed, 12345);
   assert.deepEqual(evaluated, [['development', 12], ['regression-from-prior-acceptance', 21], ['acceptance', 20]]);
   assert.ok(Math.abs(report.estimatedCostUsd - 0.279403) < 1e-9);
   assert.equal(report.attempts[0].acceptance.passed, false);

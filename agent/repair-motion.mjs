@@ -66,7 +66,7 @@ export async function repairMotion({ parent, evidence, apiKey, client, evaluate 
   report.attempts.forEach(attempt => { attempt.model ??= parent.model; });
   report.limits.maxModelCalls = parent.requests.length + 1;
   delete report.pricingPerMillionTokens;
-  report.repairExtension = { addedCalls: 1, priorCallLimit: parent.limits.maxModelCalls, reason: 'Explicit focused repair; old acceptance is now development evidence', maxCombinedCostUsd: parent.limits.maxCostUsd };
+  report.repairExtension = { addedCalls: 1, priorCallLimit: parent.limits.maxModelCalls, priorAcceptanceSeed: parent.acceptanceSeed, reason: 'Explicit focused repair; old acceptance is now development evidence', maxCombinedCostUsd: parent.limits.maxCostUsd };
   report.status = 'repairing';
   delete report.error;
   delete report.finishedAt;

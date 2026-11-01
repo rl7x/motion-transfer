@@ -26,7 +26,7 @@ export async function writeMotionPackage(directory, report, evidence) {
     'package.json': json({ name: 'recovered-dash-motion', version: '0.1.0', private: true, type: 'module', exports: './component.js' }),
     'evaluation-development.json': json(attempt.development),
     'evaluation-acceptance.json': json({ ...attempt.acceptance, seed: report.acceptanceSeed }),
-    ...(attempt.regressions ? { 'evaluation-regressions.json': json(attempt.regressions) } : {}),
+    ...(attempt.regressions ? { 'evaluation-regressions.json': json({ ...attempt.regressions, previousAcceptanceSeed: report.repairExtension.priorAcceptanceSeed }) } : {}),
     'recovery-history.json': json(report),
     'provenance.json': json({
       schemaVersion: 1, id, sourceSha256: compiled.sourceSha256, javascriptSha256: compiled.javascriptSha256,
