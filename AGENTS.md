@@ -8,11 +8,12 @@
 
 ## Commits
 
-When I ask you to commit, write the message the way I would.
+When I ask you to commit, write a professional conventional commit message.
 
-- One line: a type prefix, then lowercase, first person, past tense.
-- Say what I did in plain speech. Skip area tags and a message body unless I ask for one.
-- Match the change. If I only added a target, the message is about adding that target.
+- One subject line: a type prefix, a space, then a short imperative summary.
+- Keep the summary lowercase and leave off the trailing period.
+- Name the change itself. If the commit only adds a target, the subject is about adding that target.
+- Add a body when the reason is not clear from the subject. Skip area tags unless I ask for them.
 
 Use these prefixes:
 
@@ -21,9 +22,9 @@ Use these prefixes:
 - `chore:` for a small maintenance change, including a small readme edit.
 
 ```text
-feat: i added dashy dango
-chore: i updated the readme
-fix: i fixed the broken link
+feat: add the dashy dango target
+chore: update the readme
+fix: correct the broken link
 ```
 
 ## Pull requests
