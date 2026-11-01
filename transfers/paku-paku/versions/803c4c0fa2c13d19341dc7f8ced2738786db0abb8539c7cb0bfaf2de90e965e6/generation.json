@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "status": "conformant",
+  "model": "muse-spark-1.3",
+  "limits": {
+    "maxCostUsd": 0.05,
+    "maxModelCalls": 2,
+    "maxInputTokens": 14000,
+    "maxOutputTokens": 3000,
+    "timeoutMs": 180000
+  },
+  "startedAt": "2026-11-01T14:49:07.918Z",
+  "estimatedCostUsd": 0.01361375,
+  "reservedCostUsd": 0,
+  "requests": [
+    {
+      "attempt": 1,
+      "status": "completed",
+      "inputTokenCount": 6597,
+      "reservedCostUsd": 0.02099625,
+      "usage": {
+        "inputTokens": 6454,
+        "outputTokens": 1305,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 773
+      },
+      "estimatedCostUsd": 0.01361375,
+      "responseId": "resp_6ae7516ba3a50edaf26f4c59",
+      "responseStatus": "completed"
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "responseId": "resp_6ae7516ba3a50edaf26f4c59",
+      "candidate": {
+        "limitations": [
+          "Dash only via held D (donor X); tap-turn input unchanged",
+          "Vertical donor motion ignored; horizontal only scaled by unitScale",
+          "Sweep visualisation only; final wraparound and collisions remain recipient logic"
+        ],
+        "mapping": "Adapter holds core state from motion.init(config.motion) once. Each step maps frame.facing to donor left(16)/right(32) and frame.dash to donor X(1), calls motion.step with sourceBodyWidth 8 and config.motion. If donor ownsMotion false returns frame.normalDisplacement with empty sweep; if true returns donor displacement.x*unitScale. Copies ownsMotion/events exactly. Sweep is integer 1px offsets from 0 toward displacement excluding endpoints.",
+        "source": "export function init(motion, config) {\n  var core = motion.init(config.motion);\n  return { core: core };\n}\nexport function step(state, frame, motion, config) {\n  var buttons = 0;\n  if (frame.facing === 1) buttons |= 32;\n  else buttons |= 16;\n  if (frame.dash) buttons |= 1;\n  var r = motion.step(state.core, { buttons: buttons, sourceBodyWidth: 8 }, config.motion);\n  var owns = r.output.ownsMotion;\n  var events = r.output.events;\n  var displacement;\n  var sweep = [];\n  if (!owns) {\n    displacement = frame.normalDisplacement;\n  } else {\n    displacement = r.output.displacement.x * config.unitScale;\n    var sign = displacement < 0 ? -1 : 1;\n    var ad = displacement < 0 ? -displacement : displacement;\n    var n = Math.ceil(ad - 1e-9) - 1;\n    if (n < 0) n = 0;\n    if (n > 64) n = 64;\n    for (var i = 1; i <= n; i++) sweep.push(i * sign);\n  }\n  return { state: { core: r.state }, output: { displacement: displacement, ownsMotion: owns, events: events, sweep: sweep } };\n}\n"
+      },
+      "sourceSha256": "ac16fdc9e4a47816b7fc5ac9b060d75cfdff52b6d5537e1d2c587812c8810f91",
+      "conformance": {
+        "schemaVersion": 1,
+        "gate": "adapter-conformance",
+        "passed": true,
+        "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+        "sourceSha256": "ac16fdc9e4a47816b7fc5ac9b060d75cfdff52b6d5537e1d2c587812c8810f91",
+        "javascriptSha256": "17054a5ef235b21f00abc6b3de004f20dee924a8073449dd69bb2f61d91dc438",
+        "results": [
+          {
+            "name": "idle-and-turn",
+            "ticks": 40,
+            "passed": true,
+            "firstDivergence": null
+          },
+          {
+            "name": "early-held",
+            "ticks": 100,
+            "passed": true,
+            "firstDivergence": null
+          },
+          {
+            "name": "left-tap",
+            "ticks": 51,
+            "passed": true,
+            "firstDivergence": null
+          },
+          {
+            "name": "release-during-dash",
+            "ticks": 31,
+            "passed": true,
+            "firstDivergence": null
+          },
+          {
+            "name": "turn-during-dash",
+            "ticks": 58,
+            "passed": true,
+            "firstDivergence": null
+          },
+          {
+            "name": "recipient-speed",
+            "ticks": 100,
+            "passed": true,
+            "firstDivergence": null
+          },
+          {
+            "name": "cooldown-boundary",
+            "ticks": 54,
+            "passed": true,
+            "firstDivergence": null
+          },
+          {
+            "name": "scale-without-timer-change",
+            "ticks": 100,
+            "passed": true,
+            "firstDivergence": null
+          },
+          {
+            "name": "restart",
+            "ticks": 30,
+            "passed": true,
+            "firstDivergence": null
+          },
+          {
+            "name": "restart-again",
+            "ticks": 30,
+            "passed": true,
+            "firstDivergence": null
+          },
+          {
+            "name": "counterfactual-component-output",
+            "ticks": 8,
+            "passed": true,
+            "firstDivergence": null
+          }
+        ]
+      }
+    }
+  ],
+  "browserVerified": false,
+  "humanAssistance": [
+    "Selected recipient and authored movement/draw ports",
+    "Specified control, unit-scale, and fixed-tick policies",
+    "Authored independent conformance and browser checks"
+  ],
+  "evidenceSha256": "847e50b2a838e7c58e18d8c28f10800528ae496e72e68f32dd466866b99e24f4",
+  "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+  "recipientRevision": "6fea4eefe2deaa42706051d96a04ec9e36104696",
+  "selectedAttempt": 1,
+  "finishedAt": "2026-11-01T14:49:15.610Z"
+}

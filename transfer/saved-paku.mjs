@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, rename } from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
 import { digest } from '../component/build.mjs';
 import { pakuEnvironment } from './paku-environment.mjs';
 import { BROWSER_CHECKS, CONFORMANCE_CHECKS } from './paku-policy.mjs';
@@ -51,13 +52,15 @@ export async function readPakuCandidate(directory) {
     ...Object.fromEntries(['generation', 'evidence', 'conformance', 'browser'].map(name => [name, JSON.parse(files[name + '.json'])])) };
 }
 
-export async function savePakuTransfer(candidate, directory = savedPakuDirectory) {
+export async function savePakuTransfer(candidate, directory) {
   const environment = await pakuEnvironment();
   const identity = checkPakuPackage(candidate, environment);
   const files = { 'adapter.ts': candidate.source, 'adapter.js': candidate.javascript };
   for (const key of ['generation', 'evidence', 'conformance', 'browser']) files[key + '.json'] = JSON.stringify(candidate[key], null, 2) + '\n';
   const hashes = Object.fromEntries(Object.entries(files).map(([name, content]) => [name, digest(content)]));
   const id = digest(JSON.stringify({ files: hashes, environment }));
+  const versioned = directory === undefined;
+  directory ??= new URL(`versions/${id}/`, savedPakuDirectory);
   const receipt = { schemaVersion: 1, status: 'verified', id, ...identity, environment, files: hashes,
     model: candidate.generation.model, estimatedGenerationCostUsd: candidate.generation.estimatedCostUsd,
     humanAssistance: candidate.generation.humanAssistance };
@@ -66,10 +69,26 @@ export async function savePakuTransfer(candidate, directory = savedPakuDirectory
   await mkdir(directory);
   await Promise.all(Object.entries(files).map(([name, content]) => writeFile(new URL(name, directory), content)));
   await writeFile(new URL('receipt.json', directory), JSON.stringify(receipt, null, 2) + '\n');
+  await loadPakuTransfer({ directory });
+  if (versioned) {
+    const temporary = new URL(`current.${randomUUID()}.tmp`, savedPakuDirectory);
+    await writeFile(temporary, JSON.stringify({ id }, null, 2) + '\n');
+    await rename(temporary, new URL('current.json', savedPakuDirectory));
+  }
   return receipt;
 }
 
-export async function loadPakuTransfer({ directory = savedPakuDirectory, optional = false } = {}) {
+export async function loadPakuTransfer({ directory, optional = false } = {}) {
+  if (!directory) {
+    try {
+      const current = JSON.parse(await readFile(new URL('current.json', savedPakuDirectory), 'utf8'));
+      assert.match(current.id, /^[a-f0-9]{64}$/);
+      directory = new URL(`versions/${current.id}/`, savedPakuDirectory);
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+      directory = savedPakuDirectory;
+    }
+  }
   let receipt;
   try { receipt = JSON.parse(await readFile(new URL('receipt.json', directory), 'utf8')); }
   catch (error) { if (optional && error.code === 'ENOENT') return null; throw error; }
@@ -83,5 +102,5 @@ export async function loadPakuTransfer({ directory = savedPakuDirectory, optiona
   assert.equal(receipt.id, digest(JSON.stringify({ files: receipt.files, environment })), 'Transfer receipt identity mismatch');
   const identity = checkPakuPackage(candidate, environment);
   for (const [key, value] of Object.entries(identity)) assert.equal(receipt[key], value, `Receipt identity mismatch: ${key}`);
-  return { ...candidate, ...identity, receipt };
+  return { ...candidate, ...identity, receipt, directory };
 }

@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { compileAdapter } from '../transfer/adapter.mjs';
-import { checkPakuPackage, loadPakuTransfer, savedPakuDirectory } from '../transfer/saved-paku.mjs';
+import { checkPakuPackage, loadPakuTransfer } from '../transfer/saved-paku.mjs';
 import { evaluatePakuAdapter } from '../evaluator/paku-adapter.mjs';
 import { verifyPakuBrowser } from '../evaluator/paku-browser.mjs';
 
@@ -22,7 +22,7 @@ test('the frozen Meta adapter passes conformance and playable browser integratio
 });
 
 test('promotion rejects changed source, stale identity, missing checks, and failed browser evidence', async () => {
-  const saved = await loadPakuTransfer();
+  const { directory, ...saved } = await loadPakuTransfer();
   const environment = saved.receipt.environment;
   checkPakuPackage(saved, environment);
   assert.throws(() => checkPakuPackage({ ...saved, source: saved.source + '\n' }, environment));
@@ -45,7 +45,7 @@ test('loading a saved transfer rejects changed artifact bytes before serving the
   const temporary = await mkdtemp(join(tmpdir(), 'paku-transfer-'));
   const directory = pathToFileURL(temporary + '/');
   try {
-    for (const name of [...Object.keys(saved.receipt.files), 'receipt.json']) await copyFile(new URL(name, savedPakuDirectory), new URL(name, directory));
+    for (const name of [...Object.keys(saved.receipt.files), 'receipt.json']) await copyFile(new URL(name, saved.directory), new URL(name, directory));
     await writeFile(new URL('adapter.js', directory), saved.javascript + '\n// altered\n');
     await assert.rejects(loadPakuTransfer({ directory }), /integrity mismatch: adapter.js/);
   } finally { await rm(temporary, { recursive: true, force: true }); }
