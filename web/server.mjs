@@ -5,8 +5,9 @@ import { clockedPakuRuntime, pakuObservationSource, hookedPakuSource } from '../
 import { loadRecoveredMotion } from '../component/load.mjs';
 import { loadPakuTransfer } from '../transfer/saved-paku.mjs';
 import { PAKU_POLICY } from '../transfer/paku-policy.mjs';
+import { experienceAssets } from './experience-assets.mjs';
 
-export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapter, remixes } = {}) {
+export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapter, remixes, allowUnverified = false } = {}) {
   if (adapter === undefined) adapter = await loadPakuTransfer({ optional: true });
   const recipient = await loadPakuPaku();
   const recovered = await loadRecoveredMotion();
@@ -27,12 +28,14 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
     ['/licenses', ['text/plain', recipient.licenses.join('\n\n----------------\n\n')]],
     ['/api/recipient', ['application/json', JSON.stringify(recipient.manifest)]],
   ]);
+  for(const [path,asset] of await experienceAssets({allowUnverified,adapter}))assets.set(path,asset);
   for (const [path, file, type] of [
     ['/', 'index.html', 'text/html'], ['/style.css', 'style.css', 'text/css'],
     ['/play', 'play.html', 'text/html'], ['/assets/clock.js', 'clock.js', 'text/javascript'],
     ['/assets/boot.js', 'boot.js', 'text/javascript'], ['/assets/port.js', 'port.js', 'text/javascript'],
     ['/preview.js', 'preview.js', 'text/javascript'],
     ['/remix.js', 'remix.js', 'text/javascript'],
+    ['/evidence.js', 'evidence.js', 'text/javascript'],
   ]) assets.set(path, [type, await readFile(new URL(file, import.meta.url), 'utf8')]);
   if (adapter) {
     assets.set('/assets/adapter.js', ['text/javascript', adapter.javascript]);
@@ -89,6 +92,8 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
         model:artifact.generation?.model??adapter.receipt.model}); return;
     }
     let asset = assets.get(path);
+    if(path==='/donor/play')response.setHeader('Content-Security-Policy','sandbox allow-scripts');
+    if(path==='/jujump/play'&&url.searchParams.get('mode')==='transfer')asset=assets.get('/jujump/play-transfer');
     if (/^\/play\/[a-f0-9]{64}$/.test(path)) asset = assets.get('/');
     if (path === '/play' && url.searchParams.get('mode') === 'transfer') {
       asset = adapter ? ['text/html', asset[1].replace('src="/assets/game.js"', 'src="/assets/game-transfer.js"')] : undefined;
