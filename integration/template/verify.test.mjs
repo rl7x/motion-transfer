@@ -11,6 +11,8 @@ const sha = value => createHash('sha256').update(value).digest('hex');
 
 test('downloaded files match the recorded package identities', async () => {
   const manifest = await json('manifest.json');
+  const { id, ...identity } = manifest;
+  assert.equal(sha(JSON.stringify(identity)), id, 'Modified package manifest');
   for (const [path, expected] of Object.entries(manifest.files)) assert.equal(sha(await read(path)), expected.sha256, `Modified file: ${path}. Saved verification applies to the original export.`);
   const provenance = await json('component/provenance.json'), contract = await json('component/contract.json');
   const source = sha(await read('component/component.ts')), javascript = sha(await read('component/component.js'));

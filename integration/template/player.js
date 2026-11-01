@@ -18,11 +18,14 @@ setInterval(() => {
   for (const button of document.querySelectorAll('[data-key]')) button.disabled = comparing || paused || !$('#' + button.dataset.frame).contentWindow?.jujumpReady;
 }, 80);
 async function load(frame, url) {
+  const deadline = Date.now() + 8000;
   await new Promise((resolve, reject) => {
     const timeout = setTimeout(() => reject(Error('Player did not load')), 8000);
     frame.addEventListener('load', () => { clearTimeout(timeout); resolve(); }, { once: true });
     frame.src = url;
   });
+  // Module imports and the configuration fetch may outlive the iframe load event.
+  while (!frame.contentWindow.jujumpReady && Date.now() < deadline) await new Promise(resolve => setTimeout(resolve, 25));
   if (!frame.contentWindow.jujumpReady) throw Error('Player initialization failed');
 }
 $('#resume').addEventListener('click', () => {
