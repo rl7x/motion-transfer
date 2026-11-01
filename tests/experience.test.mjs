@@ -5,10 +5,10 @@ import { createPakuBrowser } from '../evaluator/browser-harness.mjs';
 test('visitors can play the compiled donor and move one frozen ability between both working destinations',async()=>{
   const harness=await createPakuBrowser();
   try{
-    const {page,errors}=await harness.page();await page.setViewportSize({width:1440,height:1050});await page.goto(harness.origin);
+    const {page,errors}=await harness.page();await page.setViewportSize({width:1440,height:1050});await page.goto(harness.origin+'/?destination=paku-paku');
     await page.waitForFunction(()=>window.currentDestination==='paku-paku'&&document.querySelector('#transfer-status').textContent==='VERIFIED TRANSFER');
     assert.equal(await page.locator('.games iframe').count(),3);
-    assert.equal(await page.locator('[data-destination]').count(),2);
+    assert.equal(await page.locator('[data-destination]').count(),3);
     await page.waitForSelector('#trace-comparison svg');
     const catalog=await(await fetch(harness.origin+'/api/destinations')).json();
     assert.ok(catalog.destinations.every(item=>item.componentId===catalog.componentId));

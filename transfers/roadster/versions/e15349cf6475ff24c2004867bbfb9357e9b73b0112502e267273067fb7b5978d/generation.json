@@ -1,0 +1,516 @@
+{
+  "schemaVersion": 1,
+  "status": "verified",
+  "model": "muse-spark-1.3",
+  "parentArtifactId": "0000000000000000000000000000000000000000000000000000000000000000",
+  "startedAt": "2026-11-01T19:15:14.970Z",
+  "estimatedCostUsd": 0.0093035,
+  "reservedCostUsd": 0,
+  "requests": [
+    {
+      "status": "completed",
+      "inputTokenCount": 2955,
+      "reservedCostUsd": 0.01644375,
+      "usage": {
+        "inputTokens": 2812,
+        "outputTokens": 1362,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 645
+      },
+      "estimatedCostUsd": 0.0093035,
+      "responseId": "resp_6ae78fc9eeefd65c1b2c4815",
+      "responseStatus": "completed"
+    }
+  ],
+  "humanAssistance": [
+    "Selected recipient and motion boundary",
+    "Authored 60/240Hz clock, airborne/collision policies and integration hooks",
+    "Authored independent conformance and browser gates"
+  ],
+  "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+  "recipientRevision": "8486687c6c885d49231744d5d9434ac4fe21f951",
+  "submission": {
+    "intent": {
+      "activation": "held",
+      "direction": "facing",
+      "unitScale": 0.1
+    },
+    "source": "export function init(motion: any, config: any) {\n  const core = motion.init(config.motion);\n  return { core: core, prevDash: false };\n}\nexport function step(state: any, frame: any, motion: any, config: any) {\n  const raw: boolean = !!frame.dash;\n  const airborne: boolean = !!frame.airborne;\n  const facing: number = frame.facing < 0 ? -1 : 1;\n  // adapter literals matching intent: held activation, facing direction\n  const ACT_HELD: boolean = true;\n  const DIR_FACING: boolean = true;\n  const mappedFacing: number = DIR_FACING ? facing : -facing;\n  const dirBits: number = mappedFacing < 0 ? 16 : 32;\n  let activate: boolean = false;\n  if (ACT_HELD) {\n    activate = airborne && raw;\n  }\n  const buttons: number = dirBits | (activate ? 1 : 0);\n  const next: any = motion.step(state.core, { buttons: buttons, sourceBodyWidth: 8 }, config.motion);\n  const owns: boolean = !!next.output.ownsMotion;\n  const events: string[] = next.output.events;\n  let displacement: number;\n  let sweep: number[];\n  if (owns) {\n    const dx: number = Number(next.output.displacement.x);\n    displacement = dx * config.unitScale;\n    if (activate || true) {\n      // active dash tick: build sweep with gaps at most 1m\n      const ad: number = displacement < 0 ? -displacement : displacement;\n      if (ad === 0) {\n        sweep = [];\n      } else {\n        const n: number = Math.ceil(ad / 1);\n        sweep = [];\n        for (let i = 1; i < n; i++) {\n          sweep.push(displacement * i / n);\n        }\n      }\n      // if dash owns motion but activation currently false (e.g. outlasts landing),\n      // still report sweep for owned motion; host applies only in flight.\n    } else {\n      sweep = [];\n    }\n    // Per spec sweep is [] if inactive; owned motion counts as active.\n    // If grounded and host ignores movement, still copy ownsMotion exactly.\n  } else {\n    displacement = frame.normalDisplacement;\n    sweep = [];\n  }\n  const newState: any = { core: next.state, prevDash: raw };\n  return { state: newState, output: { displacement: displacement, ownsMotion: owns, events: events, sweep: sweep } };\n}\n",
+    "summary": "Held-activation forward airborne dash adapter at 0.1 scale. Maps facing to donor left/right always, raw dash held to donor X only when airborne, scales owned X displacement, copies ownsMotion/events, builds <=1m sweep."
+  },
+  "conformance": {
+    "gate": "roadster-conformance",
+    "passed": true,
+    "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+    "sourceSha256": "800eaf10315ee22ba9c9c457a4209fb21b6fa9ee70d8ba1e0022825ef29ea35b",
+    "javascriptSha256": "aab62763cf31cd562e5cdde94bdefd86b01bb9a29fe57c9b5a85d0128aa69844",
+    "intent": {
+      "activation": "held",
+      "direction": "facing",
+      "unitScale": 0.1
+    },
+    "results": [
+      {
+        "name": "grounded-held",
+        "passed": true,
+        "updates": 100,
+        "maxError": 0,
+        "starts": [],
+        "ends": []
+      },
+      {
+        "name": "airborne-held",
+        "passed": true,
+        "updates": 140,
+        "maxError": 0,
+        "starts": [
+          11,
+          44,
+          77,
+          110
+        ],
+        "ends": [
+          18,
+          51,
+          84,
+          117
+        ]
+      },
+      {
+        "name": "fresh-press-and-cooldown",
+        "passed": true,
+        "updates": 110,
+        "maxError": 0,
+        "starts": [
+          15,
+          48,
+          81
+        ],
+        "ends": [
+          22,
+          55,
+          88
+        ]
+      },
+      {
+        "name": "held-through-launch",
+        "passed": true,
+        "updates": 90,
+        "maxError": 0,
+        "starts": [
+          21,
+          54,
+          87
+        ],
+        "ends": [
+          28,
+          61
+        ]
+      },
+      {
+        "name": "landing-during-dash",
+        "passed": true,
+        "updates": 80,
+        "maxError": 0,
+        "starts": [
+          11,
+          56
+        ],
+        "ends": [
+          18,
+          63
+        ]
+      },
+      {
+        "name": "facing-and-neutral-input",
+        "passed": true,
+        "updates": 100,
+        "maxError": 0,
+        "starts": [
+          11,
+          51,
+          91
+        ],
+        "ends": [
+          18,
+          58,
+          98
+        ]
+      },
+      {
+        "name": "ordinary-motion",
+        "passed": true,
+        "updates": 80,
+        "maxError": 0,
+        "starts": [],
+        "ends": []
+      },
+      {
+        "name": "component-counterfactuals",
+        "passed": true,
+        "updates": 30,
+        "maxError": 0,
+        "starts": [
+          3
+        ],
+        "ends": [
+          5
+        ]
+      }
+    ]
+  },
+  "finishedAt": "2026-11-01T19:17:12.512Z",
+  "previousErrors": [
+    "Build failed with 1 error:\nmotion-roadster:roadster-adapter:1:27: ERROR: Expected \")\" but found \":\""
+  ],
+  "browser": {
+    "gate": "roadster-browser",
+    "passed": true,
+    "sourceSha256": "800eaf10315ee22ba9c9c457a4209fb21b6fa9ee70d8ba1e0022825ef29ea35b",
+    "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+    "frameSha256": "353d9745362d9b74bc53707bff79c40a3b5fe82ddbaa4c9fceda9b123a2436a4",
+    "intent": {
+      "activation": "held",
+      "direction": "facing",
+      "unitScale": 0.1
+    },
+    "environment": {
+      "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+      "recipientRevision": "8486687c6c885d49231744d5d9434ac4fe21f951",
+      "recipientFiles": {
+        "LICENSE": "63432ae06413c834b4ad3f75ae6664e7201857a166a49def084f6c5c50665d0b",
+        "README.md": "d34d2994d2693f4de9919bc638ea0d19659a72cd7e53a114cf7b99694e105b89",
+        "dev/audio.html": "60467dbf701ca9fcd19ff92acb9661a7207fdf834ea7eac574ed6af728b3d6a7",
+        "dev/audio.ts": "9dd0ef609cb9bfa9135edfc0903431448c1eec9503a8ca7c24bcb53773da8a1d",
+        "dev/fx.html": "35bb36f8c3e7e012d6b673781eb608f4a6625bb2d88ffa0d7fc2c25f342a6585",
+        "dev/fx.ts": "862b78e5f6e682f75a500a75c9ba240f02a5b55069a3253d1f79c2532fca17b7",
+        "dev/harness.ts": "5897376649a7339733e2f9dbaf943d7a6401633110dbd407fb78dd7e2ab6cda4",
+        "dev/hud.html": "6f3f5d9861851f778b787c74bab3c58ae496dcf77e0d00d57e87b134a7d8e389",
+        "dev/hud.ts": "5ab1f494d6509038e6e919d99b9e8e3568c5a1ec2b52fb05c0e6fcaa2dd43170",
+        "dev/icon.html": "14ecc7a70431d68719e6af8b2d6c41b0a4937d50d4db7eac94f43d16de2168c0",
+        "dev/icon.ts": "a447603fffab51c52a7c4a8934bb41b0d64fd7deb1b1c2488382e638a2cedd6c",
+        "dev/og.html": "4f9f90c4a67155fb5eb436408cacd061220a179296b4a1d9094974d8c26f4258",
+        "dev/og.ts": "36dee4a3dedb9db4bf3ccffd8d8878d47603af5981ed88a3f6ccbe5380b9d8a1",
+        "dev/roadster.html": "8fa78760af6e6eff3047181bb43e1b76eda474eb81569aaf3e31bb5be2dc797c",
+        "dev/roadster.ts": "d1438de27d66d72edcec05353a982ea0abb7b1c6bdd70e16c4eb16b9241a5b15",
+        "dev/scenery.html": "74449738145d6a8be4d21b44593a89bec0485e0a6dfa85f6015803f80523a022",
+        "dev/scenery.ts": "10c5ba73e7a3c7089e7ba5259a747ff59ccc83bec67aa3139ade0670d24a7b9d",
+        "dev/vehicles.html": "ca946cf06a6f705e832dc6a84e2dfcb425759418ff3af4b4a257f585133999e8",
+        "dev/vehicles.ts": "dc598a36c5b33736ea170d370e1ab14e28b4adc5c800bf9e9d5eb1d7f39af326",
+        "eslint.config.js": "b97bf0947caa7d33854e11189773997bc617d6b1ae7e5211a5f83fa5744c6495",
+        "index.html": "fc28b26a17bdc3a9e9d96164d1a2ecce3635ac0d4415557a9e19ccfcced3d40e",
+        "package-lock.json": "313a3c5caadd322bc61b602fae5c32e1ab58929626f0b50dbccd1c6c6923c1f5",
+        "package.json": "cfae5281c5597a9dab6faea48559085590301779ac9d20ca17798c2913ad455e",
+        "public/apple-touch-icon.png": "dce9e51a4a0650363a791194bf44bf8ccd2877e08023c0a9653f583d687d4c22",
+        "public/favicon.ico": "519557ab878db5734fc964260737b03cd2243f65bc2ba7c29f05e5c3c93df573",
+        "public/icon-192.png": "0a0630dcd21ae44caa126b42718c65acb7f5e6c3a05317d81b3cdab7f378df7e",
+        "public/og.jpg": "a7cb1cce3c4322bba4dfabc27e09ed387387df93423fe20bbe5970248ee56397",
+        "scripts/chrome.mjs": "4e3c7249e9bca2342a5f35e4ee5c2ee099cc6f37006dfbfaa63395e14a2abc4c",
+        "scripts/snap.mjs": "a4895a126a73b4c6cb4be500b3ecf1ec4c073cffdd9780533b89569a9b839bf5",
+        "scripts/social-assets.mjs": "4867e79fc74d28993d4b23436a78ce39582fe8f31839dde184966763a798f4b6",
+        "src/app/app.ts": "d7b6c5c8b6e2a43c4723070bab661a37ca74b085b23f085c0339bf02245ad600",
+        "src/app/attract-demo.ts": "4bb49db38986d8a1821e6be1c0c4582745ad796ebd7ba54c5259e3b6cbd3d9bd",
+        "src/app/browser-events.ts": "c187663450a63e306f1908cd7f411c38a4f750db7ad0a0b1aaa665217298b482",
+        "src/app/debug-hooks.ts": "f7df40d9d426a2b1cf1dcb9a74138ca38a8e3d02d720c9e9866a21ac8fa43ef2",
+        "src/app/debug-overlay.ts": "be3ea10cf997f3f4fde2880222e4677715da0fbe882ead62a30cf19cdc37d859",
+        "src/app/event-presenter.ts": "0d94aab21a739ae181b3e0b1c875b2bc95620ec6efd859f1622307df353524e3",
+        "src/app/params.ts": "f21d3cb98eae58bbd58013bea2eb119d5ce025aeb649eb4d61af829ee164557b",
+        "src/app/run-state.ts": "28b29642845fbf9530da7f627afa10b3ff99d5ad0320c86afe9862c0baacaf71",
+        "src/audio/audio-engine.ts": "0c4ded90e5ea6c3fe6cfdcc948c918e4fea3aa048e754f9f86947214f0ddd8e3",
+        "src/audio/cues.ts": "4842e0b261389becfd7bfc28b7bb22be66dbef0abb92d53204a239c8152e168c",
+        "src/audio/dsp.ts": "1127d9dc4d6e7c36b8febd89f3c78afb542e7906861f1584fc0c29c75be0d47a",
+        "src/audio/graph.ts": "096d2b2e4588f4aefeb6ddc41883b1cdcbbba91f64ba50cdc561ab5c3e3ca165",
+        "src/audio/layers.ts": "68ba2af3c98a4239573ee901f1fa0832a67839f0013477cf5f71c3041f1cd995",
+        "src/audio/selfcheck.ts": "7a2c40a694b579784754376fd44cb61f53ab851780e22f76b124413b68dc7c09",
+        "src/core/car-spec.ts": "861809eea6a9e6db660f87f94a6d7d9fd646cf74abf32e6c2b6f994e2ecd4f64",
+        "src/core/math.ts": "7c848b6746757885a42f9f48c81f4dd56b977f143880c4a86f0bed17cc98e8ef",
+        "src/core/snapshot.ts": "956efa43895517c88cf1ba82cd94f36ba9f04455485815a3650a8d6d797be728",
+        "src/core/storage.ts": "d7ebb1898d1ecad96dbda149f6d47a914f2e0a29e2f6ba0ccf200e52e0a42780",
+        "src/core/types.ts": "96221e38c5aae5c79735a9c9c42dd89b95336025831f3581ea69c9b5b230728a",
+        "src/input/events.ts": "db1a86cba03a3244d9e22d88dd3a9acd1ec5787148fd415a478fd707a15515d6",
+        "src/input/input.ts": "79e9b31dfb658a8bdb2ebb90e3b43fceff241deb1627097f1564aaed1d1e509f",
+        "src/input/mapping.ts": "63a3f82d5446988c47ef25504d6de64b6de9fac4a475d3e776127107aaae7da3",
+        "src/input/touch-controls.ts": "221ecf98ade73168821ee0a1fee4e10f45e8b49e0f3f4b11ab005802261c45ea",
+        "src/input/touch.css": "7888475a48ec3ef38885348ff478f8457142e2f9bf5c67ffc4c5722117a25db4",
+        "src/levels/backflip.ts": "c5b4f9131322a28cc1e757edeed6390884517c72cfe7f5a5db490a26798f8e45",
+        "src/levels/index.ts": "c2b0cfd7d4e454701eb0d3b987e4527524c244df314946dc8f25f99513aaa80f",
+        "src/levels/kickflip.ts": "3987b15809bcf6c3f17fba79f340363d7a014caacc0ea1bc8a54ce964ffee021",
+        "src/main.ts": "24b09f134a1ab88564e5b41834943599a4bac32e702226a5bf39e21cdf72571c",
+        "src/physics/autopilot.ts": "73eba60edbdd708b830b19d23e6e53ae21d6950e8c4b430f0fac3375d4a075e2",
+        "src/physics/car-physics.ts": "3581ea474427b181ba22323fb77295d1e0109f861eba783785bc006e89fb93ef",
+        "src/physics/collision.ts": "64ca84f4480c89e6348e27db0271b235207f8bab3db582da223918b7df99b49f",
+        "src/physics/profile.ts": "17dc9b6bfff84a7bec52cec26dde37ba3a6f2ff4e0a6eedb94faf7ac5c329918",
+        "src/physics/scoring.ts": "106f9c8df10fd395f9d676c46fe78129439e411a5e56318931bbcda1c0c95d06",
+        "src/physics/track.ts": "6da90978e640955d4fe32baa28507f71ac435bebb8129800184274eb5d62c6ba",
+        "src/physics/tuning.ts": "c4a11a281ab1c672d3d20513117c0feb2e8486c8806563aaea965e496d44527a",
+        "src/physics/wreck.ts": "e17658f73dcf1a3f6f096a078dc9696f93ccc41f4dd6c183cc472b2c283b01c0",
+        "src/render/camera-rig.ts": "4e8fb849fce055d6b57e7890df61d67d351d91e088d71937f382d114aba82267",
+        "src/render/env-scale.ts": "50dfd6760fbc87f8f651f44795f45c487af833034fdcb7697c7fda46b8c35a31",
+        "src/render/environment.ts": "d40177ab4d3d042898b99a4ab934259e122338eb2802ed9c64a8a578b9060824",
+        "src/render/fx.ts": "aaa21905d714a17687449243d0e6bfa683ba34d03c4f1dc02a69c0871c265b2d",
+        "src/render/fx/particle-material.ts": "273bd48de0ff92a7fbb6e092f6780b2aa190ef5303200d5f36a40acd075d7547",
+        "src/render/fx/particle-system.ts": "ac5987616041ef4f7b1992770bf612d7a0155fcebb7e6b6c96be929281f9cb09",
+        "src/render/fx/puff-texture.ts": "2333c39deb3e2e4a944ac16c4bb9200a1d4afe5be08bb56a9627a4af74345819",
+        "src/render/fx/rng.ts": "f12b63ab8f02125878427bed8ed2980dfa705a1d8e2261ff6498df143d3d2db6",
+        "src/render/palette.ts": "d3462f36ce5d6cc92d2c51f023baedee49b9e570c773ca4d209e5c37be850ebe",
+        "src/render/ramp-model.ts": "81213f4b2b78940df8b81eda77ee8ba399e98b74dd489c517302a6c228ac7084",
+        "src/render/renderer.ts": "6a49f8517ff12985ede8028d243820b20a9b0da9e0d4a666a5501ee50a9a0660",
+        "src/render/roadster-model.ts": "d8e9b6f63e3938e2c146a5cd8a0a04fb3897c0e0d381aa84497656716c61dabf",
+        "src/render/roadster/body.ts": "15547c28b2270b3722d1f12cc49164bfe9aab784953e5d21e4d23330722767e1",
+        "src/render/roadster/curve.ts": "e88ec4cd59316858c98900d860ab792467e321b7ba69f172ea9a24b44b5d3814",
+        "src/render/roadster/geo.ts": "439c10861237ec39866815cc32cfbe41001ee287d6114cc124a0413b02dd205b",
+        "src/render/roadster/loft.ts": "e8d68fc48210a6903c52e444c59de9375028ce22989af106ded811e034e61915",
+        "src/render/roadster/materials.ts": "bc8e6351de94719d571e771dc89d7f599061591c3fd852c3b025e4d8131bd774",
+        "src/render/roadster/shape.ts": "fb5b86f04f01cc1b9fa946d5a0a878e6a9975123d29a1109397a849322192776",
+        "src/render/roadster/wheel.ts": "81f7c7e43773ffad3ff9797552bf4078333b64da8e08aeefe4fd3c6791bd9b32",
+        "src/render/scenery.ts": "ab0288814fc28c19ace2637bc8c886ccce26880e4fa735d80be0d01f1a3cfd41",
+        "src/render/scenery/dispose.ts": "ff0ddd050f9e4963de5a087cea89ab8f3bdf35b5930a89387da696441b86d7f8",
+        "src/render/scenery/floodlights.ts": "eb7b8003031a45d5a25feb1ed0321680d2849244231ca11b13f916ea455b5416",
+        "src/render/scenery/glow.ts": "2689aeff2566e63ba6d8096e65f0c2373951b532508ba073a12241d8b86d7c7b",
+        "src/render/scenery/grandstand.ts": "4249ca3d233ba50e3f42dbab14140592352f4cfbae140cd69a52d27a9b6a2188",
+        "src/render/scenery/layout.ts": "0c5d23e50d2a6bba6015b2bf894c1e98ba64c2dfdb9d83c2b4a5133f59e9abb4",
+        "src/render/scenery/led-lines.ts": "c447c2fa1aff55551c719e8d2ecf504f28156b748b89b285016e113334506cba",
+        "src/render/scenery/lights.ts": "9f7d8b65226219124c05d6b2dd09586d4b04a33091c9233945e1ecfc7d99dcbf",
+        "src/render/scenery/markings.ts": "441b908b8fc7e0a919fdfcc4eb4ed7afc8c083c308d975efde26b7242a5e02f3",
+        "src/render/scenery/materials.ts": "7d1fbc9d62309fc74b5f62b95ca55eb096569e2068480e51ec4816e148088a98",
+        "src/render/scenery/members.ts": "b92764f32871355340b189394398ce0365ac05f03f58dec7278972691b1561ec",
+        "src/render/textures.ts": "f1a18156f52d744b4ece9bc4834909440fc1dce9444d3834119ed8879a7b5746",
+        "src/render/vehicles-model.ts": "796925c9127a4e6f23de5d15d82157b35baac31c4f0dda50c1d06282ad321e16",
+        "src/render/vehicles/car-body.ts": "282f96e49c997f9aae2652f0d0cd738887a46137c857e9d9dd6409bfc053df0c",
+        "src/render/vehicles/cybercab.ts": "c2b88c0d531b5c769dce93499cdc2ffb8feaa96e87ed84c935b7068e5f7ba306",
+        "src/render/vehicles/cybertruck.ts": "1fc02b1bb79c200dbe5fef0028a86f3c85770dae0791fd98e063ee7717f732fa",
+        "src/render/vehicles/geometry.ts": "100162c964f55390b1ef638a60f983033c4c844ea828a6f7eb9e26fa8a3b3887",
+        "src/render/vehicles/materials.ts": "adccdffe2a75dddf88033d8a598a2b718b8cd0cb7f7b306d57a64268ebbb813f",
+        "src/render/vehicles/model-y.ts": "8eca77e7cf0ddfd18a94aa874e485c2cc9c24c5054a8eb8bb3036bd1b4efb9f1",
+        "src/render/vehicles/model3.ts": "e17a8b815d47162c944a69f9b2b328296a4be13b2246249aa9a20ae9b08aee6a",
+        "src/render/vehicles/semi.ts": "5717bb26b9808eb09b211e122fd6fdf8615a1ef92922c44071265b5c96a3e638",
+        "src/render/vehicles/specs.ts": "e191e05069274322ed5a9c0c616207c689732faba4901816210e6e920cd53afd",
+        "src/render/vehicles/stage.ts": "26ffbffb9bedea120a9b520a583530374dc64ceb41a662ef70d9333598197f9b",
+        "src/render/vehicles/wheels.ts": "be494879d5da632d702b64c5e3c6d109c6e37a5e19d715dc02f40fe34913e739",
+        "src/tests/app.test.ts": "d76a744495617ab9b92669bcf32f8f40240bfeed84b2fc0c94fb01cb1b63a542",
+        "src/tests/backflip.test.ts": "95f92d91da389195368f180cc73cd7160b844612fa583bfcc0fa86d935834d24",
+        "src/tests/camera-hud.test.ts": "630ad84d460fc7bb7791811547b8e1eeb9a628d468eea8a72ee8b3e94ba854be",
+        "src/tests/determinism.test.ts": "cee26d16c70379bd6b3411ff6772cff340a65598e9882bff1af589af9fd029fb",
+        "src/tests/fx-camera.test.ts": "6c47ea388edbcff184e80a76b5528eea60d1d307ea086bc9ee7ecfbaa0861835",
+        "src/tests/input-mapping.test.ts": "7aef43a66df43a7ce8a1c674111ecf0b0cd6d71bd664268e20724d9022f520cd",
+        "src/tests/kickflip.test.ts": "df5c19edd84d7592a733842c11821a787ee89af7ca0b88657b542cce37b64b28",
+        "src/tests/models.test.ts": "1fc817909275ed796158972675335055081a67250bf4d57c2d59aecf9a04dd2e",
+        "src/tests/physics.test.ts": "ed0de5ec9c21e830d8ee25aa0717e02834c189edec8920ab828ac9af0567ca0d",
+        "src/tests/profile.test.ts": "b0e7118a0523f38621606f3c89d1438a5b4b27e5f51295612b23a9ae7ac1acc3",
+        "src/tests/release.test.ts": "4336452bc646de9eece33cc4a662a96060a4e8585525398489ea64cf7ee7f97a",
+        "src/tests/scoring.test.ts": "57be36b557c6f330dd0cf75a3db288ce8911ea73767a651b33cdcafa21bac172",
+        "src/tests/sim.ts": "29dc808e0b99ceb468a40a1ef72e6e30d8d7030d283cc4953eb2ea6fe2b18240",
+        "src/tests/snapshot.test.ts": "cef8167a7fe781610f3a6d3ff4f631ca69fec2dd10df068c3302940e1e83e31b",
+        "src/tests/storage.test.ts": "2b971863ad5a0b63606d7ac2a51e293dbbbf9f551c0b22eea4a6281f8b1f4d92",
+        "src/tests/ui-format.test.ts": "ffc2fc11a15bac807e6e0dd3727ed9e6caf1f7c4be028979b0862c9ce51bbb80",
+        "src/tests/ui-press.test.ts": "814a14460e8faed5129b656600e56e68a6ed15343e53cbad69bf81251380f664",
+        "src/tests/venue.test.ts": "a3ec8acab6a32fb6692f0ef176002fb22ad2e2ba638852c61d710c614aeb173d",
+        "src/ui/assets/sebayaki.png": "4dd218d73ce62126b441fa8cfbd67b29a8498aea938083783c1094acbff81a9a",
+        "src/ui/cards.ts": "cfdb1a968a523d80bac4b22709e21bb9169c4711278940a9d5031e2e6cff78c1",
+        "src/ui/controls-info.ts": "c947674db63d2512dd1d09c3cc7f886e50dded3217afbe46856aed17b633822b",
+        "src/ui/dom.ts": "93542a6bd2809cf4db3d18a24ee95d78ea575a18c0a1e5fbb4695675eb0499c3",
+        "src/ui/format.ts": "ffa3fcf656fade86fa7f6600b9c79e5914d958f4563842019625a4e01183dfcb",
+        "src/ui/hud.css": "4a8b46e426090c4d3b3417f7786d414f7af902289738086e8db796fae356b5f1",
+        "src/ui/hud.ts": "4c39c8df615b3d38386bd519bd4f802b94ea0da255b69f0734bb9d2754f9d326",
+        "src/ui/icons.ts": "7ad57610f8cd2a809dcf84fda82d5341b9740f34051b565e91621e7e61cda448",
+        "src/ui/menu-view.ts": "b76f7926629abf2a3722cbf95318ac58f62c6f01242d2ee8e1660c4dbc7cd2a0",
+        "src/ui/popups.ts": "5f05c57e05d6b5421777f6df3e2c380b556b37a1882d7ec8742f2f08328a4bfc",
+        "src/ui/run-view.ts": "d8c27babd0f5189014ab5100ec1931f911306a92a5332039bf3647d9c05141b5",
+        "src/ui/toggles.ts": "ef1e6937d05c1d2320126852245cac53b8f93ba52e17db0dbb6860e92383657d",
+        "tsconfig.json": "dd0f197d4aa1091d495cc6efba4d0a5131719cfdd2268f90f2963b46fc548592",
+        "vite.config.ts": "24e10ad08f0253ba8606d90e623a19a49afd3459f0fee5befb4e8008d4e8220b",
+        "vitest.config.ts": "ded1b36e2b2bd3a773a12e91235cc9e3f739e5258b75290c79f7f48277c45d3a"
+      },
+      "three": "0.186.1",
+      "host": {
+        "roadster/build.mjs": "5a96865d2b1bceb98a51cc1f0d5d61279a25c563a0f53e9eabdb2aff82f58de8",
+        "roadster/physics.mjs": "846e84fd7472fe8707440bd4c0e0a063035344565e0960c0251a68a01f4d5f10",
+        "roadster/port.mjs": "a10ae2cffde4e36634378876e6d5dddfe16b31b3cfe7a37322247db6be3a84cc",
+        "web/roadster-entry.js": "952e1c5cf47695fa2eeb8ac1b13a865f8ee613f0bc0f4cd3121e33287543a7d3",
+        "evaluator/roadster.mjs": "7fa3d91d14245d83a06b72dc518ba2c0141ecd5a1699f81344d4b81e90e940a1",
+        "evaluator/roadster-browser.mjs": "8ff00dc3e88f2dc71ff7ec0c791396b61eb1b31cccbb2711b4606368443f73bd",
+        "transfer/adapter.mjs": "c5ff21db34895e218883b2ec0b330c99b3e6ec00ef1631a1bf5147bf62c09bce",
+        "transfer/worker.mjs": "38e34c4c58b9f8090770ca2ff6baee0e14c16536402861378fe0e121e5c04c4e"
+      }
+    },
+    "results": [
+      {
+        "name": "ordinary-stunt-agrees-with-original",
+        "passed": true,
+        "updates": 1000
+      },
+      {
+        "name": "airborne-dash-retains-vertical-and-rotation",
+        "passed": true,
+        "fixture": "Declared free-flight state, no contact",
+        "requestedMeters": 6,
+        "before": [
+          {
+            "x": -29.86667124236813,
+            "y": 100.03162908775934,
+            "z": 0
+          },
+          {
+            "x": -29.733349780229467,
+            "y": 100.06053150064639,
+            "z": 0
+          },
+          {
+            "x": -29.60003558165775,
+            "y": 100.08670739446143,
+            "z": 0
+          },
+          {
+            "x": -29.46672861752014,
+            "y": 100.11015692318072,
+            "z": 0
+          },
+          {
+            "x": -29.33342886150928,
+            "y": 100.13088023912228,
+            "z": 0
+          },
+          {
+            "x": -29.20013629017251,
+            "y": 100.14887749311471,
+            "z": 0
+          },
+          {
+            "x": -29.06685088293809,
+            "y": 100.16414883466882,
+            "z": 0
+          },
+          {
+            "x": -28.933572622138346,
+            "y": 100.17669441215178,
+            "z": 0
+          }
+        ],
+        "after": [
+          {
+            "x": -29.24999999999997,
+            "y": 100.03162908775934,
+            "z": 0
+          },
+          {
+            "x": -28.499999999999943,
+            "y": 100.06053150064645,
+            "z": 0
+          },
+          {
+            "x": -27.749999999999915,
+            "y": 100.08670739446146,
+            "z": 0
+          },
+          {
+            "x": -26.999999999999886,
+            "y": 100.11015692318082,
+            "z": 0
+          },
+          {
+            "x": -26.249999999999858,
+            "y": 100.13088023912246,
+            "z": 0
+          },
+          {
+            "x": -25.49999999999983,
+            "y": 100.14887749311498,
+            "z": 0
+          },
+          {
+            "x": -24.7499999999998,
+            "y": 100.16414883466894,
+            "z": 0
+          },
+          {
+            "x": -23.999999999999773,
+            "y": 100.17669441215176,
+            "z": 0
+          }
+        ],
+        "events": [
+          {
+            "tick": 31,
+            "events": [
+              "dash-start"
+            ],
+            "cooldown": 25
+          },
+          {
+            "tick": 32,
+            "events": [],
+            "cooldown": 25
+          },
+          {
+            "tick": 33,
+            "events": [],
+            "cooldown": 25
+          },
+          {
+            "tick": 34,
+            "events": [],
+            "cooldown": 25
+          },
+          {
+            "tick": 35,
+            "events": [],
+            "cooldown": 25
+          },
+          {
+            "tick": 36,
+            "events": [],
+            "cooldown": 25
+          },
+          {
+            "tick": 37,
+            "events": [],
+            "cooldown": 25
+          },
+          {
+            "tick": 38,
+            "events": [
+              "dash-end"
+            ],
+            "cooldown": 25
+          }
+        ]
+      },
+      {
+        "name": "grounded-activation-is-blocked",
+        "passed": true
+      },
+      {
+        "name": "dash-contact-stops-at-thin-obstacle",
+        "passed": true,
+        "fixture": "Declared 0.02m-thick obstacle in the actual collision model",
+        "position": {
+          "x": -29.61696545425085,
+          "y": 19.910617111560764,
+          "z": 0.00044396036198572733
+        }
+      },
+      {
+        "name": "logical-clock-is-display-rate-independent",
+        "passed": true,
+        "displayRates": [
+          30,
+          60,
+          144
+        ],
+        "logicalUpdates": 90
+      },
+      {
+        "name": "restart-and-keyboard-release",
+        "passed": true
+      },
+      {
+        "name": "mobile-canvas-fits-and-touch-controls-exist",
+        "passed": true,
+        "viewport": [
+          390,
+          844
+        ]
+      }
+    ]
+  }
+}

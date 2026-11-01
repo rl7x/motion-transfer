@@ -3,6 +3,7 @@ import { validateToolInput } from './tool-schema.mjs';
 import { createReplayRuntime } from '../runtime/replay.mjs';
 import { replayTrace } from '../runtime/trace.mjs';
 import { createWasmInspection, inspectFunction, listFunctions } from './wasm-inspection.mjs';
+import { observeDonorMotion } from '../runtime/donor-observation.mjs';
 
 function summarize(observation) {
   const groups = new Map();
@@ -32,6 +33,7 @@ function summarize(observation) {
     omittedSpriteGroups: Math.max(0, groups.size - 8),
     tones: observation.tones,
     memory: observation.memory ?? [],
+    motion: observation.motion??null,
   };
 }
 
@@ -40,13 +42,17 @@ async function execute(name, args) {
   const target = await loadTarget();
   if (name === 'run_original') {
     const runtime = await createReplayRuntime(target.bytes);
-    const evidence = replayTrace(runtime, { schemaVersion: 1, steps: args.steps }, { watches: args.watches });
+    const evidence = replayTrace(runtime, { schemaVersion: 1, steps: args.steps }, { watches: args.watches,checkpointData:runtime=>{
+      try{const {position,direction,cooldown,remaining,sourceBodyWidth}=observeDonorMotion(runtime);return{motion:{position,direction,cooldown,remaining,sourceBodyWidth}};}
+      catch{return{motion:null};}
+    } });
     return {
       result: {
         target: target.id,
         cartridgeSha256: target.sha256,
         frames: evidence.frames.length,
         memoryWatches: args.watches,
+        motionNotice:'Motion fields are read from the actual binary through a HUMAN-MAPPED, hash-guarded registry. The agent did not discover that mapping. Null means the mapping was unavailable (for example outside gameplay). World position is distinct from camera-relative sprites. No expected outputs or recovered controller were used.',
         checkpoints: evidence.checkpoints.map(summarize),
       },
       evidence,

@@ -20,11 +20,15 @@ Use these prefixes:
 - `feat:` for a new capability or target.
 - `fix:` for a bug fix.
 - `chore:` for a small maintenance change, including a small readme edit.
+- `refactor:` for restructuring code without changing its behavior.
+- `test:` for adding or updating tests without changing production behavior.
 
 ```text
 feat: add the dashy dango target
 chore: update the readme
 fix: correct the broken link
+refactor: share the artifact integrity checks
+test: cover adapter collision handling
 ```
 
 ## Pull requests
@@ -35,7 +39,7 @@ Use this exact title format:
 <type>(<scope>): <short imperative description>
 ```
 
-- Use `feat` for a new capability, `fix` for a bug fix, and `chore` for maintenance.
+- Use `feat` for a new capability, `fix` for a bug fix, `chore` for maintenance, `refactor` for restructuring, and `test` for test coverage.
 - Name the affected area in the scope, such as `agent`, `runtime`, or `web`.
 - Start the description with a lowercase imperative verb and leave off the trailing period. Preserve proper names such as Meta.
 

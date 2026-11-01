@@ -32,6 +32,10 @@ test('isolated experiment tools produce fresh, contrasting observations', async 
   assert.equal(first.result.frames, 83);
   assert.match(first.result.checkpoints.find(c => c.checkpoint === 'gameplay').text, /Score/);
   assert.equal(first.evidence.frames.length, 83);
+  assert.equal(first.result.checkpoints[0].motion,null);
+  const motion=first.result.checkpoints.find(c=>c.checkpoint==='move-right').motion;
+  assert.ok(Number.isFinite(motion.position.x));assert.equal(motion.sourceBodyWidth,8);
+  assert.match(first.result.motionNotice,/HUMAN-MAPPED/);
 });
 
 test('unknown tools, extra filesystem arguments, and excessive traces are rejected', async () => {

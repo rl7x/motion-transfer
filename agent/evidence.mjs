@@ -10,6 +10,7 @@ export function evidenceHistory(report) {
       checkpoints: call.result.checkpoints.map(checkpoint => ({
         checkpoint: checkpoint.checkpoint,
         frame: checkpoint.frame,
+        motion: checkpoint.motion??null,
         framebufferFingerprint: checkpoint.framebufferHash.slice(0, 12),
         text: checkpoint.text,
         textTruncated: checkpoint.textTruncated,

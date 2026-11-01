@@ -1,0 +1,359 @@
+{
+  "schemaVersion": 1,
+  "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+  "metaCalled": false,
+  "origin": "Actual execution of pinned cartridge. Human-selected trace and hash-specific body sprite pointer 17540. HUD copies excluded by screen region. No original source supplied to recovery or adaptation models.",
+  "inputs": {
+    "titleStart": {
+      "buttons": 1,
+      "frames": 1
+    },
+    "initialWait": {
+      "buttons": 0,
+      "frames": 10
+    },
+    "dash": {
+      "buttons": 33,
+      "frames": 8
+    },
+    "release": {
+      "buttons": 0,
+      "frames": 7
+    }
+  },
+  "observations": {
+    "movementBeginsOnFirstDashUpdate": true,
+    "activeMotionUpdates": 8,
+    "totalSourcePixels": 60,
+    "maxAdditionalBodyDraws": 5,
+    "bodyDrawsReturnToOneAtUpdate": 13
+  },
+  "mapping": {
+    "afterimageLifetimeUpdates": 5,
+    "renderedHoldUpdates": 3,
+    "holdAuthorship": "Human-authored visual translation; not an observed pause in the donor",
+    "physicsAndRecoveredComponent": "Unchanged"
+  },
+  "samples": [
+    {
+      "tick": 1,
+      "worldX": 7.5,
+      "remaining": 7,
+      "bodyDraws": 1,
+      "screenPositions": [
+        [
+          76,
+          76
+        ]
+      ]
+    },
+    {
+      "tick": 2,
+      "worldX": 15,
+      "remaining": 6,
+      "bodyDraws": 2,
+      "screenPositions": [
+        [
+          76,
+          76
+        ],
+        [
+          76,
+          76
+        ]
+      ]
+    },
+    {
+      "tick": 3,
+      "worldX": 22.5,
+      "remaining": 5,
+      "bodyDraws": 3,
+      "screenPositions": [
+        [
+          68,
+          76
+        ],
+        [
+          76,
+          76
+        ],
+        [
+          76,
+          76
+        ]
+      ]
+    },
+    {
+      "tick": 4,
+      "worldX": 30,
+      "remaining": 4,
+      "bodyDraws": 4,
+      "screenPositions": [
+        [
+          61,
+          76
+        ],
+        [
+          68,
+          76
+        ],
+        [
+          76,
+          76
+        ],
+        [
+          76,
+          76
+        ]
+      ]
+    },
+    {
+      "tick": 5,
+      "worldX": 37.5,
+      "remaining": 3,
+      "bodyDraws": 5,
+      "screenPositions": [
+        [
+          53,
+          76
+        ],
+        [
+          61,
+          76
+        ],
+        [
+          68,
+          76
+        ],
+        [
+          76,
+          76
+        ],
+        [
+          76,
+          76
+        ]
+      ]
+    },
+    {
+      "tick": 6,
+      "worldX": 45,
+      "remaining": 2,
+      "bodyDraws": 6,
+      "screenPositions": [
+        [
+          53,
+          76
+        ],
+        [
+          61,
+          76
+        ],
+        [
+          76,
+          76
+        ],
+        [
+          46,
+          76
+        ],
+        [
+          68,
+          76
+        ],
+        [
+          76,
+          76
+        ]
+      ]
+    },
+    {
+      "tick": 7,
+      "worldX": 52.5,
+      "remaining": 1,
+      "bodyDraws": 6,
+      "screenPositions": [
+        [
+          76,
+          76
+        ],
+        [
+          46,
+          76
+        ],
+        [
+          53,
+          76
+        ],
+        [
+          68,
+          76
+        ],
+        [
+          61,
+          76
+        ],
+        [
+          76,
+          76
+        ]
+      ]
+    },
+    {
+      "tick": 8,
+      "worldX": 60,
+      "remaining": 0,
+      "bodyDraws": 6,
+      "screenPositions": [
+        [
+          68,
+          76
+        ],
+        [
+          46,
+          76
+        ],
+        [
+          61,
+          76
+        ],
+        [
+          76,
+          76
+        ],
+        [
+          53,
+          76
+        ],
+        [
+          76,
+          76
+        ]
+      ]
+    },
+    {
+      "tick": 9,
+      "worldX": 60,
+      "remaining": 0,
+      "bodyDraws": 5,
+      "screenPositions": [
+        [
+          68,
+          76
+        ],
+        [
+          61,
+          76
+        ],
+        [
+          76,
+          76
+        ],
+        [
+          53,
+          76
+        ],
+        [
+          76,
+          76
+        ]
+      ]
+    },
+    {
+      "tick": 10,
+      "worldX": 60,
+      "remaining": 0,
+      "bodyDraws": 4,
+      "screenPositions": [
+        [
+          68,
+          76
+        ],
+        [
+          61,
+          76
+        ],
+        [
+          76,
+          76
+        ],
+        [
+          76,
+          76
+        ]
+      ]
+    },
+    {
+      "tick": 11,
+      "worldX": 60,
+      "remaining": 0,
+      "bodyDraws": 3,
+      "screenPositions": [
+        [
+          68,
+          76
+        ],
+        [
+          76,
+          76
+        ],
+        [
+          76,
+          76
+        ]
+      ]
+    },
+    {
+      "tick": 12,
+      "worldX": 60,
+      "remaining": 0,
+      "bodyDraws": 2,
+      "screenPositions": [
+        [
+          76,
+          76
+        ],
+        [
+          76,
+          76
+        ]
+      ]
+    },
+    {
+      "tick": 13,
+      "worldX": 60,
+      "remaining": 0,
+      "bodyDraws": 1,
+      "screenPositions": [
+        [
+          76,
+          76
+        ]
+      ]
+    },
+    {
+      "tick": 14,
+      "worldX": 60,
+      "remaining": 0,
+      "bodyDraws": 1,
+      "screenPositions": [
+        [
+          76,
+          76
+        ]
+      ]
+    },
+    {
+      "tick": 15,
+      "worldX": 60,
+      "remaining": 0,
+      "bodyDraws": 1,
+      "screenPositions": [
+        [
+          76,
+          76
+        ]
+      ]
+    }
+  ]
+}

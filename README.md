@@ -14,21 +14,28 @@ npm install
 npm run dev:transfer
 ```
 
-Open `http://127.0.0.1:4173`. Play the compiled **Dashy Dango** donor, inspect its saved recovered dash, and choose **PAKU PAKU** or **JUJUMP** as its new home. The page shows donor, recipient before, and recipient after side by side. Both destinations use the exact same frozen controller. JUJUMP adds a gravity/landing interaction; the host retains its original jump and platform rules while applying the horizontal dash.
+Open `http://127.0.0.1:4173`. Play the compiled **Dashy Dango** donor and give its saved recovered dash to **RDSTR Stunts**, **PAKU PAKU**, or **JUJUMP**. The default Roadster experience adds a horizontal air dash to an existing 3D stunt game, using the exact same frozen controller as both pixel games. The page shows donor, recipient before, and recipient after side by side. **Watch the ability move** runs a short comparison using actual recorded native inputs without a model request. All players expand and support touch controls.
+
+Use **Investigate with Meta** to let Muse Spark choose binary inspections and contrasting donor experiments. Its public hypotheses, actual observations and qualified conclusion appear as the job runs. World-coordinate motion measurements use a disclosed human-mapped read-only donor registry. These fresh investigations do not replace the saved recovered component or claim automatic discovery of its layout.
+
+The Roadster form lets Meta generate a new adapter for distance, direction and held/fresh-press activation. Eight mapping cases and eight real-browser checks gate each playable child. Source, reports, parent lineage and local links are retained. The [Roadster integration policy](transfers/roadster/README.md) explains the 60/240 Hz bridge, meters conversion, collision behavior, attribution and finite scope.
+
+New investigations and Roadster generation share a persistent **$10 estimated development ceiling**: up to $0.50 per investigation and $0.05 per adapter, no automatic retries, and no further inference when billing is uncertain. The existing PAKU remix budget stays at $0.10 separately. See [the lab API and accounting](lab/README.md). Loading or playing any saved destination makes no model request.
 
 Choosing a destination loads a saved checked integration and makes no model call. The page distinguishes those saved results from fresh Meta remix generation. Real trace comparisons show the compiled donor, standalone component, and both recipient adapters using matching dash displacement and event timing. Recovery evidence, supported scope, human assistance, adapter authorship, sources, and policies are available in expandable sections.
 
-Keyboard and touch controls work in each view. Donor: arrows and X. Recipients: tap/Space to turn or jump, and D to dash after transfer. PAKU PAKU retains live child remixes, inherited edits, lineage, downloads, and local playable links. JUJUMP currently supports the saved transfer only. Historical PAKU parents and children remain usable after host re-verification when their verified adapter/component/recipient identities agree.
+Keyboard and touch controls work in each view. Donor: arrows and X. Roadster: Run stunt drives the assisted run, then X dashes in the air; native driving, rotation and lift controls remain. Pixel recipients: tap/Space to turn or jump, and D to dash after transfer. PAKU PAKU retains live child remixes, inherited edits, lineage, downloads, and local playable links. JUJUMP currently supports the saved transfer only. Historical PAKU parents and children remain usable after host re-verification when their verified adapter/component/recipient identities agree.
 
 ```sh
 npm run verify:motion
 npm run verify:transfer
 npm run verify:jujump
+npm run verify:roadster
 npm run compare:transfers
 npm test
 ```
 
-These checks use no paid API. Comparison inputs are controlled free-space fixtures; platform/ghost collisions, ordinary play, death/restart, and replay are checked separately. See [the JUJUMP integration policy](transfers/jujump/README.md) and [live remix scope](remix/README.md). Public hosting remains to be built; resolve the donor's documented redistribution status before publishing its cartridge.
+These checks use no paid API. `verify:roadster` checks the saved Meta adapter against eight mapping cases and eight browser checks and writes `reports/roadster-verification.json`. Comparison inputs are controlled free-space fixtures; platform/ghost collisions, ordinary play, death/restart, and replay are checked separately. See [the JUJUMP integration policy](transfers/jujump/README.md) and [live remix scope](remix/README.md). Public hosting remains to be built; resolve the donor's documented redistribution status before publishing its cartridge.
 
 ## Run Dashy Dango
 

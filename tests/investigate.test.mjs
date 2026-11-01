@@ -140,6 +140,21 @@ test('resume cannot reset the budget or retry an unsettled request', async () =>
   await assert.rejects(investigate({ client, question: exhausted.question, resumeReport: exhausted, limits: { maxCostUsd: 0.90 } }), /original limits/);
 });
 
+test('completion requires contrasting cited inputs, not an uncited contrasting experiment', async () => {
+  const saved = settledEvidence();
+  saved.toolCalls.push(structuredClone(saved.toolCalls[2]));
+  saved.toolCalls[3].experimentId = 'exp-003';
+  saved.toolCalls[3].callId = 'third-experiment';
+  saved.toolCalls[2].args.steps = [{ buttons: 1, frames: 1, checkpoint: 'different-label' }];
+  const client = {
+    countInputTokens: async () => 100,
+    respond: async () => response('r6', [{ type: 'message', content: [{ type: 'output_text', text: 'exp-001 and exp-002 support this conclusion.' }] }]),
+  };
+  await assert.rejects(investigate({ client, question: saved.question, resumeReport: saved }), /two contrasting, cited experiments/);
+  client.respond = async () => response('r6', [{ type: 'message', content: [{ type: 'output_text', text: 'exp-001 and exp-003 differ; interpretation remains uncertain.' }] }]);
+  assert.equal((await investigate({ client, question: saved.question, resumeReport: saved })).status, 'completed');
+});
+
 test('an unsupported final claim and missing usage cannot be marked completed', async () => {
   const final = response('r1', [{ type: 'message', content: [{ type: 'output_text', text: 'I know the answer without experiments.' }] }]);
   const client = { countInputTokens: async () => 10, respond: async () => final };
@@ -156,8 +171,8 @@ test('model call limits stop a loop that keeps requesting tools', async () => {
   let calls = 0;
   const client = {
     countInputTokens: async () => 10,
-    respond: async () => { calls++; return response('r1', [call('c1', 'inspect_wasm', { view: 'overview', startLine: 1, lineCount: 5 })]); },
+    respond: async request => { calls++; assert.deepEqual(request.tools,[]);return response('r1', [call('c1', 'inspect_wasm', { view: 'overview', startLine: 1, lineCount: 5 })]); },
   };
-  await assert.rejects(investigate({ client, limits: { maxModelCalls: 1 } }), /Model call limit/);
+  await assert.rejects(investigate({ client, limits: { maxModelCalls: 1 } }), /tool call after tools were disabled/);
   assert.equal(calls, 1);
 });
