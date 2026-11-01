@@ -49,7 +49,7 @@ export const TOOLS = [{
 }, {
   type: 'function',
   name: 'run_original',
-  description: 'Run a controlled experiment from fresh cartridge, memory, and empty storage. Each step holds a gamepad mask for fixed 60 Hz updates. Returns checkpoint hashes, visible text, grouped sprite coordinates, and requested read-only memory watches at reset and checkpoints. Watches read little-endian numeric values at absolute byte addresses; use [] when none are needed. X=1 starts/dashes; Z=2; left=16; right=32; up=64; down=128. OR bits to combine; 0 releases. Maximum 12 checkpoints, 1,800 total frames, and 64 watched values. No source or filesystem access.',
+  description: 'Run a controlled experiment from fresh cartridge, memory, and empty storage. Each step holds a gamepad mask for fixed 60 Hz updates. Returns checkpoint hashes, visible text, grouped sprite coordinates, requested read-only memory watches, and motion fields from the host\'s HUMAN-MAPPED, hash-guarded donor registry: world position, direction, remaining active ticks, cooldown, sourceBodyWidth. Null motion means unavailable outside gameplay. The agent does not discover this registry mapping. Use world position to distinguish player movement from camera motion. Watches read little-endian numeric values at absolute byte addresses; use [] when unused. X=1 starts/dashes; Z=2; left=16; right=32; up=64; down=128. OR bits to combine; 0 releases. Maximum 12 checkpoints, 1,800 total frames, and 64 watched values. No source or filesystem access.',
   strict: true,
   parameters: {
     type: 'object',

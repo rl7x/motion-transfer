@@ -31,7 +31,9 @@ Reset starts on the title screen; X starts gameplay. A state change may render o
 Simulation runs at 60 updates per second. Each checkpoint describes the frame just rendered.
 Sprites are grouped by pointer, dimensions, and pixel-data hash. Multiple positions may share a sprite.
 Hashes detect differences, but hashes alone do not explain a mechanic. Use actual sprite coordinates, visible text,
-and bytecode observations to support conclusions. Long WAT lines and sprite groups may be explicitly truncated.
+and bytecode observations to support conclusions. Motion fields use a HUMAN-MAPPED read-only registry in the host;
+you did not discover its layout. Use these actual world-coordinate measurements to test motion, rather than confusing camera movement with player movement.
+Long WAT lines and sprite groups may be explicitly truncated.
 You cannot access source code, files, a shell, the internet, or prewritten behavioral answers.
 Experiment results have IDs such as exp-001. Cite at least two successful experiment IDs in your final answer.
 Give a concise conclusion: observations, their interpretation, and remaining uncertainties. Report inconclusive
@@ -87,6 +89,7 @@ export async function investigate({
     toolCalls: [],
     conclusion: null,
     conclusionVerified: false,
+    humanAssistance: ['Registered and hash-guarded the compiled donor', 'Mapped read-only motion registry fields; this mapping is not a model discovery', 'Authored the experiment tools and completion checks'],
     contextCompactions: [],
   };
   if (resumeReport) {

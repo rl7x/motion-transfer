@@ -24,10 +24,10 @@ export function validateTrace(trace) {
   return total;
 }
 
-export function replayTrace(runtime, trace, { watches = [] } = {}) {
+export function replayTrace(runtime, trace, { watches = [], checkpointData } = {}) {
   validateTrace(trace);
   validateMemoryWatches(watches, runtime.memory.buffer.byteLength);
-  const observe = observation => watches.length ? { ...observation, memory: runtime.readMemory(watches) } : observation;
+  const observe = observation => ({...observation,...(watches.length?{memory:runtime.readMemory(watches)}:{}),...(checkpointData?checkpointData(runtime):{})});
   const checkpoints = [{ checkpoint: 'reset', ...observe(runtime.reset()) }];
   const frames = [];
   for (const step of trace.steps) {
