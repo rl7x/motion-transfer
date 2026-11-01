@@ -9,11 +9,12 @@ export function validateAdapterOutput(output) {
   }
   if (!output.ownsMotion && output.sweep.length) throw new Error('Inactive motion must not add collision sweep points');
   if (output.ownsMotion) {
+    if (output.displacement === 0 && output.sweep.length) throw new Error('Zero displacement must not add sweep points');
     const points = [0, ...output.sweep, output.displacement];
     const direction = Math.sign(output.displacement);
     for (let index = 1; index < points.length; index++) {
       const gap = points[index] - points[index - 1];
-      if (Math.abs(gap) > 1 + 1e-9 || (gap !== 0 && Math.sign(gap) !== direction)) throw new Error('Dash sweep must be monotonic with gaps of at most one recipient pixel');
+      if (Math.abs(gap) > 1 + 1e-9 || (direction !== 0 && Math.sign(gap) !== direction)) throw new Error('Dash sweep must be monotonic with gaps of at most one recipient pixel');
     }
   }
 }

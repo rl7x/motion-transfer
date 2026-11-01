@@ -5,7 +5,7 @@ const frame = (facing = 1, dash = false, normalDisplacement = facing * 0.5) => (
 const hold = (count, facing = 1, dash = false) => Array.from({ length: count }, () => frame(facing, dash));
 
 export function adapterCases() {
-  return [
+  const cases = [
     { name: 'idle-and-turn', frames: [...hold(20), ...hold(20, -1)] },
     { name: 'early-held', frames: hold(100, 1, true) },
     { name: 'left-tap', frames: [...hold(10), frame(-1, true), ...hold(40, -1)] },
@@ -21,6 +21,7 @@ export function adapterCases() {
       events: index === 0 ? ['dash-start'] : index === 6 ? ['dash-end'] : [],
     })) },
   ];
+  return cases.map(trace=>({...trace,frames:trace.frames.map((frame,tick)=>({tick,position:40,...frame}))}));
 }
 
 export async function evaluatePakuAdapter(source, { signal } = {}) {

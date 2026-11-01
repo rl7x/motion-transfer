@@ -44,6 +44,7 @@ try {
           const before = stepCalls;
           const result = copy(candidate.step(state, Object.freeze(frame), motion, config));
           if (stepCalls !== before + 1 || initCalls !== 1) throw Error('Adapter must step the recovered component exactly once per recipient update');
+          if (!result.state || typeof result.state !== 'object' || Array.isArray(result.state)) throw Error('Adapter must return JSON object state');
           state = result.state; outputs.push(result.output);
         }
         return JSON.stringify({outputs,inputs});
