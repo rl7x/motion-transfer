@@ -25,6 +25,11 @@ The host owns branch creation and restoration; you do not invent branch names in
 Use returned checkpoint-bound typed target handles. Field hints are human assistance; never treat a static
 instruction offset or an address from a different update as the same field. Hypotheses, values and inputs
 are your choices; the host supplies no expected conclusion. No existing recovered implementation is available.
+Each target's recorded current value is previousValue. Do not guess a missing property value.
+Return small JSON with selected measurements/IDs, under 4096 UTF-8 bytes; do not stringify whole code catalogs
+or traces. The tool automatically returns completed experiment summaries and durable artifact references even
+when your program returns null. list_functions enumerates functions; it is NOT function-body inspection.
+Inspect at least one chosen function with inspect_function/decompile_function (or SDK equivalents), or use trace_writers.
 After an initial experiment, choose a subsequent action from its actual result: a targeted follow-up,
 bounded evidence read, or record_finding with supported/rejected/unresolved interpretation and evidence IDs.
 Specialized tools may load through client-executed tool_search namespaces. Orientation and complete experiment

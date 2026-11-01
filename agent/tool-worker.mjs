@@ -36,6 +36,10 @@ async function execute(name, args) {
   }
   validateToolInput(name, args);
   if(EXPERIMENT_TOOLS.some(tool=>tool.name===name))return(await experimentTools()).execute(name,args);
+  if(['record_finding','annotate_function','select_component_evidence'].includes(name)&&experiments){
+    const artifacts=experiments.snapshot().artifacts;
+    for(const id of args.evidenceIds){const artifact=artifacts.find(item=>item.id===id);if(artifact)session.recordStatic({id,kind:'experiment-artifact-reference',artifactId:id,sourceEvidenceId:artifact.payload.experimentId??artifact.payload.id});}
+  }
   if(name==='capture_frame'&&session&&session.snapshot().captures.length+(experiments?.snapshot().usage.captures??0)>=4)throw Error('Investigation image budget exhausted');
   if(COMPONENT_TOOLS.some(tool=>tool.name===name)){
     if(!session)throw Error('Inspect code and collect session execution evidence first');

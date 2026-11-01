@@ -26,7 +26,8 @@ export function createComponentWorkbench(session,{evaluate=evaluateMotion,seed=(
       frozen();if(state.selections.length>=3)throw Error('Component selection limit reached');
       const snapshot=session.snapshot(),code=snapshot.staticEvidence.filter(item=>Number.isInteger(item.functionIndex));
       if(args.functionIndices.some(index=>!code.some(item=>item.functionIndex===index)))throw Error('Inspect or decompile each selected function first');
-      const known=new Map([...snapshot.observations.map(item=>[item.id,item.result]),...snapshot.comparisons.map(item=>[item.comparisonId,item]),...snapshot.annotations.map(item=>[item.id,item]),...snapshot.staticEvidence.filter(item=>item.kind==='experiment').map(item=>[item.id,{...item.summary,artifactId:item.artifactId,origin:'Actual checkpoint-bound experiment; full immutable evidence is stored separately'}])]);
+      const experiments=snapshot.staticEvidence.filter(item=>item.kind==='experiment').flatMap(item=>[item.id,item.artifactId].map(id=>[id,{...item.summary,artifactId:item.artifactId,origin:'Actual checkpoint-bound experiment; full immutable evidence is stored separately'}]));
+      const known=new Map([...snapshot.observations.map(item=>[item.id,item.result]),...snapshot.comparisons.map(item=>[item.comparisonId,item]),...snapshot.annotations.map(item=>[item.id,item]),...experiments]);
       if(args.evidenceIds.some(id=>!known.has(id)))throw Error('Selection cites unknown session execution evidence');
       const evidence={schemaVersion:1,cartridgeSha256:session.identity.cartridgeSha256,scope:args.scope,
         functions:args.functionIndices.map(functionIndex=>({id:`binary:func${functionIndex}`,functionIndex,origin:'Agent-selected WABT inspection of the hash-bound binary'})),traces:args.evidenceIds.map(id=>({id,observation:known.get(id)})),
