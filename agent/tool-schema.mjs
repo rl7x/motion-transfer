@@ -100,6 +100,13 @@ TOOLS.push({type:'function',name:'session_advance',strict:true,
   description:'Continue this persistent branch with held inputs at 60 Hz, preserving prior state. Checkpoints here are observation labels; use checkpoint_state for a reusable branch point. The initial branch is main. X=1 starts/dashes; left=16, right=32, up=64, down=128. Frames and output are bounded.',
   parameters:{type:'object',properties:{branchId,hypothesis:{type:'string',minLength:1,maxLength:500},watches,steps},required:['branchId','hypothesis','watches','steps'],additionalProperties:false},
 });
+TOOLS.push({type:'function',name:'checkpoint_state',strict:true,
+  description:'Record a reusable checkpoint bound to cartridge and runtime identity. Restoration replays inputs and edits into a clean instance and verifies frame, memory, framebuffer and host-storage hashes. Private globals are reconstructed, not copied.',
+  parameters:{type:'object',properties:{branchId,label:{type:'string',minLength:1,maxLength:80}},required:['branchId','label'],additionalProperties:false},
+},{type:'function',name:'fork_checkpoint',strict:true,
+  description:'Restore a checkpoint into a new independent experimental branch. main remains unchanged. Give the new branch a short lowercase identity; use the returned identity in later commands.',
+  parameters:{type:'object',properties:{checkpointId:{type:'string',pattern:'^cp-[a-f0-9]{20}$'},branchId,watches},required:['checkpointId','branchId','watches'],additionalProperties:false},
+});
 
 function object(value, keys) {
   if (!value || typeof value !== 'object' || Array.isArray(value)
@@ -113,6 +120,17 @@ function integer(value, minimum, maximum) {
 }
 
 export function validateToolInput(name, args) {
+  if(name==='checkpoint_state'||name==='fork_checkpoint'){
+    object(args,name==='checkpoint_state'?['branchId','label']:['checkpointId','branchId','watches']);
+    if(typeof args.branchId!=='string'||!/^[a-z][a-z0-9-]{0,39}$/.test(args.branchId))throw Error('Invalid branch identity');
+    if(name==='checkpoint_state'){
+      if(typeof args.label!=='string'||!args.label.trim()||args.label.length>80)throw Error('Invalid checkpoint label');
+    }else{
+      if(typeof args.checkpointId!=='string'||!/^cp-[a-f0-9]{20}$/.test(args.checkpointId))throw Error('Invalid checkpoint identity');
+      validateMemoryWatches(args.watches);
+    }
+    return;
+  }
   if(['session_observe','read_memory','session_reset','session_advance'].includes(name)){
     if(name==='session_advance'){
       object(args,['branchId','hypothesis','watches','steps']);

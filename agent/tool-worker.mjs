@@ -12,8 +12,13 @@ let session,inspection;
 
 
 async function execute(name, args) {
+  if(name==='$open'){
+    if(session)throw Error('Investigation session is already open');
+    session=await createInvestigationSession(target.bytes,args.sessionState);
+    return{result:{sessionId:session.id,identity:session.identity,restored:Boolean(args.sessionState)}};
+  }
   validateToolInput(name, args);
-  if(name.startsWith('session_')||name==='read_memory'){
+  if(name.startsWith('session_')||['read_memory','checkpoint_state','fork_checkpoint'].includes(name)){
     session??=await createInvestigationSession(target.bytes);
     return session.execute(name,args);
   }
@@ -70,7 +75,8 @@ for await(const chunk of process.stdin){
     try{
       const request=JSON.parse(line);id=request.id;
       if(!Number.isSafeInteger(id))throw Error('Invalid worker request identity');
-      process.stdout.write(JSON.stringify({id,ok:true,...await execute(request.name,request.args)})+'\n');
-    }catch(error){process.stdout.write(JSON.stringify({id,ok:false,error:String(error.message).slice(0,1000)})+'\n');}
+      const output=await execute(request.name,request.args);
+      process.stdout.write(JSON.stringify({id,ok:true,...output,...(session?{sessionState:session.snapshot()}:{} )})+'\n');
+    }catch(error){process.stdout.write(JSON.stringify({id,ok:false,error:String(error.message).slice(0,1000),...(session?{sessionState:session.snapshot()}:{} )})+'\n');}
   }
 }

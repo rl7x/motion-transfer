@@ -34,13 +34,9 @@ export function createCartridgeTools({signal,timeoutMs=10_000}={}){
     }
   });
   const exited=new Promise(resolve=>child.once('exit',()=>{closed=true;signal?.removeEventListener('abort',aborted);if(pending){pending.reject(failure??Error('Cartridge tool process exited'));pending=null;}resolve();}));
-  return{
-    get pid(){return child.pid;},
-    get sessionState(){return lastState;},
-    async run(name,args,{signal:callSignal}={}){
-      if(!name.startsWith('$'))validateToolInput(name,args);
+  async function request(name,args,{signal:callSignal}={}){
       const input=JSON.stringify({id:++sequence,name,args});
-      if(Buffer.byteLength(input)>(name==='$restore'?2*1024*1024:32_768))throw Error('Tool request exceeds its input limit');
+      if(Buffer.byteLength(input)>(name==='$open'?2*1024*1024:32_768))throw Error('Tool request exceeds its input limit');
       if(closed)throw failure??Error('Cartridge worker is closed');
       if(pending)throw Error('Cartridge commands must execute sequentially');
       const cancel=()=>stop(Error('Cartridge experiment cancelled'));
@@ -49,7 +45,12 @@ export function createCartridgeTools({signal,timeoutMs=10_000}={}){
       const timer=setTimeout(()=>stop(Error('Cartridge experiment exceeded its time limit')),timeoutMs);
       try{return await new Promise((resolve,reject)=>{pending={id:sequence,resolve,reject};child.stdin.write(input+'\n');});}
       finally{clearTimeout(timer);callSignal?.removeEventListener('abort',cancel);}
-    },
+  }
+  return{
+    get pid(){return child.pid;},
+    get sessionState(){return lastState;},
+    open(sessionState){return request('$open',{sessionState});},
+    async run(name,args,options){validateToolInput(name,args);return request(name,args,options);},
     async close(){
       signal?.removeEventListener('abort',aborted);
       if(!closed){closed=true;child.stdin.end();const timer=setTimeout(()=>child.kill('SIGKILL'),500);try{await exited;}finally{clearTimeout(timer);}}

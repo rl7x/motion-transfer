@@ -121,6 +121,7 @@ export async function investigate({
   const checkTime = () => { if (controller.signal.aborted) throw new Error('Investigation exceeded its wall-clock limit'); };
 
   try {
+    if(worker){await worker.open(report.session);report.session=worker.sessionState;}
     await onUpdate(report);
     for (let turn = report.requests.length; turn < limits.maxModelCalls; turn++) {
       checkTime();
@@ -214,6 +215,7 @@ export async function investigate({
           entry.args = JSON.parse(call.arguments);
           onProgress(`Running ${call.name}`);
           const { result, evidence } = await dispatch(call.name, entry.args, { signal: controller.signal });
+          if(worker)report.session=worker.sessionState;
           entry.ok = true;
           entry.result = result;
           if (evidence) entry.evidence = evidence;
@@ -223,6 +225,7 @@ export async function investigate({
           }
           history.push({ type: 'function_call_output', call_id: call.call_id, output: JSON.stringify(entry.result) });
         } catch (error) {
+          if(worker?.sessionState)report.session=worker.sessionState;
           entry.error = error.message;
           history.push({ type: 'function_call_output', call_id: call.call_id, output: JSON.stringify({ error: entry.error }) });
         }
