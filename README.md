@@ -30,11 +30,12 @@ Keyboard and touch controls work in each view. Donor: arrows and X. Roadster: Ru
 npm run verify:motion
 npm run verify:transfer
 npm run verify:jujump
+npm run verify:roadster
 npm run compare:transfers
 npm test
 ```
 
-These checks use no paid API. Comparison inputs are controlled free-space fixtures; platform/ghost collisions, ordinary play, death/restart, and replay are checked separately. See [the JUJUMP integration policy](transfers/jujump/README.md) and [live remix scope](remix/README.md). Public hosting remains to be built; resolve the donor's documented redistribution status before publishing its cartridge.
+These checks use no paid API. `verify:roadster` checks the saved Meta adapter against eight mapping cases and seven browser checks and writes `reports/roadster-verification.json`. Comparison inputs are controlled free-space fixtures; platform/ghost collisions, ordinary play, death/restart, and replay are checked separately. See [the JUJUMP integration policy](transfers/jujump/README.md) and [live remix scope](remix/README.md). Public hosting remains to be built; resolve the donor's documented redistribution status before publishing its cartridge.
 
 ## Run Dashy Dango
 

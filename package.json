@@ -13,6 +13,7 @@
     "transfer:paku": "node scripts/transfer-paku.mjs",
     "verify:transfer": "node scripts/verify-paku-transfer.mjs",
     "verify:jujump": "node scripts/verify-jujump.mjs",
+    "verify:roadster": "node scripts/verify-roadster.mjs",
     "compare:transfers": "node scripts/compare-transfers.mjs",
     "tools:smoke": "node scripts/tools-smoke.mjs",
     "test": "node --test tests/*.test.mjs"
