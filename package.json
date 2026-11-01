@@ -11,6 +11,7 @@
     "recover:motion": "node scripts/recover-motion.mjs",
     "verify:motion": "node scripts/verify-motion.mjs",
     "transfer:paku": "node scripts/transfer-paku.mjs",
+    "verify:transfer": "node scripts/verify-paku-transfer.mjs",
     "tools:smoke": "node scripts/tools-smoke.mjs",
     "test": "node --test tests/*.test.mjs"
   },
