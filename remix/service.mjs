@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { loadPakuTransfer } from '../transfer/saved-paku.mjs';
+import { loadPakuTransfer, loadCompatiblePakuVersion } from '../transfer/saved-paku.mjs';
 import { loadPakuPaku } from '../recipients/paku-paku/load.mjs';
 import { compileAdapter } from '../transfer/adapter.mjs';
 import { evaluatePakuRemix } from '../evaluator/paku-remix.mjs';
@@ -19,11 +19,16 @@ export async function createRemixService({directory,apiKey,client,generate=gener
   verifyBrowser=verifyRemixBrowser,budgetUsd=LOCAL_REMIX_BUDGET_USD}={}) {
   if(!Number.isFinite(budgetUsd)||budgetUsd<=0||budgetUsd>LOCAL_REMIX_BUDGET_USD)throw Error('Invalid local remix budget');
   const saved=await loadPakuTransfer(),recipient=await loadPakuPaku();
-  const base={id:saved.receipt.id,baseTransferId:saved.receipt.id,componentId:saved.componentId,
-    recipientRevision:recipient.manifest.revision,source:saved.source,javascript:saved.javascript,
+  const makeBase=version=>({id:version.receipt.id,baseTransferId:version.receipt.id,componentId:version.componentId,
+    recipientId:'paku-paku',recipientRevision:recipient.manifest.revision,source:version.source,javascript:version.javascript,
     intent:BASE_REMIX_INTENT,summary:'Recovered dash transferred to PAKU PAKU',
-    evaluation:{conformance:saved.conformance,browser:saved.browser},generation:saved.generation,
-    notices:recipient.licenses.join('\n\n----------------\n\n')};
+    evaluation:{conformance:version.conformance,browser:version.browser},generation:version.generation,
+    notices:recipient.licenses.join('\n\n----------------\n\n')});
+  const base=makeBase(saved),roots=new Map([[base.id,base]]);
+  async function root(id){
+    if(!roots.has(id))roots.set(id,makeBase(await loadCompatiblePakuVersion(id,saved)));
+    return roots.get(id);
+  }
   const store=await createRemixStore(directory);
   let active=null,admitting=false,closed=false;
   const jobs=new Map();
@@ -50,9 +55,12 @@ export async function createRemixService({directory,apiKey,client,generate=gener
     return{limitUsd:budgetUsd,spentUsd:spent,reservedUsd:reserved,remainingUsd:Math.max(0,budgetUsd-spent-reserved)};
   };
   const parent=async id=>{
-    if(id===base.id)return base;
-    const artifact=await store.readArtifact(id);
-    if(artifact.baseTransferId!==base.id||artifact.componentId!==base.componentId)throw Error('This parent belongs to a different verified transfer');
+    if(roots.has(id))return roots.get(id);
+    let artifact;
+    try{artifact=await store.readArtifact(id);}
+    catch(error){if(error.code==='ENOENT')return root(id);throw error;}
+    await root(artifact.baseTransferId);
+    if(artifact.componentId!==base.componentId||artifact.recipientRevision!==base.recipientRevision)throw Error('This parent belongs to a different verified transfer');
     return artifact;
   };
   const run=async(job,selected)=>{

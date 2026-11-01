@@ -104,3 +104,22 @@ export async function loadPakuTransfer({ directory, optional = false } = {}) {
   for (const [key, value] of Object.entries(identity)) assert.equal(receipt[key], value, `Receipt identity mismatch: ${key}`);
   return { ...candidate, ...identity, receipt, directory };
 }
+
+// Historical roots can remain parents after a host-only re-verification. They
+// must contain the exact current adapter and component, with intact old proofs.
+export async function loadCompatiblePakuVersion(id, current) {
+  assert.match(id,/^[a-f0-9]{64}$/);
+  const directory=new URL(`versions/${id}/`,savedPakuDirectory);
+  const receipt=JSON.parse(await readFile(new URL('receipt.json',directory),'utf8'));
+  assert.equal(receipt.id,id);assert.equal(receipt.status,'verified');
+  const candidate=await readPakuCandidate(directory);
+  assert.deepEqual(Object.keys(receipt.files).sort(),[...packageFiles].sort());
+  for(const name of packageFiles)assert.equal(digest(candidate.files[name]),receipt.files[name],`Historical transfer integrity mismatch: ${name}`);
+  assert.equal(id,digest(JSON.stringify({files:receipt.files,environment:receipt.environment})));
+  const identity=checkPakuPackage(candidate,receipt.environment);
+  assert.equal(identity.componentId,current.componentId,'Historical component differs');
+  assert.equal(candidate.source,current.source,'Historical adapter differs');
+  assert.equal(candidate.javascript,current.javascript,'Historical adapter build differs');
+  assert.deepEqual(receipt.environment.recipient,current.receipt.environment.recipient,'Historical recipient differs');
+  return {...candidate,...identity,receipt,directory};
+}

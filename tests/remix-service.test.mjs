@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
@@ -37,7 +37,10 @@ test('remix jobs persist idempotency, child lineage, budget and immutable bytes 
   const generate=generatorFixture(parent=>{calls++;parents.push(parent);});
   try{
     service=await createRemixService({directory,client:{},generate,verifyBrowser:browserFixture});
-    const request={parentArtifactId:service.status().baseArtifactId,prompt:'Test-only backward press remix',idempotencyKey:randomUUID()};
+    const versions=await readdir(new URL('../transfers/paku-paku/versions/',import.meta.url));
+    const historical=versions.find(id=>id!==service.status().baseArtifactId);
+    assert.ok(historical);assert.equal((await service.artifact(historical)).id,historical);
+    const request={parentArtifactId:historical,prompt:'Test-only backward press remix',idempotencyKey:randomUUID()};
     const first=await service.submit(request),ready=await wait(service,first.id);
     assert.equal(ready.status,'ready',ready.error);assert.equal(calls,1);
     assert.equal((await service.submit(request)).id,first.id);assert.equal(calls,1);
