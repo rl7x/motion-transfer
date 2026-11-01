@@ -8,6 +8,7 @@ if(active?.request)$('#investigation-question').value=active.request.questionId;
 function save(){try{if(active)sessionStorage.setItem(storageKey,JSON.stringify(active));else sessionStorage.removeItem(storageKey);}catch{/* Reports remain available server-side. */}}
 function render(job,reportPath='/api/investigations/'+job.id){
   const report=job.report,events=$('#investigation-events');events.replaceChildren();
+  const local=job.origin==='local-verification';
   renderInvestigationSession(report);
   for(const call of report?.toolCalls??[]){
     const item=document.createElement('li'),title=document.createElement('strong'),description=document.createElement('p');
@@ -27,14 +28,15 @@ function render(job,reportPath='/api/investigations/'+job.id){
     if(call.result||call.error){const detail=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');summary.textContent='Actual inputs and returned observations';pre.textContent=JSON.stringify({inputs:call.args,observations:call.result,error:call.error},null,2);detail.append(summary,pre);item.append(detail);}
     events.append(item);
   }
-  $('#lab-mode').textContent=reportPath.includes('/saved/')?'SAVED RECORDING':job.status==='ready'?'COMPLETED META RUN':job.status==='failed'?'STOPPED META RUN':'FRESH META ACTIVITY';
+  $('#lab-mode').textContent=local?'LOCAL VERIFICATION':reportPath.includes('/saved/')?'SAVED RECORDING':job.status==='ready'?'COMPLETED META RUN':job.status==='failed'?'STOPPED META RUN':'FRESH META ACTIVITY';
   const elapsed=report?.finishedAt&&report?.startedAt?` · ${((Date.parse(report.finishedAt)-Date.parse(report.startedAt))/1000).toFixed(1)}s recorded elapsed`:'';
   const cost=`${report?.requests?.length??0} generation requests · $${(report?.estimatedCostUsd??0).toFixed(4)} estimated${elapsed}`;
   $('#lab-progress').textContent=job.error??(job.status==='ready'?`Investigation complete · ${cost}. The model’s interpretation requires review.`:`Meta investigation: ${job.status} · ${cost}.`);
+  if(local)$('#lab-progress').textContent='Local control experiment · no model request. Inputs, field selection and intervention were human-scripted; measurements come from actual execution.';
   const incomplete=job.status==='failed'?report?.turns?.at(-1)?.messages?.filter(message=>message.phase==='final').map(message=>message.text).join('\n'):null;
   const text=report?.conclusion??incomplete;
   const conclusion=$('#investigation-conclusion');conclusion.hidden=!text;
-  if(text)conclusion.textContent=(report?.conclusion?'MODEL INTERPRETATION · NOT INDEPENDENTLY VERIFIED':'INCOMPLETE RUN · COMPLETION CHECKS DID NOT PASS')+'\n\n'+text;
+  if(text)conclusion.textContent=(local?'LOCAL VERIFICATION · HUMAN-SCRIPTED EXPERIMENT':report?.conclusion?'MODEL INTERPRETATION · NOT INDEPENDENTLY VERIFIED':'INCOMPLETE RUN · COMPLETION CHECKS DID NOT PASS')+'\n\n'+text;
   const link=$('#investigation-report');link.hidden=false;link.href=reportPath;link.download='investigation-'+job.id+'.json';
 }
 async function refresh(){
@@ -49,6 +51,7 @@ async function refresh(){
     $('#investigation-submit').disabled=submitting||(!reconnect&&(!status.enabled||Boolean(active||status.activeRunId||status.unsettled)||budget?.remainingUsd<.005));
     $('#view-investigation').disabled=Boolean(active||submitting);
     $('#view-branch-investigation').disabled=Boolean(active||submitting);
+    $('#view-local-control').disabled=Boolean(active||submitting);
     window.labStatus=status;window.dispatchEvent(new Event('labstatus'));
   }catch(error){$('#lab-progress').textContent=error.message;$('#investigation-submit').disabled=true;}
   finally{polling=false;}
@@ -72,5 +75,10 @@ $('#view-branch-investigation').addEventListener('click',async()=>{
   const path='/api/investigations/saved/branch-experiment';
   try{render(await json(path),path);$('#lab-progress').textContent+=' Saved model-chosen exploration; incomplete comparison. No new model request.';}
   catch(error){$('#lab-progress').textContent=error.message;}
+});
+$('#view-local-control').addEventListener('click',async()=>{
+  if(active||submitting)return;
+  const path='/api/investigations/saved/local-control';
+  try{render(await json(path),path);}catch(error){$('#lab-progress').textContent=error.message;}
 });
 await refresh();setInterval(refresh,1000);

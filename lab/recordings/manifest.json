@@ -14,6 +14,14 @@
       "sha256": "b43699c5ef610bfe2d82008413657ce9c1b5c2b4bb58f0c5963b1fee5ded1c48",
       "title": "Model-chosen movement and checkpoint exploration; controlled comparison incomplete",
       "runId": "bec1a9ce-8b91-423e-9b01-e252516223bb"
+    },
+    {
+      "id": "local-control",
+      "file": "local-control.json",
+      "sha256": "a101878aa1a100360b9ce18213527ffce740efc8e43b696b7e7e872d11fc92a8",
+      "title": "Human-scripted local timer intervention and relocating memory addresses",
+      "runId": "783b7cb3-e85e-4ff7-a93b-c2871ceb3ba5",
+      "kind": "local-verification"
     }
   ]
 }

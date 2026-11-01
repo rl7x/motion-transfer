@@ -82,3 +82,16 @@ test('an incomplete saved exploration is labelled as failed and never presented 
     assert.match(await page.locator('#investigation-events').innerText(),/fork_checkpoint/);assert.deepEqual(posts,[]);assert.deepEqual(errors,[]);
   }finally{await harness.close();}
 });
+
+test('the saved local control displays real comparison and images without attributing it to Meta',async()=>{
+  const harness=await createPakuBrowser();
+  try{
+    const {page,errors}=await harness.page(),posts=[];page.on('request',request=>{if(request.method()==='POST')posts.push(request.url());});
+    await page.goto(harness.origin+'/?destination=paku-paku');await page.locator('#view-local-control').click();
+    await page.waitForFunction(()=>document.querySelector('#lab-mode').textContent==='LOCAL VERIFICATION');
+    assert.match(await page.locator('#lab-progress').innerText(),/human-scripted/);assert.match(await page.locator('#investigation-conclusion').innerText(),/60 source pixels/);
+    assert.equal(await page.locator('.comparison-card').count(),1);assert.equal(await page.locator('#investigation-captures img').count(),2);
+    await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    assert.deepEqual(posts,[]);assert.deepEqual(errors,[]);
+  }finally{await harness.close();}
+});
