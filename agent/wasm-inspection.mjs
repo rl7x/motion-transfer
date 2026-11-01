@@ -126,3 +126,18 @@ export function inspectFunction(inspection, { functionIndex, startLine, lineCoun
     nextLine: end < fn.startLine + fn.lineCount ? startLine + lineCount : null,
   };
 }
+
+export function navigateCallGraph(inspection,{functionIndex,direction,depth}){
+  if(!inspection.functions[functionIndex])throw Error('Unknown function index');
+  const nodes=new Map(),edges=[],queue=[[functionIndex,0]],visited=new Set();
+  while(queue.length&&nodes.size<60){
+    const [index,level]=queue.shift();if(visited.has(index))continue;visited.add(index);
+    const fn=inspection.functions[index];nodes.set(index,summary(fn));
+    if(level>=depth)continue;
+    for(const adjacent of fn[direction].slice(0,50)){
+      const from=direction==='callees'?index:adjacent.index,to=direction==='callees'?adjacent.index:index;
+      edges.push({from,to,sites:adjacent.sites});queue.push([adjacent.index,level+1]);
+    }
+  }
+  return{rootFunctionIndex:functionIndex,direction,depth,nodes:[...nodes.values()],edges:edges.slice(0,100),truncated:queue.length>0||edges.length>100,indirectCallsResolved:false,notice:'Direct call edges only. Inferred names remain separate annotations.'};
+}

@@ -24,7 +24,7 @@ export async function createInvestigationSession(bytes,saved){
   const branches=new Map([['main',{id:'main',runtime,actions:[],experimental:false}]]);
   const hostSources=await Promise.all(['replay.mjs','memory.mjs','investigation-session.mjs'].map(name=>readFile(new URL(name,import.meta.url),'utf8')));
   const identity={...runtime.provenance,hostSha256:digest(hostSources.join('\n'))};
-  const checkpoints=new Map(),observations=new Map(),comparisons=[];
+  const checkpoints=new Map(),observations=new Map(),comparisons=[],staticEvidence=[],annotations=[];
   const fingerprint=runtime=>{const {frame,memoryHash,framebufferHash,storage}=runtime.observe();return{frame,memoryHash,framebufferHash,storage,faulted:runtime.faulted};};
   function verify(runtime,expected){assert.deepEqual(fingerprint(runtime),expected,'Replay restoration hash mismatch');}
   const branch=id=>{const value=branches.get(id);if(!value)throw Error('Unknown investigation branch: '+id);return value;};
@@ -56,7 +56,7 @@ export async function createInvestigationSession(bytes,saved){
     observations.set(observationId,{id:observationId,branchId:value.id,actionCount:value.actions.length,verification:fingerprint(value.runtime),result});
     return result;
   }
-  function snapshot(){return structuredClone({schemaVersion:1,id,identity,branches:[...branches.values()].map(({runtime,...value})=>({...value,verification:fingerprint(runtime)})),checkpoints:[...checkpoints.values()],observations:[...observations.values()],comparisons});}
+  function snapshot(){return structuredClone({schemaVersion:1,id,identity,branches:[...branches.values()].map(({runtime,...value})=>({...value,verification:fingerprint(runtime)})),checkpoints:[...checkpoints.values()],observations:[...observations.values()],comparisons,staticEvidence,annotations});}
   if(saved){
     if(saved.schemaVersion!==1||typeof id!=='string'||!Array.isArray(saved.branches)||!saved.branches.length||saved.branches.length>6||saved.checkpoints?.length>16||saved.observations?.length>128)throw Error('Invalid investigation session journal');
     assert.deepEqual(saved.identity,identity,'Checkpoint cartridge/runtime identity mismatch');
@@ -79,9 +79,18 @@ export async function createInvestigationSession(bytes,saved){
     }
     if((saved.comparisons?.length??0)>12)throw Error('Comparison limit reached');
     comparisons.push(...(saved.comparisons??[]));
+    if((saved.staticEvidence?.length??0)>128||(saved.annotations?.length??0)>64)throw Error('Static evidence limit reached');
+    staticEvidence.push(...(saved.staticEvidence??[]));annotations.push(...(saved.annotations??[]));
   }
   return{
     id,identity,snapshot,
+    recordStatic(evidence){if(staticEvidence.some(item=>item.id===evidence.id))return;if(staticEvidence.length>=128)throw Error('Static evidence limit reached');staticEvidence.push(structuredClone(evidence));},
+    annotate(args){
+      const known=new Set([...staticEvidence.map(item=>item.id),...observations.keys(),...checkpoints.keys(),...comparisons.map(item=>item.comparisonId),...annotations.map(item=>item.id)]);
+      if(args.evidenceIds.some(id=>!known.has(id)))throw Error('Annotation cites unknown session evidence');
+      if(annotations.length>=64)throw Error('Annotation limit reached');
+      const annotation={id:`note-${String(annotations.length+1).padStart(3,'0')}`,sessionId:id,cartridgeSha256:identity.cartridgeSha256,nameSource:'agent-inference',...args};annotations.push(annotation);return{result:annotation};
+    },
     async execute(name,args){
       if(name==='diff_memory'){
         const records=[args.fromObservationId,args.toObservationId].map(key=>{const value=observations.get(key);if(!value)throw Error('Unknown observation identity');return value;});

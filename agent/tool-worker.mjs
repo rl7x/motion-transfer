@@ -2,13 +2,14 @@ import { loadTarget } from './target.mjs';
 import { validateToolInput } from './tool-schema.mjs';
 import { createReplayRuntime } from '../runtime/replay.mjs';
 import { replayTrace } from '../runtime/trace.mjs';
-import { createWasmInspection, inspectFunction, listFunctions } from './wasm-inspection.mjs';
+import { createWasmInspection, inspectFunction, listFunctions,navigateCallGraph } from './wasm-inspection.mjs';
+import {decompileWasm,decompileFunction} from './decompile.mjs';
 import { summarizeObservation } from './observation.mjs';
 import { observeDonorMotion } from '../runtime/donor-observation.mjs';
 import { createInvestigationSession } from '../runtime/investigation-session.mjs';
 
 const target=await loadTarget();
-let session,inspection;
+let session,inspection,decompilation;
 
 
 async function execute(name, args) {
@@ -49,8 +50,21 @@ async function execute(name, args) {
     },
   };
   inspection??=await createWasmInspection(target.bytes);
+  if(name==='decompile_function'){
+    decompilation??=await decompileWasm(target.bytes);
+    const result={sha256:target.sha256,...decompileFunction(decompilation,args)};
+    session?.recordStatic({id:result.evidenceId,functionIndex:args.functionIndex,kind:'decompilation'});return{result};
+  }
+  if(name==='call_graph')return{result:{sha256:target.sha256,...navigateCallGraph(inspection,args)}};
+  if(name==='annotate_function'){
+    if(!inspection.functions[args.functionIndex])throw Error('Unknown function index');
+    session??=await createInvestigationSession(target.bytes);return session.annotate(args);
+  }
   if (name === 'list_functions') return { result: { sha256: target.sha256, ...listFunctions(inspection, args) } };
-  if (name === 'inspect_function') return { result: { sha256: target.sha256, ...inspectFunction(inspection, args) } };
+  if (name === 'inspect_function'){
+    const evidenceId=`binary:func${args.functionIndex}`;const result={sha256:target.sha256,evidenceId,...inspectFunction(inspection,args)};
+    session?.recordStatic({id:evidenceId,functionIndex:args.functionIndex,kind:'wat'});return{result};
+  }
   const { lines } = inspection;
   if (args.startLine > lines.length) throw new Error(`startLine exceeds the ${lines.length} WAT lines`);
   return {

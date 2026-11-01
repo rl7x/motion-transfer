@@ -108,6 +108,16 @@ TOOLS.push({type:'function',name:'checkpoint_state',strict:true,
   parameters:{type:'object',properties:{checkpointId:{type:'string',pattern:'^cp-[a-f0-9]{20}$'},branchId,watches},required:['checkpointId','branchId','watches'],additionalProperties:false},
 });
 const memoryRange={type:'object',properties:{address:{type:'integer',minimum:0,maximum:65535},byteLength:{type:'integer',minimum:1,maximum:4096},type:{type:'string',enum:MEMORY_TYPES}},required:['address','byteLength','type'],additionalProperties:false};
+TOOLS.push({type:'function',name:'decompile_function',strict:true,
+  description:'Read bounded WABT C-like pseudocode for an agent-selected function index. This derived interpretation is not original source. Page relative lines as with inspect_function; WAT remains authoritative.',
+  parameters:TOOLS.find(tool=>tool.name==='inspect_function').parameters,
+},{type:'function',name:'call_graph',strict:true,
+  description:'Navigate direct callers or callees of an agent-selected function to depth three, bounded to 60 nodes and 100 edges. Indirect calls remain unresolved. Generated and inferred names are distinct.',
+  parameters:{type:'object',properties:{functionIndex:{type:'integer',minimum:0,maximum:100000},direction:{type:'string',enum:['callers','callees']},depth:{type:'integer',minimum:1,maximum:3}},required:['functionIndex','direction','depth'],additionalProperties:false},
+},{type:'function',name:'annotate_function',strict:true,
+  description:'Attach an agent-inferred name and testable interpretation to a function. Include confidence, supported/rejected/unresolved status, and actual observation/comparison/binary evidence IDs from this session. These are annotations, not established source names.',
+  parameters:{type:'object',properties:{functionIndex:{type:'integer',minimum:0,maximum:100000},inferredName:{type:'string',minLength:1,maxLength:80},hypothesis:{type:'string',minLength:1,maxLength:500},confidence:{type:'string',enum:['low','medium','high']},status:{type:'string',enum:['supported','rejected','unresolved']},evidenceIds:{type:'array',minItems:1,maxItems:8,items:{type:'string',minLength:1,maxLength:80}}},required:['functionIndex','inferredName','hypothesis','confidence','status','evidenceIds'],additionalProperties:false},
+});
 const edit={type:'object',properties:{address:{type:'integer',minimum:0,maximum:65535},type:{type:'string',enum:MEMORY_TYPES},value:{type:'number'},hypothesis:{type:'string',minLength:1,maxLength:500}},required:['address','type','value','hypothesis'],additionalProperties:false};
 TOOLS.push({type:'function',name:'write_memory',strict:true,
   description:'Apply up to eight finite typed writes to an experimental checkpoint branch. Writes to main are forbidden. Records the previous value, rounded new value, address, frame and hypothesis. Code bytes remain immutable. A trapped branch must reset before advancing.',
@@ -132,6 +142,15 @@ function integer(value, minimum, maximum) {
 }
 
 export function validateToolInput(name, args) {
+  if(name==='decompile_function'){validateToolInput('inspect_function',args);return;}
+  if(name==='call_graph'){
+    object(args,['functionIndex','direction','depth']);
+    if(!integer(args.functionIndex,0,100000)||!['callers','callees'].includes(args.direction)||!integer(args.depth,1,3))throw Error('Invalid call graph navigation');return;
+  }
+  if(name==='annotate_function'){
+    object(args,['functionIndex','inferredName','hypothesis','confidence','status','evidenceIds']);
+    if(!integer(args.functionIndex,0,100000)||typeof args.inferredName!=='string'||!args.inferredName.trim()||args.inferredName.length>80||typeof args.hypothesis!=='string'||!args.hypothesis.trim()||args.hypothesis.length>500||!['low','medium','high'].includes(args.confidence)||!['supported','rejected','unresolved'].includes(args.status)||!Array.isArray(args.evidenceIds)||!args.evidenceIds.length||args.evidenceIds.length>8||!args.evidenceIds.every(id=>typeof id==='string'&&id.length>0&&id.length<=80))throw Error('Invalid function annotation');return;
+  }
   if(name==='write_memory'){
     object(args,['branchId','edits','watches']);validateToolInput('session_observe',{branchId:args.branchId,watches:args.watches});
     if(!Array.isArray(args.edits)||!args.edits.length||args.edits.length>8)throw Error('Use one to eight memory edits');
