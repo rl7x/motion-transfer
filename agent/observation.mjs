@@ -30,4 +30,3 @@ export function summarizeObservation(observation) {
     motion: observation.motion??null,
   };
 }
-
