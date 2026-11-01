@@ -118,7 +118,13 @@ export async function createExperimentWorkbench(session,{saved,persist=async()=>
     const images=[],beforeIds=new Set(state.artifacts.map(item=>item.id));
     try{
       const executed=await executeExperimentProgram({source:args.source,language:args.language,invoke:async(name,input)=>{
-        const operation={index:program.operations.length+1,name,args:input,status:'running'};program.operations.push(operation);await persist();
+        const operation={index:program.operations.length+1,name,args:input,status:'running'};
+        if(['prepare_checkpoint','run_experiment','capture_experiment'].includes(name)){
+          if(!input||typeof input!=='object'||Array.isArray(input))throw Error('SDK arguments must be a JSON object');
+          const label=input.requestId??String(operation.index);if(typeof label!=='string'||label.length>80)throw Error('SDK request label exceeds its limit');
+          const requestId='sdk-'+digest(JSON.stringify({programId:program.id,name,label})).slice(0,40);operation.requestIdentity={label,requestId};input={...input,requestId};operation.args=input;
+        }
+        program.operations.push(operation);await persist();
         try{
           let output;
           if(['prepare_checkpoint','read_checkpoint','run_experiment','read_experiment','capture_experiment'].includes(name))output=await api.execute(name,input);
