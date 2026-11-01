@@ -241,6 +241,7 @@ export async function investigate({
         try {
           if (typeof call.arguments !== 'string' || Buffer.byteLength(call.arguments) > 32_768) throw new Error('Tool arguments exceed 32 KB or are invalid');
           entry.args = JSON.parse(call.arguments);
+          entry.startedAt=new Date().toISOString();await onUpdate(report);
           onProgress(`Running ${call.name}`);
           const { result, evidence,images } = await dispatch(call.name, entry.args, { signal: controller.signal });
           if(worker)report.session=worker.sessionState;
@@ -261,6 +262,7 @@ export async function investigate({
           entry.error = error.message;
           history.push({ type: 'function_call_output', call_id: call.call_id, output: JSON.stringify({ error: entry.error }) });
         }
+        entry.finishedAt=new Date().toISOString();
         await onUpdate(report);
       }
     }

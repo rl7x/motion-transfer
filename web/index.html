@@ -61,11 +61,21 @@
   </section>
   <section class="lab-section" aria-labelledby="lab-heading">
     <div class="section-heading"><div><p class="eyebrow">LIVE / LET META CHOOSE THE EXPERIMENT</p><h2 id="lab-heading">Find out what the dash really does.</h2></div><span class="pill neutral" id="lab-mode">NO MODEL REQUEST ON LOAD</span></div>
-      <p>Meta inspects the compiled cartridge and chooses contrasting inputs. See its hypothesis, the experiment, and the actual observations.</p>
+      <p>Meta can inspect instructions, continue a running cartridge, branch a checkpoint, and test a memory change against an unchanged control. Follow its hypothesis and the actual consequences.</p>
     <p><button id="view-investigation" type="button">View recorded investigation · no model call ↗</button></p>
-    <form id="investigation-form" class="lab-form"><label for="investigation-question">What should Meta investigate?</label><div class="prompt-row"><select id="investigation-question"><option value="held">Does holding dash differ from tapping it?</option><option value="neutral">What happens with no direction after a left dash?</option></select><button id="investigation-submit" type="submit" disabled>Investigate with Meta ↗</button></div></form>
+    <form id="investigation-form" class="lab-form"><label for="investigation-question">What should Meta investigate?</label><div class="prompt-row"><select id="investigation-question"><option value="memory">Choose and test a memory intervention</option><option value="extraction">Investigate and develop a new component</option><option value="held">Does holding dash differ from tapping it?</option><option value="neutral">What happens with no direction after a left dash?</option></select><button id="investigation-submit" type="submit" disabled>Investigate with Meta ↗</button></div></form>
     <p class="saved-note" id="lab-budget">Reading investigation availability…</p>
     <p id="lab-progress" role="status" aria-live="polite">Fresh model activity starts only when you submit. Saved recovery above remains unchanged.</p>
+    <section id="investigation-workspace" class="investigation-workspace" hidden>
+      <p class="eyebrow" id="investigation-session-id"></p>
+      <h3>Current hypothesis</h3><p id="investigation-hypothesis"></p><p id="investigation-action" role="status"></p>
+      <div id="investigation-branches" class="investigation-branches"></div>
+      <p class="saved-note">Motion fields and address hints use a human-mapped registry. Meta chooses the intervention and interpretation; it did not discover that layout. Checkpoints replay into clean instances, including globals and host storage.</p>
+      <details open><summary>Memory interventions and actual consequences</summary><div id="investigation-edits"></div><div id="investigation-comparisons"></div></details>
+      <h3>Interpretations from finite evidence</h3><div id="investigation-findings" class="investigation-findings"></div>
+      <div id="investigation-captures" class="investigation-captures"></div>
+      <details><summary>Component development and exports</summary><div id="investigation-candidates"></div></details>
+    </section>
     <ol id="investigation-events" class="investigation-events"></ol>
     <div id="investigation-conclusion" class="lab-conclusion" hidden></div>
     <a id="investigation-report" hidden>Download this investigation and measurements ↗</a>

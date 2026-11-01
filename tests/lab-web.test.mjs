@@ -17,7 +17,7 @@ test('the investigation form shows actual public tool events and a qualified con
   const harness=await createPakuBrowser({lab});
   try{
     const {page,errors}=await harness.page();await page.goto(harness.origin+'/?destination=paku-paku');await page.waitForFunction(()=>!document.querySelector('#investigation-submit').disabled);assert.equal(calls,0);
-    await page.locator('#investigation-submit').click();await page.waitForFunction(()=>document.querySelector('#lab-mode').textContent==='RECORDED RUN');
+    await page.locator('#investigation-submit').click();await page.waitForFunction(()=>document.querySelector('#lab-mode').textContent==='COMPLETED META RUN');
     assert.match(await page.locator('#investigation-events').innerText(),/Fixture hypothesis/);assert.match(await page.locator('#investigation-conclusion').innerText(),/NOT INDEPENDENTLY VERIFIED/);assert.equal(calls,1);
     const path=await page.locator('#investigation-report').getAttribute('href'),report=await(await fetch(harness.origin+path)).json();assert.equal(report.report.conclusionVerified,false);
     const denied=await fetch(harness.origin+'/api/investigations',{method:'POST',headers:{Origin:'https://example.invalid','Content-Type':'application/json'},body:'{}'});assert.equal(denied.status,403);assert.deepEqual(errors,[]);
@@ -65,7 +65,7 @@ test('recorded investigation displays its measured contrast without a POST or AP
     const {page}=await harness.page(),posts=[];page.on('request',request=>{if(request.method()==='POST')posts.push(request.url());});
     await page.goto(harness.origin+'/?destination=paku-paku');await page.locator('#view-investigation').click();
     await page.waitForFunction(()=>document.querySelector('#investigation-conclusion').textContent.includes('rejects preservation hypothesis'));
-    assert.ok(await page.locator('.measurement-table').count()>=2);assert.match(await page.locator('#lab-mode').innerText(),/RECORDED/);
+    assert.ok(await page.locator('.measurement-table').count()>=2);assert.match(await page.locator('#lab-mode').innerText(),/SAVED RECORDING/);
     assert.equal(await page.locator('#investigation-report').getAttribute('href'),'/api/investigations/saved/neutral-after-left');assert.deepEqual(posts,[]);
   }finally{await harness.close();}
 });
