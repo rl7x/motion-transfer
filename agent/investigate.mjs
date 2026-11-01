@@ -4,6 +4,7 @@ import { loadTarget } from './target.mjs';
 import { TOOLS } from './tool-schema.mjs';
 import { runCartridgeTool } from './tools.mjs';
 import { evidenceHistory } from './evidence.mjs';
+import { PRICES, readUsage } from './accounting.mjs';
 
 export const DEFAULT_QUESTION = 'Determine whether holding the dash button behaves differently from pressing and releasing it. Choose controlled experiments and cite the observations supporting your conclusion.';
 
@@ -15,11 +16,6 @@ export const DEFAULT_LIMITS = Object.freeze({
   maxCostUsd: 0.50,
   timeoutMs: 180_000,
 });
-
-const PRICES = {
-  'muse-wonder-1.0': { input: 4, cached: 0.20, output: 20 },
-  'muse-spark-1.3': { input: 1.25, cached: 0.15, output: 4.25 },
-};
 
 const INSTRUCTIONS = `You are investigating a compiled game through a restricted experiment harness.
 You have only a registered cartridge, WASM-4 host documentation in tool descriptions, and the listed tools.
@@ -49,20 +45,6 @@ function validateLimits(limits) {
   if (limits.maxOutputTokens < 16 || !Number.isFinite(limits.maxCostUsd) || limits.maxCostUsd <= 0) {
     throw new Error('Invalid output token limit or cost budget');
   }
-}
-
-function readUsage(usage) {
-  if (!Number.isSafeInteger(usage?.input_tokens) || usage.input_tokens < 0
-    || !Number.isSafeInteger(usage.output_tokens) || usage.output_tokens < 0) {
-    throw new Error('Meta response has no valid usage accounting; stopping with the request reservation retained');
-  }
-  const cached = usage.input_tokens_details?.cached_tokens ?? 0;
-  const reasoning = usage.output_tokens_details?.reasoning_tokens ?? 0;
-  if (!Number.isSafeInteger(cached) || cached < 0 || cached > usage.input_tokens
-    || !Number.isSafeInteger(reasoning) || reasoning < 0 || reasoning > usage.output_tokens) {
-    throw new Error('Meta usage breakdown is invalid; stopping with the request reservation retained');
-  }
-  return { inputTokens: usage.input_tokens, outputTokens: usage.output_tokens, cachedInputTokens: cached, reasoningTokens: reasoning };
 }
 
 function messages(output) {

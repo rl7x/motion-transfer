@@ -41,4 +41,13 @@ To check the tools locally without API calls:
 npm run tools:smoke
 ```
 
-This indexes the cartridge's functions, inspects the `update` export, and compares movement traces with read-only memory observations. It writes `reports/cartridge-tools-smoke.json`. Component extraction and transfer are still to be implemented.
+This indexes the cartridge's functions, inspects the `update` export, and compares movement traces with read-only memory observations. It writes `reports/cartridge-tools-smoke.json`.
+
+## Recover a motion component
+
+```sh
+npm run recover:motion -- --prepare-only
+npm run recover:motion
+```
+
+The first command prepares binary and numeric trace evidence locally. The second asks Meta to generate a standalone controller, then checks it against independent donor rollouts. It has a $0.30 estimated budget and at most two synthesis calls. Passing candidates are exported with source, contract, evaluations, and provenance. See [component/README.md](component/README.md). Recipient integration is still to be implemented.
