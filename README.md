@@ -51,3 +51,9 @@ npm run recover:motion
 ```
 
 The first command prepares binary and numeric trace evidence locally. The second asks Meta to generate a standalone controller, then checks it against independent donor rollouts. It has a $0.30 estimated budget and at most two synthesis calls. Passing candidates are exported with source, contract, evaluations, and provenance. See [component/README.md](component/README.md). Recipient integration is still to be implemented.
+
+The first [recovered dash component](components/dashy-dango-dash/README.md) is saved with its source and evaluation history. Verify it locally without API calls:
+
+```sh
+npm run verify:motion
+```

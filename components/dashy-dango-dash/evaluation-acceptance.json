@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "suite": "acceptance",
+  "sourceSha256": "7cfd9475696ca744982fb7c00d988aae982840d06b0fa198f111d42bba2d18bc",
+  "javascriptSha256": "8395ec0eebaea00772dea52dbcb968e53747a3a0d509dc8aaba49a840c767f06",
+  "passed": true,
+  "positionTolerance": 0.25,
+  "eventTiming": "exact",
+  "positionAccumulation": "closed-loop-f32",
+  "results": [
+    {
+      "name": "acceptance-1",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-2",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-3",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-4",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-5",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-6",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-7",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-8",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-9",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-10",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-11",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-12",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-13",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-14",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-15",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-16",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-17",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-18",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-19",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "acceptance-20",
+      "ticks": 150,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    }
+  ],
+  "seed": 408184229
+}

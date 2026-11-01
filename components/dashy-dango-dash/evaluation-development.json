@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "suite": "development",
+  "sourceSha256": "7cfd9475696ca744982fb7c00d988aae982840d06b0fa198f111d42bba2d18bc",
+  "javascriptSha256": "8395ec0eebaea00772dea52dbcb968e53747a3a0d509dc8aaba49a840c767f06",
+  "passed": true,
+  "positionTolerance": 0.25,
+  "eventTiming": "exact",
+  "positionAccumulation": "closed-loop-f32",
+  "results": [
+    {
+      "name": "idle",
+      "ticks": 70,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "walking-directions",
+      "ticks": 40,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "startup-held",
+      "ticks": 55,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "tap-right",
+      "ticks": 51,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "tap-left",
+      "ticks": 51,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "tap-up-down",
+      "ticks": 55,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "diagonal",
+      "ticks": 56,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "neutral-dash",
+      "ticks": 51,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "conflicting-inputs",
+      "ticks": 51,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "change-direction",
+      "ticks": 48,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "held-retrigger",
+      "ticks": 110,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    },
+    {
+      "name": "cooldown-boundary",
+      "ticks": 54,
+      "passed": true,
+      "maxPositionError": 0,
+      "firstDivergence": null
+    }
+  ]
+}

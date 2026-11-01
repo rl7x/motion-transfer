@@ -8,6 +8,7 @@
     "replay": "node scripts/replay.mjs",
     "investigate": "node scripts/investigate.mjs",
     "recover:motion": "node scripts/recover-motion.mjs",
+    "verify:motion": "node scripts/verify-motion.mjs",
     "tools:smoke": "node scripts/tools-smoke.mjs",
     "test": "node --test tests/*.test.mjs"
   },
