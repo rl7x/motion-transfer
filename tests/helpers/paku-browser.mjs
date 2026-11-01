@@ -1,8 +1,8 @@
 import { chromium } from 'playwright';
 import { createPreviewServer } from '../../web/server.mjs';
 
-export async function createPakuBrowser() {
-  const server = await createPreviewServer();
+export async function createPakuBrowser(options = {}) {
+  const server = await createPreviewServer(options);
   let browser;
   try {
     browser = await chromium.launch({

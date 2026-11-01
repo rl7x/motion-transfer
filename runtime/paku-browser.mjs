@@ -21,10 +21,10 @@ export function pakuObservationSource() {
     window.end = function(...args) { window.pakuStatus = 'game-over'; return baseEnd(...args); };
     const baseUpdate = window.update;
     window.update = function() {
-      if (ticks === 0) window.pakuStatus = 'playing';
+      if (ticks === 0) { window.pakuStatus = 'playing'; window.motionPort?.reset(Boolean(isReplaying)); }
       baseUpdate();
     };
-    window.pakuSnapshot = () => structuredClone({ticks, score, player, enemy, dots, powerTicks, multiplier, status:window.pakuStatus});
+    window.pakuSnapshot = () => structuredClone({ticks, score, player, enemy, dots, powerTicks, multiplier, isReplaying, status:window.pakuStatus, motion:window.motionPort?.snapshot() ?? null});
     if (new URL(location.href).searchParams.get('test') === '1') {
       window.pakuFixture = value => {
         if (!player || !enemy) throw Error('Start gameplay before applying a fixture');
@@ -37,4 +37,12 @@ export function pakuObservationSource() {
       };
     }
   `;
+}
+
+export function hookedPakuSource(source) {
+  source = source.replaceAll('\r\n', '\n');
+  source = replaceOnce(source, '  player.x += player.vx * 0.5 * difficulty;',
+    '  const motion = window.motionPort.move({tick:ticks, position:player.x, facing:player.vx, normalDisplacement:player.vx * 0.5 * difficulty});\n  player.x += motion.displacement;');
+  return replaceOnce(source, '  const ai = floor(animTicks / 7) % 4;',
+    '  const ai = floor(animTicks / 7) % 4;\n  window.motionPort.paint(motion, addWithCharCode("a", ai === 3 ? 1 : ai), 30, player.vx);');
 }
