@@ -12,6 +12,8 @@ export async function readRoadsterArtifact(directory,id){
   assert.equal(claimed,id,'Roadster artifact identity mismatch');assert.equal(digest(JSON.stringify(manifest)),id,'Roadster artifact identity mismatch');
   assert.deepEqual(Object.keys(record.files).sort(),[...ROADSTER_FILES],'Invalid Roadster artifact files');
   const files={};
-  for(const name of ROADSTER_FILES){const bytes=await readFile(join(root,name),'utf8');assert.equal(digest(bytes),record.files[name],'Roadster artifact integrity mismatch: '+name);files[name]=bytes;}
+  // Historical identities hash JSON insertion order. Preserve the verified
+  // manifest's file order so reading and exporting cannot change its identity.
+  for(const name of Object.keys(record.files)){const bytes=await readFile(join(root,name),'utf8');assert.equal(digest(bytes),record.files[name],'Roadster artifact integrity mismatch: '+name);files[name]=bytes;}
   return{...record,files};
 }
