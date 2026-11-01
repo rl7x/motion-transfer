@@ -10,18 +10,25 @@ import { summarizeObservation } from './observation.mjs';
 import { observeDonorMotion } from '../runtime/donor-observation.mjs';
 import { createInvestigationSession } from '../runtime/investigation-session.mjs';
 import {digest} from '../component/build.mjs';
+import {createExperimentWorkbench} from '../experiment/workbench.mjs';
+import {EXPERIMENT_TOOLS} from '../experiment/schema.mjs';
 
 const target=await loadTarget();
-let session,inspection,decompilation,workbench;
+let session,inspection,decompilation,workbench,experiments;
+const snapshot=()=>session?{...session.snapshot(),...(experiments?{experimentWorkbench:experiments.snapshot()}:{})}:undefined;
+async function experimentTools(saved){session??=await createInvestigationSession(target.bytes);experiments??=await createExperimentWorkbench(session,{saved});return experiments;}
 
 
 async function execute(name, args) {
   if(name==='$open'){
     if(session)throw Error('Investigation session is already open');
     session=await createInvestigationSession(target.bytes,args.sessionState);
+    if(args.sessionState?.experimentWorkbench)await experimentTools(args.sessionState.experimentWorkbench);
     return{result:{sessionId:session.id,identity:session.identity,restored:Boolean(args.sessionState)}};
   }
   validateToolInput(name, args);
+  if(EXPERIMENT_TOOLS.some(tool=>tool.name===name))return(await experimentTools()).execute(name,args);
+  if(name==='capture_frame'&&session&&session.snapshot().captures.length+(experiments?.snapshot().usage.captures??0)>=4)throw Error('Investigation image budget exhausted');
   if(COMPONENT_TOOLS.some(tool=>tool.name===name)){
     if(!session)throw Error('Inspect code and collect session execution evidence first');
     workbench??=createComponentWorkbench(session);return workbench.execute(name,args);
@@ -104,7 +111,7 @@ for await(const chunk of process.stdin){
       const request=JSON.parse(line);id=request.id;
       if(!Number.isSafeInteger(id))throw Error('Invalid worker request identity');
       const output=await execute(request.name,request.args);
-      process.stdout.write(JSON.stringify({id,ok:true,...output,...(session?{sessionState:session.snapshot()}:{} )})+'\n');
-    }catch(error){process.stdout.write(JSON.stringify({id,ok:false,error:String(error.message).slice(0,1000),...(session?{sessionState:session.snapshot()}:{} )})+'\n');}
+      process.stdout.write(JSON.stringify({id,ok:true,...output,...(session?{sessionState:snapshot()}:{} )})+'\n');
+    }catch(error){process.stdout.write(JSON.stringify({id,ok:false,error:String(error.message).slice(0,1000),...(session?{sessionState:snapshot()}:{} )})+'\n');}
   }
 }

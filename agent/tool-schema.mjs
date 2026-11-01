@@ -1,6 +1,7 @@
 import { MEMORY_TYPES, validateMemoryWatches,validateMemoryEdit,memoryTypeSize } from '../runtime/memory.mjs';
 import {COMPONENT_TOOLS} from './component-workbench.mjs';
 import {validateSchema} from './schema.mjs';
+import {EXPERIMENT_TOOLS,validateExperimentInput} from '../experiment/schema.mjs';
 
 export const MAX_TOOL_OUTPUT_BYTES = 32_768;
 
@@ -92,6 +93,7 @@ export const TOOLS = [{
 
 const branchId={type:'string',pattern:'^[a-z][a-z0-9-]{0,39}$',description:'Identity of an existing branch for observation or execution. main is the initial branch.'};
 TOOLS.push(...COMPONENT_TOOLS);
+TOOLS.push(...EXPERIMENT_TOOLS);
 const watches=TOOLS.find(tool=>tool.name==='run_original').parameters.properties.watches;
 const steps=TOOLS.find(tool=>tool.name==='run_original').parameters.properties.steps;
 for(const name of ['session_observe','read_memory','session_reset'])TOOLS.push({
@@ -157,6 +159,7 @@ function integer(value, minimum, maximum) {
 }
 
 export function validateToolInput(name, args) {
+  if(EXPERIMENT_TOOLS.some(tool=>tool.name===name)){validateExperimentInput(name,args);return;}
   if(name==='record_finding'){validateSchema(args,TOOLS.find(tool=>tool.name===name).parameters);return;}
   const component=COMPONENT_TOOLS.find(tool=>tool.name===name);
   if(component){validateSchema(args,component.parameters);return;}
