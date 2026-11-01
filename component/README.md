@@ -12,7 +12,9 @@ Recover and evaluate a candidate using the existing ignored `.env` key:
 npm run recover:motion
 ```
 
-The command has a $0.30 estimated token budget, token-count preflight, at most two synthesis requests, and a three-minute invocation deadline. It does not retry ambiguous HTTP failures. A development failure can trigger one new synthesis from public evidence and feedback within the same budget. Incomplete responses stop. Reports retain unsettled reservations when usage is unknown.
+The command has a $0.30 estimated token budget, token-count preflight, at most two synthesis requests, and a three-minute invocation deadline. It uses low reasoning effort by default. It does not retry ambiguous HTTP failures. A development failure can trigger one new synthesis from public evidence and feedback within the same budget. Incomplete responses stop. Reports retain unsettled reservations when usage is unknown.
+
+A settled interrupted run can be resumed explicitly with `npm run recover:motion -- --resume reports/recoveries/<run-id> --reasoning-effort minimal`. Resume retains the original charges, call count, limits, target, and evidence; it cannot continue a completed run, uncertain billing, or a candidate that already reached acceptance. The next output allowance is reduced to fit remaining funds, with at least 2,048 tokens required before generation. Each generation records its actual reasoning setting and token allowance. Private reasoning is discarded; the next pass receives public evidence and any development feedback.
 
 Evidence consists of WABT-generated pseudocode from functions 9, 23, 70, and 102 and sampled numeric observations from 12 actual donor traces. The host selected those functions, mapped state fields, chose the boundary, and authored the checks. Meta infers rules and writes TypeScript plus a contract. This is human-assisted recovery; original donor source, private model reasoning, and acceptance answers are not included.
 

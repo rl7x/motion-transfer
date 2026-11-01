@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
 import test from 'node:test';
-import { recoverMotion } from '../agent/recover-motion.mjs';
+import { recoverMotion, RECOVERY_LIMITS } from '../agent/recover-motion.mjs';
 import { prepareMotionEvidence } from '../agent/motion-evidence.mjs';
 import { compileMotion, digest } from '../component/build.mjs';
 import { validateMotionCandidate } from '../component/contract.mjs';
@@ -116,6 +116,47 @@ test('an acceptance failure is retained without starting a repair request', asyn
     return true;
   });
   assert.equal(calls, 1);
+});
+
+function interrupted() {
+  return {
+    schemaVersion: 1, status: 'failed', model: 'muse-wonder-1.0', limits: { ...RECOVERY_LIMITS },
+    evidenceSha256: evidence.sha256, cartridgeSha256: evidence.cartridgeSha256,
+    estimatedCostUsd: 0.167048, reservedCostUsd: 0, attempts: [], error: 'Incomplete response',
+    requests: [{ status: 'completed', responseStatus: 'incomplete', usage: {
+      inputTokens: 11762, outputTokens: 6000, cachedInputTokens: 0, reasoningTokens: 5998,
+    } }],
+  };
+}
+
+test('resume carries settled costs forward and shrinks output to fit the original budget', async () => {
+  let calls = 0;
+  const report = await recoverMotion({ evidence, resumeReport: interrupted(), reasoningEffort: 'minimal', seed: () => 123,
+    client: {
+      countInputTokens: async () => 11902,
+      respond: async request => {
+        calls++;
+        assert.equal(request.reasoning.effort, 'minimal');
+        assert.ok(request.max_output_tokens >= 4096 && request.max_output_tokens <= 4300);
+        assert.match(request.input.at(-1).content[0].text, /prior generation/);
+        return response(2);
+      },
+    },
+    evaluate: async (source, config, cases, options) => verdict(source, options.suite),
+  });
+  assert.equal(calls, 1);
+  assert.equal(report.requests.length, 2);
+  assert.equal(report.acceptedAttempt, 2);
+  assert.ok(report.estimatedCostUsd > 0.167048 && report.estimatedCostUsd < 0.30);
+  assert.equal(report.reservedCostUsd, 0);
+});
+
+test('resume rejects changed budgets, unknown charges, and already consulted acceptance', async () => {
+  const client = { countInputTokens: async () => assert.fail('Must reject before preflight') };
+  await assert.rejects(recoverMotion({ evidence, client, resumeReport: interrupted(), limits: { maxCostUsd: 0.50 } }), /mismatched/);
+  await assert.rejects(recoverMotion({ evidence, client, resumeReport: { ...interrupted(), reservedCostUsd: 0.10 } }), /unsettled/);
+  await assert.rejects(recoverMotion({ evidence, client, resumeReport: { ...interrupted(), acceptanceSeed: 0 } }), /acceptance already used/);
+  await assert.rejects(recoverMotion({ evidence, client, resumeReport: { ...interrupted(), estimatedCostUsd: 0 } }), /accounting/);
 });
 
 test('packaging checks evaluated hashes and exports runnable JavaScript without the donor', async () => {
