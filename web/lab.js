@@ -32,7 +32,7 @@ function render(job,reportPath='/api/investigations/'+job.id){
   const elapsed=report?.finishedAt&&report?.startedAt?` · ${((Date.parse(report.finishedAt)-Date.parse(report.startedAt))/1000).toFixed(1)}s recorded elapsed`:'';
   const cost=`${report?.requests?.length??0} generation requests · $${(report?.estimatedCostUsd??0).toFixed(4)} estimated${elapsed}`;
   $('#lab-progress').textContent=job.error??(job.status==='ready'?`Investigation complete · ${cost}. The model’s interpretation requires review.`:`Meta investigation: ${job.status} · ${cost}.`);
-  if(local)$('#lab-progress').textContent='Local control experiment · no model request. Inputs, field selection and intervention were human-scripted; measurements come from actual execution.';
+  if(local)$('#lab-progress').textContent='Local experiment verification · no model request. Inputs, field selection and intervention were human-scripted; measurements come from actual execution.';
   const incomplete=job.status==='failed'?report?.turns?.at(-1)?.messages?.filter(message=>message.phase==='final').map(message=>message.text).join('\n'):null;
   const text=report?.conclusion??incomplete;
   const conclusion=$('#investigation-conclusion');conclusion.hidden=!text;
@@ -52,6 +52,7 @@ async function refresh(){
     $('#view-investigation').disabled=Boolean(active||submitting);
     $('#view-branch-investigation').disabled=Boolean(active||submitting);
     $('#view-local-control').disabled=Boolean(active||submitting);
+    $('#view-programmatic-control').disabled=Boolean(active||submitting);
     window.labStatus=status;window.dispatchEvent(new Event('labstatus'));
   }catch(error){$('#lab-progress').textContent=error.message;$('#investigation-submit').disabled=true;}
   finally{polling=false;}
@@ -79,6 +80,11 @@ $('#view-branch-investigation').addEventListener('click',async()=>{
 $('#view-local-control').addEventListener('click',async()=>{
   if(active||submitting)return;
   const path='/api/investigations/saved/local-control';
+  try{render(await json(path),path);}catch(error){$('#lab-progress').textContent=error.message;}
+});
+$('#view-programmatic-control').addEventListener('click',async()=>{
+  if(active||submitting)return;
+  const path='/api/investigations/saved/programmatic-control';
   try{render(await json(path),path);}catch(error){$('#lab-progress').textContent=error.message;}
 });
 await refresh();setInterval(refresh,1000);

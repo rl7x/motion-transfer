@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "origin": "local-verification",
+  "generatedAt": "2026-11-01T22:54:41.800Z",
+  "method": "Same clean donor, X for one update, ten idle updates, checkpoint timer intervention, eight held-right-dash inputs. No images during the paired benchmark. Tool invocations are measured; model round trips, cost savings and reliability improvements are not measured. Persisted evidence sizes cover different evidence detail and are not equivalence claims.",
+  "modelCalled": false,
+  "scenarios": [
+    {
+      "workflow": "low-level",
+      "value": 40,
+      "completed": true,
+      "modelFacingToolInvocations": 6,
+      "sdkCapabilityInvocations": 0,
+      "modelGenerationRequestsMeasured": null,
+      "modelFacingResultBytes": 23775,
+      "persistedSessionBytes": 36878,
+      "immutableArtifactBytes": 0,
+      "final": {
+        "control": {
+          "dx": 60,
+          "dy": 0,
+          "cooldown": 25,
+          "remaining": 0,
+          "ownsMotion": true,
+          "events": [
+            "dash-end"
+          ]
+        },
+        "intervention": {
+          "dx": 16,
+          "dy": 0,
+          "cooldown": 32,
+          "remaining": 0,
+          "ownsMotion": false,
+          "events": []
+        }
+      }
+    },
+    {
+      "workflow": "complete-tool",
+      "value": 40,
+      "completed": true,
+      "modelFacingToolInvocations": 2,
+      "sdkCapabilityInvocations": 0,
+      "modelGenerationRequestsMeasured": null,
+      "modelFacingResultBytes": 4567,
+      "persistedSessionBytes": 39818,
+      "immutableArtifactBytes": 22995,
+      "final": {
+        "control": {
+          "dx": 60,
+          "dy": 0,
+          "cooldown": 25,
+          "remaining": 0,
+          "ownsMotion": true,
+          "events": [
+            "dash-end"
+          ]
+        },
+        "intervention": {
+          "dx": 16,
+          "dy": 0,
+          "cooldown": 32,
+          "remaining": 0,
+          "ownsMotion": false,
+          "events": []
+        }
+      }
+    },
+    {
+      "workflow": "program",
+      "value": 40,
+      "completed": true,
+      "modelFacingToolInvocations": 1,
+      "sdkCapabilityInvocations": 2,
+      "modelGenerationRequestsMeasured": null,
+      "modelFacingResultBytes": 2659,
+      "persistedSessionBytes": 60949,
+      "immutableArtifactBytes": 30629,
+      "final": {
+        "control": {
+          "dx": 60,
+          "dy": 0,
+          "cooldown": 25,
+          "remaining": 0,
+          "ownsMotion": true,
+          "events": [
+            "dash-end"
+          ]
+        },
+        "intervention": {
+          "dx": 16,
+          "dy": 0,
+          "cooldown": 32,
+          "remaining": 0,
+          "ownsMotion": false,
+          "events": []
+        }
+      }
+    },
+    {
+      "workflow": "low-level",
+      "value": 5,
+      "completed": true,
+      "modelFacingToolInvocations": 6,
+      "sdkCapabilityInvocations": 0,
+      "modelGenerationRequestsMeasured": null,
+      "modelFacingResultBytes": 23832,
+      "persistedSessionBytes": 36991,
+      "immutableArtifactBytes": 0,
+      "final": {
+        "control": {
+          "dx": 60,
+          "dy": 0,
+          "cooldown": 25,
+          "remaining": 0,
+          "ownsMotion": true,
+          "events": [
+            "dash-end"
+          ]
+        },
+        "intervention": {
+          "dx": 32.5,
+          "dy": 0,
+          "cooldown": 25,
+          "remaining": 5,
+          "ownsMotion": true,
+          "events": []
+        }
+      }
+    },
+    {
+      "workflow": "complete-tool",
+      "value": 5,
+      "completed": true,
+      "modelFacingToolInvocations": 2,
+      "sdkCapabilityInvocations": 0,
+      "modelGenerationRequestsMeasured": null,
+      "modelFacingResultBytes": 4565,
+      "persistedSessionBytes": 39816,
+      "immutableArtifactBytes": 22997,
+      "final": {
+        "control": {
+          "dx": 60,
+          "dy": 0,
+          "cooldown": 25,
+          "remaining": 0,
+          "ownsMotion": true,
+          "events": [
+            "dash-end"
+          ]
+        },
+        "intervention": {
+          "dx": 32.5,
+          "dy": 0,
+          "cooldown": 25,
+          "remaining": 5,
+          "ownsMotion": true,
+          "events": []
+        }
+      }
+    },
+    {
+      "workflow": "program",
+      "value": 5,
+      "completed": true,
+      "modelFacingToolInvocations": 1,
+      "sdkCapabilityInvocations": 2,
+      "modelGenerationRequestsMeasured": null,
+      "modelFacingResultBytes": 2658,
+      "persistedSessionBytes": 60939,
+      "immutableArtifactBytes": 30628,
+      "final": {
+        "control": {
+          "dx": 60,
+          "dy": 0,
+          "cooldown": 25,
+          "remaining": 0,
+          "ownsMotion": true,
+          "events": [
+            "dash-end"
+          ]
+        },
+        "intervention": {
+          "dx": 32.5,
+          "dy": 0,
+          "cooldown": 25,
+          "remaining": 5,
+          "ownsMotion": true,
+          "events": []
+        }
+      }
+    }
+  ]
+}
