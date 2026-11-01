@@ -33,3 +33,14 @@ test('local control evidence distinguishes human-scripted intervention from mode
   const writers=report.toolCalls.filter(call=>call.name==='trace_writers');
   assert.equal(writers[0].result.matchingWrites,0);assert.ok(writers[1].result.matchingWrites>0);assert.ok(writers.every(call=>call.result.behavioralComparison.passed));
 });
+
+test('the programmatic Meta recording retains a real chosen intervention, later evidence read and rejected completion',async()=>{
+  const record=(await savedInvestigations()).find(item=>item.id==='programmatic-investigation'),report=record.job.report;
+  assert.equal(record.job.status,'failed');assert.match(record.job.error,/actual code inspection/);assert.equal(report.requests.length,10);assert.equal(report.estimatedCostUsd,.14972375);assert.equal(report.reservedCostUsd,0);
+  const [first,second]=report.session.experimentWorkbench.programs;assert.equal(first.status,'failed');assert.match(first.error,/output byte limit/);assert.equal(second.status,'completed');
+  const experiment=report.session.experimentWorkbench.artifacts.find(item=>item.payload.kind==='experiment');
+  assert.equal(experiment.payload.status,'completed');assert.equal(experiment.payload.edits[0].name,'x');assert.equal(experiment.payload.edits[0].previousValue,60);assert.equal(experiment.payload.edits[0].newValue,20);
+  assert.equal(experiment.payload.trace.length,30);assert.equal(experiment.payload.trace.at(-1).control.normalized.dx,60);assert.equal(experiment.payload.trace.at(-1).intervention.normalized.dx,60);
+  assert.ok(second.operations.some(item=>item.name==='read_experiment'&&item.args.artifactId===experiment.id));
+  assert.equal(report.session.staticEvidence.some(item=>['wat','decompilation','writer-trace'].includes(item.kind)),false);assert.equal(report.conclusion,null);
+});

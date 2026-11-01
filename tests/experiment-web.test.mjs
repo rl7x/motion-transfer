@@ -41,3 +41,19 @@ test('the local benchmark measures matching scenarios and does not invent model 
     for(const item of group){assert.deepEqual(item.final,group[0].final);assert.equal(item.modelGenerationRequestsMeasured,null);assert.equal(item.completed,true);assert.ok(item.modelFacingResultBytes>0);}
   }
 });
+
+test('the saved Meta program failure shows the completed trial and later decision without claiming a completed investigation',async()=>{
+  const harness=await createPakuBrowser();
+  try{
+    const {page,errors}=await harness.page(),posts=[];page.on('request',request=>{if(request.method()==='POST')posts.push(request.url());});
+    await page.goto(harness.origin+'/?destination=paku-paku');await page.locator('#view-programmatic-investigation').click();
+    await page.waitForFunction(()=>document.querySelectorAll('.program-card').length===2);
+    assert.equal(await page.locator('#lab-mode').innerText(),'SAVED RECORDING');assert.match(await page.locator('#lab-progress').innerText(),/code inspection/);
+    assert.match(await page.locator('#investigation-conclusion').innerText(),/INCOMPLETE RUN/);
+    assert.equal(await page.locator('.managed-comparison').count(),1);assert.equal(await page.locator('.managed-branch').count(),2);
+    assert.match(await page.locator('#investigation-programs').innerText(),/output byte limit exceeded/);assert.match(await page.locator('#investigation-programs').innerText(),/read_experiment/);
+    await page.locator('#investigation-findings a').first().click();const target=await page.evaluate(()=>document.getElementById(decodeURIComponent(location.hash.slice(1)))?.textContent);assert.match(target,/Replay checkpoint/);
+    await page.setViewportSize({width:320,height:740});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    assert.deepEqual(posts,[]);assert.deepEqual(errors,[]);
+  }finally{await harness.close();}
+});

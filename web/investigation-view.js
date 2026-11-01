@@ -16,12 +16,12 @@ function traceTable(trace){return table(['Elapsed update','Control Δx / Δy','I
 }));}
 function managedWorkbench(report,{branches,edits,comparisons}){
   const workbench=report.session.experimentWorkbench,programs=$('#investigation-programs');programs.replaceChildren();if(!workbench)return[];
-  const local=report.model==='none'||report.origin==='local-verification',artifacts=workbench.artifacts??[];
+  const local=report.model==='none'||report.origin==='local-verification',artifacts=workbench.artifacts??[],checkpointIds=new Set();
   for(const program of workbench.programs??[]){
     const card=element('article',undefined,'program-card');card.id='evidence-'+program.id;
     card.append(element('h3',`Experiment program · ${program.status}`),element('p',program.hypothesis),element('small',local?'Human-scripted local verification · no model request':'Model-authored program · executed locally in an isolated interpreter'));
     const source=details(`${program.language} source · ${program.sourceSha256.slice(0,12)}`,program.source);source.open=true;card.append(source);
-    card.append(table(['Operation','Capability','Status','Evidence'],program.operations.map(operation=>[operation.index,operation.name,operation.status,operation.result?.experimentId??operation.result?.artifactRef?.id??operation.error??'—'])));
+    card.append(table(['Operation','Capability','Status','Evidence'],program.operations.map(operation=>[operation.index,operation.name,operation.status,operation.result?.experimentId??operation.result?.artifactRef?.id??operation.result?.checkpointId??operation.error??'—'])));
     if(program.error)card.append(element('p',program.error));
     card.append(element('p','Completed host operations survive interruption. The interpreter execution stack is not restored.'),details('Host operations, arguments and returned evidence',program.operations),exportButton('Download experiment program',program.source,program.id+(program.language==='typescript'?'.ts':'.js'),'text/plain'));
     const artifact=artifacts.find(item=>item.id===program.artifactId);if(artifact){const identity=element('small',artifact.id);identity.id='evidence-'+artifact.id;card.append(identity,exportButton('Export program evidence',JSON.stringify(artifact.payload),artifact.id+'.json'));}
@@ -37,6 +37,7 @@ function managedWorkbench(report,{branches,edits,comparisons}){
     const card=element('article',undefined,'comparison-card managed-comparison');card.id='evidence-'+experiment.experimentId;
     const identity=element('small',`Artifact ${artifact.id} · session ${experiment.sessionId}`);identity.id='evidence-'+artifact.id;
     card.append(element('h4',`${experiment.experimentId} · ${experiment.status}`),element('p',experiment.hypothesis),element('p',experiment.identicalStartingConditions?'Both branches restored and verified from identical starting conditions.':'Starting conditions were not verified.'),identity);
+    if(!checkpointIds.has(experiment.checkpoint.id)){const checkpoint=element('p',`Replay checkpoint ${experiment.checkpoint.id}`);checkpoint.id='evidence-'+experiment.checkpoint.id;card.append(checkpoint);checkpointIds.add(experiment.checkpoint.id);}
     card.append(element('p',`Initial memory edit: checkpoint update ${experiment.initialEditDifference.frame}. This is separate from subsequent behavior.`),element('p',experiment.firstBehavioralDivergence?`First observed behavior or rendering divergence: elapsed update ${experiment.firstBehavioralDivergence.elapsedFrame}.`:'No behavior or rendering divergence observed in these inputs.'),element('p',`First timer difference: ${experiment.firstTimerDifference??'none'} · first rendering difference: ${experiment.firstRenderingDifference??'none'}.`));
     const trace=experiment.trace??[];if(trace.length){card.append(traceTable(trace.filter((_,index)=>index<3||index===trace.length-1)));const all=element('details');all.append(element('summary',`All ${trace.length} update measurements`),traceTable(trace));card.append(all);}
     card.append(details('Exact inputs, edits, memory and rendering hashes',{checkpoint:experiment.checkpoint,inputs:experiment.inputs,initialEditDifference:experiment.initialEditDifference,final:experiment.final,trace:experiment.trace}),exportButton('Download experiment evidence',JSON.stringify(experiment),artifact.id+'.json'),element('p',experiment.normalization));

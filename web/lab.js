@@ -15,7 +15,7 @@ function render(job,reportPath='/api/investigations/'+job.id){
     title.textContent=`${call.experimentId??call.name} · ${call.ok?'returned evidence':call.error?'failed':'running'}`;
     description.textContent=call.args?.hypothesis??call.args?.claim??(call.name==='inspect_function'||call.name==='decompile_function'?`Function ${call.args?.functionIndex}, lines ${call.args?.startLine} onward.`:call.name.replaceAll('_',' ')+' on the pinned compiled cartridge.');
     const evidenceId=call.experimentId??call.result?.checkpointId??call.result?.evidenceId??call.result?.observationId;
-    if(evidenceId)item.id='evidence-'+evidenceId;
+    if(evidenceId&&!document.getElementById('evidence-'+evidenceId))item.id='evidence-'+evidenceId;
     item.append(title,description);
     const measurements=(call.result?.checkpoints??(call.result?.motion?[call.result]:[])).filter(point=>point.motion);
     if(measurements?.length){
@@ -53,6 +53,7 @@ async function refresh(){
     $('#view-branch-investigation').disabled=Boolean(active||submitting);
     $('#view-local-control').disabled=Boolean(active||submitting);
     $('#view-programmatic-control').disabled=Boolean(active||submitting);
+    $('#view-programmatic-investigation').disabled=Boolean(active||submitting);
     window.labStatus=status;window.dispatchEvent(new Event('labstatus'));
   }catch(error){$('#lab-progress').textContent=error.message;$('#investigation-submit').disabled=true;}
   finally{polling=false;}
@@ -86,5 +87,11 @@ $('#view-programmatic-control').addEventListener('click',async()=>{
   if(active||submitting)return;
   const path='/api/investigations/saved/programmatic-control';
   try{render(await json(path),path);}catch(error){$('#lab-progress').textContent=error.message;}
+});
+$('#view-programmatic-investigation').addEventListener('click',async()=>{
+  if(active||submitting)return;
+  const path='/api/investigations/saved/programmatic-investigation';
+  try{render(await json(path),path);$('#lab-progress').textContent+=' Saved Meta-chosen intervention and later evidence read; function-body inspection incomplete. No new model request.';}
+  catch(error){$('#lab-progress').textContent=error.message;}
 });
 await refresh();setInterval(refresh,1000);

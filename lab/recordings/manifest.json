@@ -30,6 +30,13 @@
       "title": "Human-scripted program sweep and conditional follow-up using actual results",
       "runId": "19c4c935-887b-4d50-8ca8-0ad9ba286a5b",
       "kind": "local-verification"
+    },
+    {
+      "id": "programmatic-investigation",
+      "file": "programmatic-investigation.json",
+      "sha256": "643ff2c12721096c382ea000fcf69f959c168e00c2330b039ef063cf18cbe5e9",
+      "title": "Meta-chosen position intervention and later evidence read; code inspection incomplete",
+      "runId": "6562bd42-9997-49b8-8b03-eeb6b5fcb1da"
     }
   ]
 }
