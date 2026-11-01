@@ -1,6 +1,6 @@
 const $=selector=>document.querySelector(selector);
 const before=$('#original-game'),after=$('#transfer-game'),donor=$('#donor-game');
-let catalog,ability,destination,pakuSelection,channel,childState,version=0,loadingSince=0;
+let catalog,ability,destination,pakuSelection,roadsterSelection,channel,childState,version=0,loadingSince=0;
 const donorChannel=crypto.randomUUID();
 donor.src='/donor/play#channel='+donorChannel;
 for(const button of document.querySelectorAll('[data-donor]'))button.disabled=true;
@@ -18,6 +18,7 @@ function bindHold(button,change){
 function send(frame,type,pressed){
   if(frame===after&&channel){frame.contentWindow?.postMessage({type,pressed,channel},'*');return;}
   const win=frame.contentWindow;
+  if(destination?.id==='roadster'&&frame===before){if(type==='turn'&&pressed)win?.roadsterStart?.();return;}
   if(!win||!(win.pakuReady||win.jujumpReady))return;
   const code=type==='dash'?'KeyD':'Space';
   frame.contentDocument.dispatchEvent(new win.KeyboardEvent(pressed?'keydown':'keyup',{code,key:code==='Space'?' ':'d',bubbles:true,cancelable:true}));
@@ -97,54 +98,60 @@ function renderChoices(){
     const kind=document.createElement('span');kind.className='eyebrow';kind.textContent=item.kind;
     const name=document.createElement('strong');name.textContent=item.name;
     const action=document.createElement('span');action.className='destination-action';action.textContent='Give it the dash →';
-    const saved=document.createElement('small');saved.textContent=item.liveEdits.length?'Saved transfer · live remix supported':'Saved transfer · gravity and landing';
+    const saved=document.createElement('small');saved.textContent=item.id==='roadster'?'Saved transfer · live Meta adaptation':item.liveEdits.length?'Saved transfer · live remix supported':'Saved transfer · gravity and landing';
     button.append(kind,name,action,saved);button.addEventListener('click',()=>select(item,true));return button;
   });
   $('#destinations').replaceChildren(...buttons);
 }
 function select(item,navigate=false){
   version++;loadingSince=Date.now();destination=item;channel=null;childState=null;
-  const selected=item.id==='paku-paku'?pakuSelection:null;
+  const car=item.id==='roadster';
+  const selected=car?roadsterSelection:item.id==='paku-paku'?pakuSelection:null;
   const child=Boolean(selected?.parentArtifactId);
-  window.currentDestination=item.id;window.currentArtifact=selected;
+  window.currentDestination=item.id;window.currentArtifact=car?null:selected;window.currentRoadsterArtifact=car?selected:null;
   renderChoices();
   for(const button of document.querySelectorAll('[data-turn],[data-transfer-control]'))button.disabled=true;
   $('#transfer-status').textContent='LOADING';$('#transfer-placeholder').hidden=false;after.hidden=true;
   $('#recipient-title').textContent=item.name;$('#hybrid-title').textContent=item.name+(child?' + REMIX':' + DASH');
   before.title=item.name+' before transfer';after.title=item.name+' after transfer';before.src=item.before;
   after.removeAttribute('sandbox');
-  if(child){channel=crypto.randomUUID();after.setAttribute('sandbox','allow-scripts');after.src=`/artifacts/${selected.id}/play.html#channel=${channel}`;}
+  if(car){channel=crypto.randomUUID();after.setAttribute('sandbox','allow-scripts');after.src=`/roadster/artifacts/${selected.id}/play.html?quality=low&session=${channel}#channel=${channel}`;}
+  else if(child){channel=crypto.randomUUID();after.setAttribute('sandbox','allow-scripts');after.src=`/artifacts/${selected.id}/play.html?session=${channel}#channel=${channel}`;}
   else after.src=item.after;
   after.hidden=false;
   for(const button of document.querySelectorAll('[data-turn]'))button.firstChild.textContent=item.action+' ';
   const fresh=selected?.intent.activation==='press';
   dashButton.firstChild.textContent=fresh?'Press to dash ':'Hold to dash ';
-  $('#original-controls').textContent=item.id==='jujump'?'Tap or Space to jump and alternate direction. Hold the jump button for lighter gravity.':'Tap or Space to turn. Eat dots and avoid the ghost.';
-  $('#transfer-controls').textContent=fresh?'Tap or Space to turn. Press D to dash; release it before the next dash.':item.control;
-  $('#carries-over').textContent=child?`The same controller, with this child’s ${60*selected.intent.unitScale}-pixel ${selected.intent.direction==='opposite'?'backward':'forward'} dash mapping.`:item.carries;
+  dashButton.querySelector('kbd').textContent=item.dashKey??'D';
+  for(const button of document.querySelectorAll('[data-turn]'))button.querySelector('kbd').textContent=car?'Enter':'Space';
+  $('#original-controls').textContent=car?'Run stunt starts the assisted driver. Inside the game, arrows/WASD drive and rotate; Space fires native lift thrusters.':item.id==='jujump'?'Tap or Space to jump and alternate direction. Hold the jump button for lighter gravity.':'Tap or Space to turn. Eat dots and avoid the ghost.';
+  $('#transfer-controls').textContent=car?`Run the stunt, then ${fresh?'press':'hold'} X for the horizontal air dash. Native controls and touch buttons still work.`:fresh?'Tap or Space to turn. Press D to dash; release it before the next dash.':item.control;
+  $('#carries-over').textContent=child?`The same controller, with this child’s ${60*selected.intent.unitScale}-${car?'meter':'pixel'} ${selected.intent.direction==='opposite'?'backward':'forward'} dash mapping.`:item.carries;
   $('#recipient-keeps').textContent=item.keeps;
   $('#selection-note').textContent=`${item.name}: playing a saved ${child?'remix':'transfer'}. Choosing a destination makes no model request.`;
-  $('#remix-details').hidden=item.liveEdits.length===0;$('#jujump-remix-note').hidden=item.liveEdits.length>0;
-  if(child)$('#remix-details').open=true;
-  $('#artifact-checks').href=child?`/artifacts/${selected.id}/report.json`:item.report;
-  $('#adapter-source').href=child?`/artifacts/${selected.id}/adapter.ts`:item.source;
+  $('#remix-details').hidden=item.id!=='paku-paku';$('#jujump-remix-note').hidden=item.id!=='jujump';$('#roadster-panel').hidden=!car;
+  if(child&&!car)$('#remix-details').open=true;
+  $('#artifact-checks').href=car?`/roadster/artifacts/${selected.id}/report.json`:child?`/artifacts/${selected.id}/report.json`:item.report;
+  $('#adapter-source').href=car?`/roadster/artifacts/${selected.id}/adapter.ts`:child?`/artifacts/${selected.id}/adapter.ts`:item.source;
   const artifact=$('#artifact-id');artifact.textContent=(selected?.id??item.artifactId).slice(0,12);
-  artifact.title=selected?.id??item.artifactId;artifact.href=selected?`/api/artifacts/${selected.id}`:item.report;
-  $('#check-count').textContent=selected?`${selected.conformanceChecks} mapping cases + ${selected.browserChecks} browser checks`:'11 mapping cases + 7 browser checks';
+  artifact.title=selected?.id??item.artifactId;artifact.href=car?`/api/roadster/artifacts/${selected.id}`:selected?`/api/artifacts/${selected.id}`:item.report;
+  $('#check-count').textContent=car?'8 mapping cases + 7 browser checks':selected?`${selected.conformanceChecks} mapping cases + ${selected.browserChecks} browser checks`:'11 mapping cases + 7 browser checks';
   $('#model').textContent=item.id==='jujump'?'Human-authored integration':selected?.model??'Meta-generated adapter';
-  $('#generation-cost').textContent=item.id==='jujump'?'$0 (no new model call)':`$${(selected?.estimatedGenerationCostUsd??0).toFixed(3)}`;
-  if(selected){
+  $('#generation-cost').textContent=item.id==='jujump'?'$0 (no new model call)':`$${(selected?.estimatedGenerationCostUsd??selected?.estimatedCostUsd??0).toFixed(3)}`;
+  if(selected&&!car){
     const {intent}=selected;
     $('#remix-summary').textContent=`Your dash travels ${60*intent.unitScale} pixels ${intent.direction==='opposite'?'backward':'forward'}. ${fresh?'Release D before the next dash.':'Keep D held to repeat after recharge.'}`;
     $('#source-download').href=`/api/artifacts/${selected.id}/source`;
   }
   window.dispatchEvent(new Event('artifactchange'));
-  if(navigate)history.pushState({},'',selected?.parentArtifactId?'/play/'+selected.id:'/?destination='+item.id);
+  if(navigate)history.pushState({},'',car?'/roadster/play/'+selected.id:selected?.parentArtifactId?'/play/'+selected.id:'/?destination='+item.id);
 }
 async function loadRoute(){
   const requestVersion=++version;
   const id=location.pathname.match(/^\/play\/([a-f0-9]{64})$/)?.[1];
   let target=catalog.destinations.find(item=>item.id===new URL(location.href).searchParams.get('destination'));
+  const carId=location.pathname.match(/^\/roadster\/play\/([a-f0-9]{64})$/)?.[1];
+  if(carId){roadsterSelection=await json('/api/roadster/artifacts/'+carId);if(requestVersion!==version)return;target=catalog.destinations.find(item=>item.id==='roadster');}
   if(id){
     target=catalog.destinations.find(item=>item.artifactId===id);
     if(!target){const selected=await json('/api/artifacts/'+id);if(requestVersion!==version)return;pakuSelection=selected;target=catalog.destinations.find(item=>item.id==='paku-paku');}
@@ -153,7 +160,7 @@ async function loadRoute(){
 }
 $('#share-transfer').addEventListener('click',async()=>{
   if(!destination)return;
-  const path=window.currentArtifact?'/play/'+window.currentArtifact.id:'/?destination='+destination.id;
+  const path=window.currentRoadsterArtifact?'/roadster/play/'+window.currentRoadsterArtifact.id:window.currentArtifact?'/play/'+window.currentArtifact.id:'/?destination='+destination.id;
   const url=new URL(path,location.origin).href;
   try{await navigator.clipboard.writeText(url);$('#selection-note').textContent='Playable link copied. This local server must be available.';}
   catch{$('#selection-note').textContent=url;}
@@ -162,10 +169,15 @@ window.addEventListener('popstate',()=>loadRoute().catch(error=>{$('#selection-n
 try{
   [catalog,ability]=await Promise.all([json('/api/destinations'),json('/api/ability')]);
   catalog.destinations=catalog.destinations.filter(item=>item.componentId===ability.id);
+  const canvas=document.createElement('canvas'),webgl=canvas.getContext('webgl2');
+  if(!webgl)catalog.destinations=catalog.destinations.filter(item=>item.id!=='roadster');else webgl.getExtension('WEBGL_lose_context')?.loseContext();
   if(!catalog.destinations.length)throw Error('No verified destinations are available');
   $('#shared-component').textContent='SAME COMPONENT / '+ability.id.slice(0,12);$('#shared-component').title=ability.id;
   const transfer=await json('/api/transfer');
   if(transfer.status==='verified')pakuSelection={...transfer,intent:{unitScale:0.5,activation:'held',direction:'facing'}};
+  const car=catalog.destinations.find(item=>item.id==='roadster');if(car){window.savedRoadsterId=car.artifactId;roadsterSelection=await json('/api/roadster/artifacts/'+car.artifactId);}
+  window.selectDestination=async id=>{const item=catalog.destinations.find(item=>item.id===id);if(!item)throw Error('Destination unavailable');select(item,true);};
+  window.openRoadsterArtifact=async id=>{roadsterSelection=await json('/api/roadster/artifacts/'+id);select(catalog.destinations.find(item=>item.id==='roadster'),true);};
   await loadRoute();
 }catch(error){$('#selection-note').textContent=error.message;$('#transfer-status').textContent='UNAVAILABLE';}
 setInterval(()=>{
@@ -180,7 +192,16 @@ setInterval(()=>{
       for(const button of document.querySelectorAll('[data-turn],[data-transfer-control]'))button.disabled=false;
     }else if(Date.now()-loadingSince>10000){$('#transfer-status').textContent='LOAD FAILED';$('#transfer-placeholder').textContent='The saved player did not start. Reset the player to retry.';}
     const motion=state?.motion;
+    const core=motion?.core??motion?.state?.core;
     $('#dash-state').textContent=!motion||state.status!=='playing'?'READY TO PLAY':state.isReplaying?'REPLAY'
-      :motion.output?.ownsMotion?'DASH ACTIVE':motion.core.cooldown>0?'RECHARGING · '+(motion.core.cooldown/60).toFixed(2)+'s':'DASH READY';
+      :motion.output?.ownsMotion?'DASH ACTIVE':core?.cooldown>0?'RECHARGING · '+(core.cooldown/60).toFixed(2)+'s':'DASH READY';
   }catch{/* A frame may be between documents while changing destinations. */}
 },80);
+
+const visibility=new IntersectionObserver(entries=>{
+  if(destination?.id!=='roadster'||window.guidedRunning)return;
+  for(const entry of entries){try{
+    if(entry.target===after&&channel)after.contentWindow?.postMessage({type:'roadster-visibility',pressed:entry.isIntersecting,channel},'*');
+    if(entry.target===before&&!before.src.includes('test=1'))before.contentWindow?.__game?.realtime(entry.isIntersecting);
+  }catch{/* The frame can be loading. */}}
+},{threshold:.05});visibility.observe(before);visibility.observe(after);

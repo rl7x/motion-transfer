@@ -37,3 +37,16 @@ try{
   note.textContent=`Gravity stays with JUJUMP: during the same eight updates, the dash moves 30 horizontal pixels while ordinary motion moves 8. Both fall from screen y=${first.p.y.toFixed(2)} to y=${last.p.y.toFixed(2)} with matching vertical velocity. Camera scrolling is retained. These are matched open-air fixtures; platform landing is tested separately.`;
   $('#airborne-comparison').replaceChildren(note);
 }catch(error){$('#trace-comparison').textContent=error.message+'. Open the saved destination reports for the available checks.';}
+
+try{
+  const report=await json('/roadster/report.json');
+  const flight=report.browser.results.find(result=>result.name==='airborne-dash-retains-vertical-and-rotation');
+  if(!report.passed||!flight?.passed)throw Error('No passing Roadster comparison');
+  const box=document.createElement('div');box.className='airborne-result';
+  const title=document.createElement('h3');title.textContent='The same controller in a different runtime';
+  const text=document.createElement('p');
+  const yError=Math.max(...flight.after.map((point,i)=>Math.abs(point.y-flight.before[i].y)));
+  text.textContent=`Roadster: ${Math.abs(flight.requestedMeters)} meters requested over eight active updates. Matched free-flight traces have maximum vertical-position difference ${yError.toExponential(1)} meters. Native gravity and rotation continue. The simulation runs at 240 Hz; the unchanged controller runs at 60 Hz.`;
+  const details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');summary.textContent='Actual before/after positions and event ticks';pre.textContent=JSON.stringify(flight,null,2);pre.style.maxHeight='260px';pre.style.overflow='auto';pre.style.whiteSpace='pre-wrap';details.append(summary,pre);
+  box.append(title,text,details);document.querySelector('#trace-comparison').append(box);
+}catch{/* Roadster is advertised only when its independent saved checks are present. */}

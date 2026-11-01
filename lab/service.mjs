@@ -5,7 +5,7 @@ import { createLabStore,artifactId } from './store.mjs';
 export const LAB_BUDGET_USD=10;
 export const INVESTIGATION_QUESTIONS=Object.freeze({
   held:'Does holding dash behave differently from pressing and releasing it? Choose controlled donor experiments, inspect the compiled instructions, and cite the actual observations. Do not assume a familiar dash implementation.',
-  neutral:'After a directional dash, what happens when dash is activated without any directional input? Choose contrasting donor experiments and inspect compiled instructions. Distinguish observations from hypotheses and cite experiments; report uncertainty honestly.',
+  neutral:'After a LEFT directional dash and full recovery, what happens when dash is activated without any directional input: does it keep the previous left direction or choose another? Choose contrasting donor experiments with the same preparation and elapsed time, inspect compiled instructions, and use actual motion readings to discriminate explanations. Do not assume the answer. Distinguish observations from hypotheses, cite experiments and report uncertainty honestly.',
 });
 const terminal=job=>['ready','failed'].includes(job.status);
 function validateRequest(kind,value){

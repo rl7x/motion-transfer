@@ -7,7 +7,7 @@ test('the preview starts both games and its dash button calls the verified compo
   try {
     const { page, errors } = await harness.page();
     await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto(harness.origin);
+    await page.goto(harness.origin+'/?destination=paku-paku');
     await page.waitForFunction(() => document.querySelector('#transfer-status').textContent === 'VERIFIED TRANSFER');
     const frames = [];
     for (const [id, mode] of [['original-game', 'original'], ['transfer-game', 'transfer']]) {
