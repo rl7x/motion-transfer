@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { createMetaClient } from './meta-client.mjs';
 import { loadTarget } from './target.mjs';
 import { TOOLS } from './tool-schema.mjs';
-import { runCartridgeTool } from './tools.mjs';
+import { createCartridgeTools } from './tools.mjs';
 import { evidenceHistory } from './evidence.mjs';
 import { PRICES, readUsage } from './accounting.mjs';
 
@@ -63,7 +63,7 @@ export async function investigate({
   question = DEFAULT_QUESTION,
   limits: overrides = {},
   client,
-  runTool = runCartridgeTool,
+  runTool,
   onUpdate = async () => {},
   onProgress = () => {},
   resumeReport,
@@ -112,6 +112,8 @@ export async function investigate({
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), limits.timeoutMs);
   timer.unref();
+  const worker=runTool?null:createCartridgeTools({signal:controller.signal});
+  const dispatch=runTool??worker.run;
   const history = resumeReport ? evidenceHistory(report) : [{ role: 'user', content: [{ type: 'input_text', text: question }] }];
   const ids = new Set(report.toolCalls.map(call => call.callId));
   let experiments = report.toolCalls.filter(call => call.experimentId).length;
@@ -211,7 +213,7 @@ export async function investigate({
           if (typeof call.arguments !== 'string' || Buffer.byteLength(call.arguments) > 8_192) throw new Error('Tool arguments exceed 8 KB or are invalid');
           entry.args = JSON.parse(call.arguments);
           onProgress(`Running ${call.name}`);
-          const { result, evidence } = await runTool(call.name, entry.args, { signal: controller.signal });
+          const { result, evidence } = await dispatch(call.name, entry.args, { signal: controller.signal });
           entry.ok = true;
           entry.result = result;
           if (evidence) entry.evidence = evidence;
@@ -236,6 +238,7 @@ export async function investigate({
     throw error;
   } finally {
     clearTimeout(timer);
+    await worker?.close();
     report.finishedAt = new Date().toISOString();
     await onUpdate(report);
   }

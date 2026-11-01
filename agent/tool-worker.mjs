@@ -5,11 +5,18 @@ import { replayTrace } from '../runtime/trace.mjs';
 import { createWasmInspection, inspectFunction, listFunctions } from './wasm-inspection.mjs';
 import { summarizeObservation } from './observation.mjs';
 import { observeDonorMotion } from '../runtime/donor-observation.mjs';
+import { createInvestigationSession } from '../runtime/investigation-session.mjs';
+
+const target=await loadTarget();
+let session,inspection;
 
 
 async function execute(name, args) {
   validateToolInput(name, args);
-  const target = await loadTarget();
+  if(name.startsWith('session_')||name==='read_memory'){
+    session??=await createInvestigationSession(target.bytes);
+    return session.execute(name,args);
+  }
   if (name === 'run_original') {
     const runtime = await createReplayRuntime(target.bytes);
     const evidence = replayTrace(runtime, { schemaVersion: 1, steps: args.steps }, { watches: args.watches,checkpointData:runtime=>{
@@ -36,7 +43,7 @@ async function execute(name, args) {
       imports: WebAssembly.Module.imports(module), exports: WebAssembly.Module.exports(module),
     },
   };
-  const inspection = await createWasmInspection(target.bytes);
+  inspection??=await createWasmInspection(target.bytes);
   if (name === 'list_functions') return { result: { sha256: target.sha256, ...listFunctions(inspection, args) } };
   if (name === 'inspect_function') return { result: { sha256: target.sha256, ...inspectFunction(inspection, args) } };
   const { lines } = inspection;
@@ -53,15 +60,17 @@ async function execute(name, args) {
   };
 }
 
-try {
-  let input = '';
-  for await (const chunk of process.stdin) {
-    input += chunk;
-    if (Buffer.byteLength(input) > 8_192) throw new Error('Tool request exceeds 8 KB');
+let buffer='';
+for await(const chunk of process.stdin){
+  buffer+=chunk.toString('utf8');
+  if(Buffer.byteLength(buffer)>2*1024*1024)throw Error('Worker input limit exceeded');
+  let end;
+  while((end=buffer.indexOf('\n'))>=0){
+    const line=buffer.slice(0,end);buffer=buffer.slice(end+1);let id;
+    try{
+      const request=JSON.parse(line);id=request.id;
+      if(!Number.isSafeInteger(id))throw Error('Invalid worker request identity');
+      process.stdout.write(JSON.stringify({id,ok:true,...await execute(request.name,request.args)})+'\n');
+    }catch(error){process.stdout.write(JSON.stringify({id,ok:false,error:String(error.message).slice(0,1000)})+'\n');}
   }
-  const { name, args } = JSON.parse(input);
-  process.stdout.write(JSON.stringify({ ok: true, ...await execute(name, args) }));
-} catch (error) {
-  process.stdout.write(JSON.stringify({ ok: false, error: error.message }));
-  process.exitCode = 1;
 }

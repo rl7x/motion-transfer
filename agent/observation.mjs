@@ -17,6 +17,7 @@ export function summarizeObservation(observation) {
     frame: observation.frame,
     framebufferHash: observation.framebufferHash,
     memoryHash: observation.memoryHash,
+    storage: observation.storage,
     palette: observation.palette,
     text: text.join('\n').slice(0, 1_000),
     textTruncated: text.join('\n').length > 1_000,

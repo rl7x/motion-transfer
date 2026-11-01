@@ -88,6 +88,19 @@ export const TOOLS = [{
   },
 }];
 
+const branchId={type:'string',pattern:'^[a-z][a-z0-9-]{0,39}$',description:'Existing branch identity. The initial branch is main.'};
+const watches=TOOLS.find(tool=>tool.name==='run_original').parameters.properties.watches;
+const steps=TOOLS.find(tool=>tool.name==='run_original').parameters.properties.steps;
+for(const name of ['session_observe','read_memory','session_reset'])TOOLS.push({
+  type:'function',name,strict:true,
+  description:name==='session_reset'?'Reset only this branch to a clean cartridge instance, including private globals and host storage.':'Observe the current persistent branch without advancing; include bounded typed memory watches. Motion fields are HUMAN-MAPPED assistance.',
+  parameters:{type:'object',properties:{branchId,watches},required:['branchId','watches'],additionalProperties:false},
+});
+TOOLS.push({type:'function',name:'session_advance',strict:true,
+  description:'Continue this persistent branch with held inputs at 60 Hz, preserving prior state. Checkpoints here are observation labels; use checkpoint_state for a reusable branch point. The initial branch is main. X=1 starts/dashes; left=16, right=32, up=64, down=128. Frames and output are bounded.',
+  parameters:{type:'object',properties:{branchId,hypothesis:{type:'string',minLength:1,maxLength:500},watches,steps},required:['branchId','hypothesis','watches','steps'],additionalProperties:false},
+});
+
 function object(value, keys) {
   if (!value || typeof value !== 'object' || Array.isArray(value)
     || Object.keys(value).length !== keys.length || keys.some(key => !Object.hasOwn(value, key))) {
@@ -100,6 +113,14 @@ function integer(value, minimum, maximum) {
 }
 
 export function validateToolInput(name, args) {
+  if(['session_observe','read_memory','session_reset','session_advance'].includes(name)){
+    if(name==='session_advance'){
+      object(args,['branchId','hypothesis','watches','steps']);
+      validateToolInput('run_original',{hypothesis:args.hypothesis,watches:args.watches,steps:args.steps});
+    }else{object(args,['branchId','watches']);validateMemoryWatches(args.watches);}
+    if(typeof args.branchId!=='string'||!/^[a-z][a-z0-9-]{0,39}$/.test(args.branchId))throw Error('Invalid branch identity');
+    return;
+  }
   if (name === 'list_functions') {
     object(args, ['startIndex', 'limit']);
     if (!integer(args.startIndex, 0, 100_000) || !integer(args.limit, 1, 50)) {
