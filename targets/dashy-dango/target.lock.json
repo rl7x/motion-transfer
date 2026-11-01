@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "dashy-dango",
+  "title": "Dashy Dango",
+  "runtime": "wasm4",
+  "artifact": "cart.wasm",
+  "source": {
+    "repository": "https://github.com/willGuimont/dashy-dango",
+    "revision": "9b899e81790fb3c67243f4707244b3859a91e1c6",
+    "path": "build/cart.wasm",
+    "downloadUrl": "https://raw.githubusercontent.com/willGuimont/dashy-dango/9b899e81790fb3c67243f4707244b3859a91e1c6/build/cart.wasm",
+    "gamePage": "https://wasm4.org/play/dashy-dango/"
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "digest": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+    "bytes": 47101
+  },
+  "retrievedAt": "2026-11-01T01:54:33.065511+00:00",
+  "provenance": {
+    "kind": "upstream-precompiled-cartridge",
+    "builtLocally": false,
+    "originalSourceIncluded": false,
+    "scope": "Candidate for dash movement and cooldown extraction; no recovery performed."
+  },
+  "licenseReview": {
+    "status": "unresolved",
+    "packageDeclaration": "ISC",
+    "packageMetadataUrl": "https://github.com/willGuimont/dashy-dango/blob/9b899e81790fb3c67243f4707244b3859a91e1c6/wapm.toml",
+    "galleryLabel": "CC BY-NC-SA",
+    "note": "Existing research found differing package and gallery license labels. Confirm applicable permissions and notices before redistributing the cartridge or derived assets."
+  }
+}

@@ -1,0 +1,30 @@
+# Dashy Dango target
+
+Pinned, precompiled WASM-4 cartridge for Glassbox's proposed dash movement and cooldown extraction.
+
+- **Upstream:** [willGuimont/dashy-dango](https://github.com/willGuimont/dashy-dango)
+- **Revision:** `9b899e81790fb3c67243f4707244b3859a91e1c6`
+- **Original artifact:** `build/cart.wasm`
+- **Local artifact:** [cart.wasm](cart.wasm), 47,101 bytes
+- **SHA-256:** `152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f`
+- **Manifest:** [target.lock.json](target.lock.json)
+
+The download's hash was checked against the artifact inspected during design research. This is an upstream build; it has not been rebuilt locally or reverse-engineered. The original source is not included in this folder.
+
+## Play locally
+
+With the WASM-4 CLI installed, run from the repository root:
+
+```sh
+w4 run targets/dashy-dango/cart.wasm
+```
+
+See the [WASM-4 installation instructions](https://wasm4.org/docs/getting-started/setup/). The runtime is not installed by this target download.
+
+## Recovery inputs
+
+Provide the recovery model with the cartridge, the WASM-4 host interface, and experiment tools. Keep upstream source, source-derived findings from the design document, and evaluator answers outside its isolated workspace. This README and manifest are provenance records, not recovery prompts.
+
+## Redistribution status
+
+The pinned package metadata declares ISC, while the game's WASM-4 gallery page displays CC BY-NC-SA. The applicable permissions and notices need to be resolved before publishing the cartridge or derived assets. This download does not change their licensing.
