@@ -58,6 +58,16 @@
     <div id="trace-comparison" class="trace-comparison" aria-live="polite">Loading the measured comparison…</div>
     <details id="comparison-details"><summary>How to read this comparison</summary><p>Controlled free-space inputs hold dash from tick 11. The graphs count dash travel only, excluding ordinary movement. Recipient distances are divided by their documented 0.5 scale so timing and displacement can be compared in donor units. Position fixtures keep the recipients alive; collisions and ordinary play have separate checks.</p><div id="airborne-comparison"></div><p><a href="/evidence/transfer-comparison.json">Download the actual comparison traces ↗</a> · <a id="artifact-checks" href="/artifact/browser.json">Current destination report ↗</a></p></details>
   </section>
+  <section class="lab-section" aria-labelledby="lab-heading">
+    <div class="section-heading"><div><p class="eyebrow">LIVE / LET META CHOOSE THE EXPERIMENT</p><h2 id="lab-heading">Find out what the dash really does.</h2></div><span class="pill neutral" id="lab-mode">NO MODEL REQUEST ON LOAD</span></div>
+    <p>Meta inspects the compiled cartridge and chooses contrasting inputs. See its hypothesis, the experiment, and the actual observations.</p>
+    <form id="investigation-form" class="lab-form"><label for="investigation-question">What should Meta investigate?</label><div class="prompt-row"><select id="investigation-question"><option value="held">Does holding dash differ from tapping it?</option><option value="neutral">What happens with no direction after a left dash?</option></select><button id="investigation-submit" type="submit" disabled>Investigate with Meta ↗</button></div></form>
+    <p class="saved-note" id="lab-budget">Reading investigation availability…</p>
+    <p id="lab-progress" role="status" aria-live="polite">Fresh model activity starts only when you submit. Saved recovery above remains unchanged.</p>
+    <ol id="investigation-events" class="investigation-events"></ol>
+    <div id="investigation-conclusion" class="lab-conclusion" hidden></div>
+    <a id="investigation-report" hidden>Download this investigation and measurements ↗</a>
+  </section>
   <details class="recovery-details" id="recovery-details">
     <summary><span>How was this dash recovered?</span><span class="detail-label">SAVED EVIDENCE + SUPPORTED RULES</span></summary>
     <div class="recovery-grid"><div><h3>From compiled instructions to reusable source</h3><p>Meta models received selected WebAssembly instructions and measured donor traces. They reconstructed a standalone controller, which was checked against the actual cartridge. The component runs without the donor's binary, renderer, or assets.</p><p id="recovery-verdict">Loading saved recovery results…</p><p><a href="/evidence/recovery-history.json">Generation and repair history</a> · <a href="/evidence/evidence.json">Binary and numeric evidence</a> · <a href="/evidence/evaluation-acceptance.json">Acceptance results</a></p></div><div><h3>What is supported?</h3><ul><li>An eight-tick dash covering 60 donor pixels.</li><li>Direction stays fixed during the dash.</li><li>Recharge lasts 25 inactive ticks; holding dash can retrigger it.</li><li>Initial readiness takes 10 ticks. Timing runs at 60 updates per second.</li></ul><p>Verified for the default donor configuration and source body width 8. Combat, scoring, visuals, and full-game equivalence are outside this recovery's claim.</p></div></div>
@@ -80,5 +90,5 @@
   <details class="artifact-details"><summary>Current transfer source, identity, and checks</summary><div class="evidence"><div><p class="eyebrow">CHECKED BEHAVIOR</p><p id="check-count">Loading…</p></div><div><p class="eyebrow">ADAPTER AUTHOR</p><p id="model">—</p><small><span id="generation-cost">—</span> adapter generation cost</small></div><div><p class="eyebrow">SAVED VERSION</p><p><a id="artifact-id" href="/artifact/receipt.json">—</a></p><small><a id="adapter-source" href="/artifact/adapter.ts">Adapter source</a> · <a href="/artifact/component.ts">Frozen component source</a></small></div></div></details>
   <footer><span>Dashy Dango by willGuimont · PAKU PAKU &amp; JUJUMP by Kenta Cho / ABA Games · <a href="/licenses">PAKU notices</a> · <a href="/jujump/licenses">JUJUMP notices</a></span><span>Local preview · one recovered dash, two new homes</span></footer>
 </main>
-<script type="module" src="/preview.js"></script><script type="module" src="/remix.js"></script><script type="module" src="/evidence.js"></script>
+<script type="module" src="/preview.js"></script><script type="module" src="/remix.js"></script><script type="module" src="/evidence.js"></script><script type="module" src="/lab.js"></script>
 </body></html>
