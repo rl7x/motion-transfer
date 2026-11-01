@@ -1,0 +1,12 @@
+{
+  "name": "meta-ai-developer-hackathon",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local WASM-4 player for game targets",
+  "scripts": {
+    "dev": "w4 run targets/dashy-dango/cart.wasm --no-qr"
+  },
+  "devDependencies": {
+    "wasm4": "2.7.1"
+  }
+}
