@@ -16,7 +16,15 @@ import {EXPERIMENT_TOOLS} from '../experiment/schema.mjs';
 const target=await loadTarget();
 let session,inspection,decompilation,workbench,experiments;
 const snapshot=()=>session?{...session.snapshot(),...(experiments?{experimentWorkbench:experiments.snapshot()}:{})}:undefined;
-async function experimentTools(saved){session??=await createInvestigationSession(target.bytes);experiments??=await createExperimentWorkbench(session,{saved});return experiments;}
+let activeRequestId=null,checkpointSequence=0;const acknowledgements=new Map();
+async function persistCheckpoint(){
+  if(activeRequestId===null)throw Error('No active investigation request');
+  const sequence=++checkpointSequence;
+  const acknowledged=new Promise((resolve,reject)=>acknowledgements.set(sequence,{resolve,reject,id:activeRequestId}));
+  process.stdout.write(JSON.stringify({kind:'checkpoint',id:activeRequestId,sequence,sessionState:snapshot()})+'\n');
+  await acknowledged;
+}
+async function experimentTools(saved){session??=await createInvestigationSession(target.bytes);experiments??=await createExperimentWorkbench(session,{saved,persist:persistCheckpoint});return experiments;}
 
 
 async function execute(name, args) {
@@ -101,17 +109,30 @@ async function execute(name, args) {
 
 let buffer='';
 process.stdin.setEncoding('utf8');
+let queue=Promise.resolve();
+async function command(request){
+  const id=request.id;activeRequestId=id;
+  try{
+    const output=await execute(request.name,request.args);
+    process.stdout.write(JSON.stringify({id,ok:true,...output,...(session?{sessionState:snapshot()}:{} )})+'\n');
+  }catch(error){process.stdout.write(JSON.stringify({id,ok:false,error:String(error.message).slice(0,1000),...(session?{sessionState:snapshot()}:{} )})+'\n');}
+  finally{activeRequestId=null;}
+}
 for await(const chunk of process.stdin){
   buffer+=chunk.toString('utf8');
   if(Buffer.byteLength(buffer)>2*1024*1024)throw Error('Worker input limit exceeded');
   let end;
   while((end=buffer.indexOf('\n'))>=0){
-    const line=buffer.slice(0,end);buffer=buffer.slice(end+1);let id;
-    try{
-      const request=JSON.parse(line);id=request.id;
-      if(!Number.isSafeInteger(id))throw Error('Invalid worker request identity');
-      const output=await execute(request.name,request.args);
-      process.stdout.write(JSON.stringify({id,ok:true,...output,...(session?{sessionState:snapshot()}:{} )})+'\n');
-    }catch(error){process.stdout.write(JSON.stringify({id,ok:false,error:String(error.message).slice(0,1000),...(session?{sessionState:snapshot()}:{} )})+'\n');}
+    const line=buffer.slice(0,end);buffer=buffer.slice(end+1);const request=JSON.parse(line);
+    if(request.kind==='checkpoint_ack'){
+      const pending=acknowledgements.get(request.sequence);
+      if(!pending||pending.id!==request.id)throw Error('Invalid checkpoint acknowledgement');
+      acknowledgements.delete(request.sequence);
+      if(request.ok)pending.resolve();else pending.reject(Error('Host could not durably persist investigation checkpoint'));
+      continue;
+    }
+    if(!Number.isSafeInteger(request.id))throw Error('Invalid worker request identity');
+    queue=queue.then(()=>command(request));
   }
 }
+await queue;

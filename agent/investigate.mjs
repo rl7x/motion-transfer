@@ -136,7 +136,7 @@ export async function investigate({
   const cancel=()=>controller.abort();signal?.addEventListener('abort',cancel,{once:true});if(signal?.aborted)cancel();
   const timer = setTimeout(() => controller.abort(), limits.timeoutMs);
   timer.unref();
-  const worker=runTool?null:createCartridgeTools({signal:controller.signal});
+  const worker=runTool?null:createCartridgeTools({signal:controller.signal,onCheckpoint:async session=>{report.session=session;await onUpdate(report);}});
   const dispatch=runTool??worker.run;
   const history = resumeReport ? evidenceHistory(report) : [{ role: 'user', content: [{ type: 'input_text', text: question }] }];
   const ids = new Set(report.toolCalls.map(call => call.callId));
