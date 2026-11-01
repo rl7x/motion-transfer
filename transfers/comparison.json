@@ -1,0 +1,4638 @@
+{
+  "schemaVersion": 1,
+  "passed": true,
+  "metaCalled": false,
+  "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+  "adapters": {
+    "paku": "ac16fdc9e4a47816b7fc5ac9b060d75cfdff52b6d5537e1d2c587812c8810f91",
+    "jujump": "175b2cd25453e84d99b5b700446d4049c4a9058aab195885a0a57e9ee28e4453"
+  },
+  "fixture": "100 controlled logical updates: hold right; hold dash from tick 11. Recipient position fixtures isolate free-space controller output. JUJUMP changes facing during the first dash.",
+  "scope": "Measured requested dash movement, not universal world-position equivalence. Ordinary movement omitted. Collision and ordinary-behavior checks are separate.",
+  "activationTicks": [
+    11,
+    44,
+    77
+  ],
+  "endTicks": [
+    18,
+    51,
+    84
+  ],
+  "lanes": [
+    {
+      "id": "donor",
+      "name": "Compiled donor",
+      "scale": 1,
+      "frames": [
+        {
+          "tick": 1,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 9,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 2,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 8,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 3,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 7,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 4,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 6,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 5,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 5,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 6,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 4,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 7,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 3,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 8,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 2,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 9,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 1,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 10,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 0,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 11,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 7.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 7,
+          "events": [
+            "dash-start"
+          ]
+        },
+        {
+          "tick": 12,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 15,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 6,
+          "events": []
+        },
+        {
+          "tick": 13,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 22.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 5,
+          "events": []
+        },
+        {
+          "tick": 14,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 30,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 4,
+          "events": []
+        },
+        {
+          "tick": 15,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 37.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 3,
+          "events": []
+        },
+        {
+          "tick": 16,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 45,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 2,
+          "events": []
+        },
+        {
+          "tick": 17,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 52.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 1,
+          "events": []
+        },
+        {
+          "tick": 18,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 60,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 0,
+          "events": [
+            "dash-end"
+          ]
+        },
+        {
+          "tick": 19,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 24,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 20,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 23,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 21,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 22,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 22,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 21,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 23,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 20,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 24,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 19,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 25,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 18,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 26,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 17,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 27,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 16,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 28,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 15,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 29,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 14,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 30,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 13,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 31,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 12,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 32,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 11,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 33,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 10,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 34,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 9,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 35,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 8,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 36,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 7,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 37,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 6,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 38,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 5,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 39,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 4,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 40,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 3,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 41,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 2,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 42,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 1,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 43,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 0,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 44,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 67.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 7,
+          "events": [
+            "dash-start"
+          ]
+        },
+        {
+          "tick": 45,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 75,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 6,
+          "events": []
+        },
+        {
+          "tick": 46,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 82.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 5,
+          "events": []
+        },
+        {
+          "tick": 47,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 90,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 4,
+          "events": []
+        },
+        {
+          "tick": 48,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 97.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 3,
+          "events": []
+        },
+        {
+          "tick": 49,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 105,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 2,
+          "events": []
+        },
+        {
+          "tick": 50,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 112.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 1,
+          "events": []
+        },
+        {
+          "tick": 51,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 120,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 0,
+          "events": [
+            "dash-end"
+          ]
+        },
+        {
+          "tick": 52,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 24,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 53,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 23,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 54,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 22,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 55,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 21,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 56,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 20,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 57,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 19,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 58,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 18,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 59,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 17,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 60,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 16,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 61,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 15,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 62,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 14,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 63,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 13,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 64,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 12,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 65,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 11,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 66,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 10,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 67,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 9,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 68,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 8,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 69,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 7,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 70,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 6,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 71,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 5,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 72,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 4,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 73,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 3,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 74,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 2,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 75,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 1,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 76,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 0,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 77,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 127.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 7,
+          "events": [
+            "dash-start"
+          ]
+        },
+        {
+          "tick": 78,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 135,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 6,
+          "events": []
+        },
+        {
+          "tick": 79,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 142.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 5,
+          "events": []
+        },
+        {
+          "tick": 80,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 150,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 4,
+          "events": []
+        },
+        {
+          "tick": 81,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 157.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 3,
+          "events": []
+        },
+        {
+          "tick": 82,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 165,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 2,
+          "events": []
+        },
+        {
+          "tick": 83,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 172.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 1,
+          "events": []
+        },
+        {
+          "tick": 84,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 180,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 0,
+          "events": [
+            "dash-end"
+          ]
+        },
+        {
+          "tick": 85,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 24,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 86,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 23,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 87,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 22,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 88,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 21,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 89,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 20,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 90,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 19,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 91,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 18,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 92,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 17,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 93,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 16,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 94,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 15,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 95,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 14,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 96,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 13,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 97,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 12,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 98,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 11,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 99,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 10,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 100,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 9,
+          "remaining": 0,
+          "events": []
+        }
+      ]
+    },
+    {
+      "id": "component",
+      "name": "Standalone component",
+      "scale": 1,
+      "frames": [
+        {
+          "tick": 1,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 9,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 2,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 8,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 3,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 7,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 4,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 6,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 5,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 5,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 6,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 4,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 7,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 3,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 8,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 2,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 9,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 1,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 10,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 0,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 11,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 7.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 7,
+          "events": [
+            "dash-start"
+          ]
+        },
+        {
+          "tick": 12,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 15,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 6,
+          "events": []
+        },
+        {
+          "tick": 13,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 22.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 5,
+          "events": []
+        },
+        {
+          "tick": 14,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 30,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 4,
+          "events": []
+        },
+        {
+          "tick": 15,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 37.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 3,
+          "events": []
+        },
+        {
+          "tick": 16,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 45,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 2,
+          "events": []
+        },
+        {
+          "tick": 17,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 52.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 1,
+          "events": []
+        },
+        {
+          "tick": 18,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 60,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 0,
+          "events": [
+            "dash-end"
+          ]
+        },
+        {
+          "tick": 19,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 24,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 20,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 23,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 21,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 22,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 22,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 21,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 23,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 20,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 24,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 19,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 25,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 18,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 26,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 17,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 27,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 16,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 28,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 15,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 29,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 14,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 30,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 13,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 31,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 12,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 32,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 11,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 33,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 10,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 34,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 9,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 35,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 8,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 36,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 7,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 37,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 6,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 38,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 5,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 39,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 4,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 40,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 3,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 41,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 2,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 42,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 1,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 43,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 0,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 44,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 67.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 7,
+          "events": [
+            "dash-start"
+          ]
+        },
+        {
+          "tick": 45,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 75,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 6,
+          "events": []
+        },
+        {
+          "tick": 46,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 82.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 5,
+          "events": []
+        },
+        {
+          "tick": 47,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 90,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 4,
+          "events": []
+        },
+        {
+          "tick": 48,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 97.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 3,
+          "events": []
+        },
+        {
+          "tick": 49,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 105,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 2,
+          "events": []
+        },
+        {
+          "tick": 50,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 112.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 1,
+          "events": []
+        },
+        {
+          "tick": 51,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 120,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 0,
+          "events": [
+            "dash-end"
+          ]
+        },
+        {
+          "tick": 52,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 24,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 53,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 23,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 54,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 22,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 55,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 21,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 56,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 20,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 57,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 19,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 58,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 18,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 59,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 17,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 60,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 16,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 61,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 15,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 62,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 14,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 63,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 13,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 64,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 12,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 65,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 11,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 66,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 10,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 67,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 9,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 68,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 8,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 69,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 7,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 70,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 6,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 71,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 5,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 72,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 4,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 73,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 3,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 74,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 2,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 75,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 1,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 76,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 0,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 77,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 127.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 7,
+          "events": [
+            "dash-start"
+          ]
+        },
+        {
+          "tick": 78,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 135,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 6,
+          "events": []
+        },
+        {
+          "tick": 79,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 142.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 5,
+          "events": []
+        },
+        {
+          "tick": 80,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 150,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 4,
+          "events": []
+        },
+        {
+          "tick": 81,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 157.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 3,
+          "events": []
+        },
+        {
+          "tick": 82,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 165,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 2,
+          "events": []
+        },
+        {
+          "tick": 83,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 172.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 1,
+          "events": []
+        },
+        {
+          "tick": 84,
+          "pixels": 7.5,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 180,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 0,
+          "events": [
+            "dash-end"
+          ]
+        },
+        {
+          "tick": 85,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 24,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 86,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 23,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 87,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 22,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 88,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 21,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 89,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 20,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 90,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 19,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 91,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 18,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 92,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 17,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 93,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 16,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 94,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 15,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 95,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 14,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 96,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 13,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 97,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 12,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 98,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 11,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 99,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 10,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 100,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 9,
+          "remaining": 0,
+          "events": []
+        }
+      ]
+    },
+    {
+      "id": "paku-paku",
+      "name": "PAKU PAKU",
+      "scale": 0.5,
+      "frames": [
+        {
+          "tick": 1,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 9,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 2,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 8,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 3,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 7,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 4,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 6,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 5,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 5,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 6,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 4,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 7,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 3,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 8,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 2,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 9,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 1,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 10,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 0,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 11,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 7.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 7,
+          "events": [
+            "dash-start"
+          ]
+        },
+        {
+          "tick": 12,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 15,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 6,
+          "events": []
+        },
+        {
+          "tick": 13,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 22.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 5,
+          "events": []
+        },
+        {
+          "tick": 14,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 30,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 4,
+          "events": []
+        },
+        {
+          "tick": 15,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 37.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 3,
+          "events": []
+        },
+        {
+          "tick": 16,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 45,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 2,
+          "events": []
+        },
+        {
+          "tick": 17,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 52.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 1,
+          "events": []
+        },
+        {
+          "tick": 18,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 60,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 0,
+          "events": [
+            "dash-end"
+          ]
+        },
+        {
+          "tick": 19,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 24,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 20,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 23,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 21,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 22,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 22,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 21,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 23,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 20,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 24,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 19,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 25,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 18,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 26,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 17,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 27,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 16,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 28,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 15,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 29,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 14,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 30,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 13,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 31,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 12,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 32,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 11,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 33,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 10,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 34,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 9,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 35,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 8,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 36,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 7,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 37,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 6,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 38,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 5,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 39,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 4,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 40,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 3,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 41,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 2,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 42,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 1,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 43,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 0,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 44,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 67.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 7,
+          "events": [
+            "dash-start"
+          ]
+        },
+        {
+          "tick": 45,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 75,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 6,
+          "events": []
+        },
+        {
+          "tick": 46,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 82.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 5,
+          "events": []
+        },
+        {
+          "tick": 47,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 90,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 4,
+          "events": []
+        },
+        {
+          "tick": 48,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 97.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 3,
+          "events": []
+        },
+        {
+          "tick": 49,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 105,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 2,
+          "events": []
+        },
+        {
+          "tick": 50,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 112.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 1,
+          "events": []
+        },
+        {
+          "tick": 51,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 120,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 0,
+          "events": [
+            "dash-end"
+          ]
+        },
+        {
+          "tick": 52,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 24,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 53,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 23,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 54,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 22,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 55,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 21,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 56,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 20,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 57,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 19,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 58,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 18,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 59,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 17,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 60,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 16,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 61,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 15,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 62,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 14,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 63,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 13,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 64,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 12,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 65,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 11,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 66,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 10,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 67,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 9,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 68,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 8,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 69,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 7,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 70,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 6,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 71,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 5,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 72,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 4,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 73,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 3,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 74,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 2,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 75,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 1,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 76,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 0,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 77,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 127.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 7,
+          "events": [
+            "dash-start"
+          ]
+        },
+        {
+          "tick": 78,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 135,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 6,
+          "events": []
+        },
+        {
+          "tick": 79,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 142.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 5,
+          "events": []
+        },
+        {
+          "tick": 80,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 150,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 4,
+          "events": []
+        },
+        {
+          "tick": 81,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 157.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 3,
+          "events": []
+        },
+        {
+          "tick": 82,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 165,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 2,
+          "events": []
+        },
+        {
+          "tick": 83,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 172.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 1,
+          "events": []
+        },
+        {
+          "tick": 84,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 180,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 0,
+          "events": [
+            "dash-end"
+          ]
+        },
+        {
+          "tick": 85,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 24,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 86,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 23,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 87,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 22,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 88,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 21,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 89,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 20,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 90,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 19,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 91,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 18,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 92,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 17,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 93,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 16,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 94,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 15,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 95,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 14,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 96,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 13,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 97,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 12,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 98,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 11,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 99,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 10,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 100,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 9,
+          "remaining": 0,
+          "events": []
+        }
+      ]
+    },
+    {
+      "id": "jujump",
+      "name": "JUJUMP",
+      "scale": 0.5,
+      "frames": [
+        {
+          "tick": 1,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 9,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 2,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 8,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 3,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 7,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 4,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 6,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 5,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 5,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 6,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 4,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 7,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 3,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 8,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 2,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 9,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 1,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 10,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 0,
+          "active": false,
+          "cooldown": 0,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 11,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 7.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 7,
+          "events": [
+            "dash-start"
+          ]
+        },
+        {
+          "tick": 12,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 15,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 6,
+          "events": []
+        },
+        {
+          "tick": 13,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 22.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 5,
+          "events": []
+        },
+        {
+          "tick": 14,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 30,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 4,
+          "events": []
+        },
+        {
+          "tick": 15,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 37.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 3,
+          "events": []
+        },
+        {
+          "tick": 16,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 45,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 2,
+          "events": []
+        },
+        {
+          "tick": 17,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 52.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 1,
+          "events": []
+        },
+        {
+          "tick": 18,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 60,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 0,
+          "events": [
+            "dash-end"
+          ]
+        },
+        {
+          "tick": 19,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 24,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 20,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 23,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 21,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 22,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 22,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 21,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 23,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 20,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 24,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 19,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 25,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 18,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 26,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 17,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 27,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 16,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 28,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 15,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 29,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 14,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 30,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 13,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 31,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 12,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 32,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 11,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 33,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 10,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 34,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 9,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 35,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 8,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 36,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 7,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 37,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 6,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 38,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 5,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 39,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 4,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 40,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 3,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 41,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 2,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 42,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 1,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 43,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 60,
+          "active": false,
+          "cooldown": 0,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 44,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 67.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 7,
+          "events": [
+            "dash-start"
+          ]
+        },
+        {
+          "tick": 45,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 75,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 6,
+          "events": []
+        },
+        {
+          "tick": 46,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 82.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 5,
+          "events": []
+        },
+        {
+          "tick": 47,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 90,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 4,
+          "events": []
+        },
+        {
+          "tick": 48,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 97.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 3,
+          "events": []
+        },
+        {
+          "tick": 49,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 105,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 2,
+          "events": []
+        },
+        {
+          "tick": 50,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 112.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 1,
+          "events": []
+        },
+        {
+          "tick": 51,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 120,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 0,
+          "events": [
+            "dash-end"
+          ]
+        },
+        {
+          "tick": 52,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 24,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 53,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 23,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 54,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 22,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 55,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 21,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 56,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 20,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 57,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 19,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 58,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 18,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 59,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 17,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 60,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 16,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 61,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 15,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 62,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 14,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 63,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 13,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 64,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 12,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 65,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 11,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 66,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 10,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 67,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 9,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 68,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 8,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 69,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 7,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 70,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 6,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 71,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 5,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 72,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 4,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 73,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 3,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 74,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 2,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 75,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 1,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 76,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 120,
+          "active": false,
+          "cooldown": 0,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 77,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 127.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 7,
+          "events": [
+            "dash-start"
+          ]
+        },
+        {
+          "tick": 78,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 135,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 6,
+          "events": []
+        },
+        {
+          "tick": 79,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 142.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 5,
+          "events": []
+        },
+        {
+          "tick": 80,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 150,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 4,
+          "events": []
+        },
+        {
+          "tick": 81,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 157.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 3,
+          "events": []
+        },
+        {
+          "tick": 82,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 165,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 2,
+          "events": []
+        },
+        {
+          "tick": 83,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 172.5,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 1,
+          "events": []
+        },
+        {
+          "tick": 84,
+          "pixels": 3.75,
+          "sourcePixels": 7.5,
+          "cumulativeSourcePixels": 180,
+          "active": true,
+          "cooldown": 25,
+          "remaining": 0,
+          "events": [
+            "dash-end"
+          ]
+        },
+        {
+          "tick": 85,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 24,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 86,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 23,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 87,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 22,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 88,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 21,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 89,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 20,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 90,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 19,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 91,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 18,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 92,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 17,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 93,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 16,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 94,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 15,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 95,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 14,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 96,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 13,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 97,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 12,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 98,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 11,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 99,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 10,
+          "remaining": 0,
+          "events": []
+        },
+        {
+          "tick": 100,
+          "pixels": 0,
+          "sourcePixels": 0,
+          "cumulativeSourcePixels": 180,
+          "active": false,
+          "cooldown": 9,
+          "remaining": 0,
+          "events": []
+        }
+      ]
+    }
+  ],
+  "airborne": {
+    "fixture": "Open air, x30/y20, velocity x1/y0.5; matched initial state; no platforms",
+    "original": [
+      {
+        "ticks": 10,
+        "score": 1.00125,
+        "p": {
+          "x": 30,
+          "y": 20
+        },
+        "v": {
+          "x": 1,
+          "y": 0.5
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 0.10025,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": null
+      },
+      {
+        "ticks": 11,
+        "score": 2.051527777777778,
+        "p": {
+          "x": 31,
+          "y": 21.55027777777778
+        },
+        "v": {
+          "x": 1,
+          "y": 0.6
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 1.0502777777777779,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": null
+      },
+      {
+        "ticks": 12,
+        "score": 2.9368055555555554,
+        "p": {
+          "x": 32,
+          "y": 23.035555555555558
+        },
+        "v": {
+          "x": 1,
+          "y": 0.7
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 0.8852777777777775,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": null
+      },
+      {
+        "ticks": 13,
+        "score": 3.6635833333333334,
+        "p": {
+          "x": 33,
+          "y": 24.462333333333333
+        },
+        "v": {
+          "x": 1,
+          "y": 0.7999999999999999
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 0.7267777777777777,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": null
+      },
+      {
+        "ticks": 14,
+        "score": 4.237711111111111,
+        "p": {
+          "x": 34,
+          "y": 25.836461111111113
+        },
+        "v": {
+          "x": 1,
+          "y": 0.8999999999999999
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 0.5741277777777777,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": null
+      },
+      {
+        "ticks": 15,
+        "score": 4.66445388888889,
+        "p": {
+          "x": 35,
+          "y": 27.16320388888889
+        },
+        "v": {
+          "x": 1,
+          "y": 0.9999999999999999
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 0.4267427777777777,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": null
+      },
+      {
+        "ticks": 16,
+        "score": 4.948550166666667,
+        "p": {
+          "x": 36,
+          "y": 28.44730016666667
+        },
+        "v": {
+          "x": 1,
+          "y": 1.0999999999999999
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 0.28409627777777763,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": null
+      },
+      {
+        "ticks": 17,
+        "score": 5.094264594444445,
+        "p": {
+          "x": 37,
+          "y": 29.693014594444445
+        },
+        "v": {
+          "x": 1,
+          "y": 1.2
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 0.1457144277777775,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": null
+      },
+      {
+        "ticks": 18,
+        "score": 5.1947368166666665,
+        "p": {
+          "x": 38,
+          "y": 30.993486816666667
+        },
+        "v": {
+          "x": 1,
+          "y": 1.3
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 0.10047222222222224,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": null
+      }
+    ],
+    "transfer": [
+      {
+        "ticks": 10,
+        "score": 1.00125,
+        "p": {
+          "x": 30,
+          "y": 20
+        },
+        "v": {
+          "x": 1,
+          "y": 0.5
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 0.10025,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": {
+          "core": {
+            "dirX": 0,
+            "dirY": 0,
+            "remaining": 0,
+            "cooldown": 0,
+            "cooldownFresh": false
+          },
+          "output": {
+            "displacement": 0,
+            "ownsMotion": false,
+            "events": [],
+            "sweep": []
+          },
+          "initCalls": 1,
+          "stepCalls": 10,
+          "dashHeld": false
+        }
+      },
+      {
+        "ticks": 11,
+        "score": 2.051527777777778,
+        "p": {
+          "x": 33.75,
+          "y": 21.55027777777778
+        },
+        "v": {
+          "x": 1,
+          "y": 0.6
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 1.0502777777777779,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": {
+          "core": {
+            "dirX": 1,
+            "dirY": 0,
+            "remaining": 7,
+            "cooldown": 25,
+            "cooldownFresh": true
+          },
+          "output": {
+            "displacement": 3.75,
+            "ownsMotion": true,
+            "events": [
+              "dash-start"
+            ],
+            "sweep": [
+              1,
+              2,
+              3
+            ]
+          },
+          "initCalls": 1,
+          "stepCalls": 11,
+          "dashHeld": true
+        }
+      },
+      {
+        "ticks": 12,
+        "score": 2.9368055555555554,
+        "p": {
+          "x": 37.5,
+          "y": 23.03555555555555
+        },
+        "v": {
+          "x": 1,
+          "y": 0.7
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 0.8852777777777775,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": {
+          "core": {
+            "dirX": 1,
+            "dirY": 0,
+            "remaining": 6,
+            "cooldown": 25,
+            "cooldownFresh": true
+          },
+          "output": {
+            "displacement": 3.75,
+            "ownsMotion": true,
+            "events": [],
+            "sweep": [
+              1,
+              2,
+              3
+            ]
+          },
+          "initCalls": 1,
+          "stepCalls": 12,
+          "dashHeld": true
+        }
+      },
+      {
+        "ticks": 13,
+        "score": 3.663583333333334,
+        "p": {
+          "x": 41.25,
+          "y": 24.462333333333333
+        },
+        "v": {
+          "x": 1,
+          "y": 0.7999999999999999
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 0.7267777777777784,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": {
+          "core": {
+            "dirX": 1,
+            "dirY": 0,
+            "remaining": 5,
+            "cooldown": 25,
+            "cooldownFresh": true
+          },
+          "output": {
+            "displacement": 3.75,
+            "ownsMotion": true,
+            "events": [],
+            "sweep": [
+              1,
+              2,
+              3
+            ]
+          },
+          "initCalls": 1,
+          "stepCalls": 13,
+          "dashHeld": true
+        }
+      },
+      {
+        "ticks": 14,
+        "score": 4.237711111111111,
+        "p": {
+          "x": 45,
+          "y": 25.83646111111111
+        },
+        "v": {
+          "x": 1,
+          "y": 0.8999999999999999
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 0.5741277777777777,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": {
+          "core": {
+            "dirX": 1,
+            "dirY": 0,
+            "remaining": 4,
+            "cooldown": 25,
+            "cooldownFresh": true
+          },
+          "output": {
+            "displacement": 3.75,
+            "ownsMotion": true,
+            "events": [],
+            "sweep": [
+              1,
+              2,
+              3
+            ]
+          },
+          "initCalls": 1,
+          "stepCalls": 14,
+          "dashHeld": true
+        }
+      },
+      {
+        "ticks": 15,
+        "score": 4.66445388888889,
+        "p": {
+          "x": 48.75,
+          "y": 27.163203888888894
+        },
+        "v": {
+          "x": 1,
+          "y": 0.9999999999999999
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 0.42674277777777814,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": {
+          "core": {
+            "dirX": 1,
+            "dirY": 0,
+            "remaining": 3,
+            "cooldown": 25,
+            "cooldownFresh": true
+          },
+          "output": {
+            "displacement": 3.75,
+            "ownsMotion": true,
+            "events": [],
+            "sweep": [
+              1,
+              2,
+              3
+            ]
+          },
+          "initCalls": 1,
+          "stepCalls": 15,
+          "dashHeld": true
+        }
+      },
+      {
+        "ticks": 16,
+        "score": 4.948550166666667,
+        "p": {
+          "x": 52.5,
+          "y": 28.447300166666672
+        },
+        "v": {
+          "x": 1,
+          "y": 1.0999999999999999
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 0.28409627777777724,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": {
+          "core": {
+            "dirX": 1,
+            "dirY": 0,
+            "remaining": 2,
+            "cooldown": 25,
+            "cooldownFresh": true
+          },
+          "output": {
+            "displacement": 3.75,
+            "ownsMotion": true,
+            "events": [],
+            "sweep": [
+              1,
+              2,
+              3
+            ]
+          },
+          "initCalls": 1,
+          "stepCalls": 16,
+          "dashHeld": true
+        }
+      },
+      {
+        "ticks": 17,
+        "score": 5.094264594444445,
+        "p": {
+          "x": 56.25,
+          "y": 29.693014594444442
+        },
+        "v": {
+          "x": 1,
+          "y": 1.2
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 0.14571442777777713,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": {
+          "core": {
+            "dirX": 1,
+            "dirY": 0,
+            "remaining": 1,
+            "cooldown": 25,
+            "cooldownFresh": true
+          },
+          "output": {
+            "displacement": 3.75,
+            "ownsMotion": true,
+            "events": [],
+            "sweep": [
+              1,
+              2,
+              3
+            ]
+          },
+          "initCalls": 1,
+          "stepCalls": 17,
+          "dashHeld": true
+        }
+      },
+      {
+        "ticks": 18,
+        "score": 5.1947368166666665,
+        "p": {
+          "x": 60,
+          "y": 30.993486816666667
+        },
+        "v": {
+          "x": 1,
+          "y": 1.3
+        },
+        "floors": [],
+        "jumpWay": 1,
+        "jumpPower": 1,
+        "scr": 0.10047222222222224,
+        "status": "playing",
+        "isReplaying": false,
+        "motion": {
+          "core": {
+            "dirX": 1,
+            "dirY": 0,
+            "remaining": 0,
+            "cooldown": 25,
+            "cooldownFresh": true
+          },
+          "output": {
+            "displacement": 3.75,
+            "ownsMotion": true,
+            "events": [
+              "dash-end"
+            ],
+            "sweep": [
+              1,
+              2,
+              3
+            ]
+          },
+          "initCalls": 1,
+          "stepCalls": 18,
+          "dashHeld": true
+        }
+      }
+    ]
+  }
+}

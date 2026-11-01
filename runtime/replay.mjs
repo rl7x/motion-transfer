@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { loadWasm4Core } from './wasm4-core.mjs';
+import { readMemoryWatches } from './memory.mjs';
 
 export const BUTTONS = Object.freeze({
   X: 1, Z: 2, LEFT: 16, RIGHT: 32, UP: 64, DOWN: 128,
@@ -121,6 +122,10 @@ class ReplayRuntime {
       this.frame++;
     }
     return this.observe();
+  }
+
+  readMemory(watches) {
+    return readMemoryWatches(this.memory.buffer, watches);
   }
 
   observe() {

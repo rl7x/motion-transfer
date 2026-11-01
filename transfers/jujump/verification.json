@@ -1,0 +1,2453 @@
+{
+  "schemaVersion": 1,
+  "passed": true,
+  "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+  "sourceSha256": "175b2cd25453e84d99b5b700446d4049c4a9058aab195885a0a57e9ee28e4453",
+  "javascriptSha256": "942d9fbda548404dee32fc8094ad4399b7b0abe304f277b4a38166494ba25c3b",
+  "environment": {
+    "recipientRevision": "cfb39d2f988feb5918eb83697145b5a35adabf58",
+    "sourceSha256": "fb277a1d34622639f8f1d3aa4ecc8bb6254c910b105794249fd9cdefd54df035",
+    "runtimeSha256": "3cb200a6e7d8f191562c8c5e91e9395fbe9098b4f335f2ee6233f03f0b4a25b1",
+    "soundSha256": "52fe5525fe1dd2a7bdeaf4049a6d945ed3da596950fc1d6b4bea707312af95e1",
+    "files": {
+      "runtime/jujump-browser.mjs": "d94ca93cd144e9879b7da58a0f2a705419a8f19349d9b46b1a798e9208893f7c",
+      "web/jujump-boot.js": "c67ee72872d9fc4633d237e2b098ceed2e885736627e8a1202c21b7d728ccdd4",
+      "web/clock.js": "d51578500d68583173a3cfb0aa1702033e2fe363092aa72da39ea5c1ac483a21",
+      "web/port.js": "95a9bf1e97318e85dcf0d329e974c31c1290b25df6af15f4b86a60389668f727",
+      "runtime/paku-browser.mjs": "94aa691f1e741bc95889398bf507308edfb63d46977bbfa7b882f8132c6238f4",
+      "transfer/output.mjs": "c7b7d0f1cc35950923112f7800ca6d10de46dc5781e3eed7a3da4674df677355"
+    },
+    "policy": {
+      "tickRate": 60,
+      "seed": 9,
+      "unitScale": 0.5,
+      "sourceBodyWidth": 8,
+      "horizontal": "Use the frozen dash horizontal displacement; retain JUJUMP velocity when inactive",
+      "vertical": "JUJUMP gravity, jump strength and vertical velocity remain active during a dash",
+      "collision": "Sweep active motion in at most one-pixel increments; retain upward platform overlap resolution and velocity reset; no new edge clamp",
+      "authorship": "Human-authored adapter and host hooks; unchanged Meta-recovered component",
+      "liveEdits": []
+    }
+  },
+  "conformance": {
+    "schemaVersion": 1,
+    "gate": "adapter-conformance",
+    "passed": true,
+    "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+    "sourceSha256": "175b2cd25453e84d99b5b700446d4049c4a9058aab195885a0a57e9ee28e4453",
+    "javascriptSha256": "942d9fbda548404dee32fc8094ad4399b7b0abe304f277b4a38166494ba25c3b",
+    "results": [
+      {
+        "name": "idle-and-turn",
+        "ticks": 40,
+        "passed": true,
+        "firstDivergence": null
+      },
+      {
+        "name": "early-held",
+        "ticks": 100,
+        "passed": true,
+        "firstDivergence": null
+      },
+      {
+        "name": "left-tap",
+        "ticks": 51,
+        "passed": true,
+        "firstDivergence": null
+      },
+      {
+        "name": "release-during-dash",
+        "ticks": 31,
+        "passed": true,
+        "firstDivergence": null
+      },
+      {
+        "name": "turn-during-dash",
+        "ticks": 58,
+        "passed": true,
+        "firstDivergence": null
+      },
+      {
+        "name": "recipient-speed",
+        "ticks": 100,
+        "passed": true,
+        "firstDivergence": null
+      },
+      {
+        "name": "cooldown-boundary",
+        "ticks": 54,
+        "passed": true,
+        "firstDivergence": null
+      },
+      {
+        "name": "scale-without-timer-change",
+        "ticks": 100,
+        "passed": true,
+        "firstDivergence": null
+      },
+      {
+        "name": "restart",
+        "ticks": 30,
+        "passed": true,
+        "firstDivergence": null
+      },
+      {
+        "name": "restart-again",
+        "ticks": 30,
+        "passed": true,
+        "firstDivergence": null
+      },
+      {
+        "name": "counterfactual-component-output",
+        "ticks": 8,
+        "passed": true,
+        "firstDivergence": null
+      }
+    ]
+  },
+  "browser": {
+    "schemaVersion": 1,
+    "gate": "jujump-browser",
+    "passed": true,
+    "results": [
+      {
+        "name": "ordinary-play-matches-original",
+        "passed": true,
+        "checkpoints": 5
+      },
+      {
+        "name": "native-jumps-gravity-and-landing",
+        "passed": true,
+        "airJumpStrengths": [
+          0.7,
+          0.48999999999999994
+        ],
+        "landingRestoresStrength": 1
+      },
+      {
+        "name": "airborne-dash-retains-gravity",
+        "passed": true,
+        "ticks": 8,
+        "dashDistance": 30,
+        "ordinaryDistance": 8,
+        "startY": 20,
+        "endY": 30.993486816666667,
+        "maxVerticalDifference": 7.105427357601002e-15
+      },
+      {
+        "name": "swept-platform-contact",
+        "passed": true,
+        "fixtureIncomingVerticalSpeed": 35,
+        "landedY": 43.10027777777778,
+        "floorY": 50.10027777777778,
+        "remainingDashTicks": 7
+      },
+      {
+        "name": "held-timing-and-frozen-direction",
+        "passed": true,
+        "ticks": 100,
+        "activationTicks": [
+          11,
+          44,
+          77
+        ],
+        "endTicks": [
+          18,
+          51,
+          84
+        ],
+        "sourceBodyWidth": 8
+      },
+      {
+        "name": "death-restart-resets-controller",
+        "passed": true,
+        "restarted": true
+      },
+      {
+        "name": "dash-controls-replay",
+        "passed": true,
+        "replayedTicks": 20,
+        "lifecycleEndFixture": true
+      }
+    ],
+    "traces": {
+      "airborne": {
+        "fixture": "Open air, x30/y20, velocity x1/y0.5; matched initial state; no platforms",
+        "original": [
+          {
+            "ticks": 10,
+            "score": 1.00125,
+            "p": {
+              "x": 30,
+              "y": 20
+            },
+            "v": {
+              "x": 1,
+              "y": 0.5
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 0.10025,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": null
+          },
+          {
+            "ticks": 11,
+            "score": 2.051527777777778,
+            "p": {
+              "x": 31,
+              "y": 21.55027777777778
+            },
+            "v": {
+              "x": 1,
+              "y": 0.6
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 1.0502777777777779,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": null
+          },
+          {
+            "ticks": 12,
+            "score": 2.9368055555555554,
+            "p": {
+              "x": 32,
+              "y": 23.035555555555558
+            },
+            "v": {
+              "x": 1,
+              "y": 0.7
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 0.8852777777777775,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": null
+          },
+          {
+            "ticks": 13,
+            "score": 3.6635833333333334,
+            "p": {
+              "x": 33,
+              "y": 24.462333333333333
+            },
+            "v": {
+              "x": 1,
+              "y": 0.7999999999999999
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 0.7267777777777777,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": null
+          },
+          {
+            "ticks": 14,
+            "score": 4.237711111111111,
+            "p": {
+              "x": 34,
+              "y": 25.836461111111113
+            },
+            "v": {
+              "x": 1,
+              "y": 0.8999999999999999
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 0.5741277777777777,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": null
+          },
+          {
+            "ticks": 15,
+            "score": 4.66445388888889,
+            "p": {
+              "x": 35,
+              "y": 27.16320388888889
+            },
+            "v": {
+              "x": 1,
+              "y": 0.9999999999999999
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 0.4267427777777777,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": null
+          },
+          {
+            "ticks": 16,
+            "score": 4.948550166666667,
+            "p": {
+              "x": 36,
+              "y": 28.44730016666667
+            },
+            "v": {
+              "x": 1,
+              "y": 1.0999999999999999
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 0.28409627777777763,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": null
+          },
+          {
+            "ticks": 17,
+            "score": 5.094264594444445,
+            "p": {
+              "x": 37,
+              "y": 29.693014594444445
+            },
+            "v": {
+              "x": 1,
+              "y": 1.2
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 0.1457144277777775,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": null
+          },
+          {
+            "ticks": 18,
+            "score": 5.1947368166666665,
+            "p": {
+              "x": 38,
+              "y": 30.993486816666667
+            },
+            "v": {
+              "x": 1,
+              "y": 1.3
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 0.10047222222222224,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": null
+          }
+        ],
+        "transfer": [
+          {
+            "ticks": 10,
+            "score": 1.00125,
+            "p": {
+              "x": 30,
+              "y": 20
+            },
+            "v": {
+              "x": 1,
+              "y": 0.5
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 0.10025,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": {
+              "core": {
+                "dirX": 0,
+                "dirY": 0,
+                "remaining": 0,
+                "cooldown": 0,
+                "cooldownFresh": false
+              },
+              "output": {
+                "displacement": 0,
+                "ownsMotion": false,
+                "events": [],
+                "sweep": []
+              },
+              "initCalls": 1,
+              "stepCalls": 10,
+              "dashHeld": false
+            }
+          },
+          {
+            "ticks": 11,
+            "score": 2.051527777777778,
+            "p": {
+              "x": 33.75,
+              "y": 21.55027777777778
+            },
+            "v": {
+              "x": 1,
+              "y": 0.6
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 1.0502777777777779,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": {
+              "core": {
+                "dirX": 1,
+                "dirY": 0,
+                "remaining": 7,
+                "cooldown": 25,
+                "cooldownFresh": true
+              },
+              "output": {
+                "displacement": 3.75,
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ],
+                "sweep": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "initCalls": 1,
+              "stepCalls": 11,
+              "dashHeld": true
+            }
+          },
+          {
+            "ticks": 12,
+            "score": 2.9368055555555554,
+            "p": {
+              "x": 37.5,
+              "y": 23.03555555555555
+            },
+            "v": {
+              "x": 1,
+              "y": 0.7
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 0.8852777777777775,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": {
+              "core": {
+                "dirX": 1,
+                "dirY": 0,
+                "remaining": 6,
+                "cooldown": 25,
+                "cooldownFresh": true
+              },
+              "output": {
+                "displacement": 3.75,
+                "ownsMotion": true,
+                "events": [],
+                "sweep": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "initCalls": 1,
+              "stepCalls": 12,
+              "dashHeld": true
+            }
+          },
+          {
+            "ticks": 13,
+            "score": 3.663583333333334,
+            "p": {
+              "x": 41.25,
+              "y": 24.462333333333333
+            },
+            "v": {
+              "x": 1,
+              "y": 0.7999999999999999
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 0.7267777777777784,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": {
+              "core": {
+                "dirX": 1,
+                "dirY": 0,
+                "remaining": 5,
+                "cooldown": 25,
+                "cooldownFresh": true
+              },
+              "output": {
+                "displacement": 3.75,
+                "ownsMotion": true,
+                "events": [],
+                "sweep": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "initCalls": 1,
+              "stepCalls": 13,
+              "dashHeld": true
+            }
+          },
+          {
+            "ticks": 14,
+            "score": 4.237711111111111,
+            "p": {
+              "x": 45,
+              "y": 25.83646111111111
+            },
+            "v": {
+              "x": 1,
+              "y": 0.8999999999999999
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 0.5741277777777777,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": {
+              "core": {
+                "dirX": 1,
+                "dirY": 0,
+                "remaining": 4,
+                "cooldown": 25,
+                "cooldownFresh": true
+              },
+              "output": {
+                "displacement": 3.75,
+                "ownsMotion": true,
+                "events": [],
+                "sweep": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "initCalls": 1,
+              "stepCalls": 14,
+              "dashHeld": true
+            }
+          },
+          {
+            "ticks": 15,
+            "score": 4.66445388888889,
+            "p": {
+              "x": 48.75,
+              "y": 27.163203888888894
+            },
+            "v": {
+              "x": 1,
+              "y": 0.9999999999999999
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 0.42674277777777814,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": {
+              "core": {
+                "dirX": 1,
+                "dirY": 0,
+                "remaining": 3,
+                "cooldown": 25,
+                "cooldownFresh": true
+              },
+              "output": {
+                "displacement": 3.75,
+                "ownsMotion": true,
+                "events": [],
+                "sweep": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "initCalls": 1,
+              "stepCalls": 15,
+              "dashHeld": true
+            }
+          },
+          {
+            "ticks": 16,
+            "score": 4.948550166666667,
+            "p": {
+              "x": 52.5,
+              "y": 28.447300166666672
+            },
+            "v": {
+              "x": 1,
+              "y": 1.0999999999999999
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 0.28409627777777724,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": {
+              "core": {
+                "dirX": 1,
+                "dirY": 0,
+                "remaining": 2,
+                "cooldown": 25,
+                "cooldownFresh": true
+              },
+              "output": {
+                "displacement": 3.75,
+                "ownsMotion": true,
+                "events": [],
+                "sweep": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "initCalls": 1,
+              "stepCalls": 16,
+              "dashHeld": true
+            }
+          },
+          {
+            "ticks": 17,
+            "score": 5.094264594444445,
+            "p": {
+              "x": 56.25,
+              "y": 29.693014594444442
+            },
+            "v": {
+              "x": 1,
+              "y": 1.2
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 0.14571442777777713,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": {
+              "core": {
+                "dirX": 1,
+                "dirY": 0,
+                "remaining": 1,
+                "cooldown": 25,
+                "cooldownFresh": true
+              },
+              "output": {
+                "displacement": 3.75,
+                "ownsMotion": true,
+                "events": [],
+                "sweep": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "initCalls": 1,
+              "stepCalls": 17,
+              "dashHeld": true
+            }
+          },
+          {
+            "ticks": 18,
+            "score": 5.1947368166666665,
+            "p": {
+              "x": 60,
+              "y": 30.993486816666667
+            },
+            "v": {
+              "x": 1,
+              "y": 1.3
+            },
+            "floors": [],
+            "jumpWay": 1,
+            "jumpPower": 1,
+            "scr": 0.10047222222222224,
+            "status": "playing",
+            "isReplaying": false,
+            "motion": {
+              "core": {
+                "dirX": 1,
+                "dirY": 0,
+                "remaining": 0,
+                "cooldown": 25,
+                "cooldownFresh": true
+              },
+              "output": {
+                "displacement": 3.75,
+                "ownsMotion": true,
+                "events": [
+                  "dash-end"
+                ],
+                "sweep": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "initCalls": 1,
+              "stepCalls": 18,
+              "dashHeld": true
+            }
+          }
+        ]
+      },
+      "timing": {
+        "fixture": "Open-air position/velocity reset each tick to isolate the controller; facing changes on ticks 14–18",
+        "frames": [
+          {
+            "tick": 1,
+            "core": {
+              "dirX": 0,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 9,
+              "cooldownFresh": false
+            },
+            "output": {
+              "displacement": 0,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 2,
+            "core": {
+              "dirX": 0,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 8,
+              "cooldownFresh": false
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 3,
+            "core": {
+              "dirX": 0,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 7,
+              "cooldownFresh": false
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 4,
+            "core": {
+              "dirX": 0,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 6,
+              "cooldownFresh": false
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 5,
+            "core": {
+              "dirX": 0,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 5,
+              "cooldownFresh": false
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 6,
+            "core": {
+              "dirX": 0,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 4,
+              "cooldownFresh": false
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 7,
+            "core": {
+              "dirX": 0,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 3,
+              "cooldownFresh": false
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 8,
+            "core": {
+              "dirX": 0,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 2,
+              "cooldownFresh": false
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 9,
+            "core": {
+              "dirX": 0,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 1,
+              "cooldownFresh": false
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 10,
+            "core": {
+              "dirX": 0,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 0,
+              "cooldownFresh": false
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 11,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 7,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [
+                "dash-start"
+              ],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 12,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 6,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 13,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 5,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 14,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 4,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 15,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 3,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 16,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 2,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 17,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 1,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 18,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [
+                "dash-end"
+              ],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 19,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 24,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 20,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 23,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 21,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 22,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 22,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 21,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 23,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 20,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 24,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 19,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 25,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 18,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 26,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 17,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 27,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 16,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 28,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 15,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 29,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 14,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 30,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 13,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 31,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 12,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 32,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 11,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 33,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 10,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 34,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 9,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 35,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 8,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 36,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 7,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 37,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 6,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 38,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 5,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 39,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 4,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 40,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 3,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 41,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 2,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 42,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 1,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 43,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 0,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 44,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 7,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [
+                "dash-start"
+              ],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 45,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 6,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 46,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 5,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 47,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 4,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 48,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 3,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 49,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 2,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 50,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 1,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 51,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [
+                "dash-end"
+              ],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 52,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 24,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 53,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 23,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 54,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 22,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 55,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 21,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 56,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 20,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 57,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 19,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 58,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 18,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 59,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 17,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 60,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 16,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 61,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 15,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 62,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 14,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 63,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 13,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 64,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 12,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 65,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 11,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 66,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 10,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 67,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 9,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 68,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 8,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 69,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 7,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 70,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 6,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 71,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 5,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 72,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 4,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 73,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 3,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 74,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 2,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 75,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 1,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 76,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 0,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 77,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 7,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [
+                "dash-start"
+              ],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 78,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 6,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 79,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 5,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 80,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 4,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 81,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 3,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 82,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 2,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 83,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 1,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 84,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 25,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 3.75,
+              "ownsMotion": true,
+              "events": [
+                "dash-end"
+              ],
+              "sweep": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          {
+            "tick": 85,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 24,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 86,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 23,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 87,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 22,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 88,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 21,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 89,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 20,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 90,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 19,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 91,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 18,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 92,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 17,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 93,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 16,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 94,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 15,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 95,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 14,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 96,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 13,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 97,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 12,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 98,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 11,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 99,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 10,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          },
+          {
+            "tick": 100,
+            "core": {
+              "dirX": 1,
+              "dirY": 0,
+              "remaining": 0,
+              "cooldown": 9,
+              "cooldownFresh": true
+            },
+            "output": {
+              "displacement": 1,
+              "ownsMotion": false,
+              "events": [],
+              "sweep": []
+            }
+          }
+        ]
+      }
+    },
+    "environment": {
+      "recipientRevision": "cfb39d2f988feb5918eb83697145b5a35adabf58",
+      "sourceSha256": "fb277a1d34622639f8f1d3aa4ecc8bb6254c910b105794249fd9cdefd54df035",
+      "runtimeSha256": "3cb200a6e7d8f191562c8c5e91e9395fbe9098b4f335f2ee6233f03f0b4a25b1",
+      "soundSha256": "52fe5525fe1dd2a7bdeaf4049a6d945ed3da596950fc1d6b4bea707312af95e1",
+      "files": {
+        "runtime/jujump-browser.mjs": "d94ca93cd144e9879b7da58a0f2a705419a8f19349d9b46b1a798e9208893f7c",
+        "web/jujump-boot.js": "c67ee72872d9fc4633d237e2b098ceed2e885736627e8a1202c21b7d728ccdd4",
+        "web/clock.js": "d51578500d68583173a3cfb0aa1702033e2fe363092aa72da39ea5c1ac483a21",
+        "web/port.js": "95a9bf1e97318e85dcf0d329e974c31c1290b25df6af15f4b86a60389668f727",
+        "runtime/paku-browser.mjs": "94aa691f1e741bc95889398bf507308edfb63d46977bbfa7b882f8132c6238f4",
+        "transfer/output.mjs": "c7b7d0f1cc35950923112f7800ca6d10de46dc5781e3eed7a3da4674df677355"
+      },
+      "policy": {
+        "tickRate": 60,
+        "seed": 9,
+        "unitScale": 0.5,
+        "sourceBodyWidth": 8,
+        "horizontal": "Use the frozen dash horizontal displacement; retain JUJUMP velocity when inactive",
+        "vertical": "JUJUMP gravity, jump strength and vertical velocity remain active during a dash",
+        "collision": "Sweep active motion in at most one-pixel increments; retain upward platform overlap resolution and velocity reset; no new edge clamp",
+        "authorship": "Human-authored adapter and host hooks; unchanged Meta-recovered component",
+        "liveEdits": []
+      }
+    }
+  },
+  "metaCalled": false
+}

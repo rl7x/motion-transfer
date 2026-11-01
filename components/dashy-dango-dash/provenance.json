@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+  "sourceSha256": "7cfd9475696ca744982fb7c00d988aae982840d06b0fa198f111d42bba2d18bc",
+  "javascriptSha256": "8395ec0eebaea00772dea52dbcb968e53747a3a0d509dc8aaba49a840c767f06",
+  "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+  "evidenceSha256": "1d793764f3f17e588285b8ddda9fa2e345c2f6df32deb396091889cdb8303fb7",
+  "model": "muse-spark-1.3",
+  "models": [
+    "muse-wonder-1.0",
+    "muse-spark-1.3"
+  ],
+  "responseId": "resp_6ae7385c032974c6d9694947",
+  "estimatedCostUsd": 0.28511424999999996,
+  "humanAssistance": [
+    "Selected the motion boundary and function slices",
+    "Mapped live registry and numeric state fields",
+    "Selected development inputs and evaluator events",
+    "Converted a failed acceptance case into development evidence and selected a focused patch context"
+  ],
+  "implementationAuthor": "Meta models; no manual source repairs",
+  "buildTool": "esbuild 0.28.2",
+  "evaluationScope": "Finite motion rollouts; combat, scoring, visuals, and recipient integration excluded"
+}

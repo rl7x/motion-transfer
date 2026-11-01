@@ -32,10 +32,20 @@ fix: correct the broken link
 Use this exact title format:
 
 ```text
-[area] <Imperative description of the change>
+<type>(<scope>): <short imperative description>
 ```
 
-Example: `[runtime] Add deterministic input replay`.
+- Use `feat` for a new capability, `fix` for a bug fix, and `chore` for maintenance.
+- Name the affected area in the scope, such as `agent`, `runtime`, or `web`.
+- Start the description with a lowercase imperative verb and leave off the trailing period. Preserve proper names such as Meta.
+
+Examples:
+
+```text
+feat(agent): add bounded Meta cartridge experiments
+fix(runtime): reset input state between replays
+chore(docs): update the setup instructions
+```
 
 - Explain the problem, the resulting behavior, and why the change fixes it. Use short paragraphs and concrete examples.
 - Describe the final diff; omit implementation diaries and generic filler.

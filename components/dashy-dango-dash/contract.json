@@ -1,0 +1,78 @@
+{
+  "name": "Recovered dash and walking controller",
+  "scope": "Standalone 60Hz movement only: walking, dash activation/active motion, direction storage, cooldown. Excludes registries, allocation, damage, scoring, rendering and effects; no cartridge/runtime/assets.",
+  "defaults": {
+    "walkingSpeed": 2,
+    "dashDistance": 60,
+    "cooldownTicks": 25,
+    "initialCooldownTicks": 10
+  },
+  "stateDescription": "JSON state {dirX,dirY,remaining,cooldown,cooldownFresh}: float32 dash direction (initial 0,0), int remaining dash ticks, int cooldown ticks initialized from initialCooldownTicks and decremented on non-dash ticks.",
+  "rules": [
+    {
+      "description": "Cooldown decrements once per non-dash tick when >0; initial 10 shows 9 after tick 1, and dash is blocked until cooldown was 0 at tick start.",
+      "evidence": [
+        "dev:idle",
+        "dev:cooldown-boundary",
+        "binary:func9"
+      ]
+    },
+    {
+      "description": "Activation requires X (bit1) held/pressed with cooldown 0, even if held continuously; retrigger occurs on first tick after cooldown reaches 0 on a prior tick.",
+      "evidence": [
+        "dev:startup-held",
+        "dev:held-retrigger",
+        "dev:cooldown-boundary"
+      ]
+    },
+    {
+      "description": "On activation set cooldown=cooldownTicks, emit dash-start, move same tick; cooldown does not decrement during dash.",
+      "evidence": [
+        "dev:tap-right",
+        "dev:startup-held"
+      ]
+    },
+    {
+      "description": "Dash lasts sourceBodyWidth ticks (8 ticks at width 8) moving fround(dashDistance/width) per tick along direction; dash-end on last tick when remaining transitions to 0; ownsMotion on all dash ticks.",
+      "evidence": [
+        "dev:tap-right",
+        "dev:tap-up-down",
+        "binary:func9"
+      ]
+    },
+    {
+      "description": "Input direction from left16/right32/up64/down128, float32-normalized (func102); conflicting axes cancel. During dash direction is frozen despite input changes.",
+      "evidence": [
+        "binary:func70",
+        "binary:func102",
+        "dev:conflicting-inputs",
+        "dev:change-direction"
+      ]
+    },
+    {
+      "description": "Dash activation with zero input direction defaults to (1,0); stored direction is not reused for neutral activation; new directional activation replaces stored direction.",
+      "evidence": [
+        "dev:neutral-dash",
+        "binary:func9",
+        "dev:tap-up-down"
+      ]
+    },
+    {
+      "description": "When not dashing, walking displacement is normalized input direction times walkingSpeed in float32, including diagonals and zero for cancelled inputs.",
+      "evidence": [
+        "dev:walking-directions",
+        "dev:diagonal",
+        "binary:func70"
+      ]
+    }
+  ],
+  "limitations": [
+    "Dash duration inferred as sourceBodyWidth ticks with per-tick dashDistance/width; traces only confirm this at width 8, distance 60.",
+    "Only X activation is evidenced; Z and other buttons have no observed dash effect and are ignored.",
+    "Exact float32 rounding of donor sqrt/division approximated with Math.fround operations."
+  ],
+  "interfaceVersion": 1,
+  "tickRate": 60,
+  "units": "source-pixels-per-tick",
+  "numericDomain": "sourceBodyWidth=8; default donor configuration; tested button masks"
+}
