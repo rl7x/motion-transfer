@@ -1,10 +1,10 @@
 import { createHash } from 'node:crypto';
 import { createMetaClient } from './meta-client.mjs';
 import { loadTarget } from './target.mjs';
-import { TOOLS } from './tool-schema.mjs';
 import { createCartridgeTools } from './tools.mjs';
 import { evidenceHistory } from './evidence.mjs';
 import { PRICES, readUsage } from './accounting.mjs';
+import {createToolDiscovery} from './tool-discovery.mjs';
 
 export const DEFAULT_QUESTION = 'Determine whether holding the dash button behaves differently from pressing and releasing it. Choose controlled experiments and cite the observations supporting your conclusion.';
 
@@ -19,6 +19,16 @@ export const DEFAULT_LIMITS = Object.freeze({
 
 const INSTRUCTIONS = `You are investigating a compiled game through a restricted experiment harness.
 You have only a registered cartridge, WASM-4 host documentation in tool descriptions, and the listed tools.
+Prefer run_experiment_program for a short program that prepares a checkpoint, chooses interventions/inputs,
+and branches on actual returned measurements. Or use prepare_checkpoint followed by run_experiment.
+The host owns branch creation and restoration; you do not invent branch names in these workflows.
+Use returned checkpoint-bound typed target handles. Field hints are human assistance; never treat a static
+instruction offset or an address from a different update as the same field. Hypotheses, values and inputs
+are your choices; the host supplies no expected conclusion. No existing recovered implementation is available.
+After an initial experiment, choose a subsequent action from its actual result: a targeted follow-up,
+bounded evidence read, or record_finding with supported/rejected/unresolved interpretation and evidence IDs.
+Specialized tools may load through client-executed tool_search namespaces. Orientation and complete experiment
+tools are already available. In an experiment program sdk.static can inspect code without another model round trip.
 Use inspect_wasm overview at least once. Choose code yourself with list_functions, inspect_function,
 decompile_function and call_graph. trace_writers can connect actual scalar stores to original function indices.
 One isolated worker persists throughout this investigation. main starts at frame 0. session_advance continues
@@ -88,6 +98,7 @@ export async function investigate({
   signal,
   requirements={},
   reasoningEffort='high',
+  toolDiscovery='none',
 } = {}) {
   const limits = { ...DEFAULT_LIMITS, ...overrides };
   validateLimits(limits);
@@ -132,6 +143,7 @@ export async function investigate({
     delete report.error;
     delete report.finishedAt;
   }
+  const catalog=createToolDiscovery({mode:report.toolDiscovery?.mode??toolDiscovery,model,state:report.toolDiscovery});report.toolDiscovery=catalog.state;
   const controller = new AbortController();
   const cancel=()=>controller.abort();signal?.addEventListener('abort',cancel,{once:true});if(signal?.aborted)cancel();
   const timer = setTimeout(() => controller.abort(), limits.timeoutMs);
@@ -151,14 +163,14 @@ export async function investigate({
       checkTime();
       const finalizing = turn === limits.maxModelCalls - 1;
       if (finalizing) {
-        history.splice(0, history.length, ...evidenceHistory(report));
+        history.splice(0, history.length, ...evidenceHistory(report,{includeDiscovery:false}));
         report.contextCompactions.push({ at: new Date().toISOString(), reason: 'final-conclusion' });
       }
       const request = {
         model,
-        instructions: INSTRUCTIONS + `\nYou have ${limits.maxModelCalls} generation requests and ${limits.maxToolCalls} tool calls total. This is request ${turn+1}. Reserve the last request for a conclusion. Prioritize execution evidence before lengthy static browsing. fork_checkpoint branchId is a NEW unused name, never main. Learn from tool errors; do not repeat a rejected call with the same arguments. Requirements: ${JSON.stringify(report.requirements??requirements)}.` + (finalizing ? '\nThis is the last generation request. No tools remain. Give your concise conclusion from the recorded observations, cite experiment/comparison IDs, and state what remains inconclusive.' : ''),
+        instructions: INSTRUCTIONS + `\nYou have ${limits.maxModelCalls} generation requests and ${limits.maxToolCalls} tool calls total. This is request ${turn+1}. Reserve the last request for a conclusion. Prioritize execution evidence before lengthy static browsing. ${catalog.state.mode==='client'?'Use managed experiments rather than manual branch creation.':'If using low-level forks, the name must be NEW, never main.'} Learn from tool errors; do not repeat a rejected call with the same arguments. Requirements: ${JSON.stringify(report.requirements??requirements)}.` + (finalizing ? '\nThis is the last generation request. No tools remain. Give your concise conclusion from the recorded observations, cite experiment/comparison IDs, and state what remains inconclusive.' : ''),
         input: history,
-        tools: finalizing ? [] : TOOLS,
+        tools: finalizing ? [] : catalog.definitions(),
         store: false,
         include: ['reasoning.encrypted_content'],
         reasoning: { effort: reasoningEffort },
@@ -202,6 +214,7 @@ export async function investigate({
       if (response.status !== 'completed') throw new Error(`Meta response ended with status ${response.status}; stopping without retry`);
       if (report.estimatedCostUsd > limits.maxCostUsd) throw new Error('Reported usage exceeded the local cost budget; stopping');
       if (publicMessages.some(message => message.refused)) throw new Error('Meta declined the investigation');
+      catalog.validateResponse(response.output);
 
       for (const item of response.output) {
         if (item.type === 'reasoning' && (typeof item.encrypted_content !== 'string' || !item.encrypted_content)) {
@@ -209,21 +222,26 @@ export async function investigate({
         }
         history.push(item.type === 'reasoning' ? { ...item, summary: item.summary ?? [] } : item);
       }
-      const calls = response.output.filter(item => item.type === 'function_call');
+      const calls = response.output.filter(item => item.type === 'function_call'||item.type==='tool_search_call');
       if (finalizing && calls.length) throw new Error('Meta returned a tool call after tools were disabled for the final request');
       if (!calls.length) {
         const conclusion = publicMessages.map(message => message.text).filter(Boolean).join('\n');
         const successful = report.toolCalls.filter(call => ['run_original','session_advance','compare_branches'].includes(call.name)&&call.ok);
-        const citations = new Set(conclusion.match(/\b(?:exp-\d{3}|cmp-\d{3})\b/g) ?? []);
+        const citations = new Set(conclusion.match(/\b(?:exp-\d{3}|cmp-\d{3}|experiment-[a-f0-9-]{36}|[a-f0-9]{64})\b/g) ?? []);
         const cited = successful.filter(call => citations.has(call.experimentId)||citations.has(call.result?.comparisonId));
         const signatures = new Set(cited.filter(call=>call.name!=='compare_branches').map(call => JSON.stringify(call.args.steps.map(step => [step.buttons, step.frames]))));
-        const comparison=cited.some(call=>call.name==='compare_branches'&&call.result.edits?.length&&call.result.checkpoints?.length);
+        const managed=report.toolCalls.filter(call=>call.ok).flatMap(call=>(call.name==='run_experiment'?[call.result]:call.name==='run_experiment_program'?call.result.experiments??[]:[]).filter(result=>result.status==='completed'&&result.initialEditDifference?.edits.length&&result.frameCount>0).map(result=>({call,result})));
+        const citedManaged=managed.filter(({result})=>citations.has(result.experimentId)||citations.has(result.artifactRef.id));
+        const comparison=citedManaged.length>0||cited.some(call=>call.name==='compare_branches'&&call.result.edits?.length&&call.result.checkpoints?.length);
+        const inspected=report.session?.staticEvidence?.some(item=>['wat','decompilation','writer-trace'].includes(item.kind))||report.toolCalls.some(call=>['inspect_function','decompile_function','trace_writers'].includes(call.name)&&call.ok);
+        const oriented=report.toolCalls.some(call=>call.name==='inspect_wasm'&&call.ok)||report.session?.experimentWorkbench?.programs.some(program=>program.operations.some(operation=>operation.name==='inspect_wasm'&&operation.status==='completed'));
         if (!conclusion || (!comparison&&(signatures.size<2||cited.length<2))
-          || !report.toolCalls.some(call => call.name === 'inspect_wasm' && call.ok)) {
+          || !oriented) {
           throw new Error('Model ended without an inspection and two contrasting, cited experiments');
         }
         if(report.requirements?.branchComparison&&!comparison)throw Error('This investigation requires a cited controlled branch perturbation comparison');
-        if(report.requirements?.codeInspection&&!report.toolCalls.some(call=>['inspect_function','decompile_function','trace_writers'].includes(call.name)&&call.ok))throw Error('This investigation requires actual code inspection');
+        if(report.requirements?.codeInspection&&!inspected)throw Error('This investigation requires actual code inspection');
+        if(report.requirements?.followupDecision&&!citedManaged.some(({call,result})=>report.toolCalls.some(next=>next.ok&&next.requestAttempt>call.requestAttempt&&['record_finding','run_experiment','run_experiment_program','read_experiment','select_component_evidence','annotate_function'].includes(next.name)&&[result.experimentId,result.artifactRef.id,...(next.name==='run_experiment'?[result.checkpointId]:[])].some(id=>JSON.stringify(next.args).includes(id)))))throw Error('The managed experiment needs a subsequent model action linked to its actual result');
         if(report.requirements?.componentAcceptance&&!report.session?.recovery?.acceptedAttempt)throw Error('No new component passed separate acceptance; recovery remains incomplete');
         report.conclusion = conclusion;
         report.status = 'completed';
@@ -236,9 +254,14 @@ export async function investigate({
         if (typeof call.call_id !== 'string' || !call.call_id || ids.has(call.call_id)
           || (call.status && call.status !== 'completed')) throw new Error('Meta returned a duplicate or incomplete tool call');
         ids.add(call.call_id);
-        const entry = { callId: call.call_id, name: call.name, ok: false };
+        const entry = { callId: call.call_id, name: call.type==='tool_search_call'?'tool_search':call.name,namespace:call.namespace??null,requestAttempt:turn+1,ok: false };
         report.toolCalls.push(entry);
         try {
+          if(call.type==='tool_search_call'){
+            const loaded=catalog.load(call);entry.args=loaded.args;entry.result=loaded.result;entry.ok=true;
+            history.push(loaded.output);await onUpdate(report);continue;
+          }
+          entry.name=catalog.route(call);
           if (typeof call.arguments !== 'string' || Buffer.byteLength(call.arguments) > 32_768) throw new Error('Tool arguments exceed 32 KB or are invalid');
           entry.args = JSON.parse(call.arguments);
           entry.startedAt=new Date().toISOString();await onUpdate(report);
@@ -260,7 +283,9 @@ export async function investigate({
         } catch (error) {
           if(worker?.sessionState)report.session=worker.sessionState;
           entry.error = error.message;
-          history.push({ type: 'function_call_output', call_id: call.call_id, output: JSON.stringify({ error: entry.error,...(report.session?{sessionContext:{sessionId:report.session.id,occupiedBranchIds:report.session.branches.map(branch=>branch.id),checkpointIds:report.session.checkpoints.map(checkpoint=>checkpoint.id)}}:{}) }) });
+          if(call.type==='tool_search_call'){
+            history.push(catalog.failedSearch(call),{role:'user',content:[{type:'input_text',text:'Local tool discovery failed: '+entry.error}]});
+          }else history.push({ type: 'function_call_output', call_id: call.call_id, output: JSON.stringify({ error: entry.error,...(report.session?{sessionContext:{sessionId:report.session.id,occupiedBranchIds:report.session.branches.map(branch=>branch.id),checkpointIds:report.session.checkpoints.map(checkpoint=>checkpoint.id)}}:{}) }) });
         }
         entry.finishedAt=new Date().toISOString();
         await onUpdate(report);
