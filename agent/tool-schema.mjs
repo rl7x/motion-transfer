@@ -1,4 +1,6 @@
 import { MEMORY_TYPES, validateMemoryWatches,validateMemoryEdit,memoryTypeSize } from '../runtime/memory.mjs';
+import {COMPONENT_TOOLS} from './component-workbench.mjs';
+import {validateSchema} from './schema.mjs';
 
 export const MAX_TOOL_OUTPUT_BYTES = 32_768;
 
@@ -89,6 +91,7 @@ export const TOOLS = [{
 }];
 
 const branchId={type:'string',pattern:'^[a-z][a-z0-9-]{0,39}$',description:'Existing branch identity. The initial branch is main.'};
+TOOLS.push(...COMPONENT_TOOLS);
 const watches=TOOLS.find(tool=>tool.name==='run_original').parameters.properties.watches;
 const steps=TOOLS.find(tool=>tool.name==='run_original').parameters.properties.steps;
 for(const name of ['session_observe','read_memory','session_reset'])TOOLS.push({
@@ -123,6 +126,10 @@ TOOLS.push({type:'function',name:'capture_frame',strict:true,
   description:'Capture the current native framebuffer as a real PNG and send it alongside structured evidence to the model. Select only informative frames: at most four images per investigation. The image retains session, branch, frame, palette and hashes.',
   parameters:{type:'object',properties:{branchId,reason:{type:'string',minLength:1,maxLength:300}},required:['branchId','reason'],additionalProperties:false},
 });
+TOOLS.push({type:'function',name:'record_finding',strict:true,
+  description:'Record a supported, rejected, or unresolved model interpretation with confidence and real session evidence links. Status describes your interpretation of finite observations; it does not establish universal correctness.',
+  parameters:{type:'object',properties:{claim:{type:'string',minLength:1,maxLength:800},status:{type:'string',enum:['supported','rejected','unresolved']},confidence:{type:'string',enum:['low','medium','high']},evidenceIds:{type:'array',minItems:1,maxItems:8,items:{type:'string',minLength:1,maxLength:80}}},required:['claim','status','confidence','evidenceIds'],additionalProperties:false},
+});
 TOOLS.push({type:'function',name:'trace_writers',strict:true,
   description:'Trace executed scalar store writers to a selected absolute memory range in a separate instrumented analysis copy restored from a checkpoint. Compare its full observed behavior against the unchanged cartridge for the same inputs. At most 120 frames and 64 hits. Does not implement pausing watchpoints, host writes, SIMD, bulk or atomic write tracing.',
   parameters:{type:'object',properties:{checkpointId:{type:'string'},address:{type:'integer',minimum:0,maximum:65535},byteLength:{type:'integer',minimum:1,maximum:256},steps:{...steps,maxItems:4}},required:['checkpointId','address','byteLength','steps'],additionalProperties:false},
@@ -150,6 +157,9 @@ function integer(value, minimum, maximum) {
 }
 
 export function validateToolInput(name, args) {
+  if(name==='record_finding'){validateSchema(args,TOOLS.find(tool=>tool.name===name).parameters);return;}
+  const component=COMPONENT_TOOLS.find(tool=>tool.name===name);
+  if(component){validateSchema(args,component.parameters);return;}
   if(name==='capture_frame'){
     object(args,['branchId','reason']);validateToolInput('session_observe',{branchId:args.branchId,watches:[]});
     if(typeof args.reason!=='string'||!args.reason.trim()||args.reason.length>300)throw Error('An image needs a selective capture reason');return;

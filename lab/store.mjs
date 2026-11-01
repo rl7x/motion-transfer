@@ -22,7 +22,7 @@ export async function createLabStore(directory){
   return{
     async close(){await rm(lock,{recursive:true});},
     async jobs(){return Promise.all((await readdir(join(directory,'jobs'))).filter(name=>name.endsWith('.json')).map(name=>json(pathFor(name.slice(0,-5)))));},
-    async writeJob(job){const path=pathFor(job.id),temporary=path+'.'+randomUUID()+'.tmp';await writeFile(temporary,JSON.stringify(job,null,2)+'\n',{mode:0o600});await rename(temporary,path);await saveInvestigationEvidence(directory,job.report?.session);},
+    async writeJob(job){const path=pathFor(job.id),temporary=path+'.'+randomUUID()+'.tmp';await writeFile(temporary,JSON.stringify(job,null,2)+'\n',{mode:0o600});await rename(temporary,path);await saveInvestigationEvidence(directory,job.report?.session,job.report);},
     async publish(files,metadata){
       if(Object.keys(files).sort().join(',')!==ROADSTER_FILES.join(','))throw Error('Invalid Roadster artifact files');
       const manifest={schemaVersion:1,...metadata,files:Object.fromEntries(Object.entries(files).map(([name,bytes])=>[name,digest(bytes)]))};

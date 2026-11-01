@@ -12,7 +12,8 @@ export const MOTION_ASSISTANCE='Motion fields come from a HUMAN-MAPPED read-only
 
 export function observeRuntime(runtime,watches=[]){
   const observation=runtime.observe();
-  try{const {position,direction,cooldown,remaining,sourceBodyWidth}=observeDonorMotion(runtime);observation.motion={position,direction,cooldown,remaining,sourceBodyWidth};}
+  try{const {position,direction,cooldown,remaining,sourceBodyWidth,pointers}=observeDonorMotion(runtime);observation.motion={position,direction,cooldown,remaining,sourceBodyWidth,
+    fieldHints:{source:'human-mapped-assistance',x:{address:pointers.position,type:'f32'},y:{address:pointers.position+4,type:'f32'},cooldown:{address:pointers.dash+42,type:'i16'},remaining:{address:pointers.dash+44,type:'i16'}}};}
   catch{observation.motion=null;}
   observation.memory=runtime.readMemory(watches);
   return observation;
@@ -25,7 +26,9 @@ export async function createInvestigationSession(bytes,saved){
   const branches=new Map([['main',{id:'main',runtime,actions:[],experimental:false}]]);
   const hostSources=await Promise.all(['replay.mjs','memory.mjs','investigation-session.mjs'].map(name=>readFile(new URL(name,import.meta.url),'utf8')));
   const identity={...runtime.provenance,hostSha256:digest(hostSources.join('\n'))};
-  const checkpoints=new Map(),observations=new Map(),comparisons=[],staticEvidence=[],annotations=[],captures=[];
+  const checkpoints=new Map(),observations=new Map(),comparisons=[],staticEvidence=[],annotations=[],captures=[],findings=[];
+  const recovery=structuredClone(saved?.recovery??{selections:[],attempts:[]});
+  if(!Array.isArray(recovery.selections)||recovery.selections.length>3||!Array.isArray(recovery.attempts)||recovery.attempts.length>3)throw Error('Invalid component development journal');
   const fingerprint=runtime=>{const {frame,memoryHash,framebufferHash,storage}=runtime.observe();return{frame,memoryHash,framebufferHash,storage,faulted:runtime.faulted};};
   function verify(runtime,expected){assert.deepEqual(fingerprint(runtime),expected,'Replay restoration hash mismatch');}
   const branch=id=>{const value=branches.get(id);if(!value)throw Error('Unknown investigation branch: '+id);return value;};
@@ -57,7 +60,8 @@ export async function createInvestigationSession(bytes,saved){
     observations.set(observationId,{id:observationId,branchId:value.id,actionCount:value.actions.length,verification:fingerprint(value.runtime),result});
     return result;
   }
-  function snapshot(){return structuredClone({schemaVersion:1,id,identity,branches:[...branches.values()].map(({runtime,...value})=>({...value,verification:fingerprint(runtime)})),checkpoints:[...checkpoints.values()],observations:[...observations.values()],comparisons,staticEvidence,annotations,captures});}
+  function snapshot(){return structuredClone({schemaVersion:1,id,identity,branches:[...branches.values()].map(({runtime,...value})=>({...value,verification:fingerprint(runtime)})),checkpoints:[...checkpoints.values()],observations:[...observations.values()],comparisons,staticEvidence,annotations,captures,findings,recovery});}
+  const evidenceIds=()=>new Set([...staticEvidence.map(item=>item.id),...observations.keys(),...checkpoints.keys(),...comparisons.map(item=>item.comparisonId),...annotations.map(item=>item.id),...captures.map(item=>item.evidenceId),...findings.map(item=>item.id)]);
   if(saved){
     if(saved.schemaVersion!==1||typeof id!=='string'||!Array.isArray(saved.branches)||!saved.branches.length||saved.branches.length>6||saved.checkpoints?.length>16||saved.observations?.length>128)throw Error('Invalid investigation session journal');
     assert.deepEqual(saved.identity,identity,'Checkpoint cartridge/runtime identity mismatch');
@@ -84,18 +88,23 @@ export async function createInvestigationSession(bytes,saved){
     staticEvidence.push(...(saved.staticEvidence??[]));annotations.push(...(saved.annotations??[]));
     if((saved.captures?.length??0)>4)throw Error('Capture limit reached');
     for(const capture of saved.captures??[]){if(!capture.dataUrl?.startsWith('data:image/png;base64,')||digest(Buffer.from(capture.dataUrl.split(',')[1],'base64'))!==capture.pngSha256)throw Error('Capture evidence hash mismatch');captures.push(capture);}
+    if((saved.findings?.length??0)>16)throw Error('Finding limit reached');findings.push(...(saved.findings??[]));
   }
   return{
-    id,identity,snapshot,
+    id,identity,snapshot,recovery,
     async reconstructCheckpoint(checkpointId,options){const value=checkpoints.get(checkpointId);if(!value)throw Error('Unknown checkpoint');return replay(value.actions,value.verification,options);},
     recordStatic(evidence){if(staticEvidence.some(item=>item.id===evidence.id))return;if(staticEvidence.length>=128)throw Error('Static evidence limit reached');staticEvidence.push(structuredClone(evidence));},
     annotate(args){
-      const known=new Set([...staticEvidence.map(item=>item.id),...observations.keys(),...checkpoints.keys(),...comparisons.map(item=>item.comparisonId),...annotations.map(item=>item.id),...captures.map(item=>item.evidenceId)]);
+      const known=evidenceIds();
       if(args.evidenceIds.some(id=>!known.has(id)))throw Error('Annotation cites unknown session evidence');
       if(annotations.length>=64)throw Error('Annotation limit reached');
       const annotation={id:`note-${String(annotations.length+1).padStart(3,'0')}`,sessionId:id,cartridgeSha256:identity.cartridgeSha256,nameSource:'agent-inference',...args};annotations.push(annotation);return{result:annotation};
     },
     async execute(name,args){
+      if(name==='record_finding'){
+        if(findings.length>=16||args.evidenceIds.some(id=>!evidenceIds().has(id)))throw Error('Finding limit reached or unknown evidence citation');
+        const finding={id:`finding-${String(findings.length+1).padStart(3,'0')}`,sessionId:id,...args,reviewStatus:'Model interpretation; not independently established'};findings.push(finding);return{result:finding};
+      }
       if(name==='diff_memory'){
         const records=[args.fromObservationId,args.toObservationId].map(key=>{const value=observations.get(key);if(!value)throw Error('Unknown observation identity');return value;});
         const runtimes=await Promise.all(records.map(record=>replay(branch(record.branchId).actions.slice(0,record.actionCount),record.verification)));
@@ -112,6 +121,10 @@ export async function createInvestigationSession(bytes,saved){
         if(total>600||comparisons.length>=12||observations.size+2*args.steps.length>128)throw Error('Comparison frame, observation or count limit reached');
         for(const value of [control,experimental])if(value.runtime.faulted||value.actions.length+args.steps.length>128||value.actions.reduce((sum,action)=>sum+(action.frames??0),0)+total>7200)throw Error('Branch cannot advance this comparison');
         const result={comparisonId:`cmp-${String(comparisons.length+1).padStart(3,'0')}`,sessionId:id,hypothesis:args.hypothesis,checkpointId:checkpoint.id,controlBranchId:control.id,experimentalBranchId:experimental.id,identicalInputs:args.steps,edits:suffix(experimental).filter(action=>action.kind==='write'),firstDivergence:null,checkpoints:[],scope:'Identical inputs and elapsed frames in two replay-verified branches. Finite observations; no causal claim is assigned automatically.'};
+        let priorA=observeRuntime(control.runtime).motion,priorB=observeRuntime(experimental.runtime).motion,elapsedFrame=0;
+        const initialA=priorA,initialB=priorB;result.normalizedTrace=[];result.firstBehaviorDivergence=null;
+        result.eventConvention='Human-authored normalization: start when remaining changes from <=0 to >0; end when >0 becomes 0. Motion is measured relative to each branch before the comparison.';
+        const normalize=(current,previous,initial)=>current&&previous&&initial?{dx:current.position.x-initial.position.x,dy:current.position.y-initial.position.y,cooldown:current.cooldown,remaining:current.remaining,ownsMotion:previous.remaining>0||(previous.remaining<=0&&current.remaining>0),events:[...(previous.remaining<=0&&current.remaining>0?['dash-start']:[]),...(previous.remaining>0&&current.remaining===0?['dash-end']:[])]}:null;
         for(const step of args.steps){
           const count={control:0,experimental:0};let failure;
           try{
@@ -119,6 +132,10 @@ export async function createInvestigationSession(bytes,saved){
               count.control++;control.runtime.step(step.buttons,1);
               count.experimental++;experimental.runtime.step(step.buttons,1);
               const a=observeRuntime(control.runtime,args.watches),b=observeRuntime(experimental.runtime,args.watches);
+              elapsedFrame++;
+              const normalized={elapsedFrame,control:normalize(a.motion,priorA,initialA),experimental:normalize(b.motion,priorB,initialB)};priorA=a.motion;priorB=b.motion;
+              if(result.normalizedTrace.length<16)result.normalizedTrace.push(normalized);
+              if(!result.firstBehaviorDivergence&&JSON.stringify(normalized.control)!==JSON.stringify(normalized.experimental))result.firstBehaviorDivergence=normalized;
               if(!result.firstDivergence&&(a.memoryHash!==b.memoryHash||a.framebufferHash!==b.framebufferHash||a.storage.hash!==b.storage.hash))result.firstDivergence={elapsedFrame:result.checkpoints.reduce((sum,point)=>sum+point.frames,0)+tick+1,frame:a.frame,control:summarizeObservation(a),experimental:summarizeObservation(b)};
             }
           }catch(error){failure=error;}

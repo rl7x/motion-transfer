@@ -5,12 +5,13 @@ import { replayTrace } from '../runtime/trace.mjs';
 import { createWasmInspection, inspectFunction, listFunctions,navigateCallGraph } from './wasm-inspection.mjs';
 import {decompileWasm,decompileFunction} from './decompile.mjs';
 import {traceMemoryWriters} from './write-instrumentation.mjs';
+import {createComponentWorkbench,COMPONENT_TOOLS} from './component-workbench.mjs';
 import { summarizeObservation } from './observation.mjs';
 import { observeDonorMotion } from '../runtime/donor-observation.mjs';
 import { createInvestigationSession } from '../runtime/investigation-session.mjs';
 
 const target=await loadTarget();
-let session,inspection,decompilation;
+let session,inspection,decompilation,workbench;
 
 
 async function execute(name, args) {
@@ -20,7 +21,11 @@ async function execute(name, args) {
     return{result:{sessionId:session.id,identity:session.identity,restored:Boolean(args.sessionState)}};
   }
   validateToolInput(name, args);
-  if(name.startsWith('session_')||['read_memory','checkpoint_state','fork_checkpoint','write_memory','diff_memory','compare_branches','capture_frame'].includes(name)){
+  if(COMPONENT_TOOLS.some(tool=>tool.name===name)){
+    if(!session)throw Error('Inspect code and collect session execution evidence first');
+    workbench??=createComponentWorkbench(session);return workbench.execute(name,args);
+  }
+  if(name.startsWith('session_')||['read_memory','checkpoint_state','fork_checkpoint','write_memory','diff_memory','compare_branches','capture_frame','record_finding'].includes(name)){
     session??=await createInvestigationSession(target.bytes);
     return session.execute(name,args);
   }
