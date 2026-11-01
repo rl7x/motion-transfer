@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "target": "dashy-dango",
+  "description": "Start gameplay, move right, dash right, release, and move down.",
+  "steps": [
+    { "buttons": 0, "frames": 1, "checkpoint": "title" },
+    { "buttons": 1, "frames": 1, "checkpoint": "start-requested" },
+    { "buttons": 0, "frames": 20, "checkpoint": "gameplay" },
+    { "buttons": 32, "frames": 10, "checkpoint": "move-right" },
+    { "buttons": 33, "frames": 1, "checkpoint": "dash-right" },
+    { "buttons": 32, "frames": 10, "checkpoint": "after-dash" },
+    { "buttons": 0, "frames": 30, "checkpoint": "release" },
+    { "buttons": 128, "frames": 10, "checkpoint": "move-down" }
+  ]
+}

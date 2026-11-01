@@ -1,6 +1,6 @@
 # Dashy Dango target
 
-Pinned, precompiled WASM-4 cartridge for Glassbox's proposed dash movement and cooldown extraction.
+Pinned, precompiled WASM-4 cartridge for dash movement and cooldown extraction.
 
 - **Upstream:** [willGuimont/dashy-dango](https://github.com/willGuimont/dashy-dango)
 - **Revision:** `9b899e81790fb3c67243f4707244b3859a91e1c6`
@@ -13,13 +13,14 @@ The download's hash was checked against the artifact inspected during design res
 
 ## Play locally
 
-With the WASM-4 CLI installed, run from the repository root:
+From the repository root:
 
 ```sh
-w4 run targets/dashy-dango/cart.wasm
+npm install
+npm run dev
 ```
 
-See the [WASM-4 installation instructions](https://wasm4.org/docs/getting-started/setup/). The runtime is not installed by this target download.
+Open the local URL printed in the terminal (normally `http://localhost:4444`). The runtime is pinned in the root package lockfile.
 
 ## Recovery inputs
 
