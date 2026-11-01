@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "w4 run targets/dashy-dango/cart.wasm --no-qr",
     "replay": "node scripts/replay.mjs",
+    "investigate": "node scripts/investigate.mjs",
+    "tools:smoke": "node scripts/tools-smoke.mjs",
     "test": "node --test tests/*.test.mjs"
   },
   "devDependencies": {

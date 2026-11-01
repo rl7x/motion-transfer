@@ -24,3 +24,13 @@ npm test
 ```
 
 The replay command runs the recorded start/move/dash sequence three times and checks that every frame matches. It saves observations to `reports/dashy-dango-replay.json`. See [runtime/README.md](runtime/README.md) for the API, trace format, and supported scope. Use Node.js 22 or newer.
+
+## Investigate with Meta
+
+Copy `.env.example` to `.env` and set `MODEL_API_KEY` locally. Then run:
+
+```sh
+npm run investigate
+```
+
+The model can inspect the pinned bytecode and choose controlled replay experiments. The default run has a $0.50 estimated generation budget, with token-count preflight before each request. Reports contain experiments, observations, token usage, and a conclusion for review. See [agent/README.md](agent/README.md) for details, or run `npm run tools:smoke` to exercise the tools without API calls.
