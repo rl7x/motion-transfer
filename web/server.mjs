@@ -42,6 +42,7 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
     ['/investigation-view.js', 'investigation-view.js', 'text/javascript'],
     ['/roadster.js', 'roadster.js', 'text/javascript'],
     ['/guided.js', 'guided.js', 'text/javascript'],
+    ['/developer-task.js', 'developer-task.js', 'text/javascript'],
   ]) assets.set(path, [type, await readFile(new URL(file, import.meta.url), 'utf8')]);
   if (adapter) {
     assets.set('/assets/adapter.js', ['text/javascript', adapter.javascript]);
@@ -53,7 +54,7 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
   }
   const server = createServer(async (request, response) => {
     const send = (status, type, body) => {
-      response.writeHead(status, { 'Content-Type': `${type}; charset=utf-8`, 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
+      response.writeHead(status, { 'Content-Type': type + (Buffer.isBuffer(body) ? '' : '; charset=utf-8'), 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
       response.end(request.method === 'HEAD' ? undefined : body);
     };
     const json = (status, value) => send(status, 'application/json', JSON.stringify(value));
@@ -127,6 +128,7 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
       asset = adapter ? ['text/html', asset[1].replace('src="/assets/game.js"', 'src="/assets/game-transfer.js"')] : undefined;
     }
     if (!asset) { send(404, 'text/plain', 'Not found'); return; }
+    if(path==='/integrations/jujump/project.zip')response.setHeader('Content-Disposition','attachment; filename="jujump-dash.zip"');
     send(200, asset[0], asset[1]);
     } catch (error) { json(error.code === 'ENOENT' || error.message === 'Run not found' ? 404 : 400, {error:error.code === 'ENOENT' ? 'Artifact not found' : error.message}); }
   });

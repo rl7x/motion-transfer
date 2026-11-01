@@ -15,7 +15,7 @@
       <p class="eyebrow">EXTRACTED FROM DASHY DANGO</p><h2>Dash</h2><p>A burst of movement with its own direction,<br>duration, and recharge.</p>
       <div class="ability-rules"><span><strong>~0.13s</strong> burst of movement</span><span><strong>~0.42s</strong> to recharge</span></div>
       <p class="ability-origin">Recovered by Meta models. Reused as a standalone component.</p>
-      <div class="ability-links"><a href="/component/export" download="recovered-dash.json">Get the component ↗</a><a href="#recovery-details">See recovery evidence ↓</a></div>
+      <div class="ability-links"><a href="#developer-task">Use it in your project ↓</a><a href="/component/export" download="recovered-dash.json">Component source ↗</a><a href="#recovery-details">Recovery evidence ↓</a></div>
       <p class="saved-note">This is a saved recovery. Choosing a destination makes no model request.</p>
     </aside>
   </section>
@@ -51,6 +51,19 @@
     <div><p class="eyebrow">WHAT CARRIES OVER</p><p id="carries-over">The recovered dash.</p></div>
     <div><p class="eyebrow">WHAT STAYS WITH THE RECIPIENT</p><p id="recipient-keeps">Its own rules and world.</p></div>
     <div><p class="eyebrow">THE COMPONENT STAYS THE SAME</p><p>Different adapters. One unchanged dash.</p><a href="#comparison-details">Compare the recorded behavior ↓</a></div>
+  </section>
+  <section class="developer-task" id="developer-task" aria-labelledby="developer-task-heading">
+    <div class="section-heading"><div><p class="eyebrow">DEVELOPER TASK / RECOVER A MECHANIC, KEEP BUILDING</p><h2 id="developer-task-heading">Take the ability into your own project.</h2></div><span class="pill neutral">SAVED RECOVERY</span></div>
+    <p class="developer-intro">Porting a game mechanic means preserving its timing and quirks. Start with a compiled reference. Finish with editable source and a working integration.</p>
+    <div class="developer-steps">
+      <article><span class="eyebrow">01 / COMPILED REFERENCE</span><h3>Keep the original behavior.</h3><p>Dashy Dango's compiled WASM-4 build was the recovery input. Its source was withheld from recovery; it wasn't lost.</p><a href="#recovery-details">Inspect the saved recovery ↓</a></article>
+      <article><span class="eyebrow">02 / A CHECKED COMPONENT</span><h3>Recover the timing and rules.</h3><p>Meta generated and repaired the controller. Human assistance supplied the boundary, mapped fields and evaluator.</p><p id="developer-recovery" class="saved-note">Reading saved recovery measurements…</p></article>
+      <article><span class="eyebrow">03 / WORKING INTEGRATION</span><h3>Keep JUJUMP's own physics.</h3><p>The human-authored adapter adds a horizontal dash. Jumping, gravity, landing and scrolling stay with JUJUMP.</p><a href="/?destination=jujump#developer-task" id="developer-select">Play the platformer transfer ↑</a></article>
+    </div>
+    <div class="developer-handoff"><div><h3>A project you can run without this app.</h3><p>Before/after players, editable component and adapter, bundled runtime, checks and recovery history. No installation or API key needed; use Node.js 22+.</p><code>npm test &amp;&amp; npm start</code><p id="developer-package" class="saved-note">Checking export identity…</p></div><div class="developer-actions"><a class="download-project" id="developer-download" hidden download="jujump-dash.zip">Download working integration ↓</a><a id="developer-preview" hidden target="_blank" rel="noopener">Open the standalone example ↗</a><a href="/integrations/jujump/README.md">Read the integration guide ↗</a></div></div>
+    <div id="developer-measurements" class="developer-measurements" aria-live="polite"></div>
+    <p id="developer-standalone-checks" class="saved-note">Reading verification of the downloaded project…</p>
+    <details><summary>Measured outcome, recovery history and remaining work</summary><p id="developer-history"></p><p>The standalone example can execute a matched before/after comparison and download its actual traces. This is a local scripted check, with an explicit open-air fixture. Platform contact and ordinary gameplay have separate saved checks.</p><p id="developer-effort"></p><p>Later live workbench investigations are separate from this accepted component. The recorded programmatic investigation remains incomplete; this download does not claim a new independent recovery. Modified files need new verification.</p><p><a href="/api/developer-task">Case measurements and evidence references ↗</a> · <a href="/integrations/jujump/evidence/recovery-history.json">Full recovery and failure history ↗</a></p></details>
   </section>
   <section class="proof-section" aria-labelledby="proof-heading">
     <div class="section-heading"><div><p class="eyebrow">EVIDENCE / BEHAVIOR THAT SURVIVES THE MOVE</p><h2 id="proof-heading">Same burst. Same recharge. Different rules around it.</h2></div></div>
@@ -113,4 +126,5 @@
   <footer><span>Dashy Dango by willGuimont · PAKU PAKU &amp; JUJUMP by Kenta Cho / ABA Games · RDSTR Stunts by sebayaki · <a href="/licenses">PAKU notices</a> · <a href="/jujump/licenses">JUJUMP notices</a> · <a href="/roadster/notices">Roadster notices</a></span><span>Local preview · one recovered dash, different worlds</span></footer>
 </main>
 <script type="module" src="/preview.js"></script><script type="module" src="/remix.js"></script><script type="module" src="/evidence.js"></script><script type="module" src="/lab.js"></script><script type="module" src="/roadster.js"></script><script type="module" src="/guided.js"></script>
+<script type="module" src="/developer-task.js"></script>
 </body></html>
