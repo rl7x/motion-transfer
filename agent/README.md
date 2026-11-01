@@ -37,7 +37,7 @@ For a local smoke check with no model calls or API cost:
 npm run tools:smoke
 ```
 
-This local check uses fixed controls and explicitly labels its report `metaCalled: false`. The automated tests use mocked Meta HTTP responses while dispatching real cartridge tools. Neither is a substitute for the live command.
+This local check indexes all cartridge functions, inspects the `update` export, and compares two movement traces while watching the documented gamepad register. It saves the function index, a disassembly window, and observed readings to `reports/cartridge-tools-smoke.json`, explicitly labeled `metaCalled: false`. It checks the investigation tools, not a recovered component or an identified gameplay variable. The automated tests use mocked Meta HTTP responses while dispatching real cartridge tools. Neither is a substitute for the live command.
 
 ## Tools and observations
 

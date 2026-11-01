@@ -33,4 +33,12 @@ Copy `.env.example` to `.env` and set `MODEL_API_KEY` locally. Then run:
 npm run investigate
 ```
 
-The model can inspect the pinned bytecode and choose controlled replay experiments. The default run has a $0.50 estimated generation budget, with token-count preflight before each request. Reports contain experiments, observations, token usage, and a conclusion for review. See [agent/README.md](agent/README.md) for details, or run `npm run tools:smoke` to exercise the tools without API calls.
+The model can inspect the pinned bytecode, follow direct function calls, and choose controlled replay experiments with typed memory watches. The default run has a $0.50 estimated generation budget, with token-count preflight before each request. Reports contain experiments, observations, token usage, and a conclusion for review. See [agent/README.md](agent/README.md) for details.
+
+To check the tools locally without API calls:
+
+```sh
+npm run tools:smoke
+```
+
+This indexes the cartridge's functions, inspects the `update` export, and compares movement traces with read-only memory observations. It writes `reports/cartridge-tools-smoke.json`. Component extraction and transfer are still to be implemented.
