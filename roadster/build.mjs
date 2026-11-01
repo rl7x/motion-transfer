@@ -20,7 +20,7 @@ export async function buildRoadsterFrame({source=null,intent=ROADSTER_INTENT}={}
     'roadster-core':component.javascript,'roadster-config':`export default ${JSON.stringify({defaults:component.contract.defaults,intent,componentId:component.provenance.id,transferred:Boolean(source)})};`};
   const virtual={name:'roadster-frame',setup(build){
     build.onResolve({filter:/^roadster-(entry|adapter|core|config)$/},args=>({path:args.path,namespace:'motion-roadster'}));
-    build.onLoad({filter:/.*/,namespace:'motion-roadster'},args=>({contents:modules[args.path],resolveDir:fileURLToPath(new URL('../web/',import.meta.url)),loader:'js'}));
+    build.onLoad({filter:/.*/,namespace:'motion-roadster'},args=>({contents:modules[args.path],resolveDir:fileURLToPath(new URL('../web/',import.meta.url)),loader:args.path==='roadster-adapter'?'ts':'js'}));
   }};
   const result=await build({entryPoints:['roadster-entry'],bundle:true,write:false,outdir:'out',format:'iife',target:'es2022',minify:true,alias:{'@':ROADSTER_SOURCE},loader:{'.png':'dataurl'},plugins:[virtual,roadsterHooks()]});
   const javascript=result.outputFiles.find(file=>file.path.endsWith('.js')).text;

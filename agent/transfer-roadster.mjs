@@ -46,15 +46,22 @@ export async function generateRoadsterTransfer({apiKey,client,parent,prompt,maxC
     const submission=JSON.parse(calls[0].arguments);validateRoadsterIntent(submission.intent);
     if(Object.keys(submission).sort().join(',')!=='intent,source,summary'||typeof submission.source!=='string'||Buffer.byteLength(submission.source)>16384||!submission.source.trim()||typeof submission.summary!=='string'||submission.summary.length>1000)throw Error('Invalid Roadster submission');
     report.submission=submission;
-    await onStage('building');const compiled=await compileAdapter(submission.source);
-    await onStage('testing');const conformance=await evaluateRoadsterAdapter(submission.source,submission.intent);
-    report.conformance=conformance;await onUpdate(report);if(!conformance.passed)throw Error('Roadster mapping checks failed; parent unchanged');
-    const browser=await verifyBrowser(submission.source,submission.intent);report.browser=browser;await onUpdate(report);
-    if(!browser.passed)throw Error('Roadster browser checks failed; parent unchanged');
-    const frame=await buildRoadsterFrame({source:submission.source,intent:submission.intent});
-    report.status='verified';report.finishedAt=new Date().toISOString();await onUpdate(report);
-    const verification={passed:true,scope:'Finite adapter and recipient checks, frozen donor defaults; declared collision/free-flight fixtures',conformance,browser};
-    return{files:{'adapter.ts':submission.source,'adapter.js':compiled.javascript,'frame.html':frame.html,'verification.json':JSON.stringify(verification,null,2)+'\n','generation.json':JSON.stringify(report,null,2)+'\n','notices.txt':recipient.notices},metadata:{kind:'roadster',parentArtifactId:parent.files?.['adapter.ts']?parent.id:null,componentId:frame.componentId,recipientRevision:recipient.manifest.revision,intent:submission.intent,summary:submission.summary,environment:frame.environment}};
+    return await verifyRoadsterSubmission({report,parent,recipient,onStage,onUpdate,verifyBrowser});
   }catch(error){for(const record of report.requests)if(record.status==='pending')record.status='unsettled';report.status='failed';report.error=error.message;error.report=report;throw error;}
   finally{report.finishedAt??=new Date().toISOString();await onUpdate(report);}
+}
+
+// Local re-verification reuses recorded, settled Meta source without another request.
+export async function verifyRoadsterSubmission({report,parent,recipient,onStage=async()=>{},onUpdate=async()=>{},verifyBrowser=verifyRoadsterBrowser}){
+  const {submission}=report;validateRoadsterIntent(submission.intent);recipient??=await loadRoadster();
+  if(report.reservedCostUsd!==0||!report.requests?.length||!report.requests.every(request=>request.status==='completed'&&request.usage)||report.recipientRevision!==recipient.manifest.revision||report.componentId!==(await loadRecoveredMotion()).provenance.id)throw Error('Only settled matching Meta submissions can be verified');
+  await onStage('building');const compiled=await compileAdapter(submission.source);
+  await onStage('testing');const conformance=await evaluateRoadsterAdapter(submission.source,submission.intent);
+  report.conformance=conformance;await onUpdate(report);if(!conformance.passed)throw Error('Roadster mapping checks failed; parent unchanged');
+  const browser=await verifyBrowser(submission.source,submission.intent);report.browser=browser;await onUpdate(report);
+  if(!browser.passed)throw Error('Roadster browser checks failed; parent unchanged');
+  const frame=await buildRoadsterFrame({source:submission.source,intent:submission.intent});
+  report.status='verified';report.finishedAt=new Date().toISOString();await onUpdate(report);
+  const verification={passed:true,scope:'Finite adapter and recipient checks, frozen donor defaults; declared collision/free-flight fixtures',conformance,browser};
+  return{files:{'adapter.ts':submission.source,'adapter.js':compiled.javascript,'frame.html':frame.html,'verification.json':JSON.stringify(verification,null,2)+'\n','generation.json':JSON.stringify(report,null,2)+'\n','notices.txt':recipient.notices},metadata:{kind:'roadster',parentArtifactId:parent.files?.['adapter.ts']?parent.id:null,componentId:frame.componentId,recipientRevision:recipient.manifest.revision,intent:submission.intent,summary:submission.summary,environment:frame.environment}};
 }
