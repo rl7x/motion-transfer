@@ -11,7 +11,7 @@ const cache=new Map();
 export async function buildRoadsterFrame({source=null,intent=ROADSTER_INTENT}={}){
   validateRoadsterIntent(intent);
   const recipient=await loadRoadster(),component=await loadRecoveredMotion();
-  const hostFiles=['roadster/physics.mjs','roadster/port.mjs','web/roadster-entry.js'];
+  const hostFiles=['roadster/build.mjs','roadster/physics.mjs','roadster/port.mjs','web/roadster-entry.js','evaluator/roadster.mjs','evaluator/roadster-browser.mjs','transfer/adapter.mjs','transfer/worker.mjs'];
   const host=Object.fromEntries(await Promise.all(hostFiles.map(async path=>[path,digest(await readFile(new URL('../'+path,import.meta.url)))])));
   const environment={componentId:component.provenance.id,recipientRevision:recipient.manifest.revision,recipientFiles:recipient.manifest.files,three:'0.186.1',host};
   const key=digest(JSON.stringify({source,intent,environment}));if(cache.has(key))return cache.get(key);

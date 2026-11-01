@@ -4,6 +4,7 @@ import {createRoadsterPort} from '../roadster/port.mjs';
 import * as component from 'roadster-core';
 import * as candidate from 'roadster-adapter';
 import config from 'roadster-config';
+import {prepareObstacles} from '@/physics/collision';
 
 const port=createRoadsterPort({component,adapter:config.transferred?candidate:null,defaults:config.defaults,intent:config.intent});
 globalThis.roadsterPort=port;
@@ -25,6 +26,8 @@ if(testing)window.roadsterFixture=values=>{
   for(const [key,value]of Object.entries(values)){if(!(key in map)||!Number.isFinite(value))throw Error('Invalid fixture');physics[map[key]]=value;}
   physics.mode='airborne';physics.runEnded=false;physics.writeSnapshot(0,0);app.state='running';
 };
+if(testing)window.roadsterElapsed=(seconds,dt)=>{window.__game.realtime(false);for(let i=0;i<Math.round(seconds/dt);i++)app.tick(dt,{throttle:0,brake:0,thrust:false,spin:0});return window.roadsterSnapshot();};
+if(testing)window.roadsterObstacle=x=>{if(!Number.isFinite(x))throw Error('Invalid obstacle fixture');app.physics.shapes.push(...prepareObstacles([{id:'declared-test-wall',label:'Declared thin-wall fixture',kind:'stage',x,z:0,baseY:0,sizeX:.02,sizeY:60,sizeZ:10,yaw:0,color:0xffffff,polygon:[[x-.01,0],[x+.01,0],[x+.01,60],[x-.01,60]]}]));};
 const channel=location.hash.match(/(?:#|&)channel=([a-zA-Z0-9-]+)/)?.[1];
 window.addEventListener('message',event=>{
   if(event.source!==parent||!channel||event.data?.channel!==channel)return;
