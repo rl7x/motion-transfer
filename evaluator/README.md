@@ -9,3 +9,13 @@ The observer checks the cartridge hash, gameplay state, registry occupancy, uniq
 `recordDonorMotion({name, steps: [{buttons, frames}]})` sends the title-screen start request, observes the freshly initialized motion state, then records up to 600 gameplay ticks. The initial ten-tick cooldown is retained. It records world coordinates rather than screen coordinates: the game's camera keeps its player near screen center. `dash-start` and `dash-end` label transitions into/out of the observed remaining-ticks state; they are evaluator events, not intercepted donor event messages. `ownsMotion` covers activation and subsequent active ticks.
 
 These observations support a motion-controller comparison. They do not establish equivalence for combat, scoring, effects, enemy behavior, or the full game. A candidate must still run independently and be compared against donor rollouts on separate inputs.
+
+## Standalone component checks
+
+Components export `init(config)` returning JSON object state, and `step(state, {buttons, sourceBodyWidth}, config)` returning `{state, output}`. Output is `{ownsMotion: boolean, displacement: {x, y}, events: string[]}`, with event names `dash-start` and `dash-end`. Displacement uses source pixels per fixed 60 Hz tick. Component state belongs to the candidate and is never corrected using donor state.
+
+The trusted builder compiles up to 16 KB of TypeScript with imports rejected. The runner starts a separate process with no inference credentials, a 64 MB V8 heap limit and five-second deadline, then runs each trace in a fresh VM context with a 500 ms script timeout. No filesystem, network, donor binary, renderer, or expected outputs are supplied to that context. VM contexts are a local execution restriction for these generated candidates; they are not a public upload sandbox.
+
+`evaluateMotion` independently runs the donor and the candidate. It accumulates candidate displacement with float32 rounding from the initial position, checks a frozen 0.25-source-pixel positional tolerance, and requires exact motion-ownership and event ticks. It reports the first divergence rather than accepting a candidate's own status. Tests deliberately introduce cumulative drift and omit dash activation to verify rejection.
+
+`cases.mjs` supplies 12 public development traces. Acceptance generates 20 separate 150-tick traces from a recorded seed after source generation. Those inputs and expected results stay in the evaluator; the candidate worker receives only button/body-width inputs and config. If an acceptance failure informs a repair, use a fresh seed for the repaired candidate. Passing these finite suites supports only their declared motion domain.
