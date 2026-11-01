@@ -135,7 +135,7 @@ function select(item,navigate=false){
   $('#adapter-source').href=car?`/roadster/artifacts/${selected.id}/adapter.ts`:child?`/artifacts/${selected.id}/adapter.ts`:item.source;
   const artifact=$('#artifact-id');artifact.textContent=(selected?.id??item.artifactId).slice(0,12);
   artifact.title=selected?.id??item.artifactId;artifact.href=car?`/api/roadster/artifacts/${selected.id}`:selected?`/api/artifacts/${selected.id}`:item.report;
-  $('#check-count').textContent=car?'8 mapping cases + 7 browser checks':selected?`${selected.conformanceChecks} mapping cases + ${selected.browserChecks} browser checks`:'11 mapping cases + 7 browser checks';
+  $('#check-count').textContent=car?'8 mapping cases + 8 browser checks':selected?`${selected.conformanceChecks} mapping cases + ${selected.browserChecks} browser checks`:'11 mapping cases + 7 browser checks';
   $('#model').textContent=item.id==='jujump'?'Human-authored integration':selected?.model??'Meta-generated adapter';
   $('#generation-cost').textContent=item.id==='jujump'?'$0 (no new model call)':`$${(selected?.estimatedGenerationCostUsd??selected?.estimatedCostUsd??0).toFixed(3)}`;
   if(selected&&!car){

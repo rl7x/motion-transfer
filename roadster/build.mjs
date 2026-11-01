@@ -11,9 +11,10 @@ const cache=new Map();
 export async function buildRoadsterFrame({source=null,intent=ROADSTER_INTENT}={}){
   validateRoadsterIntent(intent);
   const recipient=await loadRoadster(),component=await loadRecoveredMotion();
-  const hostFiles=['roadster/build.mjs','roadster/physics.mjs','roadster/port.mjs','web/roadster-entry.js','evaluator/roadster.mjs','evaluator/roadster-browser.mjs','transfer/adapter.mjs','transfer/worker.mjs'];
+  const hostFiles=['roadster/build.mjs','roadster/physics.mjs','roadster/port.mjs','roadster/dash-presentation.mjs','roadster/dash-visuals.js','web/roadster-entry.js','evaluator/roadster.mjs','evaluator/roadster-browser.mjs','transfer/adapter.mjs','transfer/worker.mjs'];
   const host=Object.fromEntries(await Promise.all(hostFiles.map(async path=>[path,digest(await readFile(new URL('../'+path,import.meta.url)))])));
-  const environment={componentId:component.provenance.id,recipientRevision:recipient.manifest.revision,recipientFiles:recipient.manifest.files,three:'0.186.1',host};
+  const environment={componentId:component.provenance.id,recipientRevision:recipient.manifest.revision,recipientFiles:recipient.manifest.files,three:'0.186.1',host,
+    presentation:{author:'Human-authored recipient presentation',afterimageLifetimeUpdates:5,renderedHoldUpdates:3,scope:'Visual hold and afterimages; component and simulated motion are unchanged. The hold is an added translation, not an observed donor pause.'}};
   const key=digest(JSON.stringify({source,intent,environment}));if(cache.has(key))return cache.get(key);
   const entry=await readFile(new URL('../web/roadster-entry.js',import.meta.url),'utf8');
   const modules={'roadster-entry':entry,'roadster-adapter':source??'export const init=null;export const step=null;',

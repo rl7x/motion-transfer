@@ -18,7 +18,7 @@ Open `http://127.0.0.1:4173`. Play the compiled **Dashy Dango** donor and give i
 
 Use **Investigate with Meta** to let Muse Spark choose binary inspections and contrasting donor experiments. Its public hypotheses, actual observations and qualified conclusion appear as the job runs. World-coordinate motion measurements use a disclosed human-mapped read-only donor registry. These fresh investigations do not replace the saved recovered component or claim automatic discovery of its layout.
 
-The Roadster form lets Meta generate a new adapter for distance, direction and held/fresh-press activation. Eight mapping cases and seven real-browser checks gate each playable child. Source, reports, parent lineage and local links are retained. The [Roadster integration policy](transfers/roadster/README.md) explains the 60/240 Hz bridge, meters conversion, collision behavior, attribution and finite scope.
+The Roadster form lets Meta generate a new adapter for distance, direction and held/fresh-press activation. Eight mapping cases and eight real-browser checks gate each playable child. Source, reports, parent lineage and local links are retained. The [Roadster integration policy](transfers/roadster/README.md) explains the 60/240 Hz bridge, meters conversion, collision behavior, attribution and finite scope.
 
 New investigations and Roadster generation share a persistent **$10 estimated development ceiling**: up to $0.50 per investigation and $0.05 per adapter, no automatic retries, and no further inference when billing is uncertain. The existing PAKU remix budget stays at $0.10 separately. See [the lab API and accounting](lab/README.md). Loading or playing any saved destination makes no model request.
 
@@ -35,7 +35,7 @@ npm run compare:transfers
 npm test
 ```
 
-These checks use no paid API. `verify:roadster` checks the saved Meta adapter against eight mapping cases and seven browser checks and writes `reports/roadster-verification.json`. Comparison inputs are controlled free-space fixtures; platform/ghost collisions, ordinary play, death/restart, and replay are checked separately. See [the JUJUMP integration policy](transfers/jujump/README.md) and [live remix scope](remix/README.md). Public hosting remains to be built; resolve the donor's documented redistribution status before publishing its cartridge.
+These checks use no paid API. `verify:roadster` checks the saved Meta adapter against eight mapping cases and eight browser checks and writes `reports/roadster-verification.json`. Comparison inputs are controlled free-space fixtures; platform/ghost collisions, ordinary play, death/restart, and replay are checked separately. See [the JUJUMP integration policy](transfers/jujump/README.md) and [live remix scope](remix/README.md). Public hosting remains to be built; resolve the donor's documented redistribution status before publishing its cartridge.
 
 ## Run Dashy Dango
 

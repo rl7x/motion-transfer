@@ -5,11 +5,17 @@ import * as component from 'roadster-core';
 import * as candidate from 'roadster-adapter';
 import config from 'roadster-config';
 import {prepareObstacles} from '@/physics/collision';
+import {createDashVisuals} from '../roadster/dash-visuals.js';
 
-const port=createRoadsterPort({component,adapter:config.transferred?candidate:null,defaults:config.defaults,intent:config.intent});
+let presentation;
+const port=createRoadsterPort({component,adapter:config.transferred?candidate:null,defaults:config.defaults,intent:config.intent,
+  onStep:sample=>presentation?.observe(sample),onReset:()=>presentation?.reset()});
 globalThis.roadsterPort=port;
 const app=new App(document.querySelector('#scene'),document.querySelector('#ui'));
 const testing=new URLSearchParams(location.search).get('test')==='1';
+presentation=createDashVisuals(app,{enabled:config.transferred&&new URLSearchParams(location.search).get('presentation')!=='off',reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches});
+const draw=app.renderer.render.bind(app.renderer);app.renderer.render=()=>presentation.render(draw);
+window.roadsterPresentation=()=>presentation.snapshot();
 let dash=false,guided=false,guideDriver;
 const release=()=>{dash=false;port.setDash(false);};
 document.addEventListener('keydown',event=>{if(event.code==='KeyX'){event.preventDefault();dash=true;port.setDash(true);}});

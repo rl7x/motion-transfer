@@ -17,7 +17,7 @@ export async function validateRoadsterArtifact(artifact){
   for(const report of [verification.conformance,verification.browser]){
     assert.equal(report.passed,true);assert.equal(report.componentId,artifact.componentId);assert.equal(report.sourceSha256,digest(artifact.files['adapter.ts']));assert.deepEqual(report.intent,artifact.intent);assert.ok(report.results.every(result=>result.passed));
   }
-  assert.equal(verification.browser.results.length,7);assert.equal(verification.conformance.results.length,8);
+  assert.equal(verification.browser.results.length,8);assert.equal(verification.conformance.results.length,8);
   assert.equal(verification.browser.frameSha256,digest(artifact.files['frame.html']));assert.equal(artifact.files['frame.html'],frame.html);
   return artifact;
 }

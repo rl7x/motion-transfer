@@ -33,10 +33,11 @@ export async function experienceAssets({allowUnverified=false,adapter,roadster}=
     assets.set('/roadster/play-transfer',['text/html',roadster.files['frame.html']]);
     assets.set('/roadster/adapter.ts',['text/plain',roadster.files['adapter.ts']]);
     assets.set('/roadster/report.json',['application/json',roadster.files['verification.json']]);
+    assets.set('/roadster/presentation.json',['application/json',await readFile(new URL('../transfers/roadster/presentation-evidence.json',import.meta.url),'utf8')]);
     assets.set('/roadster/notices',['text/plain',roadster.files['notices.txt']]);
     json('/api/roadster/base',{id:roadster.id,componentId:roadster.componentId,intent:roadster.intent,summary:roadster.summary,parentArtifactId:roadster.parentArtifactId});
     destinations.push({id:'roadster',name:'RDSTR STUNTS',kind:'A 3D Roadster stunt simulation',componentId:component.provenance.id,before:'/roadster/play?mode=original&quality=low',after:'/roadster/play?mode=transfer&quality=low',artifactId:roadster.id,aspect:1.5,
-      keeps:'Its ramp, gravity, rotation, lift thrusters, fuel, and native landing and collision rules.',carries:'The same eight-update burst and recharge, now a six-meter horizontal air dash along the stunt path.',control:'Run the stunt with the assisted driver, then hold X to dash in the air. Native controls remain available inside the game.',action:'Run stunt',dashKey:'X',liveEdits:['distance','activation','direction'],report:'/roadster/report.json',source:'/roadster/adapter.ts',author:'Meta-generated adapter; human-built host and verification; upstream simulation by sebayaki'});
+      keeps:'Its ramp, gravity, rotation, lift thrusters, fuel, and native landing and collision rules.',carries:'The same eight-update burst and recharge, now a six-meter air dash. A brief visual hold and fading car afterimages make the burst visible.',control:'Run the stunt with the assisted driver, then hold X to dash in the air. Native controls remain available inside the game.',action:'Run stunt',dashKey:'X',liveEdits:['distance','activation','direction'],report:'/roadster/report.json',source:'/roadster/adapter.ts',author:'Meta-generated adapter; human-built host, presentation and verification; upstream simulation by sebayaki'});
   }
   if(adapter?.receipt)destinations.push({id:'paku-paku',name:'PAKU PAKU',kind:'A one-dimensional maze',componentId:component.provenance.id,
     before:'/play?mode=original',after:'/play?mode=transfer',artifactId:adapter.receipt.id,aspect:2,

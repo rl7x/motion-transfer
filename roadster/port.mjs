@@ -4,7 +4,7 @@ export function validateRoadsterIntent(intent){
   if(!intent||Object.keys(intent).sort().join(',')!=='activation,direction,unitScale'||!Number.isFinite(intent.unitScale)||intent.unitScale<.025||intent.unitScale>.2||!['held','press'].includes(intent.activation)||!['facing','opposite'].includes(intent.direction))throw Error('Unsupported Roadster mapping');
   return intent;
 }
-export function createRoadsterPort({component,adapter,defaults,intent=ROADSTER_INTENT}={}){
+export function createRoadsterPort({component,adapter,defaults,intent=ROADSTER_INTENT,onStep=()=>{},onReset=()=>{}}={}){
   validateRoadsterIntent(intent);const states=new WeakMap();let dashHeld=false;
   const config=Object.freeze({motion:Object.freeze({...defaults}),unitScale:intent.unitScale});
   function create(){
@@ -17,7 +17,7 @@ export function createRoadsterPort({component,adapter,defaults,intent=ROADSTER_I
   }
   return{
     setDash(value){dashHeld=Boolean(value);},
-    reset(physics){states.set(physics,create());},
+    reset(physics){states.set(physics,create());onReset();},
     substep(physics,airborne){
       let state=states.get(physics);if(!state){state=create();states.set(physics,state);}
       if(state.substeps++%4!==0)return;
@@ -29,6 +29,7 @@ export function createRoadsterPort({component,adapter,defaults,intent=ROADSTER_I
       const output=result?.output;
       if(!result.state||!output||!Number.isFinite(output.displacement)||Math.abs(output.displacement)>2||typeof output.ownsMotion!=='boolean'||!Array.isArray(output.events)||output.events.some(value=>!['dash-start','dash-end'].includes(value)))throw Error('Invalid Roadster adapter output');
       state.state=result.state;state.output=output;
+      onStep({tick:state.tick,output,pose:{x:physics.px,y:physics.py,pitch:physics.pitch,roll:physics.roll}});
     },
     movement(physics){const state=states.get(physics);return state?.output?.ownsMotion?state.output.displacement/4:null;},
     snapshot(physics){const state=states.get(physics);return state?JSON.parse(JSON.stringify({tick:state.tick,substeps:state.substeps,state:state.state,output:state.output,dashHeld,coreCalls:state.counters.step})):null;},
