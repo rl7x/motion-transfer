@@ -15,6 +15,13 @@ export const DEVELOPMENT_CASES = [
   { name: 'cooldown-boundary', steps: [step(0, 10), step(33, 1), step(0, 30), step(65, 1), step(0, 1), step(65, 1), step(0, 10)] },
 ];
 
+// Added after acceptance seed 302473669 exposed neutral activation following
+// an earlier directional dash. This is development evidence from now on.
+export const MOTION_REGRESSIONS = [{
+  name: 'neutral-after-left-dash',
+  steps: [step(0, 10), step(17, 1), step(0, 32), step(1, 1), step(0, 8)],
+}];
+
 // Generate only in the evaluator after a candidate is frozen. Never send these
 // cases or donor answers to synthesis. A repaired candidate needs a fresh seed.
 export function acceptanceCases(seed, count = 20) {
