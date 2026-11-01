@@ -11,26 +11,28 @@ function sha256(bytes) {
   return createHash('sha256').update(bytes).digest('hex');
 }
 
-export async function createReplayRuntime(cartridge) {
+export async function createReplayRuntime(cartridge,{onMemoryWrite}={}) {
   const core = await loadWasm4Core();
   const bytes = Uint8Array.from(cartridge);
   const module = await WebAssembly.compile(bytes);
-  const runtime = new ReplayRuntime(module, core, sha256(bytes));
+  const runtime = new ReplayRuntime(module, core, sha256(bytes),onMemoryWrite);
   runtime.reset();
   return runtime;
 }
 
 class ReplayRuntime {
-  constructor(module, core, cartridgeHash) {
+  constructor(module, core, cartridgeHash,onMemoryWrite) {
     this.module = module;
     this.core = core;
     this.provenance = { cartridgeSha256: cartridgeHash, runtime: core.provenance };
+    this.onMemoryWrite=onMemoryWrite;
   }
 
   reset() {
     const c = this.core;
     this.frame = 0;
     this.faulted = false;
+    this.executingUpdate=false;
     this.drawCalls = [];
     this.tones = [];
     this.disk = new Uint8Array(c.STORAGE_SIZE);
@@ -45,6 +47,7 @@ class ReplayRuntime {
 
     const env = {
       memory: this.memory,
+      analysis_write:(address,width,functionIndex,functionLine)=>this.onMemoryWrite?.({address:address>>>0,width,functionIndex,functionLine,frame:this.frame+(this.executingUpdate?1:0),phase:this.executingUpdate?'update':'initialization'}),
       blit: (...args) => this.blit(...args),
       textUtf8: (pointer, length, x, y) => {
         const bytes = new Uint8Array(this.memory.buffer, pointer, length);
@@ -114,11 +117,12 @@ class ReplayRuntime {
         this.framebuffer.clear();
       }
       try {
+        this.executingUpdate=true;
         this.instance.exports.update();
       } catch (error) {
         this.faulted = true;
         throw new Error(`Cartridge update failed at frame ${this.frame + 1}: ${error.message}`, { cause: error });
-      }
+      }finally{this.executingUpdate=false;}
       this.frame++;
     }
     return this.observe();

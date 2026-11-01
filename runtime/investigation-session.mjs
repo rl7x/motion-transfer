@@ -28,9 +28,9 @@ export async function createInvestigationSession(bytes,saved){
   const fingerprint=runtime=>{const {frame,memoryHash,framebufferHash,storage}=runtime.observe();return{frame,memoryHash,framebufferHash,storage,faulted:runtime.faulted};};
   function verify(runtime,expected){assert.deepEqual(fingerprint(runtime),expected,'Replay restoration hash mismatch');}
   const branch=id=>{const value=branches.get(id);if(!value)throw Error('Unknown investigation branch: '+id);return value;};
-  async function replay(actions,expected){
+  async function replay(actions,expected,options={}){
     if(!Array.isArray(actions)||actions.length>128)throw Error('Invalid replay journal');
-    const restored=await createReplayRuntime(bytes);let frames=0;
+    const restored=await createReplayRuntime(options.bytes??bytes,{onMemoryWrite:options.onMemoryWrite});let frames=0;
     for(const action of actions){
       try{
         if(action.kind==='reset')restored.reset();
@@ -84,6 +84,7 @@ export async function createInvestigationSession(bytes,saved){
   }
   return{
     id,identity,snapshot,
+    async reconstructCheckpoint(checkpointId,options){const value=checkpoints.get(checkpointId);if(!value)throw Error('Unknown checkpoint');return replay(value.actions,value.verification,options);},
     recordStatic(evidence){if(staticEvidence.some(item=>item.id===evidence.id))return;if(staticEvidence.length>=128)throw Error('Static evidence limit reached');staticEvidence.push(structuredClone(evidence));},
     annotate(args){
       const known=new Set([...staticEvidence.map(item=>item.id),...observations.keys(),...checkpoints.keys(),...comparisons.map(item=>item.comparisonId),...annotations.map(item=>item.id)]);

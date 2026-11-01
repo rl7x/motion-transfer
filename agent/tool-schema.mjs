@@ -119,6 +119,10 @@ TOOLS.push({type:'function',name:'decompile_function',strict:true,
   parameters:{type:'object',properties:{functionIndex:{type:'integer',minimum:0,maximum:100000},inferredName:{type:'string',minLength:1,maxLength:80},hypothesis:{type:'string',minLength:1,maxLength:500},confidence:{type:'string',enum:['low','medium','high']},status:{type:'string',enum:['supported','rejected','unresolved']},evidenceIds:{type:'array',minItems:1,maxItems:8,items:{type:'string',minLength:1,maxLength:80}}},required:['functionIndex','inferredName','hypothesis','confidence','status','evidenceIds'],additionalProperties:false},
 });
 const edit={type:'object',properties:{address:{type:'integer',minimum:0,maximum:65535},type:{type:'string',enum:MEMORY_TYPES},value:{type:'number'},hypothesis:{type:'string',minLength:1,maxLength:500}},required:['address','type','value','hypothesis'],additionalProperties:false};
+TOOLS.push({type:'function',name:'trace_writers',strict:true,
+  description:'Trace executed scalar store writers to a selected absolute memory range in a separate instrumented analysis copy restored from a checkpoint. Compare its full observed behavior against the unchanged cartridge for the same inputs. At most 120 frames and 64 hits. Does not implement pausing watchpoints, host writes, SIMD, bulk or atomic write tracing.',
+  parameters:{type:'object',properties:{checkpointId:{type:'string'},address:{type:'integer',minimum:0,maximum:65535},byteLength:{type:'integer',minimum:1,maximum:256},steps:{...steps,maxItems:4}},required:['checkpointId','address','byteLength','steps'],additionalProperties:false},
+});
 TOOLS.push({type:'function',name:'write_memory',strict:true,
   description:'Apply up to eight finite typed writes to an experimental checkpoint branch. Writes to main are forbidden. Records the previous value, rounded new value, address, frame and hypothesis. Code bytes remain immutable. A trapped branch must reset before advancing.',
   parameters:{type:'object',properties:{branchId,edits:{type:'array',minItems:1,maxItems:8,items:edit},watches},required:['branchId','edits','watches'],additionalProperties:false},
@@ -142,6 +146,12 @@ function integer(value, minimum, maximum) {
 }
 
 export function validateToolInput(name, args) {
+  if(name==='trace_writers'){
+    object(args,['checkpointId','address','byteLength','steps']);
+    if(typeof args.checkpointId!=='string'||!/^cp-[a-f0-9]{20}$/.test(args.checkpointId)||!integer(args.address,0,65535)||!integer(args.byteLength,1,256)||args.address+args.byteLength>65536)throw Error('Invalid writer range or checkpoint');
+    validateToolInput('run_original',{hypothesis:'Trace selected writers.',watches:[],steps:args.steps});
+    if(args.steps.length>4||args.steps.reduce((sum,step)=>sum+step.frames,0)>120)throw Error('Writer tracing is limited to four steps and 120 frames');return;
+  }
   if(name==='decompile_function'){validateToolInput('inspect_function',args);return;}
   if(name==='call_graph'){
     object(args,['functionIndex','direction','depth']);

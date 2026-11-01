@@ -4,6 +4,7 @@ import { createReplayRuntime } from '../runtime/replay.mjs';
 import { replayTrace } from '../runtime/trace.mjs';
 import { createWasmInspection, inspectFunction, listFunctions,navigateCallGraph } from './wasm-inspection.mjs';
 import {decompileWasm,decompileFunction} from './decompile.mjs';
+import {traceMemoryWriters} from './write-instrumentation.mjs';
 import { summarizeObservation } from './observation.mjs';
 import { observeDonorMotion } from '../runtime/donor-observation.mjs';
 import { createInvestigationSession } from '../runtime/investigation-session.mjs';
@@ -50,6 +51,12 @@ async function execute(name, args) {
     },
   };
   inspection??=await createWasmInspection(target.bytes);
+  if(name==='trace_writers'){
+    if(!session)throw Error('Create an investigation checkpoint first');
+    const result=await traceMemoryWriters(session,inspection,target.bytes,args);
+    result.evidenceId=`writers:${args.checkpointId}:${args.address}:${args.byteLength}`;
+    session.recordStatic({id:result.evidenceId,kind:'writer-trace',passed:result.behavioralComparison.passed});return{result};
+  }
   if(name==='decompile_function'){
     decompilation??=await decompileWasm(target.bytes);
     const result={sha256:target.sha256,...decompileFunction(decompilation,args)};
