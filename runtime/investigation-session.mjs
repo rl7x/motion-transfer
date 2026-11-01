@@ -6,6 +6,7 @@ import { readFile } from 'node:fs/promises';
 import { digest } from '../component/build.mjs';
 import assert from 'node:assert/strict';
 import { writeMemoryValue,compareMemoryValues,validateMemoryEdit } from './memory.mjs';
+import {framebufferPng} from './png.mjs';
 
 export const MOTION_ASSISTANCE='Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.';
 
@@ -24,7 +25,7 @@ export async function createInvestigationSession(bytes,saved){
   const branches=new Map([['main',{id:'main',runtime,actions:[],experimental:false}]]);
   const hostSources=await Promise.all(['replay.mjs','memory.mjs','investigation-session.mjs'].map(name=>readFile(new URL(name,import.meta.url),'utf8')));
   const identity={...runtime.provenance,hostSha256:digest(hostSources.join('\n'))};
-  const checkpoints=new Map(),observations=new Map(),comparisons=[],staticEvidence=[],annotations=[];
+  const checkpoints=new Map(),observations=new Map(),comparisons=[],staticEvidence=[],annotations=[],captures=[];
   const fingerprint=runtime=>{const {frame,memoryHash,framebufferHash,storage}=runtime.observe();return{frame,memoryHash,framebufferHash,storage,faulted:runtime.faulted};};
   function verify(runtime,expected){assert.deepEqual(fingerprint(runtime),expected,'Replay restoration hash mismatch');}
   const branch=id=>{const value=branches.get(id);if(!value)throw Error('Unknown investigation branch: '+id);return value;};
@@ -56,7 +57,7 @@ export async function createInvestigationSession(bytes,saved){
     observations.set(observationId,{id:observationId,branchId:value.id,actionCount:value.actions.length,verification:fingerprint(value.runtime),result});
     return result;
   }
-  function snapshot(){return structuredClone({schemaVersion:1,id,identity,branches:[...branches.values()].map(({runtime,...value})=>({...value,verification:fingerprint(runtime)})),checkpoints:[...checkpoints.values()],observations:[...observations.values()],comparisons,staticEvidence,annotations});}
+  function snapshot(){return structuredClone({schemaVersion:1,id,identity,branches:[...branches.values()].map(({runtime,...value})=>({...value,verification:fingerprint(runtime)})),checkpoints:[...checkpoints.values()],observations:[...observations.values()],comparisons,staticEvidence,annotations,captures});}
   if(saved){
     if(saved.schemaVersion!==1||typeof id!=='string'||!Array.isArray(saved.branches)||!saved.branches.length||saved.branches.length>6||saved.checkpoints?.length>16||saved.observations?.length>128)throw Error('Invalid investigation session journal');
     assert.deepEqual(saved.identity,identity,'Checkpoint cartridge/runtime identity mismatch');
@@ -81,13 +82,15 @@ export async function createInvestigationSession(bytes,saved){
     comparisons.push(...(saved.comparisons??[]));
     if((saved.staticEvidence?.length??0)>128||(saved.annotations?.length??0)>64)throw Error('Static evidence limit reached');
     staticEvidence.push(...(saved.staticEvidence??[]));annotations.push(...(saved.annotations??[]));
+    if((saved.captures?.length??0)>4)throw Error('Capture limit reached');
+    for(const capture of saved.captures??[]){if(!capture.dataUrl?.startsWith('data:image/png;base64,')||digest(Buffer.from(capture.dataUrl.split(',')[1],'base64'))!==capture.pngSha256)throw Error('Capture evidence hash mismatch');captures.push(capture);}
   }
   return{
     id,identity,snapshot,
     async reconstructCheckpoint(checkpointId,options){const value=checkpoints.get(checkpointId);if(!value)throw Error('Unknown checkpoint');return replay(value.actions,value.verification,options);},
     recordStatic(evidence){if(staticEvidence.some(item=>item.id===evidence.id))return;if(staticEvidence.length>=128)throw Error('Static evidence limit reached');staticEvidence.push(structuredClone(evidence));},
     annotate(args){
-      const known=new Set([...staticEvidence.map(item=>item.id),...observations.keys(),...checkpoints.keys(),...comparisons.map(item=>item.comparisonId),...annotations.map(item=>item.id)]);
+      const known=new Set([...staticEvidence.map(item=>item.id),...observations.keys(),...checkpoints.keys(),...comparisons.map(item=>item.comparisonId),...annotations.map(item=>item.id),...captures.map(item=>item.evidenceId)]);
       if(args.evidenceIds.some(id=>!known.has(id)))throw Error('Annotation cites unknown session evidence');
       if(annotations.length>=64)throw Error('Annotation limit reached');
       const annotation={id:`note-${String(annotations.length+1).padStart(3,'0')}`,sessionId:id,cartridgeSha256:identity.cartridgeSha256,nameSource:'agent-inference',...args};annotations.push(annotation);return{result:annotation};
@@ -137,6 +140,12 @@ export async function createInvestigationSession(bytes,saved){
         return{result:{...describe(value,args.watches),restoredFrom:checkpoint.id,restorationVerified:true}};
       }
       const value=branch(args.branchId);
+      if(name==='capture_frame'){
+        if(captures.length>=4)throw Error('At most four selective image captures per investigation');
+        const observation=describe(value),png=framebufferPng(value.runtime.framebuffer.bytes,observation.palette),pngSha256=digest(png);
+        const capture={evidenceId:`image-${String(captures.length+1).padStart(3,'0')}`,sessionId:id,branchId:value.id,observationId:observation.observationId,frame:observation.frame,cartridgeSha256:identity.cartridgeSha256,framebufferHash:observation.framebufferHash,palette:observation.palette,width:160,height:160,pngSha256,reason:args.reason,dataUrl:'data:image/png;base64,'+png.toString('base64')};
+        captures.push(capture);const {dataUrl,...metadata}=capture;return{result:metadata,images:[capture]};
+      }
       if(name==='write_memory'){
         if(!value.experimental)throw Error('Memory writes are permitted only in checkpoint branches');
         if(value.runtime.faulted||value.actions.length+args.edits.length>128)throw Error('Cannot edit this branch');

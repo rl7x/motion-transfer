@@ -20,7 +20,7 @@ async function execute(name, args) {
     return{result:{sessionId:session.id,identity:session.identity,restored:Boolean(args.sessionState)}};
   }
   validateToolInput(name, args);
-  if(name.startsWith('session_')||['read_memory','checkpoint_state','fork_checkpoint','write_memory','diff_memory','compare_branches'].includes(name)){
+  if(name.startsWith('session_')||['read_memory','checkpoint_state','fork_checkpoint','write_memory','diff_memory','compare_branches','capture_frame'].includes(name)){
     session??=await createInvestigationSession(target.bytes);
     return session.execute(name,args);
   }

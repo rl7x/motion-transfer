@@ -214,7 +214,7 @@ export async function investigate({
           if (typeof call.arguments !== 'string' || Buffer.byteLength(call.arguments) > 8_192) throw new Error('Tool arguments exceed 8 KB or are invalid');
           entry.args = JSON.parse(call.arguments);
           onProgress(`Running ${call.name}`);
-          const { result, evidence } = await dispatch(call.name, entry.args, { signal: controller.signal });
+          const { result, evidence,images } = await dispatch(call.name, entry.args, { signal: controller.signal });
           if(worker)report.session=worker.sessionState;
           entry.ok = true;
           entry.result = result;
@@ -224,6 +224,10 @@ export async function investigate({
             entry.result = { experimentId: entry.experimentId, ...result };
           }
           history.push({ type: 'function_call_output', call_id: call.call_id, output: JSON.stringify(entry.result) });
+          if(images?.length){
+            entry.images=images.map(({dataUrl,...metadata})=>metadata);
+            for(const image of images)history.push({role:'user',content:[{type:'input_text',text:`Actual framebuffer evidence ${image.evidenceId}, session ${image.sessionId}, branch ${image.branchId}, frame ${image.frame}, PNG SHA256 ${image.pngSha256}.`},{type:'input_image',image_url:image.dataUrl}]});
+          }
         } catch (error) {
           if(worker?.sessionState)report.session=worker.sessionState;
           entry.error = error.message;
