@@ -2,6 +2,7 @@ import { loadTarget } from './target.mjs';
 import { validateToolInput } from './tool-schema.mjs';
 import { createReplayRuntime } from '../runtime/replay.mjs';
 import { replayTrace } from '../runtime/trace.mjs';
+import { createWasmInspection, inspectFunction, listFunctions } from './wasm-inspection.mjs';
 
 function summarize(observation) {
   const groups = new Map();
@@ -57,27 +58,21 @@ async function execute(name, args) {
       imports: WebAssembly.Module.imports(module), exports: WebAssembly.Module.exports(module),
     },
   };
-  const { default: wabtFactory } = await import('wabt');
-  const wabt = await wabtFactory();
-  const disassembly = wabt.readWasm(target.bytes, { readDebugNames: false });
-  try {
-    disassembly.generateNames();
-    disassembly.applyNames();
-    const lines = disassembly.toText({ foldExprs: false, inlineExport: false }).split('\n');
-    if (args.startLine > lines.length) throw new Error(`startLine exceeds the ${lines.length} WAT lines`);
-    return {
-      result: {
-        sha256: target.sha256,
-        totalLines: lines.length,
-        lines: lines.slice(args.startLine - 1, args.startLine - 1 + args.lineCount).map((text, index) => ({
-          number: args.startLine + index, text: text.slice(0, 240), truncated: text.length > 240,
-        })),
-        nextLine: args.startLine + args.lineCount <= lines.length ? args.startLine + args.lineCount : null,
-      },
-    };
-  } finally {
-    disassembly.destroy();
-  }
+  const inspection = await createWasmInspection(target.bytes);
+  if (name === 'list_functions') return { result: { sha256: target.sha256, ...listFunctions(inspection, args) } };
+  if (name === 'inspect_function') return { result: { sha256: target.sha256, ...inspectFunction(inspection, args) } };
+  const { lines } = inspection;
+  if (args.startLine > lines.length) throw new Error(`startLine exceeds the ${lines.length} WAT lines`);
+  return {
+    result: {
+      sha256: target.sha256,
+      totalLines: lines.length,
+      lines: lines.slice(args.startLine - 1, args.startLine - 1 + args.lineCount).map((text, index) => ({
+        number: args.startLine + index, text: text.slice(0, 240), truncated: text.length > 240,
+      })),
+      nextLine: args.startLine + args.lineCount <= lines.length ? args.startLine + args.lineCount : null,
+    },
+  };
 }
 
 try {

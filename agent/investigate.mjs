@@ -22,8 +22,11 @@ const PRICES = {
 };
 
 const INSTRUCTIONS = `You are investigating a compiled game through a restricted experiment harness.
-You have only a registered cartridge, WASM-4 host documentation in tool descriptions, and two tools.
+You have only a registered cartridge, WASM-4 host documentation in tool descriptions, and the listed tools.
 Use inspect_wasm overview at least once. Run at least two contrasting run_original experiments.
+Use list_functions and inspect_function to locate relevant bytecode and follow direct calls.
+Generated names are not recovered source names. Indirect call targets are unresolved; static offsets
+on load/store instructions are added to runtime base addresses, not guaranteed absolute addresses.
 State a testable hypothesis in each experiment. Hold other inputs and elapsed frames constant when possible.
 Reset starts on the title screen; X starts gameplay. A state change may render on the following update.
 Simulation runs at 60 updates per second. Each checkpoint describes the frame just rendered.

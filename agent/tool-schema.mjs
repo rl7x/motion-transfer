@@ -17,6 +17,35 @@ export const TOOLS = [{
   },
 }, {
   type: 'function',
+  name: 'list_functions',
+  description: 'List generated function names, signatures, exports, WAT locations, and counts of direct calls and memory instructions in the pinned cartridge. Function indices include imports. Page with nextIndex; names are not recovered source names.',
+  strict: true,
+  parameters: {
+    type: 'object',
+    properties: {
+      startIndex: { type: 'integer', minimum: 0, maximum: 100_000 },
+      limit: { type: 'integer', minimum: 1, maximum: 50 },
+    },
+    required: ['startIndex', 'limit'],
+    additionalProperties: false,
+  },
+}, {
+  type: 'function',
+  name: 'inspect_function',
+  description: 'Inspect one function by index from list_functions. Returns direct callers/callees and up to 100 WAT lines with call sites and memory load/store offsets in that window. startLine is relative to the function, starting at 1. Indirect calls are marked unresolved. A memory offset is added to a runtime base address; it is not necessarily an absolute address. This is disassembly, not recovered source.',
+  strict: true,
+  parameters: {
+    type: 'object',
+    properties: {
+      functionIndex: { type: 'integer', minimum: 0, maximum: 100_000 },
+      startLine: { type: 'integer', minimum: 1, maximum: 100_000 },
+      lineCount: { type: 'integer', minimum: 1, maximum: 100 },
+    },
+    required: ['functionIndex', 'startLine', 'lineCount'],
+    additionalProperties: false,
+  },
+}, {
+  type: 'function',
   name: 'run_original',
   description: 'Run a controlled experiment from fresh cartridge, memory, and empty storage. Each step holds a gamepad mask for fixed 60 Hz updates. Returns checkpoint hashes, visible text, and grouped sprite coordinates. X=1 starts/dashes; Z=2; left=16; right=32; up=64; down=128. OR bits to combine; 0 releases. Maximum 12 checkpoints and 1,800 total frames. No source or filesystem access.',
   strict: true,
@@ -55,6 +84,20 @@ function integer(value, minimum, maximum) {
 }
 
 export function validateToolInput(name, args) {
+  if (name === 'list_functions') {
+    object(args, ['startIndex', 'limit']);
+    if (!integer(args.startIndex, 0, 100_000) || !integer(args.limit, 1, 50)) {
+      throw new Error('Invalid function index range');
+    }
+    return;
+  }
+  if (name === 'inspect_function') {
+    object(args, ['functionIndex', 'startLine', 'lineCount']);
+    if (!integer(args.functionIndex, 0, 100_000) || !integer(args.startLine, 1, 100_000) || !integer(args.lineCount, 1, 100)) {
+      throw new Error('Invalid function index or relative line range');
+    }
+    return;
+  }
   if (name === 'inspect_wasm') {
     object(args, ['view', 'startLine', 'lineCount']);
     if (!['overview', 'wat'].includes(args.view) || !integer(args.startLine, 1, 100_000) || !integer(args.lineCount, 1, 100)) {

@@ -1,6 +1,6 @@
 # Meta cartridge experiments
 
-This CLI gives a Meta model two tools for investigating the registered compiled cartridge: `inspect_wasm` and `run_original`. It records the chosen experiments and their observations. It does not generate or transfer a component yet.
+This CLI gives a Meta model tools for investigating the registered compiled cartridge through disassembly and controlled replays. It records the chosen experiments and their observations. It does not generate or transfer a component yet.
 
 ## Run
 
@@ -42,11 +42,13 @@ This local check uses fixed controls and explicitly labels its report `metaCalle
 ## Tools and observations
 
 - `inspect_wasm` returns the pinned cartridge's imports/exports or a numbered WAT slice of up to 100 lines. WABT generates names with debug names disabled. Long lines are explicitly abbreviated.
+- `list_functions` pages through function indices, generated names, signatures, exports, WAT locations, and counts of calls and memory instructions. Start with `{ "startIndex": 0, "limit": 50 }`, then follow `nextIndex`. Function indices include imported functions; other imports do not consume an index.
+- `inspect_function` takes a `functionIndex`, a function-relative `startLine` starting at 1, and a `lineCount` of up to 100. It returns that WAT window, direct callers/callees, and call sites and load/store offsets within the window. Follow `nextLine` to continue. Direct caller/callee lists are capped at 50 with omitted counts. Indirect calls remain unresolved; a static memory offset is added to a runtime base address and does not identify an absolute address by itself. These are instruction relationships, not recovered source or proof that a function implements a mechanic.
 - `run_original` takes a hypothesis and up to 12 input steps. Each step specifies a button mask, frame count, and checkpoint name. The tool resets the game and empty storage before every experiment, advances fixed simulation updates, and returns checkpoint hashes, visible text, and grouped sprite coordinates. Each step is capped at 600 updates; the whole experiment at 1,800.
 
 Sprite groups include pointers, pixel-data hashes, dimensions, and colors. Up to four positions per group and eight groups per checkpoint are returned, with omitted counts. These limits keep observations small; they are not guarantees that every object is shown. Use fewer checkpoints or targeted experiments if the 32 KB tool-output limit is reached. The report retains the full replay evidence, including per-frame hashes and original checkpoint draw calls.
 
-The model has no filesystem, shell, arbitrary URL, or original source tool. Both tools accept only their declared fields and read the registered target after checking its hash. Each tool runs in a separate process with a 10-second deadline and an explicit environment that excludes inference credentials. This is a restricted local harness for one fixed cartridge, not a public upload sandbox.
+The model has no filesystem, shell, arbitrary URL, or original source tool. All tools accept only their declared fields and read the registered target after checking its hash. Each tool runs in a separate process with a 10-second deadline and an explicit environment that excludes inference credentials. This is a restricted local harness for one fixed cartridge, not a public upload sandbox.
 
 ## Limits and cost accounting
 
@@ -74,6 +76,6 @@ Reports default to a unique file under `reports/investigations/`. The CLI prints
 
 Each successful replay receives an ID such as `exp-001`. A run can finish with `status: "completed"` only after at least one successful inspection and two different input sequences, both cited in its final statement. This checks the presence of evidence, not whether the interpretation is correct. `conclusionVerified` remains `false`; review the observations before treating the conclusion as a recovered rule.
 
-The model only receives the question, fixed host/control instructions, its own outputs, and the two tools' results. It is not given the repo's design notes, donor source, or prewritten explanations of the mechanic.
+The model only receives the question, fixed host/control instructions, its own outputs, and tool results. It is not given the repo's design notes, donor source, or prewritten explanations of the mechanic.
 
 Sources: [Meta model availability](https://dev.meta.ai/docs/models), [Responses continuation](https://dev.meta.ai/docs/protocols/responses), [tool calling](https://dev.meta.ai/docs/tool-calling), [token counting](https://dev.meta.ai/docs/token-counting), [standard pricing](https://dev.meta.ai/docs/pricing-rate-limits).
