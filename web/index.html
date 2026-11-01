@@ -26,21 +26,21 @@
   </section>
   <section class="games" aria-label="Donor, recipient before transfer, recipient after transfer">
     <article class="game-card donor-card">
-      <div class="card-heading"><div><p class="eyebrow">02 / FEEL THE ORIGINAL ABILITY</p><h2>Dashy Dango</h2></div><span class="pill neutral">COMPILED DONOR</span></div>
+      <div class="card-heading"><div><p class="eyebrow">02 / FEEL THE ORIGINAL ABILITY</p><h2>Dashy Dango</h2></div><div class="card-heading-actions"><span class="pill neutral">COMPILED DONOR</span><button class="expand-player" data-expand="donor-game" aria-expanded="false">Expand ⤢</button></div></div>
       <iframe id="donor-game" title="Compiled Dashy Dango donor" sandbox="allow-scripts" allow="autoplay"></iframe>
       <div class="toolbar donor-toolbar"><button data-donor="left" aria-label="Move donor left">←</button><button data-donor="up" aria-label="Move donor up">↑</button><button data-donor="down" aria-label="Move donor down">↓</button><button data-donor="right" aria-label="Move donor right">→</button><button class="dash-button" data-donor="dash">Start / dash <kbd>X</kbd></button><button class="quiet" data-reset="donor-game" aria-label="Reset donor">↻</button></div>
       <p class="controls">Focus the game. Arrow keys move; <kbd>X</kbd> starts and dashes. Or use the buttons above.</p>
       <p class="card-note" id="donor-state">The original compiled cartridge, running locally.</p>
     </article>
     <article class="game-card">
-      <div class="card-heading"><div><p class="eyebrow">03 / BEFORE THE TRANSFER</p><h2 id="recipient-title">Recipient</h2></div><span class="pill neutral">BEFORE</span></div>
+      <div class="card-heading"><div><p class="eyebrow">03 / BEFORE THE TRANSFER</p><h2 id="recipient-title">Recipient</h2></div><div class="card-heading-actions"><span class="pill neutral">BEFORE</span><button class="expand-player" data-expand="original-game" aria-expanded="false">Expand ⤢</button></div></div>
       <iframe id="original-game" title="Recipient before transfer" allow="autoplay"></iframe>
       <div class="toolbar"><button data-turn="original-game" disabled>Start / turn <kbd>Space</kbd></button><button class="quiet" data-reset="original-game" aria-label="Reset recipient before transfer">↻</button></div>
       <p class="controls" id="original-controls">Loading the recipient…</p>
       <p class="card-note">The recipient's own rules, without the recovered ability.</p>
     </article>
     <article class="game-card transferred">
-      <div class="card-heading"><div><p class="eyebrow">04 / THE SAME ABILITY, REHOMED</p><h2 id="hybrid-title">Recipient + dash</h2></div><span class="pill" id="transfer-status" role="status">LOADING</span></div>
+      <div class="card-heading"><div><p class="eyebrow">04 / THE SAME ABILITY, REHOMED</p><h2 id="hybrid-title">Recipient + dash</h2></div><div class="card-heading-actions"><span class="pill" id="transfer-status" role="status">LOADING</span><button class="expand-player" data-expand="transfer-game" aria-expanded="false">Expand ⤢</button></div></div>
       <div class="play-area"><iframe id="transfer-game" data-src="/play?mode=transfer" title="Recipient after transfer" allow="autoplay" hidden></iframe><div id="transfer-placeholder">Loading the saved transfer…</div></div>
       <div class="toolbar"><button data-turn="transfer-game" data-transfer-control disabled>Start / turn <kbd>Space</kbd></button><button class="dash-button" data-dash data-transfer-control disabled>Hold to dash <kbd>D</kbd></button><button class="quiet" data-reset="transfer-game" data-transfer-control disabled aria-label="Reset recipient after transfer">↻</button></div>
       <p class="controls" id="transfer-controls">Loading the transferred ability…</p>

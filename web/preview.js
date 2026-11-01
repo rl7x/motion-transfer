@@ -6,7 +6,10 @@ donor.src='/donor/play#channel='+donorChannel;
 for(const button of document.querySelectorAll('[data-donor]'))button.disabled=true;
 
 function bindHold(button,change){
-  button.addEventListener('pointerdown',event=>{button.setPointerCapture(event.pointerId);change(true);});
+  button.addEventListener('pointerdown',event=>{
+    // Keep the game focused; its blur handler would otherwise release this input.
+    event.preventDefault();button.setPointerCapture(event.pointerId);change(true);
+  });
   for(const name of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(name,()=>change(false));
   button.addEventListener('keydown',event=>{if(['Space','Enter'].includes(event.code)){event.preventDefault();if(!event.repeat)change(true);}});
   button.addEventListener('keyup',event=>{if(['Space','Enter'].includes(event.code)){event.preventDefault();change(false);}});
@@ -31,6 +34,50 @@ for(const button of document.querySelectorAll('[data-reset]'))button.addEventLis
   if(frame.getAttribute('src'))frame.src=frame.getAttribute('src');
 });
 window.addEventListener('blur',()=>{send(after,'dash',false);dashButton.classList.remove('pressed');});
+
+let expandedCard,expandedButton,expandedInert=[],expanding=false;
+function markExpanded(card,button){
+  expandedCard=card;expandedButton=button;
+  button.textContent='Close large view ×';button.setAttribute('aria-expanded','true');
+  // Keep the existing iframe in place so resizing does not restart its game.
+  card.querySelector('iframe').focus();
+}
+function closeExpanded(){
+  if(!expandedCard)return;
+  expandedCard.classList.remove('is-expanded');document.body.classList.remove('player-expanded');
+  for(const element of expandedInert)element.inert=false;
+  expandedInert=[];
+  expandedButton.textContent='Expand ⤢';expandedButton.setAttribute('aria-expanded','false');
+  expandedButton.focus({preventScroll:true});expandedCard=expandedButton=null;
+}
+document.addEventListener('fullscreenchange',()=>{
+  if(!document.fullscreenElement)closeExpanded();
+});
+document.addEventListener('keydown',event=>{
+  if(event.code==='Escape'&&expandedCard&&!document.fullscreenElement){event.preventDefault();closeExpanded();}
+});
+for(const button of document.querySelectorAll('[data-expand]'))button.addEventListener('click',async()=>{
+  if(expanding)return;
+  expanding=true;
+  try{
+    const card=button.closest('.game-card');
+    if(expandedCard===card){
+      if(document.fullscreenElement===card)await document.exitFullscreen();
+      closeExpanded();
+      return;
+    }
+    if(document.fullscreenEnabled&&card.requestFullscreen){
+      try{await card.requestFullscreen();markExpanded(card,button);return;}
+      catch{/* Use the page-sized player when browser fullscreen is unavailable. */}
+    }
+    card.classList.add('is-expanded');document.body.classList.add('player-expanded');
+    for(let node=card;node.parentElement&&node!==document.body;node=node.parentElement){
+      for(const sibling of node.parentElement.children)if(sibling!==node&&!sibling.inert){sibling.inert=true;expandedInert.push(sibling);}
+    }
+    markExpanded(card,button);
+  }finally{expanding=false;}
+});
+
 window.addEventListener('message',event=>{
   if(event.source===donor.contentWindow&&event.data?.channel===donorChannel&&event.data.type==='donor-status'){
     for(const button of document.querySelectorAll('[data-donor]'))button.disabled=false;

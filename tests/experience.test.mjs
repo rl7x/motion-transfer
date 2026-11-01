@@ -77,3 +77,56 @@ test('mobile touch controls operate the transferred ability without viewport ove
     await page.setViewportSize({width:320,height:740});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   }finally{await context?.close();await harness.close();}
 });
+
+test('expanding a player enlarges its actual canvas and preserves the current game and dash controls',async()=>{
+  const harness=await createPakuBrowser();
+  try{
+    const {page,errors}=await harness.page();await page.setViewportSize({width:1440,height:1050});
+    await page.goto(harness.origin+'/?destination=jujump');
+    await page.waitForFunction(()=>window.currentDestination==='jujump'&&document.querySelector('#transfer-status').textContent==='VERIFIED TRANSFER');
+    const frame=await(await page.$('#transfer-game')).contentFrame();
+    await frame.goto(frame.url()+'&test=1');await frame.waitForFunction(()=>window.jujumpReady===true);
+    await page.locator('[data-turn="transfer-game"]').click();await frame.evaluate(()=>gameClock.advance(11));
+    await frame.evaluate(()=>jujumpFixture({p:{x:30,y:20},v:{x:1,y:0.5},floors:[],jumpWay:1,floorAppDist:99999}));
+    const before=await frame.evaluate(()=>jujumpSnapshot());
+    const width=await frame.locator('canvas').evaluate(canvas=>canvas.getBoundingClientRect().width);
+    await page.locator('[data-expand="transfer-game"]').click();
+    await page.waitForFunction(()=>document.fullscreenElement?.contains(document.querySelector('#transfer-game')));
+    await frame.waitForFunction(width=>document.querySelector('canvas').getBoundingClientRect().width>width*1.5,width);
+    assert.deepEqual(await frame.evaluate(()=>jujumpSnapshot()),before);
+    const button=page.locator('[data-dash]'),box=await button.boundingBox();
+    await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();
+    await frame.waitForFunction(()=>motionPort.snapshot().dashHeld===true);await frame.evaluate(()=>gameClock.advance(8));
+    await page.mouse.up();await frame.waitForFunction(()=>motionPort.snapshot().dashHeld===false);
+    const dashed=await frame.evaluate(()=>jujumpSnapshot());assert.equal(dashed.p.x-before.p.x,30);
+    await page.locator('[data-expand="transfer-game"]').click();
+    await page.waitForFunction(()=>document.fullscreenElement===null);
+    await page.waitForFunction(()=>document.querySelector('[data-expand="transfer-game"]').getAttribute('aria-expanded')==='false');
+    assert.deepEqual(await frame.evaluate(()=>jujumpSnapshot()),dashed);
+    assert.equal(await page.locator('[data-expand="transfer-game"]').getAttribute('aria-expanded'),'false');
+    assert.deepEqual(errors,[]);
+  }finally{await harness.close();}
+});
+
+test('the large touch player works when browser fullscreen is unavailable',async()=>{
+  const harness=await createPakuBrowser();let context;
+  try{
+    const {page:seed}=await harness.page();
+    context=await seed.context().browser().newContext({viewport:{width:375,height:812},hasTouch:true,isMobile:true});
+    await context.addInitScript(()=>Object.defineProperty(document,'fullscreenEnabled',{get:()=>false}));
+    const page=await context.newPage();await page.goto(harness.origin+'/?destination=jujump');
+    await page.waitForFunction(()=>window.currentDestination==='jujump'&&document.querySelector('#transfer-status').textContent==='VERIFIED TRANSFER');
+    const frame=await(await page.$('#transfer-game')).contentFrame();
+    await frame.evaluate(()=>{window.playSession='retained';});
+    await page.locator('[data-expand="transfer-game"]').tap();
+    const bounds=await page.locator('#transfer-game').boundingBox();assert.ok(bounds.width>=370);assert.ok(bounds.height>450);
+    assert.equal(await frame.evaluate(()=>window.playSession),'retained');
+    assert.equal(await page.locator('.intro').evaluate(element=>element.inert),true);
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+    await page.locator('[data-turn="transfer-game"]').tap();await frame.waitForFunction(()=>jujumpSnapshot().status==='playing');
+    await page.locator('[data-expand="transfer-game"]').tap();
+    assert.equal(await page.locator('.intro').evaluate(element=>element.inert),false);
+    assert.equal(await page.locator('[data-expand="transfer-game"]').getAttribute('aria-expanded'),'false');
+    assert.equal(await frame.evaluate(()=>window.playSession),'retained');
+  }finally{await context?.close();await harness.close();}
+});
