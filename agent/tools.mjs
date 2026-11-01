@@ -5,7 +5,7 @@ import { MAX_TOOL_OUTPUT_BYTES, validateToolInput } from './tool-schema.mjs';
 const worker = fileURLToPath(new URL('tool-worker.mjs', import.meta.url));
 
 export function createCartridgeTools({signal,timeoutMs=10_000}={}){
-  const child=spawn(process.execPath,[worker],{
+  const child=spawn(process.execPath,['--max-old-space-size=128',worker],{
     env: { PATH: process.env.PATH ?? '', ...(process.env.TMPDIR ? { TMPDIR: process.env.TMPDIR } : {}) },
     stdio:['pipe','pipe','pipe'],
   });
