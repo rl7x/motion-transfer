@@ -119,14 +119,14 @@ export async function investigate({
     await onUpdate(report);
     for (let turn = report.requests.length; turn < limits.maxModelCalls; turn++) {
       checkTime();
-      const finalizing = experiments >= 2 && turn === limits.maxModelCalls - 1;
+      const finalizing = turn === limits.maxModelCalls - 1;
       if (finalizing) {
         history.splice(0, history.length, ...evidenceHistory(report));
         report.contextCompactions.push({ at: new Date().toISOString(), reason: 'final-conclusion' });
       }
       const request = {
         model,
-        instructions: INSTRUCTIONS + (finalizing ? '\nThis is the last generation request. No tools remain. Give your concise conclusion from the recorded observations, cite experiment IDs, and state what remains inconclusive.' : ''),
+        instructions: INSTRUCTIONS + `\nYou have ${limits.maxModelCalls} generation requests total. This is request ${turn+1}. Reserve the last request for a conclusion. Prioritize two contrasting experiments: after overview and function listing, inspect at most one relevant function before running them. You may inspect further only after both experiments exist.` + (finalizing ? '\nThis is the last generation request. No tools remain. Give your concise conclusion from the recorded observations, cite experiment IDs, and state what remains inconclusive.' : ''),
         input: history,
         tools: finalizing ? [] : TOOLS,
         store: false,

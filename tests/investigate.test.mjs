@@ -171,8 +171,8 @@ test('model call limits stop a loop that keeps requesting tools', async () => {
   let calls = 0;
   const client = {
     countInputTokens: async () => 10,
-    respond: async () => { calls++; return response('r1', [call('c1', 'inspect_wasm', { view: 'overview', startLine: 1, lineCount: 5 })]); },
+    respond: async request => { calls++; assert.deepEqual(request.tools,[]);return response('r1', [call('c1', 'inspect_wasm', { view: 'overview', startLine: 1, lineCount: 5 })]); },
   };
-  await assert.rejects(investigate({ client, limits: { maxModelCalls: 1 } }), /Model call limit/);
+  await assert.rejects(investigate({ client, limits: { maxModelCalls: 1 } }), /tool call after tools were disabled/);
   assert.equal(calls, 1);
 });
