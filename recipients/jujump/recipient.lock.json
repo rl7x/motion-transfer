@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "jujump",
+  "name": "JUJUMP",
+  "author": "Kenta Cho / ABA Games",
+  "repository": "https://github.com/abagames/crisp-game-lib-games",
+  "revision": "cfb39d2f988feb5918eb83697145b5a35adabf58",
+  "license": "MIT",
+  "files": [
+    {
+      "path": "docs/jujump/main.js",
+      "local": "upstream/main.js",
+      "bytes": 1139,
+      "sha256": "fb277a1d34622639f8f1d3aa4ecc8bb6254c910b105794249fd9cdefd54df035"
+    },
+    {
+      "path": "LICENSE.txt",
+      "local": "upstream/LICENSE.txt",
+      "bytes": 1066,
+      "sha256": "ddc67bc26d4cbf406256e3848129869020bc8bc4631078b8955c1f758eee88ae"
+    },
+    {
+      "path": "README.md",
+      "local": "upstream/README.md",
+      "bytes": 209,
+      "sha256": "b7d9bf52e00e38b8b135fb6171ebb2ccf660f255e748a370506edfd07385eb06"
+    }
+  ],
+  "runtime": {
+    "name": "crisp-game-lib",
+    "version": "1.1.1"
+  },
+  "sound": {
+    "name": "sounds-some-sounds",
+    "version": "3.0.0"
+  }
+}

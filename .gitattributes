@@ -1,2 +1,3 @@
 # Preserve the pinned upstream bytes, including its original CRLF line endings.
 recipients/paku-paku/upstream/* -text whitespace=cr-at-eol
+recipients/jujump/upstream/* -text whitespace=cr-at-eol
