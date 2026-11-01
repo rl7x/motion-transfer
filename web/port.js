@@ -3,9 +3,14 @@ import { validateAdapterOutput } from '/assets/transfer-output.js';
 export function createMotionPort(adapter, recovered, config) {
   let state, coreState, output, origin, dash = false, initCalls = 0, stepCalls = 0, replayControls = [];
   const frozen = Object.freeze({ motion: Object.freeze(config.motion), unitScale: config.unitScale });
+  function checkConfig(value) {
+    if (!value || Object.keys(value).sort().join(',') !== Object.keys(frozen.motion).sort().join(',')
+      || Object.keys(frozen.motion).some(key=>value[key]!==frozen.motion[key])) throw Error('Adapter changed frozen component configuration');
+  }
   const motion = Object.freeze({
-    init(config) { initCalls++; coreState = recovered.init(config); return coreState; },
+    init(config) { checkConfig(config); initCalls++; coreState = recovered.init(config); return coreState; },
     step(state, input, config) {
+      checkConfig(config);
       if (input.sourceBodyWidth !== 8) throw Error('Transfer changed verified source geometry');
       stepCalls++;
       const result = recovered.step(state, input, config);
@@ -53,6 +58,7 @@ export function createMotionPort(adapter, recovered, config) {
   }, true);
   window.addEventListener('blur', () => port.setDash(false));
   window.addEventListener('message', event => {
+    if (config.parentMessages === false) return;
     if (event.origin === location.origin && event.source === parent && event.data?.type === 'dash') port.setDash(event.data.pressed);
   });
   return port;

@@ -19,9 +19,14 @@ try {
         const config = Object.freeze({ motion: Object.freeze(request.defaults), unitScale: request.trace.scale ?? 0.5 });
         let initCalls = 0, stepCalls = 0;
         const inputs = [];
+        function checkConfig(config) {
+          if (!config || Object.keys(config).sort().join(',') !== Object.keys(request.defaults).sort().join(',')
+            || Object.keys(request.defaults).some(key=>config[key]!==request.defaults[key])) throw Error('Adapter changed frozen component configuration');
+        }
         const motion = Object.freeze({
-          init(config) { initCalls++; return recovered.init(config); },
+          init(config) { checkConfig(config); initCalls++; return recovered.init(config); },
           step(state, input, config) {
+            checkConfig(config);
             stepCalls++; inputs.push(JSON.parse(JSON.stringify(input)));
             if (input.sourceBodyWidth !== 8) throw Error('Adapter must retain verified source body width 8');
             if (request.trace.mockOutputs) return {state:{mockTick:stepCalls},output:request.trace.mockOutputs[stepCalls-1]};
