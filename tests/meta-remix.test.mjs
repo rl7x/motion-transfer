@@ -41,4 +41,3 @@ test('remixes reject unsupported edits, no-op intent, and exhausted budgets with
   });
   assert.equal(calls,2);
 });
-
