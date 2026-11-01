@@ -184,9 +184,9 @@ export async function investigate({
       if (!calls.length) {
         const conclusion = publicMessages.map(message => message.text).filter(Boolean).join('\n');
         const successful = report.toolCalls.filter(call => call.name === 'run_original' && call.ok);
-        const signatures = new Set(successful.map(call => JSON.stringify(call.args.steps.map(step => [step.buttons, step.frames]))));
         const citations = new Set(conclusion.match(/\bexp-\d{3}\b/g) ?? []);
         const cited = successful.filter(call => citations.has(call.experimentId));
+        const signatures = new Set(cited.map(call => JSON.stringify(call.args.steps.map(step => [step.buttons, step.frames]))));
         if (!conclusion || signatures.size < 2 || cited.length < 2
           || !report.toolCalls.some(call => call.name === 'inspect_wasm' && call.ok)) {
           throw new Error('Model ended without an inspection and two contrasting, cited experiments');
