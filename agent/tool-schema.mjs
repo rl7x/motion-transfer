@@ -1,4 +1,4 @@
-import { MEMORY_TYPES, validateMemoryWatches } from '../runtime/memory.mjs';
+import { MEMORY_TYPES, validateMemoryWatches,validateMemoryEdit,memoryTypeSize } from '../runtime/memory.mjs';
 
 export const MAX_TOOL_OUTPUT_BYTES = 32_768;
 
@@ -107,6 +107,18 @@ TOOLS.push({type:'function',name:'checkpoint_state',strict:true,
   description:'Restore a checkpoint into a new independent experimental branch. main remains unchanged. Give the new branch a short lowercase identity; use the returned identity in later commands.',
   parameters:{type:'object',properties:{checkpointId:{type:'string',pattern:'^cp-[a-f0-9]{20}$'},branchId,watches},required:['checkpointId','branchId','watches'],additionalProperties:false},
 });
+const memoryRange={type:'object',properties:{address:{type:'integer',minimum:0,maximum:65535},byteLength:{type:'integer',minimum:1,maximum:4096},type:{type:'string',enum:MEMORY_TYPES}},required:['address','byteLength','type'],additionalProperties:false};
+const edit={type:'object',properties:{address:{type:'integer',minimum:0,maximum:65535},type:{type:'string',enum:MEMORY_TYPES},value:{type:'number'},hypothesis:{type:'string',minLength:1,maxLength:500}},required:['address','type','value','hypothesis'],additionalProperties:false};
+TOOLS.push({type:'function',name:'write_memory',strict:true,
+  description:'Apply up to eight finite typed writes to an experimental checkpoint branch. Writes to main are forbidden. Records the previous value, rounded new value, address, frame and hypothesis. Code bytes remain immutable. A trapped branch must reset before advancing.',
+  parameters:{type:'object',properties:{branchId,edits:{type:'array',minItems:1,maxItems:8,items:edit},watches},required:['branchId','edits','watches'],additionalProperties:false},
+},{type:'function',name:'diff_memory',strict:true,
+  description:'Compare up to 4096 bytes as typed values between two observation IDs from this session. Returns absolute candidate addresses and changes, capped at 64. Reconstructs each observation by verified replay. Changes alone are correlation, not inferred names.',
+  parameters:{type:'object',properties:{fromObservationId:{type:'string'},toObservationId:{type:'string'},range:memoryRange},required:['fromObservationId','toObservationId','range'],additionalProperties:false},
+},{type:'function',name:'compare_branches',strict:true,
+  description:'Advance two branches forked from the same checkpoint with exactly the same inputs. The control must have no additional writes. Prior input histories and elapsed frames must match. Observe actual motion, memory and rendering differences; mutations alone are not proof of a field meaning. At most 600 frames total.',
+  parameters:{type:'object',properties:{controlBranchId:branchId,experimentalBranchId:branchId,hypothesis:{type:'string',minLength:1,maxLength:500},watches,steps:{...steps,maxItems:4}},required:['controlBranchId','experimentalBranchId','hypothesis','watches','steps'],additionalProperties:false},
+});
 
 function object(value, keys) {
   if (!value || typeof value !== 'object' || Array.isArray(value)
@@ -120,6 +132,25 @@ function integer(value, minimum, maximum) {
 }
 
 export function validateToolInput(name, args) {
+  if(name==='write_memory'){
+    object(args,['branchId','edits','watches']);validateToolInput('session_observe',{branchId:args.branchId,watches:args.watches});
+    if(!Array.isArray(args.edits)||!args.edits.length||args.edits.length>8)throw Error('Use one to eight memory edits');
+    for(const edit of args.edits){object(edit,['address','type','value','hypothesis']);validateMemoryEdit(edit);if(typeof edit.hypothesis!=='string'||!edit.hypothesis.trim()||edit.hypothesis.length>500)throw Error('Each edit needs a hypothesis');}
+    return;
+  }
+  if(name==='diff_memory'){
+    object(args,['fromObservationId','toObservationId','range']);object(args.range,['address','byteLength','type']);
+    const size=memoryTypeSize(args.range.type);
+    if(![args.fromObservationId,args.toObservationId].every(id=>typeof id==='string'&&/^obs-\d{4}$/.test(id))||!size||!integer(args.range.address,0,65535)||!integer(args.range.byteLength,1,4096)||args.range.byteLength%size||args.range.address+args.range.byteLength>65536)throw Error('Invalid observation IDs or memory comparison range');
+    return;
+  }
+  if(name==='compare_branches'){
+    object(args,['controlBranchId','experimentalBranchId','hypothesis','watches','steps']);
+    for(const branchId of [args.controlBranchId,args.experimentalBranchId])validateToolInput('session_observe',{branchId,watches:args.watches});
+    validateToolInput('run_original',{hypothesis:args.hypothesis,watches:args.watches,steps:args.steps});
+    if(args.steps.length>4||args.steps.reduce((sum,step)=>sum+step.frames,0)>600)throw Error('Compare at most four steps and 600 frames');
+    return;
+  }
   if(name==='checkpoint_state'||name==='fork_checkpoint'){
     object(args,name==='checkpoint_state'?['branchId','label']:['checkpointId','branchId','watches']);
     if(typeof args.branchId!=='string'||!/^[a-z][a-z0-9-]{0,39}$/.test(args.branchId))throw Error('Invalid branch identity');
