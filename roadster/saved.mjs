@@ -3,6 +3,8 @@ import { readFile,mkdir,writeFile,rename } from 'node:fs/promises';
 import { digest } from '../component/build.mjs';
 import { buildRoadsterFrame } from './build.mjs';
 import { validateRoadsterIntent } from './port.mjs';
+import {fileURLToPath} from 'node:url';
+import {readRoadsterArtifact} from './artifact.mjs';
 
 const root=new URL('../transfers/roadster/',import.meta.url);
 export async function validateRoadsterArtifact(artifact){
@@ -22,11 +24,7 @@ export async function validateRoadsterArtifact(artifact){
 export async function loadSavedRoadster({optional=false}={}){
   let current;try{current=JSON.parse(await readFile(new URL('current.json',root),'utf8'));}catch(error){if(optional&&error.code==='ENOENT')return null;throw error;}
   if(!/^[a-f0-9]{64}$/.test(current.id))throw Error('Invalid saved Roadster ID');
-  const base=new URL('versions/'+current.id+'/',root),record=JSON.parse(await readFile(new URL('manifest.json',base),'utf8'));
-  const {id,...manifest}=record;assert.equal(id,current.id);assert.equal(digest(JSON.stringify(manifest)),id);
-  if(Object.keys(manifest.files).sort().join(',')!=='adapter.js,adapter.ts,frame.html,generation.json,notices.txt,verification.json')throw Error('Invalid saved Roadster files');
-  const files={};for(const [name,hash]of Object.entries(manifest.files)){files[name]=await readFile(new URL(name,base),'utf8');assert.equal(digest(files[name]),hash);}
-  return validateRoadsterArtifact({...record,files});
+  return validateRoadsterArtifact(await readRoadsterArtifact(fileURLToPath(new URL('versions/',root)),current.id));
 }
 export async function saveRoadsterArtifact(artifact){
   await validateRoadsterArtifact(artifact);const directory=new URL('versions/'+artifact.id+'/',root);await mkdir(directory,{recursive:true});

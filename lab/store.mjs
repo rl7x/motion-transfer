@@ -2,8 +2,9 @@ import { mkdir,readFile,readdir,rename,rm,writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { digest } from '../component/build.mjs';
+import {readRoadsterArtifact,ROADSTER_FILES} from '../roadster/artifact.mjs';
 
-export const artifactId=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
+export {artifactId} from '../roadster/artifact.mjs';
 export async function createLabStore(directory){
   await mkdir(join(directory,'jobs'),{recursive:true});await mkdir(join(directory,'artifacts'),{recursive:true});
   const lock=join(directory,'.lock');
@@ -22,7 +23,7 @@ export async function createLabStore(directory){
     async jobs(){return Promise.all((await readdir(join(directory,'jobs'))).filter(name=>name.endsWith('.json')).map(name=>json(pathFor(name.slice(0,-5)))));},
     async writeJob(job){const path=pathFor(job.id),temporary=path+'.'+randomUUID()+'.tmp';await writeFile(temporary,JSON.stringify(job,null,2)+'\n',{mode:0o600});await rename(temporary,path);},
     async publish(files,metadata){
-      if(Object.keys(files).sort().join(',')!=='adapter.js,adapter.ts,frame.html,generation.json,notices.txt,verification.json')throw Error('Invalid Roadster artifact files');
+      if(Object.keys(files).sort().join(',')!==ROADSTER_FILES.join(','))throw Error('Invalid Roadster artifact files');
       const manifest={schemaVersion:1,...metadata,files:Object.fromEntries(Object.entries(files).map(([name,bytes])=>[name,digest(bytes)]))};
       const id=digest(JSON.stringify(manifest)),target=join(directory,'artifacts',id),temporary=target+'.'+randomUUID()+'.tmp';
       await mkdir(temporary);
@@ -31,13 +32,7 @@ export async function createLabStore(directory){
       return this.artifact(id);
     },
     async artifact(id){
-      if(!artifactId(id))throw Error('Invalid Roadster artifact ID');
-      const root=join(directory,'artifacts',id),record=await json(join(root,'manifest.json'));
-      const {id:claimed,...manifest}=record;
-      if(claimed!==id||digest(JSON.stringify(manifest))!==id)throw Error('Roadster artifact identity mismatch');
-      if(Object.keys(record.files).sort().join(',')!=='adapter.js,adapter.ts,frame.html,generation.json,notices.txt,verification.json')throw Error('Invalid Roadster artifact files');
-      const files={};for(const [name,hash]of Object.entries(record.files)){const bytes=await readFile(join(root,name),'utf8');if(digest(bytes)!==hash)throw Error('Roadster artifact integrity mismatch: '+name);files[name]=bytes;}
-      return{...record,files};
+      return readRoadsterArtifact(join(directory,'artifacts'),id);
     },
   };
 }
