@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {createPakuBrowser} from '../evaluator/browser-harness.mjs';
+import {readRoadsterArtifact} from '../roadster/artifact.mjs';
+import {fileURLToPath} from 'node:url';
 
 test('the default Roadster transfer and guided comparison execute without model requests',async()=>{
   const harness=await createPakuBrowser();
@@ -14,6 +16,19 @@ test('the default Roadster transfer and guided comparison execute without model 
     assert.deepEqual(posts,[]);assert.deepEqual(errors,[]);
     await page.locator('[data-destination="paku-paku"]').click();await page.waitForFunction(()=>window.currentDestination==='paku-paku'&&document.querySelector('#transfer-status').textContent==='VERIFIED TRANSFER');
     assert.equal(await page.locator('#roadster-panel').isHidden(),true);
+  }finally{await harness.close();}
+});
+
+test('historical Roadster versions display their own verification count',async()=>{
+  const historical=await readRoadsterArtifact(fileURLToPath(new URL('../transfers/roadster/versions/',import.meta.url)),'9126d1dd00b794daab3fda1711fd3b7058b4962eed800cc8105fd4b874d6eed3');
+  const lab={status:()=>({enabled:false,activeRunId:null,budget:null}),artifact:async id=>{assert.equal(id,historical.id);return historical;}};
+  const harness=await createPakuBrowser({lab});
+  try{
+    const {page}=await harness.page();await page.goto(harness.origin+'/roadster/play/'+historical.id);
+    await page.waitForFunction(id=>window.currentRoadsterArtifact?.id===id,historical.id);
+    assert.equal(await page.locator('#check-count').textContent(),'8 mapping cases + 7 browser checks');
+    await page.locator('[data-destination="paku-paku"]').click();
+    assert.equal(await page.locator('#check-count').textContent(),'11 mapping cases + 8 browser checks');
   }finally{await harness.close();}
 });
 

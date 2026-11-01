@@ -55,6 +55,7 @@ test('a lost Roadster response retains its request across refresh and reconnects
     await page.reload();await page.waitForFunction(()=>document.querySelector('#roadster-submit').textContent.includes('Reconnect')&&!document.querySelector('#roadster-submit').disabled);
     await page.locator('#roadster-submit').click();await page.waitForFunction(()=>window.currentRoadsterArtifact?.summary==='Injected reconnect fixture; no model call');
     assert.equal(calls,1);assert.equal((await page.evaluate(()=>window.currentRoadsterArtifact)).parentArtifactId,base.id);
+    await page.waitForFunction(()=>document.querySelector('#transfer-status').textContent==='CHECKED REMIX');
   }finally{await harness.close();await lab.close();await rm(directory,{recursive:true,force:true});}
 });
 

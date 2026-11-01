@@ -91,6 +91,10 @@ window.addEventListener('message',event=>{
 });
 
 async function json(path){const response=await fetch(path);const body=await response.json();if(!response.ok)throw Error(body.error??'Could not load saved result');return body;}
+async function roadsterArtifact(id){
+  const [artifact,report]=await Promise.all([json('/api/roadster/artifacts/'+id),json('/roadster/artifacts/'+id+'/report.json')]);
+  return{...artifact,conformanceChecks:report.conformance.results.length,browserChecks:report.browser.results.length};
+}
 function renderChoices(){
   const buttons=catalog.destinations.map(item=>{
     const button=document.createElement('button');button.className='destination';button.dataset.destination=item.id;
@@ -135,7 +139,7 @@ function select(item,navigate=false){
   $('#adapter-source').href=car?`/roadster/artifacts/${selected.id}/adapter.ts`:child?`/artifacts/${selected.id}/adapter.ts`:item.source;
   const artifact=$('#artifact-id');artifact.textContent=(selected?.id??item.artifactId).slice(0,12);
   artifact.title=selected?.id??item.artifactId;artifact.href=car?`/api/roadster/artifacts/${selected.id}`:selected?`/api/artifacts/${selected.id}`:item.report;
-  $('#check-count').textContent=car?'8 mapping cases + 8 browser checks':selected?`${selected.conformanceChecks} mapping cases + ${selected.browserChecks} browser checks`:'11 mapping cases + 7 browser checks';
+  $('#check-count').textContent=selected?`${selected.conformanceChecks} mapping cases + ${selected.browserChecks} browser checks`:'11 mapping cases + 7 browser checks';
   $('#model').textContent=item.id==='jujump'?'Human-authored integration':selected?.model??'Meta-generated adapter';
   $('#generation-cost').textContent=item.id==='jujump'?'$0 (no new model call)':`$${(selected?.estimatedGenerationCostUsd??selected?.estimatedCostUsd??0).toFixed(3)}`;
   if(selected&&!car){
@@ -151,7 +155,7 @@ async function loadRoute(){
   const id=location.pathname.match(/^\/play\/([a-f0-9]{64})$/)?.[1];
   let target=catalog.destinations.find(item=>item.id===new URL(location.href).searchParams.get('destination'));
   const carId=location.pathname.match(/^\/roadster\/play\/([a-f0-9]{64})$/)?.[1];
-  if(carId){roadsterSelection=await json('/api/roadster/artifacts/'+carId);if(requestVersion!==version)return;target=catalog.destinations.find(item=>item.id==='roadster');}
+  if(carId){roadsterSelection=await roadsterArtifact(carId);if(requestVersion!==version)return;target=catalog.destinations.find(item=>item.id==='roadster');}
   if(id){
     target=catalog.destinations.find(item=>item.artifactId===id);
     if(!target){const selected=await json('/api/artifacts/'+id);if(requestVersion!==version)return;pakuSelection=selected;target=catalog.destinations.find(item=>item.id==='paku-paku');}
@@ -175,9 +179,9 @@ try{
   $('#shared-component').textContent='SAME COMPONENT / '+ability.id.slice(0,12);$('#shared-component').title=ability.id;
   const transfer=await json('/api/transfer');
   if(transfer.status==='verified')pakuSelection={...transfer,intent:{unitScale:0.5,activation:'held',direction:'facing'}};
-  const car=catalog.destinations.find(item=>item.id==='roadster');if(car){window.savedRoadsterId=car.artifactId;roadsterSelection=await json('/api/roadster/artifacts/'+car.artifactId);}
+  const car=catalog.destinations.find(item=>item.id==='roadster');if(car){window.savedRoadsterId=car.artifactId;roadsterSelection=await roadsterArtifact(car.artifactId);}
   window.selectDestination=async id=>{const item=catalog.destinations.find(item=>item.id===id);if(!item)throw Error('Destination unavailable');select(item,true);};
-  window.openRoadsterArtifact=async id=>{roadsterSelection=await json('/api/roadster/artifacts/'+id);select(catalog.destinations.find(item=>item.id==='roadster'),true);};
+  window.openRoadsterArtifact=async id=>{roadsterSelection=await roadsterArtifact(id);select(catalog.destinations.find(item=>item.id==='roadster'),true);};
   await loadRoute();
 }catch(error){$('#selection-note').textContent=error.message;$('#transfer-status').textContent='UNAVAILABLE';}
 setInterval(()=>{
@@ -188,7 +192,7 @@ setInterval(()=>{
     const ready=channel?Boolean(childState):Boolean(win.pakuReady||win.jujumpReady);
     if(ready){
       $('#transfer-placeholder').hidden=true;
-      $('#transfer-status').textContent=window.currentArtifact?.parentArtifactId?'CHECKED REMIX':'VERIFIED TRANSFER';
+      $('#transfer-status').textContent=(window.currentArtifact??window.currentRoadsterArtifact)?.parentArtifactId?'CHECKED REMIX':'VERIFIED TRANSFER';
       for(const button of document.querySelectorAll('[data-turn],[data-transfer-control]'))button.disabled=false;
     }else if(Date.now()-loadingSince>10000){$('#transfer-status').textContent='LOAD FAILED';$('#transfer-placeholder').textContent='The saved player did not start. Reset the player to retry.';}
     const motion=state?.motion;
