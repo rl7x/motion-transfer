@@ -1,3 +1,5 @@
+import { MEMORY_TYPES, validateMemoryWatches } from '../runtime/memory.mjs';
+
 export const MAX_TOOL_OUTPUT_BYTES = 32_768;
 
 export const TOOLS = [{
@@ -47,12 +49,26 @@ export const TOOLS = [{
 }, {
   type: 'function',
   name: 'run_original',
-  description: 'Run a controlled experiment from fresh cartridge, memory, and empty storage. Each step holds a gamepad mask for fixed 60 Hz updates. Returns checkpoint hashes, visible text, and grouped sprite coordinates. X=1 starts/dashes; Z=2; left=16; right=32; up=64; down=128. OR bits to combine; 0 releases. Maximum 12 checkpoints and 1,800 total frames. No source or filesystem access.',
+  description: 'Run a controlled experiment from fresh cartridge, memory, and empty storage. Each step holds a gamepad mask for fixed 60 Hz updates. Returns checkpoint hashes, visible text, grouped sprite coordinates, and requested read-only memory watches at reset and checkpoints. Watches read little-endian numeric values at absolute byte addresses; use [] when none are needed. X=1 starts/dashes; Z=2; left=16; right=32; up=64; down=128. OR bits to combine; 0 releases. Maximum 12 checkpoints, 1,800 total frames, and 64 watched values. No source or filesystem access.',
   strict: true,
   parameters: {
     type: 'object',
     properties: {
       hypothesis: { type: 'string', minLength: 1, maxLength: 500 },
+      watches: {
+        type: 'array', maxItems: 8,
+        items: {
+          type: 'object',
+          properties: {
+            name: { type: 'string', minLength: 1, maxLength: 40 },
+            address: { type: 'integer', minimum: 0, maximum: 65_535 },
+            type: { type: 'string', enum: MEMORY_TYPES },
+            count: { type: 'integer', minimum: 1, maximum: 16 },
+          },
+          required: ['name', 'address', 'type', 'count'],
+          additionalProperties: false,
+        },
+      },
       steps: {
         type: 'array', minItems: 1, maxItems: 12,
         items: {
@@ -67,7 +83,7 @@ export const TOOLS = [{
         },
       },
     },
-    required: ['hypothesis', 'steps'],
+    required: ['hypothesis', 'watches', 'steps'],
     additionalProperties: false,
   },
 }];
@@ -106,7 +122,8 @@ export function validateToolInput(name, args) {
     return;
   }
   if (name !== 'run_original') throw new Error(`Unknown tool: ${name}`);
-  object(args, ['hypothesis', 'steps']);
+  object(args, ['hypothesis', 'watches', 'steps']);
+  validateMemoryWatches(args.watches);
   if (typeof args.hypothesis !== 'string' || !args.hypothesis.trim() || args.hypothesis.length > 500) {
     throw new Error('hypothesis must contain 1–500 characters');
   }

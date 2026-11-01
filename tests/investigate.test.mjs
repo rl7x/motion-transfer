@@ -12,14 +12,15 @@ const response = (id, output) => ({ id, status: 'completed', model: 'muse-wonder
 test('Meta loop dispatches real cartridge tools, preserves private state, and cites experiments', async () => {
   const changed = structuredClone(trace.steps);
   changed.find(step => step.checkpoint === 'move-right').buttons = 16;
+  const watches = [{ name: 'gamepad', address: 0x16, type: 'u8', count: 1 }];
   const replies = [
     response('r1', [
       { type: 'reasoning', id: 'rs-one', encrypted_content: 'opaque-test-state' },
       { type: 'message', phase: 'commentary', role: 'assistant', content: [{ type: 'output_text', text: 'I will inspect the binary.' }] },
       call('c1', 'inspect_wasm', { view: 'overview', startLine: 1, lineCount: 20 }),
     ]),
-    response('r2', [call('c2', 'run_original', { hypothesis: 'Right movement produces a baseline.', steps: trace.steps })]),
-    response('r3', [call('c3', 'run_original', { hypothesis: 'Left movement changes the same checkpoint.', steps: changed })]),
+    response('r2', [call('c2', 'run_original', { hypothesis: 'Right movement produces a baseline.', watches, steps: trace.steps })]),
+    response('r3', [call('c3', 'run_original', { hypothesis: 'Left movement changes the same checkpoint.', watches, steps: changed })]),
     response('r4', [{ type: 'message', role: 'assistant', content: [{ type: 'output_text', text: 'The rendered movement differs between exp-001 and exp-002. This does not establish dash timing.' }] }]),
   ];
   const requests = [];
@@ -52,6 +53,13 @@ test('Meta loop dispatches real cartridge tools, preserves private state, and ci
   assert.ok(report.contextCompactions.some(item => item.reason === 'input-token-limit'));
   assert.ok(requests[3].input.some(item => item.content?.some(block => block.text?.includes('exp-001'))));
   assert.ok(!requests[3].input.some(item => item.type === 'reasoning'));
+  const ledgerText = requests[3].input.flatMap(item => item.content ?? []).find(block => block.text?.includes('ledger contains actual')).text;
+  const ledger = JSON.parse(ledgerText.slice(ledgerText.indexOf('\n') + 1));
+  const observations = ledger.observations.filter(item => item.experimentId);
+  assert.deepEqual(observations[0].memoryWatches, watches);
+  assert.deepEqual(observations.map(item => item.checkpoints.find(checkpoint => checkpoint.checkpoint === 'move-right').memory), [
+    [{ name: 'gamepad', values: [32], bytesHex: '20' }], [{ name: 'gamepad', values: [16], bytesHex: '10' }],
+  ]);
   assert.doesNotMatch(JSON.stringify(report), /opaque-test-state|fake-secret-key/);
 });
 

@@ -20,7 +20,7 @@ test('inspection returns pinned metadata and bounded generated WAT', async () =>
 });
 
 test('isolated experiment tools produce fresh, contrasting observations', async () => {
-  const args = { hypothesis: 'Moving right produces a repeatable checkpoint.', steps: trace.steps };
+  const args = { hypothesis: 'Moving right produces a repeatable checkpoint.', watches: [], steps: trace.steps };
   const first = await runCartridgeTool('run_original', args);
   const repeat = await runCartridgeTool('run_original', args);
   assert.deepEqual(repeat, first);
@@ -37,7 +37,7 @@ test('isolated experiment tools produce fresh, contrasting observations', async 
 test('unknown tools, extra filesystem arguments, and excessive traces are rejected', async () => {
   await assert.rejects(runCartridgeTool('read_file', { path: '.env' }), /Unknown tool/);
   await assert.rejects(runCartridgeTool('inspect_wasm', { view: 'wat', startLine: 1, lineCount: 10, path: '.env' }), /only these fields/);
-  await assert.rejects(runCartridgeTool('run_original', { hypothesis: 'Oversized', steps: [
+  await assert.rejects(runCartridgeTool('run_original', { hypothesis: 'Oversized', watches: [], steps: [
     { buttons: 0, frames: 600, checkpoint: 'one' },
     { buttons: 0, frames: 600, checkpoint: 'two' },
     { buttons: 0, frames: 600, checkpoint: 'three' },

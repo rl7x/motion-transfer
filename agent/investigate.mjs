@@ -27,6 +27,9 @@ Use inspect_wasm overview at least once. Run at least two contrasting run_origin
 Use list_functions and inspect_function to locate relevant bytecode and follow direct calls.
 Generated names are not recovered source names. Indirect call targets are unresolved; static offsets
 on load/store instructions are added to runtime base addresses, not guaranteed absolute addresses.
+Use run_original watches to read numeric memory at reset and checkpoints; supply [] when unused.
+Watch names are your hypotheses about state, not established variable identities. Reads do not mutate memory;
+correlated changes alone do not establish causality. Watches do not expose private WASM globals.
 State a testable hypothesis in each experiment. Hold other inputs and elapsed frames constant when possible.
 Reset starts on the title screen; X starts gameplay. A state change may render on the following update.
 Simulation runs at 60 updates per second. Each checkpoint describes the frame just rendered.

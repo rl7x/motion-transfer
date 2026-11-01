@@ -1,4 +1,5 @@
 import { MAX_FRAMES } from './replay.mjs';
+import { validateMemoryWatches } from './memory.mjs';
 
 export function validateTrace(trace) {
   if (trace?.schemaVersion !== 1 || !Array.isArray(trace.steps) || !trace.steps.length) {
@@ -23,9 +24,11 @@ export function validateTrace(trace) {
   return total;
 }
 
-export function replayTrace(runtime, trace) {
+export function replayTrace(runtime, trace, { watches = [] } = {}) {
   validateTrace(trace);
-  const checkpoints = [{ checkpoint: 'reset', ...runtime.reset() }];
+  validateMemoryWatches(watches, runtime.memory.buffer.byteLength);
+  const observe = observation => watches.length ? { ...observation, memory: runtime.readMemory(watches) } : observation;
+  const checkpoints = [{ checkpoint: 'reset', ...observe(runtime.reset()) }];
   const frames = [];
   for (const step of trace.steps) {
     let observation;
@@ -39,7 +42,7 @@ export function replayTrace(runtime, trace) {
         storage: observation.storage,
       });
     }
-    checkpoints.push({ checkpoint: step.checkpoint, ...observation });
+    checkpoints.push({ checkpoint: step.checkpoint, ...observe(observation) });
   }
   return { frames, checkpoints };
 }

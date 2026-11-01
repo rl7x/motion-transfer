@@ -6,10 +6,10 @@ async function main() {
   const root = new URL('../', import.meta.url);
   const trace = JSON.parse(await readFile(new URL('experiments/dashy-dango/start-move-dash.json', root), 'utf8'));
   const overview = await runCartridgeTool('inspect_wasm', { view: 'overview', startLine: 1, lineCount: 20 });
-  const original = await runCartridgeTool('run_original', { hypothesis: 'Local smoke: original recorded controls produce observable gameplay.', steps: trace.steps });
+  const original = await runCartridgeTool('run_original', { hypothesis: 'Local smoke: original recorded controls produce observable gameplay.', watches: [], steps: trace.steps });
   const changed = structuredClone(trace.steps);
   changed.find(step => step.checkpoint === 'move-right').buttons = 16;
-  const contrast = await runCartridgeTool('run_original', { hypothesis: 'Local smoke: changing right movement to left changes the rendered checkpoint.', steps: changed });
+  const contrast = await runCartridgeTool('run_original', { hypothesis: 'Local smoke: changing right movement to left changes the rendered checkpoint.', watches: [], steps: changed });
   const getHash = output => output.result.checkpoints.find(checkpoint => checkpoint.checkpoint === 'move-right').framebufferHash;
   if (getHash(original) === getHash(contrast)) throw new Error('Changed movement produced an identical checkpoint');
   const directory = new URL('reports/', root);

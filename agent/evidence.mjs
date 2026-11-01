@@ -6,6 +6,7 @@ export function evidenceHistory(report) {
       experimentId: call.experimentId,
       hypothesis: call.args.hypothesis,
       inputs: call.args.steps,
+      memoryWatches: call.args.watches ?? [],
       checkpoints: call.result.checkpoints.map(checkpoint => ({
         checkpoint: checkpoint.checkpoint,
         frame: checkpoint.frame,
@@ -28,6 +29,7 @@ export function evidenceHistory(report) {
           };
         }),
         tones: checkpoint.tones,
+        memory: (checkpoint.memory ?? []).map(watch => ({ name: watch.name, values: watch.values, bytesHex: watch.bytesHex })),
       })),
     };
   });

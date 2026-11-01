@@ -31,6 +31,7 @@ function summarize(observation) {
     })),
     omittedSpriteGroups: Math.max(0, groups.size - 8),
     tones: observation.tones,
+    memory: observation.memory ?? [],
   };
 }
 
@@ -39,12 +40,13 @@ async function execute(name, args) {
   const target = await loadTarget();
   if (name === 'run_original') {
     const runtime = await createReplayRuntime(target.bytes);
-    const evidence = replayTrace(runtime, { schemaVersion: 1, steps: args.steps });
+    const evidence = replayTrace(runtime, { schemaVersion: 1, steps: args.steps }, { watches: args.watches });
     return {
       result: {
         target: target.id,
         cartridgeSha256: target.sha256,
         frames: evidence.frames.length,
+        memoryWatches: args.watches,
         checkpoints: evidence.checkpoints.map(summarize),
       },
       evidence,
