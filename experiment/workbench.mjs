@@ -22,7 +22,7 @@ export async function createExperimentWorkbench(session,{saved,persist=async()=>
   }
   state.programs??=[];
   function checkpoint(id){const value=session.snapshot().checkpoints.find(item=>item.id===id);if(!value)throw Error('Unknown checkpoint');assert.deepEqual(value.identity,session.identity);return value;}
-  function charge(frames=0){if(state.usage.operations>=limits.maxOperations||state.usage.frames+frames>limits.maxFrames)throw Error('Experiment operation or frame budget exhausted');state.usage.operations++;state.usage.frames+=frames;}
+  function charge(frames=0){if(!Number.isSafeInteger(frames)||frames<0)throw Error('Invalid experiment frame charge');if(state.usage.operations>=limits.maxOperations||state.usage.frames+frames>limits.maxFrames)throw Error('Experiment operation or frame budget exhausted');state.usage.operations++;state.usage.frames+=frames;}
   function remember(payload){
     const json=JSON.stringify(payload),id=digest(json),bytes=Buffer.byteLength(json);
     if(state.artifacts.some(item=>item.id===id))return state.artifacts.find(item=>item.id===id);
@@ -129,7 +129,9 @@ export async function createExperimentWorkbench(session,{saved,persist=async()=>
           let output;
           if(['prepare_checkpoint','read_checkpoint','run_experiment','read_experiment','capture_experiment'].includes(name))output=await api.execute(name,input);
           else if(['inspect_wasm','list_functions','inspect_function','decompile_function','call_graph','trace_writers','record_finding'].includes(name)){
-            if(!dispatch)throw Error('Static SDK dispatch is unavailable');charge();output=await dispatch(name,input);
+            if(!dispatch)throw Error('Static SDK dispatch is unavailable');
+            const frames=name==='trace_writers'?2*(checkpoint(input.checkpointId).actions.reduce((sum,action)=>sum+(action.frames??0),0)+input.steps.reduce((sum,step)=>sum+step.frames,0)):0;
+            charge(frames);output=await dispatch(name,input);
           }else throw Error('Forbidden experiment capability');
           operation.result=output.result;operation.status='completed';
           if(output.images)images.push(...output.images);
