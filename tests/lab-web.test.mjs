@@ -69,3 +69,16 @@ test('recorded investigation displays its measured contrast without a POST or AP
     assert.equal(await page.locator('#investigation-report').getAttribute('href'),'/api/investigations/saved/neutral-after-left');assert.deepEqual(posts,[]);
   }finally{await harness.close();}
 });
+
+test('an incomplete saved exploration is labelled as failed and never presented as a completed comparison',async()=>{
+  const harness=await createPakuBrowser();
+  try{
+    const {page,errors}=await harness.page(),posts=[];page.on('request',request=>{if(request.method()==='POST')posts.push(request.url());});
+    await page.goto(harness.origin+'/?destination=paku-paku');await page.locator('#view-branch-investigation').click();
+    await page.waitForFunction(()=>document.querySelector('#investigation-conclusion').textContent.includes('INCOMPLETE RUN'));
+    assert.equal(await page.locator('#lab-mode').innerText(),'SAVED RECORDING');
+    assert.match(await page.locator('#lab-progress').innerText(),/incomplete comparison/);
+    assert.equal(await page.locator('.branch-card').count(),2);assert.equal(await page.locator('.comparison-card').count(),0);
+    assert.match(await page.locator('#investigation-events').innerText(),/fork_checkpoint/);assert.deepEqual(posts,[]);assert.deepEqual(errors,[]);
+  }finally{await harness.close();}
+});

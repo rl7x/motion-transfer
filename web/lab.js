@@ -31,8 +31,10 @@ function render(job,reportPath='/api/investigations/'+job.id){
   const elapsed=report?.finishedAt&&report?.startedAt?` · ${((Date.parse(report.finishedAt)-Date.parse(report.startedAt))/1000).toFixed(1)}s recorded elapsed`:'';
   const cost=`${report?.requests?.length??0} generation requests · $${(report?.estimatedCostUsd??0).toFixed(4)} estimated${elapsed}`;
   $('#lab-progress').textContent=job.error??(job.status==='ready'?`Investigation complete · ${cost}. The model’s interpretation requires review.`:`Meta investigation: ${job.status} · ${cost}.`);
-  const conclusion=$('#investigation-conclusion');conclusion.hidden=!report?.conclusion;
-  if(report?.conclusion)conclusion.textContent='MODEL INTERPRETATION · NOT INDEPENDENTLY VERIFIED\n\n'+report.conclusion;
+  const incomplete=job.status==='failed'?report?.turns?.at(-1)?.messages?.filter(message=>message.phase==='final').map(message=>message.text).join('\n'):null;
+  const text=report?.conclusion??incomplete;
+  const conclusion=$('#investigation-conclusion');conclusion.hidden=!text;
+  if(text)conclusion.textContent=(report?.conclusion?'MODEL INTERPRETATION · NOT INDEPENDENTLY VERIFIED':'INCOMPLETE RUN · COMPLETION CHECKS DID NOT PASS')+'\n\n'+text;
   const link=$('#investigation-report');link.hidden=false;link.href=reportPath;link.download='investigation-'+job.id+'.json';
 }
 async function refresh(){
@@ -46,6 +48,7 @@ async function refresh(){
     $('#investigation-submit').textContent=reconnect?'Reconnect to investigation ↗':'Investigate with Meta ↗';
     $('#investigation-submit').disabled=submitting||(!reconnect&&(!status.enabled||Boolean(active||status.activeRunId||status.unsettled)||budget?.remainingUsd<.005));
     $('#view-investigation').disabled=Boolean(active||submitting);
+    $('#view-branch-investigation').disabled=Boolean(active||submitting);
     window.labStatus=status;window.dispatchEvent(new Event('labstatus'));
   }catch(error){$('#lab-progress').textContent=error.message;$('#investigation-submit').disabled=true;}
   finally{polling=false;}
@@ -62,6 +65,12 @@ $('#view-investigation').addEventListener('click',async()=>{
   if(active||submitting)return;
   const path='/api/investigations/saved/neutral-after-left';
   try{render(await json(path),path);$('#lab-progress').textContent+=' Viewing saved evidence; no new model request.';}
+  catch(error){$('#lab-progress').textContent=error.message;}
+});
+$('#view-branch-investigation').addEventListener('click',async()=>{
+  if(active||submitting)return;
+  const path='/api/investigations/saved/branch-experiment';
+  try{render(await json(path),path);$('#lab-progress').textContent+=' Saved model-chosen exploration; incomplete comparison. No new model request.';}
   catch(error){$('#lab-progress').textContent=error.message;}
 });
 await refresh();setInterval(refresh,1000);

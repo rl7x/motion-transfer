@@ -13,3 +13,13 @@ test('the recorded Meta investigation retains contrasting actual motion observat
   assert.deepEqual(directions,[1,-1]);assert.match(report.conclusion,/rejects preservation hypothesis/);
   assert.ok(report.humanAssistance.some(note=>note.includes('Mapped read-only motion registry')));
 });
+
+test('the incomplete live branch recording retains its failure, actual motion and reproducible session',async()=>{
+  const records=await savedInvestigations(),record=records.find(item=>item.id==='branch-experiment'),report=record.job.report;
+  assert.equal(record.job.status,'failed');assert.equal(report.status,'failed');assert.equal(report.conclusion,null);
+  assert.equal(report.requests.length,12);assert.equal(report.reservedCostUsd,0);assert.ok(Math.abs(report.estimatedCostUsd-.252143)<1e-9);
+  const experiment=report.toolCalls.find(call=>call.name==='session_advance');
+  assert.equal(experiment.result.checkpoints.at(-1).motion.position.x,60);
+  assert.equal(report.session.branches.length,2);assert.equal(report.session.comparisons.length,0);
+  assert.ok(report.turns.at(-1).messages[0].text.includes('No `compare_branches` completed'));
+});
