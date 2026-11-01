@@ -24,7 +24,7 @@ async function persistCheckpoint(){
   process.stdout.write(JSON.stringify({kind:'checkpoint',id:activeRequestId,sequence,sessionState:snapshot()})+'\n');
   await acknowledged;
 }
-async function experimentTools(saved){session??=await createInvestigationSession(target.bytes);experiments??=await createExperimentWorkbench(session,{saved,persist:persistCheckpoint});return experiments;}
+async function experimentTools(saved){session??=await createInvestigationSession(target.bytes);experiments??=await createExperimentWorkbench(session,{saved,persist:persistCheckpoint,dispatch:execute});return experiments;}
 
 
 async function execute(name, args) {

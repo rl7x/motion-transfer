@@ -6,17 +6,21 @@ import {readMemoryWatches,writeMemoryValue,validateMemoryEdit,memoryTypeSize} fr
 import {framebufferPng} from '../runtime/png.mjs';
 import {fingerprint,measure,normalized,behavior,equal} from './compare.mjs';
 import {validateExperimentInput} from './schema.mjs';
+import {executeExperimentProgram} from './interpreter.mjs';
 
 export const EXPERIMENT_LIMITS=Object.freeze({maxExperiments:4,maxOperations:24,maxFrames:7200,maxCaptures:4,maxEvidenceBytes:1024*1024});
-export async function createExperimentWorkbench(session,{saved,persist=async()=>{},limits=EXPERIMENT_LIMITS}={}){
+export async function createExperimentWorkbench(session,{saved,persist=async()=>{},dispatch,limits=EXPERIMENT_LIMITS}={}){
   for(const [key,ceiling]of Object.entries(EXPERIMENT_LIMITS))if(!Number.isSafeInteger(limits[key])||limits[key]<1||limits[key]>ceiling)throw Error('Invalid experiment limit: '+key);
-  const engineSha256=digest((await Promise.all(['workbench.mjs','compare.mjs','schema.mjs'].map(name=>readFile(new URL(name,import.meta.url),'utf8')))).join('\n'));
-  let state=saved?structuredClone(saved):{schemaVersion:1,sessionId:session.id,identity:session.identity,engineSha256,requests:[],targets:[],artifacts:[],usage:{operations:0,experiments:0,frames:0,captures:0,evidenceBytes:0}};
+  const engineSha256=digest((await Promise.all(['workbench.mjs','compare.mjs','schema.mjs','interpreter.mjs'].map(name=>readFile(new URL(name,import.meta.url),'utf8')))).join('\n'));
+  let state=saved?structuredClone(saved):{schemaVersion:1,sessionId:session.id,identity:session.identity,engineSha256,requests:[],targets:[],artifacts:[],programs:[],usage:{operations:0,experiments:0,frames:0,captures:0,evidenceBytes:0}};
   if(saved){
     assert.equal(state.schemaVersion,1);assert.equal(state.sessionId,session.id);assert.deepEqual(state.identity,session.identity,'Experiment runtime identity mismatch');assert.equal(state.engineSha256,engineSha256,'Experiment engine changed; old evidence remains readable but execution cannot resume');
     for(const artifact of state.artifacts)if(digest(JSON.stringify(artifact.payload))!==artifact.id)throw Error('Experiment evidence integrity mismatch');
+    for(const program of state.programs??[])if(typeof program.source!=='string'||digest(program.source)!==program.sourceSha256)throw Error('Experiment program source identity mismatch');
     for(const request of state.requests)if(request.status==='running'){request.status='interrupted';request.error='Execution was interrupted; completed artifacts are retained. No interpreter stack or partial experiment is resumed.';}
+    for(const program of state.programs??[])if(program.status==='running'){program.status='interrupted';program.error='Interpreter stack was not restored. Completed experiment artifacts remain available.';}
   }
+  state.programs??=[];
   function checkpoint(id){const value=session.snapshot().checkpoints.find(item=>item.id===id);if(!value)throw Error('Unknown checkpoint');assert.deepEqual(value.identity,session.identity);return value;}
   function charge(frames=0){if(state.usage.operations>=limits.maxOperations||state.usage.frames+frames>limits.maxFrames)throw Error('Experiment operation or frame budget exhausted');state.usage.operations++;state.usage.frames+=frames;}
   function remember(payload){
@@ -40,7 +44,8 @@ export async function createExperimentWorkbench(session,{saved,persist=async()=>
     return{checkpointId:cp.id,sessionId:session.id,verification:cp.verification,observation,targets,notice:'Target handles bind to this checkpoint only. Human-mapped hints are assistance; raw watch names are hypotheses. An address may hold a different allocation later.'};
   }
   async function idempotent(kind,args,operation){
-    const argsSha256=digest(JSON.stringify(args)),prior=state.requests.find(item=>item.requestId===args.requestId);
+    const canonical=value=>Array.isArray(value)?value.map(canonical):value&&typeof value==='object'?Object.fromEntries(Object.keys(value).sort().map(key=>[key,canonical(value[key])])):value;
+    const argsSha256=digest(JSON.stringify(canonical(args))),prior=state.requests.find(item=>item.requestId===args.requestId);
     if(prior){if(prior.kind!==kind||prior.argsSha256!==argsSha256)throw Error('Experiment request identity reused with different input');if(prior.status==='completed')return structuredClone(prior.output);throw Error(prior.error??'Experiment request did not complete; no automatic retry');}
     if(state.requests.length>=32)throw Error('Experiment request journal budget exhausted');
     const request={requestId:args.requestId,kind,argsSha256,status:'running'};state.requests.push(request);await persist();
@@ -55,6 +60,7 @@ export async function createExperimentWorkbench(session,{saved,persist=async()=>
   }
   async function runExperiment(args){return idempotent('experiment',args,async()=>{
     const cp=checkpoint(args.checkpointId),frames=args.steps.reduce((sum,step)=>sum+step.frames,0),replayed=cp.actions.reduce((sum,action)=>sum+(action.frames??0),0)*2;
+    if(session.snapshot().branches.length+2>6)throw Error('Active branch budget exhausted; existing branches are retained');
     if(state.usage.experiments>=limits.maxExperiments)throw Error('Experiment count budget exhausted');
     if(session.snapshot().captures.length+state.usage.captures+args.observations.captures.length>limits.maxCaptures)throw Error('Investigation image budget exhausted');
     const edits=args.interventions.map(edit=>{const found=state.targets.find(target=>target.id===edit.targetId);if(!found||found.checkpointId!==cp.id||found.memoryHash!==cp.verification.memoryHash)throw Error('Intervention target is stale or belongs to a different checkpoint');validateMemoryEdit({...found,value:edit.value});return{...found,value:edit.value,hypothesis:edit.hypothesis};});
@@ -64,7 +70,7 @@ export async function createExperimentWorkbench(session,{saved,persist=async()=>
     const controlHandle='branch-'+randomUUID(),interventionHandle='branch-'+randomUUID(),experimentId='experiment-'+randomUUID();
     const starting=fingerprint(control);assert.deepEqual(fingerprint(intervention),starting,'Experiment branches did not start identically');
     assert.equal(starting.memoryHash,cp.verification.memoryHash);
-    const payload={schemaVersion:1,experimentId,sessionId:session.id,requestId:args.requestId,hypothesis:args.hypothesis,checkpoint:{id:cp.id,identity:cp.identity,actions:cp.actions,verification:cp.verification},branches:{control:controlHandle,intervention:interventionHandle},inputs:args.steps,observations:args.observations,identicalStartingConditions:true,starting,edits:[],trace:[],captures:[],normalization:'Human-mapped motion/timers and human-authored start/end convention; finite measurements, not inferred field layout or expected conclusions.'};
+    const payload={schemaVersion:1,kind:'experiment',experimentId,sessionId:session.id,requestId:args.requestId,hypothesis:args.hypothesis,checkpoint:{id:cp.id,identity:cp.identity,actions:cp.actions,verification:cp.verification},branches:{control:controlHandle,intervention:interventionHandle},inputs:args.steps,observations:args.observations,identicalStartingConditions:true,starting,edits:[],trace:[],captures:[],normalization:'Human-mapped motion/timers and human-authored start/end convention; finite measurements, not inferred field layout or expected conclusions.'};
     const take=(runtime,handle,stage)=>{if(args.observations.captures.includes(stage))payload.captures.push(capture(runtime,handle,stage,experimentId));};
     take(control,controlHandle,'control-before');
     for(const edit of edits){const actual=readMemoryWatches(intervention.memory.buffer,[{name:'bound target',address:edit.address,type:edit.type,count:1}])[0];if(actual.bytesHex!==edit.previousBytesHex)throw Error('Intervention previous bytes do not match checkpoint');payload.edits.push({...edit,frame:intervention.frame,...writeMemoryValue(intervention.memory.buffer,edit)});}
@@ -92,11 +98,62 @@ export async function createExperimentWorkbench(session,{saved,persist=async()=>
     session.recordStatic({id:experimentId,kind:'experiment',artifactId:artifact.id,summary});
     return{result:summary,images:payload.captures};
   });}
-  return{
+  function artifactById(id){const value=state.artifacts.find(item=>item.id===id);if(!value||value.payload.kind!=='experiment')throw Error('Unknown experiment artifact');return value;}
+  async function captureExperiment(args){return idempotent('capture',args,async()=>{
+    const original=artifactById(args.artifactId).payload;if(original.status!=='completed')throw Error('Only complete endpoints can be captured');
+    const frames=original.checkpoint.actions.reduce((sum,step)=>sum+(step.frames??0),0)+original.inputs.reduce((sum,step)=>sum+step.frames,0);charge(frames);
+    const runtime=await session.reconstructCheckpoint(original.checkpoint.id);
+    if(args.branch==='intervention')for(const edit of original.edits){const change=writeMemoryValue(runtime.memory.buffer,edit);assert.equal(change.previousBytesHex,edit.previousBytesHex,'Capture intervention replay mismatch');}
+    for(const step of original.inputs)runtime.step(step.buttons,step.frames);
+    assert.deepEqual(fingerprint(runtime),fingerprintFromMeasurement(original.final[args.branch]),'Captured endpoint replay mismatch');
+    const image=capture(runtime,original.branches[args.branch],args.branch+'-after',original.experimentId);image.reason=args.reason;
+    const artifact=remember({kind:'capture',sessionId:session.id,experimentId:original.experimentId,sourceArtifactId:args.artifactId,captures:[image]});
+    session.recordStatic({id:image.evidenceId,kind:'experiment-capture',artifactId:artifact.id});
+    return{result:{...image,dataUrl:undefined,artifactRef:{id:artifact.id,sessionId:session.id,bytes:artifact.bytes}},images:[image]};
+  });}
+  const fingerprintFromMeasurement=({frame,memoryHash,framebufferHash,renderingHash,storage,faulted})=>({frame,memoryHash,framebufferHash,renderingHash,storage,faulted});
+  async function runProgram(args){return idempotent('program',args,async()=>{
+    if(state.programs.length>=2)throw Error('Experiment program count budget exhausted');
+    charge();const program={id:'program-'+randomUUID(),requestId:args.requestId,hypothesis:args.hypothesis,source:args.source,sourceSha256:digest(args.source),language:args.language,status:'running',operations:[],startedAt:new Date().toISOString()};state.programs.push(program);await persist();
+    const images=[],beforeIds=new Set(state.artifacts.map(item=>item.id));
+    try{
+      const executed=await executeExperimentProgram({source:args.source,language:args.language,invoke:async(name,input)=>{
+        const operation={index:program.operations.length+1,name,args:input,status:'running'};program.operations.push(operation);await persist();
+        try{
+          let output;
+          if(['prepare_checkpoint','read_checkpoint','run_experiment','read_experiment','capture_experiment'].includes(name))output=await api.execute(name,input);
+          else if(['inspect_wasm','list_functions','inspect_function','decompile_function','call_graph','trace_writers','record_finding'].includes(name)){
+            if(!dispatch)throw Error('Static SDK dispatch is unavailable');charge();output=await dispatch(name,input);
+          }else throw Error('Forbidden experiment capability');
+          operation.result=output.result;operation.status='completed';
+          if(output.images)images.push(...output.images);
+          await persist();
+          if(name==='run_experiment'&&output.result.status!=='completed')throw Error('Experiment trapped or failed; completed partial evidence is retained');
+          return output.result;
+        }catch(error){operation.status='failed';operation.error=String(error.message).slice(0,1000);await persist();throw error;}
+      }});
+      program.output=executed.output;program.compiledSha256=executed.compiledSha256;program.interpreter=executed.interpreter;program.status='completed';
+    }catch(error){program.status='failed';program.error=String(error.message).slice(0,1000);}
+    program.finishedAt=new Date().toISOString();
+    const record=remember({kind:'program',sessionId:session.id,...program});program.artifactId=record.id;
+    const artifacts=state.artifacts.filter(item=>!beforeIds.has(item.id)).map(({id,bytes,payload})=>({id,bytes,kind:payload.kind,experimentId:payload.experimentId}));
+    const summaries=state.requests.filter(request=>request.kind==='experiment'&&request.status==='completed'&&!beforeIds.has(request.output.result.artifactRef.id)).map(request=>request.output.result);
+    const result={programId:program.id,status:program.status,hypothesis:program.hypothesis,sourceSha256:program.sourceSha256,output:program.output,operations:program.operations.length,experiments:summaries,artifactRefs:artifacts,completedExperimentArtifacts:artifacts.filter(item=>item.kind==='experiment').length,stackSnapshot:false,...(program.error?{error:program.error}:{})};
+    session.recordStatic({id:program.id,kind:'experiment-program',artifactId:record.id,summary:result});
+    return{result,images};
+  });}
+  const api={
     snapshot:()=>structuredClone(state),
     async execute(name,args){
       validateExperimentInput(name,args);
+      if(name==='run_experiment_program')return runProgram(args);
       if(name==='run_experiment')return runExperiment(args);
+      if(name==='capture_experiment')return captureExperiment(args);
+      if(name==='read_experiment'){
+        charge();const artifact=artifactById(args.artifactId),payload=artifact.payload;
+        const frames=payload.trace.slice(args.startFrame-1,args.startFrame-1+args.frameCount);await persist();
+        return{result:{experimentId:payload.experimentId,artifactRef:{id:artifact.id,sessionId:session.id,bytes:artifact.bytes},initialEditDifference:payload.initialEditDifference,frames,final:payload.final,totalFrames:payload.trace.length,notice:'This is a bounded page of actual observations. Full evidence remains in the artifact.'}};
+      }
       if(name==='read_checkpoint'){const result=await readCheckpoint(args);await persist();return{result};}
       if(name==='prepare_checkpoint')return idempotent('prepare',args,async()=>{
         charge(args.steps.reduce((sum,step)=>sum+step.frames,0));
@@ -107,4 +164,5 @@ export async function createExperimentWorkbench(session,{saved,persist=async()=>
       throw Error('Unknown experiment operation');
     },
   };
+  return api;
 }
