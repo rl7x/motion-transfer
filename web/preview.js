@@ -76,7 +76,7 @@ function select(item,navigate=false){
   $('#transfer-controls').textContent=fresh?'Tap or Space to turn. Press D to dash; release it before the next dash.':item.control;
   $('#carries-over').textContent=child?`The same controller, with this child’s ${60*selected.intent.unitScale}-pixel ${selected.intent.direction==='opposite'?'backward':'forward'} dash mapping.`:item.carries;
   $('#recipient-keeps').textContent=item.keeps;
-  $('#selection-note').textContent=`${item.name}: playing a saved ${child?'remix':'transfer'}. No model is running.`;
+  $('#selection-note').textContent=`${item.name}: playing a saved ${child?'remix':'transfer'}. Choosing a destination makes no model request.`;
   $('#remix-details').hidden=item.liveEdits.length===0;$('#jujump-remix-note').hidden=item.liveEdits.length>0;
   if(child)$('#remix-details').open=true;
   $('#artifact-checks').href=child?`/artifacts/${selected.id}/report.json`:item.report;

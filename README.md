@@ -7,6 +7,29 @@
 ## Idea
 My core idea is to do some component extraction and transfer between programs. I will start with some games first. I picked dashy dango cause i was thinking of a matcha parfait i had in kyoto, and dango came to mind.
 
+## Try the extraction and transfer experience
+
+```sh
+npm install
+npm run dev:transfer
+```
+
+Open `http://127.0.0.1:4173`. Play the compiled **Dashy Dango** donor, inspect its saved recovered dash, and choose **PAKU PAKU** or **JUJUMP** as its new home. The page shows donor, recipient before, and recipient after side by side. Both destinations use the exact same frozen controller. JUJUMP adds a gravity/landing interaction; the host retains its original jump and platform rules while applying the horizontal dash.
+
+Choosing a destination loads a saved checked integration and makes no model call. The page distinguishes those saved results from fresh Meta remix generation. Real trace comparisons show the compiled donor, standalone component, and both recipient adapters using matching dash displacement and event timing. Recovery evidence, supported scope, human assistance, adapter authorship, sources, and policies are available in expandable sections.
+
+Keyboard and touch controls work in each view. Donor: arrows and X. Recipients: tap/Space to turn or jump, and D to dash after transfer. PAKU PAKU retains live child remixes, inherited edits, lineage, downloads, and local playable links. JUJUMP currently supports the saved transfer only. Historical PAKU parents and children remain usable after host re-verification when their verified adapter/component/recipient identities agree.
+
+```sh
+npm run verify:motion
+npm run verify:transfer
+npm run verify:jujump
+npm run compare:transfers
+npm test
+```
+
+These checks use no paid API. Comparison inputs are controlled free-space fixtures; platform/ghost collisions, ordinary play, death/restart, and replay are checked separately. See [the JUJUMP integration policy](transfers/jujump/README.md) and [live remix scope](remix/README.md). Public hosting remains to be built; resolve the donor's documented redistribution status before publishing its cartridge.
+
 ## Run Dashy Dango
 
 ```sh

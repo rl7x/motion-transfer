@@ -27,6 +27,7 @@ export async function buildDonorFrame() {
       const baseUpdate=app.runtime.update.bind(app.runtime);
       app.runtime.update=(...args)=>{
         const result=baseUpdate(...args);
+        tick++;
         app.inputState.gamepad[0]&=~pendingRelease;pendingRelease=0;
         return result;
       };
@@ -50,7 +51,7 @@ export async function buildDonorFrame() {
       };
       if(new URL(location.href).searchParams.get('test')==='1')window.donorInput=()=>({buttons:app.inputState.gamepad[0],pendingRelease});
       if(new URL(location.href).searchParams.get('test')==='1')window.donorAdvance=(count=1)=>{
-        for(let i=0;i<count;i++){app.runtime.setGamepad(0,app.inputState.gamepad[0]);app.runtime.update();tick++;}
+        for(let i=0;i<count;i++){app.runtime.setGamepad(0,app.inputState.gamepad[0]);app.runtime.update();}
         app.runtime.composite();return window.donorSnapshot();
       };
       setInterval(()=>{if(channel)parent.postMessage({type:'donor-status',channel,state:window.donorSnapshot()},'*');},100);

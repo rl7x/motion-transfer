@@ -9,7 +9,7 @@ Pinned, precompiled WASM-4 cartridge for dash movement and cooldown extraction.
 - **SHA-256:** `152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f`
 - **Manifest:** [target.lock.json](target.lock.json)
 
-The download's hash was checked against the artifact inspected during design research. This is an upstream build; it has not been rebuilt locally or reverse-engineered. The original source is not included in this folder.
+The download's hash was checked against the artifact inspected during design research. This is an unchanged upstream build; it has not been rebuilt locally. The original source is not included in this folder. Recovery has since produced a separately packaged [standalone dash controller](../../components/dashy-dango-dash/README.md); the manifest's original retrieval-time scope is historical metadata.
 
 ## Play locally
 
