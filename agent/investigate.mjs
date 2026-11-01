@@ -156,7 +156,7 @@ export async function investigate({
       }
       const request = {
         model,
-        instructions: INSTRUCTIONS + `\nYou have ${limits.maxModelCalls} generation requests and ${limits.maxToolCalls} tool calls total. This is request ${turn+1}. Reserve the last request for a conclusion. Prioritize execution evidence before lengthy static browsing. Requirements: ${JSON.stringify(report.requirements??requirements)}.` + (finalizing ? '\nThis is the last generation request. No tools remain. Give your concise conclusion from the recorded observations, cite experiment/comparison IDs, and state what remains inconclusive.' : ''),
+        instructions: INSTRUCTIONS + `\nYou have ${limits.maxModelCalls} generation requests and ${limits.maxToolCalls} tool calls total. This is request ${turn+1}. Reserve the last request for a conclusion. Prioritize execution evidence before lengthy static browsing. fork_checkpoint branchId is a NEW unused name, never main. Learn from tool errors; do not repeat a rejected call with the same arguments. Requirements: ${JSON.stringify(report.requirements??requirements)}.` + (finalizing ? '\nThis is the last generation request. No tools remain. Give your concise conclusion from the recorded observations, cite experiment/comparison IDs, and state what remains inconclusive.' : ''),
         input: history,
         tools: finalizing ? [] : TOOLS,
         store: false,
@@ -260,7 +260,7 @@ export async function investigate({
         } catch (error) {
           if(worker?.sessionState)report.session=worker.sessionState;
           entry.error = error.message;
-          history.push({ type: 'function_call_output', call_id: call.call_id, output: JSON.stringify({ error: entry.error }) });
+          history.push({ type: 'function_call_output', call_id: call.call_id, output: JSON.stringify({ error: entry.error,...(report.session?{sessionContext:{sessionId:report.session.id,occupiedBranchIds:report.session.branches.map(branch=>branch.id),checkpointIds:report.session.checkpoints.map(checkpoint=>checkpoint.id)}}:{}) }) });
         }
         entry.finishedAt=new Date().toISOString();
         await onUpdate(report);

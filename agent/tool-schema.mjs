@@ -90,7 +90,7 @@ export const TOOLS = [{
   },
 }];
 
-const branchId={type:'string',pattern:'^[a-z][a-z0-9-]{0,39}$',description:'Existing branch identity. The initial branch is main.'};
+const branchId={type:'string',pattern:'^[a-z][a-z0-9-]{0,39}$',description:'Identity of an existing branch for observation or execution. main is the initial branch.'};
 TOOLS.push(...COMPONENT_TOOLS);
 const watches=TOOLS.find(tool=>tool.name==='run_original').parameters.properties.watches;
 const steps=TOOLS.find(tool=>tool.name==='run_original').parameters.properties.steps;
@@ -108,7 +108,7 @@ TOOLS.push({type:'function',name:'checkpoint_state',strict:true,
   parameters:{type:'object',properties:{branchId,label:{type:'string',minLength:1,maxLength:80}},required:['branchId','label'],additionalProperties:false},
 },{type:'function',name:'fork_checkpoint',strict:true,
   description:'Restore a checkpoint into a new independent experimental branch. main remains unchanged. Give the new branch a short lowercase identity; use the returned identity in later commands.',
-  parameters:{type:'object',properties:{checkpointId:{type:'string',pattern:'^cp-[a-f0-9]{20}$'},branchId,watches},required:['checkpointId','branchId','watches'],additionalProperties:false},
+  parameters:{type:'object',properties:{checkpointId:{type:'string',pattern:'^cp-[a-f0-9]{20}$'},branchId:{...branchId,description:'A NEW unused branch name, such as control or variant. Never use main or any already-created branch. This is the name to CREATE, not the checkpoint source.'},watches},required:['checkpointId','branchId','watches'],additionalProperties:false},
 });
 const memoryRange={type:'object',properties:{address:{type:'integer',minimum:0,maximum:65535},byteLength:{type:'integer',minimum:1,maximum:4096},type:{type:'string',enum:MEMORY_TYPES}},required:['address','byteLength','type'],additionalProperties:false};
 TOOLS.push({type:'function',name:'decompile_function',strict:true,

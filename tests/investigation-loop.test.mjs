@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {investigate} from '../agent/investigate.mjs';
+import {TOOLS} from '../agent/tool-schema.mjs';
 
 const usage={input_tokens:1000,output_tokens:100,input_tokens_details:{cached_tokens:0},output_tokens_details:{reasoning_tokens:0}};
 const call=(number,name,args)=>({type:'function_call',call_id:'session-call-'+number,name,arguments:JSON.stringify(args)});
@@ -46,4 +47,18 @@ test('external cancellation retains the last session journal and makes no paid r
     assert.ok(error.report.session.identity.cartridgeSha256);assert.equal(error.report.requests[0].status,'unsettled');assert.ok(error.report.reservedCostUsd>0);return true;
   });
   assert.equal(calls,1);
+});
+
+test('a rejected fork exposes occupied names to the next model action',async()=>{
+  let turn=0,checkpointId;
+  const client={countInputTokens:async()=>1000,respond:async request=>{
+    turn++;const last=request.input.filter(item=>item.type==='function_call_output').map(item=>JSON.parse(item.output)).at(-1);let action;
+    if(turn===1)action=call(turn,'checkpoint_state',{branchId:'main',label:'fork rejection fixture'});
+    if(turn===2){checkpointId=last.checkpointId;action=call(turn,'fork_checkpoint',{branchId:'main',checkpointId,watches:[]});}
+    if(turn===3){assert.deepEqual(last.sessionContext.occupiedBranchIds,['main']);assert.match(last.error,/new branch identity/);action=call(turn,'fork_checkpoint',{branchId:'variant',checkpointId,watches:[]});}
+    if(turn===4){assert.equal(last.branchId,'variant');assert.equal(last.restorationVerified,true);}
+    return{id:'rejected-fork-'+turn,status:'completed',output:action?[action]:[{type:'message',content:[{type:'output_text',text:'Incomplete fixture without enough experimental evidence.'}]}],usage};
+  }};
+  await assert.rejects(investigate({client}),error=>{assert.equal(error.report.session.branches.length,2);assert.equal(error.report.reservedCostUsd,0);return true;});
+  assert.match(TOOLS.find(tool=>tool.name==='fork_checkpoint').parameters.properties.branchId.description,/NEW unused/);
 });
