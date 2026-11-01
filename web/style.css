@@ -1,0 +1,23 @@
+:root { color-scheme: dark; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: #111315; color: #f0ece2; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 1240px; margin: auto; padding: 32px 40px; }
+a { color: inherit; text-underline-offset: 4px; }
+header, .card-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+header { padding-bottom: 28px; border-bottom: 1px solid #34383b; }
+.wordmark { font-size: 13px; letter-spacing: 2px; text-decoration: none; }
+.pill { border: 1px solid #485046; border-radius: 100px; padding: 7px 10px; font-size: 10px; letter-spacing: 1px; color: #c3ed89; white-space: nowrap; }
+.intro { padding: 64px 0 44px; }
+.eyebrow { color: #a2b0a5; font-size: 10px; letter-spacing: 2px; line-height: 1.6; }
+h1 { font-family: system-ui, sans-serif; font-weight: 550; letter-spacing: -4px; font-size: clamp(48px, 7vw, 84px); line-height: 1.02; margin: 20px 0; }
+.intro > p:last-child { color: #aeb1ab; font-size: 13px; line-height: 1.9; }
+.games { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: 24px; }
+.game-card { border: 1px solid #34383b; border-radius: 16px; background: #171a1c; overflow: hidden; }
+.card-heading { padding: 20px 24px; }
+.card-heading .eyebrow { margin: 0 0 6px; }
+h2 { font-size: 21px; font-weight: 500; letter-spacing: 1px; margin: 0; }
+iframe { width: 100%; aspect-ratio: 2; min-height: 220px; border: 0; display: block; background: #101010; }
+.controls, .credit { font-size: 11px; color: #c4c4ba; line-height: 1.8; margin: 16px 24px; }
+.credit { font-size: 10px; color: #858e88; padding-bottom: 8px; }
+footer { color: #737c76; font-size: 10px; margin-top: 40px; padding-top: 20px; border-top: 1px solid #34383b; }
+@media (max-width: 600px) { main { padding: 24px 16px; } .intro { padding-top: 40px; } h1 { letter-spacing: -2px; } header { align-items: flex-start; } }
