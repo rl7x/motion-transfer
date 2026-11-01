@@ -9,6 +9,7 @@ import {createComponentWorkbench,COMPONENT_TOOLS} from './component-workbench.mj
 import { summarizeObservation } from './observation.mjs';
 import { observeDonorMotion } from '../runtime/donor-observation.mjs';
 import { createInvestigationSession } from '../runtime/investigation-session.mjs';
+import {digest} from '../component/build.mjs';
 
 const target=await loadTarget();
 let session,inspection,decompilation,workbench;
@@ -59,7 +60,7 @@ async function execute(name, args) {
   if(name==='trace_writers'){
     if(!session)throw Error('Create an investigation checkpoint first');
     const result=await traceMemoryWriters(session,inspection,target.bytes,args);
-    result.evidenceId=`writers:${args.checkpointId}:${args.address}:${args.byteLength}`;
+    result.evidenceId='writers:'+digest(JSON.stringify(result)).slice(0,24);
     session.recordStatic({id:result.evidenceId,kind:'writer-trace',passed:result.behavioralComparison.passed});return{result};
   }
   if(name==='decompile_function'){
