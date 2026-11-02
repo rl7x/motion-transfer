@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { errorMessage, fetchJson, postJson, readStorage, writeStorage } from '../api';
 import type { Job, ServiceStatus } from '../types';
 
-export function useLabStatus() {
+export function useLabStatus(path = '/api/lab/status') {
   const [status, setStatus] = useState<ServiceStatus | null>(null);
   useEffect(() => {
     const controller = new AbortController();
@@ -11,7 +11,7 @@ export function useLabStatus() {
       if (busy) return;
       busy = true;
       try {
-        setStatus(await fetchJson<ServiceStatus>('/api/lab/status', { signal: controller.signal }));
+        setStatus(await fetchJson<ServiceStatus>(path, { signal: controller.signal }));
       } catch {
         /* Keep the last known status during a transient read failure. */
       } finally {
@@ -26,7 +26,7 @@ export function useLabStatus() {
       controller.abort();
       clearInterval(timer);
     };
-  }, []);
+  }, [path]);
   return status;
 }
 interface Pending<R> {
@@ -38,18 +38,27 @@ export function useJob<R extends { idempotencyKey: string }, T>({
   submitPath,
   pollPath,
   onReady,
+  legacyRunKey,
 }: {
   storageKey: string;
   submitPath: string;
   pollPath: string;
   onReady?: (job: Job<T>) => Promise<void>;
+  legacyRunKey?: string;
 }) {
-  const [pending, setPending] = useState<Pending<R> | null>(() =>
-    readStorage<Pending<R>>(storageKey),
-  );
+  const [pending, setPending] = useState<Pending<R> | null>(() => {
+    const stored = readStorage<Pending<R>>(storageKey);
+    try {
+      const id = legacyRunKey ? sessionStorage.getItem(legacyRunKey) : null;
+      return stored && id ? { ...stored, id: stored.id ?? id } : stored;
+    } catch {
+      return stored;
+    }
+  });
   const [job, setJob] = useState<Job<T> | null>(null),
     [error, setError] = useState<string | null>(null),
     [submitting, setSubmitting] = useState(false);
+  const [pollRevision, setPollRevision] = useState(0);
   const ready = useRef(onReady);
   useEffect(() => {
     ready.current = onReady;
@@ -57,9 +66,10 @@ export function useJob<R extends { idempotencyKey: string }, T>({
   const save = useCallback(
     (value: Pending<R> | null) => {
       writeStorage(storageKey, value);
+      if (!value && legacyRunKey) writeStorage(legacyRunKey, null);
       setPending(value);
     },
-    [storageKey],
+    [storageKey, legacyRunKey],
   );
   useEffect(() => {
     if (!pending?.id) return;
@@ -90,9 +100,16 @@ export function useJob<R extends { idempotencyKey: string }, T>({
       controller.abort();
       clearTimeout(timer);
     };
-  }, [pending?.id, pollPath, save]);
+  }, [pending?.id, pollPath, save, pollRevision]);
   const submit = async (request: R) => {
-    if (submitting || pending?.id) return;
+    if (submitting) return;
+    if (pending?.id) {
+      if (error) {
+        setError(null);
+        setPollRevision((value) => value + 1);
+      }
+      return;
+    }
     const selected = pending?.request ?? request;
     save({ request: selected });
     setSubmitting(true);
@@ -112,8 +129,8 @@ export function useJob<R extends { idempotencyKey: string }, T>({
     job,
     error,
     submitting,
-    running: submitting || Boolean(pending?.id),
-    reconnect: Boolean(pending && !pending.id),
+    running: submitting || Boolean(pending?.id && !error),
+    reconnect: Boolean(pending && (!pending.id || error)),
     submit,
   };
 }

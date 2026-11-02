@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useTransfer } from '../transfer-context';
-import { useJob } from '../hooks/use-job';
-import { useResource } from '../hooks/use-resource';
+import { useJob, useLabStatus } from '../hooks/use-job';
 import type { Job, ServiceStatus } from '../types';
 
 interface AdaptRequest {
@@ -15,6 +14,7 @@ function RoadsterRemix({ status }: { status: ServiceStatus | null }) {
   const [prompt, setPrompt] = useState('');
   const flow = useJob<AdaptRequest, unknown>({
     storageKey: 'motion-roadster-request',
+    legacyRunKey: 'motion-roadster-run',
     submitPath: '/api/roadster/transfers',
     pollPath: '/api/roadster/transfers/',
     onReady: async (job: Job<unknown>) => {
@@ -126,7 +126,7 @@ function PakuRemix() {
   const { artifact } = useTransfer();
   const [prompt, setPrompt] = useState('');
   const [shareNote, setShareNote] = useState('');
-  const { data: status } = useResource<ServiceStatus>('/api/remixes/status');
+  const status = useLabStatus('/api/remixes/status');
   const flow = useJob<AdaptRequest, unknown>({
     storageKey: 'motion-paku-request',
     submitPath: '/api/remixes',
