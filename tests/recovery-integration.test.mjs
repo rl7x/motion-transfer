@@ -26,6 +26,9 @@ test('a newly frozen candidate passes recipient and final ZIP checks without usi
     assert.match(result.project.files['index.html'], /newly accepted candidate/);
     const publication = await publications.publish(result), loaded = await publications.read(publication.id);
     assert.deepEqual(loaded.project.zip, result.project.zip);
+    const afterInterruption = createIntegrationPublication(join(directory, 'fresh-journal'), { savedDirectory: join(directory, 'integrations') });
+    assert.equal((await afterInterruption.read(publication.id)).receipt.packageId, result.project.manifest.id);
+    await afterInterruption.close();
     const preview = await publications.preview(publication.id);
     assert.ok(preview.startsWith('http://127.0.0.1:'));
     assert.equal((await fetch(preview + '/api/investigations', { method: 'POST' })).status, 404);

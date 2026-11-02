@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
 import { digest } from '../component/build.mjs';
 import { projectZip } from './archive.mjs';
 import { extractIntegration, serveIntegration } from '../evaluator/integration-harness.mjs';
@@ -28,7 +29,7 @@ function verifyProject(project, verification) {
   assert.deepEqual(verification.externalRequests, []); assert.deepEqual(verification.nonGetRequests, []);
 }
 
-export function createIntegrationPublication(directory) {
+export function createIntegrationPublication(directory, { savedDirectory = fileURLToPath(new URL('./recordings/recoveries/', import.meta.url)) } = {}) {
   const root = join(directory, 'integrations');
   const previews = new Map();
   return {
@@ -51,7 +52,9 @@ export function createIntegrationPublication(directory) {
     },
     async read(id) {
       assert.match(id, /^[a-f0-9]{64}$/, 'Invalid integration identity');
-      const path = join(root, id);
+      let path = join(root, id);
+      try { await readFile(join(path, 'receipt.json')); }
+      catch (error) { if (error.code !== 'ENOENT') throw error; path = join(savedDirectory, id); }
       const [{ id: storedId, ...receipt }, project, verification] = await Promise.all(['receipt.json', 'project.json', 'validation.json']
         .map(async name => JSON.parse(await readFile(join(path, name), 'utf8'))));
       assert.equal(storedId, id); assert.equal(digest(JSON.stringify(receipt)), id);
