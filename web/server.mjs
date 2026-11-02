@@ -8,8 +8,9 @@ import { PAKU_POLICY } from '../transfer/paku-policy.mjs';
 import { experienceAssets } from './experience-assets.mjs';
 import { loadSavedRoadster } from '../roadster/saved.mjs';
 import { buildFrontend } from './build.mjs';
+import { developerBenchmarkAssets } from '../benchmark/assets.mjs';
 
-export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapter, remixes, lab, allowUnverified = false } = {}) {
+export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapter, remixes, lab, allowUnverified = false, benchmarks = developerBenchmarkAssets() } = {}) {
   if (adapter === undefined) adapter = await loadPakuTransfer({ optional: true });
   const recipient = await loadPakuPaku();
   const recovered = await loadRecoveredMotion();
@@ -75,9 +76,30 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
       json(202, await remixes.submit(JSON.parse(body))); return;
     }
     if (!['GET', 'HEAD'].includes(request.method)) { send(404, 'text/plain', 'Not found'); return; }
+    if (/^\/(api\/)?developer-benchmarks(?:\/|$)/.test(path)) {
+      const asset = await benchmarks(path);
+      if (!asset) { send(404, 'text/plain', 'Benchmark not found'); return; }
+      if (asset.sandbox) response.setHeader('Content-Security-Policy', 'sandbox allow-scripts');
+      if (asset.download) response.setHeader('Content-Disposition', `attachment; filename="${asset.download}"`);
+      send(200, asset.type, asset.body); return;
+    }
     if(path==='/api/lab/status'){json(200,lab?.status()??{enabled:false,activeRunId:null,budget:null});return;}
     const labRun=path.match(/^\/api\/(investigations|roadster\/transfers)\/([a-f0-9-]{36})$/);
     if(labRun&&lab){const job=await lab.run(labRun[2]);if(job.kind!==(labRun[1]==='investigations'?'investigation':'roadster')){json(404,{error:'Run not found'});return;}json(200,job);return;}
+    const recoveryProject = path.match(/^\/recovery-projects\/([a-f0-9]{64})\/(play|project.zip|validation.json|receipt.json|case-study.json)$/);
+    if (recoveryProject && lab) {
+      const [, id, file] = recoveryProject;
+      if (file === 'play') {
+        const origin = await lab.previewIntegration(id);
+        response.writeHead(303, { Location: origin + '/index.html', 'Cache-Control': 'no-store' }); response.end(); return;
+      }
+      const artifact = await lab.integration(id);
+      if (file === 'project.zip') {
+        response.setHeader('Content-Disposition', `attachment; filename="jujump-recovery-${id.slice(0, 12)}.zip"`);
+        send(200, 'application/zip', artifact.project.zip);
+      } else json(200, file === 'validation.json' ? artifact.verification : file === 'receipt.json' ? artifact.receipt : artifact.project.caseStudy);
+      return;
+    }
     const carArtifact=path.match(/^\/(api\/roadster\/artifacts|roadster\/artifacts)\/([a-f0-9]{64})(?:\/(source|play\.html|adapter\.ts|report\.json))?$/);
     if(carArtifact){
       const id=carArtifact[2],file=carArtifact[3],artifact=id===roadster?.id?roadster:await lab?.artifact(id);

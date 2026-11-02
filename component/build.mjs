@@ -16,6 +16,10 @@ export async function compileMotion(source) {
     } }],
   });
   const esm = result.outputFiles[0].text;
+  const exports = Object.values(result.metafile.outputs).flatMap(output => output.exports);
+  if (!exports.includes('init') || !exports.includes('step')) {
+    throw new Error('Component must export named ES module functions init and step; use export function init(config) and export function step(state,input,config)');
+  }
   const compiled = await transform(esm, { format: 'iife', globalName: 'candidate', target: 'es2022' });
   return { sourceSha256: digest(source), javascriptSha256: digest(esm), javascript: esm, code: compiled.code };
 }

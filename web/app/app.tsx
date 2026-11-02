@@ -5,6 +5,7 @@ import { useLabStatus } from './hooks/use-job';
 import { Header, Intro, RecoveryDetails, Footer } from './components/static-content';
 import { Destinations, Players } from './components/players';
 import { DeveloperTask } from './components/developer-task';
+import { DeveloperBenchmarks } from './components/developer-benchmarks';
 import { Proof, TransferExplanation } from './components/proof';
 import { InvestigationPanel } from './components/investigation-panel';
 import { RemixPanel } from './components/remix-panel';
@@ -42,6 +43,7 @@ function Experience() {
       <Players />
       <TransferExplanation />
       <DeveloperTask />
+      <DeveloperBenchmarks />
       <Proof />
       <InvestigationPanel status={status} />
       <RecoveryDetails />

@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "origin": "local-verification",
+  "metaCalled": false,
+  "method": "Same 1500x1000 local guided scenario, bundled headless Chromium forced to SwiftShader. Baseline exceeded the unchanged 60s guided deadline; final run retained 8 active updates and 6m assertions. These are single local observations, not hosted CI or a reliability benchmark.",
+  "before": {
+    "error": "page.waitForFunction: Timeout 60000ms exceeded.",
+    "elapsedMs": 85966.676458,
+    "state": {
+      "phase": "starting"
+    }
+  },
+  "visibilityOnly": {
+    "error": "page.waitForFunction: Timeout 60000ms exceeded.",
+    "elapsedMs": 85077.541583,
+    "state": {
+      "phase": "starting"
+    }
+  },
+  "after": {
+    "schemaVersion": 1,
+    "kind": "local-guided-demo-verification",
+    "metaCalled": false,
+    "rendering": "forced-swiftshader",
+    "passed": true,
+    "loadedMs": 23238,
+    "guidedMs": 33930,
+    "state": {
+      "phase": "complete",
+      "activeUpdates": 8,
+      "measuredMeters": 6.000000000000227,
+      "trace": [
+        {
+          "before": {
+            "x": -16.179554560280405,
+            "y": 21.58406494943358,
+            "z": 0
+          },
+          "after": {
+            "x": -15.167817410361701,
+            "y": 21.584064949433543,
+            "z": 0
+          },
+          "mode": "airborne",
+          "events": [
+            "dash-start"
+          ]
+        },
+        {
+          "before": {
+            "x": -16.44126125221415,
+            "y": 21.45532225471402,
+            "z": 0
+          },
+          "after": {
+            "x": -14.417817410361673,
+            "y": 21.455322254713966,
+            "z": 0
+          },
+          "mode": "airborne",
+          "events": []
+        },
+        {
+          "before": {
+            "x": -16.70293736762636,
+            "y": 21.323869721251228,
+            "z": 0
+          },
+          "after": {
+            "x": -13.667817410361645,
+            "y": 21.323869721251196,
+            "z": 0
+          },
+          "mode": "airborne",
+          "events": []
+        },
+        {
+          "before": {
+            "x": -16.96458278591586,
+            "y": 21.189707728516147,
+            "z": 0
+          },
+          "after": {
+            "x": -12.917817410361616,
+            "y": 21.189707728516087,
+            "z": 0
+          },
+          "mode": "airborne",
+          "events": []
+        },
+        {
+          "before": {
+            "x": -17.226197384444962,
+            "y": 21.052836659581324,
+            "z": 0
+          },
+          "after": {
+            "x": -12.167817410361588,
+            "y": 21.05283665958127,
+            "z": 0
+          },
+          "mode": "airborne",
+          "events": []
+        },
+        {
+          "before": {
+            "x": -17.48778103856752,
+            "y": 20.913256901170353,
+            "z": 0
+          },
+          "after": {
+            "x": -11.41781741036156,
+            "y": 20.91325690117029,
+            "z": 0
+          },
+          "mode": "airborne",
+          "events": []
+        },
+        {
+          "before": {
+            "x": -17.74933362165695,
+            "y": 20.770968843706214,
+            "z": 0
+          },
+          "after": {
+            "x": -10.66781741036153,
+            "y": 20.77096884370616,
+            "z": 0
+          },
+          "mode": "airborne",
+          "events": []
+        },
+        {
+          "before": {
+            "x": -18.010855005134236,
+            "y": 20.62597288135845,
+            "z": 0
+          },
+          "after": {
+            "x": -9.917817410361502,
+            "y": 20.625972881358383,
+            "z": 0
+          },
+          "mode": "airborne",
+          "events": [
+            "dash-end"
+          ]
+        }
+      ]
+    },
+    "elapsedMs": 57174
+  }
+}

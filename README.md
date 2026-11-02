@@ -7,6 +7,8 @@
 ## Idea
 My core idea is to do some component extraction and transfer between programs. I will start with some games first. I picked dashy dango cause i was thinking of a matcha parfait i had in kyoto, and dango came to mind.
 
+The [Motion Transfer implementation checklist](docs/motion-transfer-implementation.md) tracks the next phase: a playable challenge, public remixes, fresh recovery measurements, and integrations by other developers.
+
 ## Try the extraction and transfer experience
 
 ```sh
@@ -19,6 +21,12 @@ Open `http://127.0.0.1:4173`. Play the compiled **Dashy Dango** donor and give i
 The frontend is React with strict TypeScript. See [the frontend guide](web/README.md) for component ownership, request reconnection and `typecheck`, `lint`, formatting, build and browser-test commands. The existing Node backend and verified game runtimes remain separate from the application UI.
 
 **Use it in your project** opens the developer task: recover a mechanic from a compiled reference and integrate it into a platformer while keeping native physics. **Download working integration** exports a self-contained JUJUMP project with the exact frozen component, editable adapter, before/after players, source, notices, recovery failures and verification reports. Extract it, run `npm test`, then `npm start` with Node.js 22+. No dependency installation, key, donor cartridge or investigation backend is required. The standalone example can execute a matched open-air comparison and export the actual before/after traces. See [the developer handoff and its measurement limits](docs/developer-handoff.md).
+
+**Measured developer tasks** records fresh recovery and two predefined adapter-editing workflows, including inherited changes, actual verification failures, setup disclosures and API cost. Run `npm run benchmark:verify` before `npm run benchmark:developer`; see [the fixed tasks, spending limits and interruption behavior](docs/developer-benchmark.md). These are self-run measurements, with no claimed productivity baseline or independent adoption.
+
+The [November 2 campaign](benchmark/recordings/README.md) completed **2 of 3 tasks** for an estimated **$0.7299**, with no unsettled reservations. Roadster's requested edit and both PAKU child edits passed their recipient checks. Three fresh Meta recovery trials inspected code and executed experiments but submitted no candidate; new development, acceptance and export remain incomplete. All outcomes and two repairs between trials are preserved. Campaign-time local validation passed **194 tests**, TypeScript, lint, formatting and the frontend build; the report UI was also checked at 390px and 320px without inference.
+
+**Recover for JUJUMP** starts a fresh Meta-led investigation through evidence selection, candidate development and separate frozen acceptance. Only a newly accepted candidate that also passes recipient checks and independent final-ZIP verification receives its own play/download links. The UI shows actual donor-versus-candidate development failures. Two later development trials cost **$0.640187**: one reached **0/13 → 9/13 → 10/13** development checks; the other selected evidence too late to submit a candidate. Neither passed acceptance or published a project. Both complete failed recordings and all earlier outcomes remain available without inference. The final scheduling fix reserves requests for development and has local validation only. See [the recovery task, measured spending and limitations](docs/recovery-handoff.md).
 
 ```sh
 npm run export:jujump

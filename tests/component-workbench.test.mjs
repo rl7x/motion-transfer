@@ -23,8 +23,11 @@ async function setup(options){
 
 test('real development failures expose normalized movement, timer and event divergence for revision',async()=>{
   const {session,workbench,candidate}=await setup();
+  await assert.rejects(workbench.execute('submit_component_candidate',{...candidate,source:source.replaceAll('export ','')}),/must export named ES module functions init and step/);
+  assert.equal(session.recovery.attempts.length,0,'Invalid modules are rejected before consuming a behavioral evaluation');
   const first=(await workbench.execute('submit_component_candidate',candidate)).result;
   assert.equal(first.development.passed,false);assert.equal(first.acceptanceRun,false);assert.equal(first.canRevise,true);
+  assert.equal(first.attempt,1);
   assert.ok(first.development.results.some(result=>result.firstDivergence?.expected.timers));
   assert.equal(first.development.eventTiming,'exact');
   assert.ok(first.development.results.some(result=>Array.isArray(result.firstDivergence?.expected.events)));

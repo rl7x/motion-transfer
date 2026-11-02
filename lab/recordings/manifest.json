@@ -37,6 +37,48 @@
       "sha256": "643ff2c12721096c382ea000fcf69f959c168e00c2330b039ef063cf18cbe5e9",
       "title": "Meta-chosen position intervention and later evidence read; code inspection incomplete",
       "runId": "6562bd42-9997-49b8-8b03-eeb6b5fcb1da"
+    },
+    {
+      "id": "recovery-handoff",
+      "file": "recovery-handoff.json",
+      "sha256": "1578cf51ba467fd0077edf4a21feaa90fdfcedfcf738a3c7e0bf465a7f5e787f",
+      "title": "Meta recovery attempt · incomplete",
+      "runId": "5e570dca-e9aa-4b69-9d65-74d69bcc6e5f"
+    },
+    {
+      "id": "benchmark-recovery-one",
+      "file": "benchmark-recovery-one.json",
+      "sha256": "7cf3ef3dfcb2fbcb8659fe8916b8e67ca0ade1df8e0c4cf222823264990fd8de",
+      "title": "Measured recovery trial 1 · code inspected; context limit before candidate",
+      "runId": "44282d6e-ac4d-4097-b637-10b709001363"
+    },
+    {
+      "id": "benchmark-recovery-two",
+      "file": "benchmark-recovery-two.json",
+      "sha256": "03b13d8fa8aebf05087aba86d9284cc3aadb6fd9501d3f69e72a2a3329b058d3",
+      "title": "Measured recovery trial 2 · evidence selected; context limit before candidate",
+      "runId": "963be909-6ca9-469f-bcb8-d9543d34e36b"
+    },
+    {
+      "id": "benchmark-recovery-three",
+      "file": "benchmark-recovery-three.json",
+      "sha256": "4832c34d2ed41a9f8fab1c2a9b2dc9ec494586c0eb0f58099e1d8af5cca73f91",
+      "title": "Measured recovery trial 3 · experiments executed; no candidate",
+      "runId": "de204b97-127e-4f27-9244-42a4d89f3b17"
+    },
+    {
+      "id": "stage-guided-recovery",
+      "file": "stage-guided-recovery.json",
+      "sha256": "96b7b7d225ea5867564679e644bbe36fd2d5436b3183a3ce26f3c5970556d0a4",
+      "title": "Stage-guided recovery · 10 of 13 development checks; incomplete",
+      "runId": "dec3cd86-cbbe-48dd-8e73-36b6ad79db44"
+    },
+    {
+      "id": "development-trace-recovery",
+      "file": "development-trace-recovery.json",
+      "sha256": "9f57976512473efa0c6f94e36b364b6f1452b50b4c38ff33a643a2ba710709cf",
+      "title": "Development-trace recovery · selection too late; incomplete",
+      "runId": "6a53d6da-c6f4-4dec-a53f-c2d638769885"
     }
   ]
 }

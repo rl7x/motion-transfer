@@ -248,14 +248,37 @@ function RecipientPair() {
   );
   useEffect(() => {
     const started = Date.now();
+    const visibilityState = new Map<Element, boolean>();
+    const syncVisibility = () => {
+      if (!car || window.guidedRunning) return;
+      try {
+        const afterVisible = after.current ? visibilityState.get(after.current) : undefined;
+        if (afterVisible !== undefined && childState.current && channel)
+          after.current?.contentWindow?.postMessage(
+            { type: 'roadster-visibility', pressed: afterVisible, channel },
+            '*',
+          );
+        const beforeVisible = before.current ? visibilityState.get(before.current) : undefined;
+        const win = before.current?.contentWindow as PlayerWindow | null;
+        if (
+          beforeVisible !== undefined &&
+          win?.roadsterReady &&
+          !before.current?.src.includes('test=1')
+        )
+          win?.__game?.realtime(beforeVisible);
+      } catch {
+        /* A visibility event can precede player initialization. Retry after readiness. */
+      }
+    };
     const message = (event: MessageEvent) => {
       if (
         channel &&
         event.source === after.current?.contentWindow &&
         event.data?.channel === channel &&
         event.data.type === 'motion-status'
-      )
+      ) {
         childState.current = event.data;
+      }
     };
     const release = () => {
       send(after.current, 'dash', false);
@@ -275,6 +298,7 @@ function RecipientPair() {
           ? Boolean(childState.current)
           : Boolean(win?.pakuReady || win?.jujumpReady);
         setReady(loaded);
+        syncVisibility();
         if (!loaded && Date.now() - started > 10000) setFailed(true);
         const motion = state?.motion,
           core = motion?.core ?? motion?.state?.core;
@@ -295,21 +319,8 @@ function RecipientPair() {
     }, 80);
     const visibility = new IntersectionObserver(
       (entries) => {
-        if (!car || window.guidedRunning) return;
-        for (const entry of entries)
-          try {
-            if (entry.target === after.current && channel)
-              after.current?.contentWindow?.postMessage(
-                { type: 'roadster-visibility', pressed: entry.isIntersecting, channel },
-                '*',
-              );
-            if (entry.target === before.current && !before.current?.src.includes('test=1'))
-              (before.current?.contentWindow as PlayerWindow | null)?.__game?.realtime(
-                entry.isIntersecting,
-              );
-          } catch {
-            /* Loading frames have no runtime yet. */
-          }
+        for (const entry of entries) visibilityState.set(entry.target, entry.isIntersecting);
+        syncVisibility();
       },
       { threshold: 0.05 },
     );

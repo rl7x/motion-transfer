@@ -1,0 +1,100 @@
+{
+  "recipient": {
+    "revision": "6fea4eefe2deaa42706051d96a04ec9e36104696",
+    "sourceSha256": "465b4baaa64bb3c3d3fed5a31788611b49420406acf655d998dc8dda9cbbbe87",
+    "source": "title = \"PAKU PAKU\";\r\n\r\ndescription = `\r\n[Tap] Turn\r\n`;\r\n\r\ncharacters = [\r\n  `\r\n  llll\r\n lll\r\nlll\r\nlll\r\n lll\r\n  llll\r\n`,\r\n  `\r\n  lll\r\n lllll\r\nlll\r\nlll\r\n lllll\r\n  lll\r\n`,\r\n  `\r\n  ll\r\n llll\r\nllllll\r\nllllll\r\n llll\r\n  ll\r\n`,\r\n  `\r\n  lll\r\n l l l\r\n llll\r\n llll\r\nllll\r\nl l l\r\n`,\r\n  `\r\n  lll\r\n l l l\r\n llll\r\n llll\r\n llll\r\n l l\r\n`,\r\n  `\r\nll\r\nll\r\n`,\r\n  `\r\n ll\r\nllll\r\nllll\r\n ll\r\n`,\r\n  `\r\n  l l\r\n\r\n\r\n\r\n`,\r\n];\r\n\r\noptions = {\r\n  theme: \"dark\",\r\n  viewSize: { x: 100, y: 50 },\r\n  isPlayingBgm: true,\r\n  isReplayEnabled: true,\r\n  seed: 9,\r\n};\r\n\r\n/** @type {{x: number, vx: number}} */\r\nlet player;\r\n/** @type {{x: number, eyeVx: number}} */\r\nlet enemy;\r\n/** @type {{x: number, isPower: boolean}[]} */\r\nlet dots;\r\nlet powerTicks;\r\nlet animTicks;\r\nlet multiplier;\r\n\r\nfunction update() {\r\n  if (!ticks) {\r\n    player = { x: 40, vx: 1 };\r\n    enemy = { x: 100, eyeVx: 0 };\r\n    multiplier = 0;\r\n    addDots();\r\n    powerTicks = animTicks = 0;\r\n  }\r\n  animTicks += difficulty;\r\n  color(\"black\");\r\n  text(`x${multiplier}`, 3, 9);\r\n  if (input.isJustPressed) {\r\n    player.vx *= -1;\r\n  }\r\n  player.x += player.vx * 0.5 * difficulty;\r\n  if (player.x < -3) {\r\n    player.x = 103;\r\n  } else if (player.x > 103) {\r\n    player.x = -3;\r\n  }\r\n  color(\"blue\");\r\n  rect(0, 23, 100, 1);\r\n  rect(0, 25, 100, 1);\r\n  rect(0, 34, 100, 1);\r\n  rect(0, 36, 100, 1);\r\n  color(\"green\");\r\n  const ai = floor(animTicks / 7) % 4;\r\n  char(addWithCharCode(\"a\", ai === 3 ? 1 : ai), player.x, 30, {\r\n    // @ts-ignore\r\n    mirror: { x: player.vx },\r\n  });\r\n  remove(dots, (d) => {\r\n    color(\r\n      d.isPower && floor(animTicks / 7) % 2 === 0 ? \"transparent\" : \"yellow\"\r\n    );\r\n    const c = char(d.isPower ? \"g\" : \"f\", d.x, 30).isColliding.char;\r\n    if (c.a || c.b || c.c) {\r\n      if (d.isPower) {\r\n        play(\"jump\");\r\n        if (enemy.eyeVx === 0) {\r\n          powerTicks = 120;\r\n        }\r\n      } else {\r\n        play(\"hit\");\r\n      }\r\n      addScore(multiplier);\r\n      return true;\r\n    }\r\n  });\r\n  const evx =\r\n    enemy.eyeVx !== 0\r\n      ? enemy.eyeVx\r\n      : (player.x > enemy.x ? 1 : -1) * (powerTicks > 0 ? -1 : 1);\r\n  enemy.x = clamp(\r\n    enemy.x +\r\n      evx *\r\n        (powerTicks > 0 ? 0.25 : enemy.eyeVx !== 0 ? 0.75 : 0.55) *\r\n        difficulty,\r\n    0,\r\n    100\r\n  );\r\n  if ((enemy.eyeVx < 0 && enemy.x < 1) || (enemy.eyeVx > 0 && enemy.x > 99)) {\r\n    enemy.eyeVx = 0;\r\n  }\r\n  color(\r\n    powerTicks > 0\r\n      ? powerTicks < 30 && powerTicks % 10 < 5\r\n        ? \"black\"\r\n        : \"blue\"\r\n      : enemy.eyeVx !== 0\r\n      ? \"black\"\r\n      : \"red\"\r\n  );\r\n  const c = char(\r\n    enemy.eyeVx !== 0 ? \"h\" : addWithCharCode(\"d\", floor(animTicks / 7) % 2),\r\n    enemy.x,\r\n    30,\r\n    {\r\n      // @ts-ignore\r\n      mirror: { x: evx },\r\n    }\r\n  ).isColliding.char;\r\n  if (enemy.eyeVx === 0 && (c.a || c.b || c.c)) {\r\n    if (powerTicks > 0) {\r\n      play(\"powerUp\");\r\n      addScore(10 * multiplier, enemy.x, 30);\r\n      enemy.eyeVx = player.x > 50 ? -1 : 1;\r\n      powerTicks = 0;\r\n      multiplier++;\r\n    } else {\r\n      play(\"explosion\");\r\n      end();\r\n    }\r\n  }\r\n  powerTicks -= difficulty;\r\n  if (dots.length === 0) {\r\n    play(\"coin\");\r\n    addDots();\r\n  }\r\n}\r\n\r\nfunction addDots() {\r\n  let pi = player.x > 50 ? rndi(1, 6) : rndi(10, 15);\r\n  dots = times(16, (i) => ({ x: i * 6 + 5, isPower: i === pi }));\r\n  multiplier++;\r\n}\r\n",
+    "hookedSource": "title = \"PAKU PAKU\";\n\ndescription = `\n[Tap] Turn\n`;\n\ncharacters = [\n  `\n  llll\n lll\nlll\nlll\n lll\n  llll\n`,\n  `\n  lll\n lllll\nlll\nlll\n lllll\n  lll\n`,\n  `\n  ll\n llll\nllllll\nllllll\n llll\n  ll\n`,\n  `\n  lll\n l l l\n llll\n llll\nllll\nl l l\n`,\n  `\n  lll\n l l l\n llll\n llll\n llll\n l l\n`,\n  `\nll\nll\n`,\n  `\n ll\nllll\nllll\n ll\n`,\n  `\n  l l\n\n\n\n`,\n];\n\noptions = {\n  theme: \"dark\",\n  viewSize: { x: 100, y: 50 },\n  isPlayingBgm: true,\n  isReplayEnabled: true,\n  seed: 9,\n};\n\n/** @type {{x: number, vx: number}} */\nlet player;\n/** @type {{x: number, eyeVx: number}} */\nlet enemy;\n/** @type {{x: number, isPower: boolean}[]} */\nlet dots;\nlet powerTicks;\nlet animTicks;\nlet multiplier;\n\nfunction update() {\n  if (!ticks) {\n    player = { x: 40, vx: 1 };\n    enemy = { x: 100, eyeVx: 0 };\n    multiplier = 0;\n    addDots();\n    powerTicks = animTicks = 0;\n  }\n  animTicks += difficulty;\n  color(\"black\");\n  text(`x${multiplier}`, 3, 9);\n  if (input.isJustPressed) {\n    player.vx *= -1;\n  }\n  const motion = window.motionPort.move({tick:ticks, position:player.x, facing:player.vx, normalDisplacement:player.vx * 0.5 * difficulty});\n  player.x += motion.displacement;\n  if (player.x < -3) {\n    player.x = 103;\n  } else if (player.x > 103) {\n    player.x = -3;\n  }\n  color(\"blue\");\n  rect(0, 23, 100, 1);\n  rect(0, 25, 100, 1);\n  rect(0, 34, 100, 1);\n  rect(0, 36, 100, 1);\n  color(\"green\");\n  const ai = floor(animTicks / 7) % 4;\n  window.motionPort.paint(motion, addWithCharCode(\"a\", ai === 3 ? 1 : ai), 30, player.vx);\n  char(addWithCharCode(\"a\", ai === 3 ? 1 : ai), player.x, 30, {\n    // @ts-ignore\n    mirror: { x: player.vx },\n  });\n  remove(dots, (d) => {\n    color(\n      d.isPower && floor(animTicks / 7) % 2 === 0 ? \"transparent\" : \"yellow\"\n    );\n    const c = char(d.isPower ? \"g\" : \"f\", d.x, 30).isColliding.char;\n    if (c.a || c.b || c.c) {\n      if (d.isPower) {\n        play(\"jump\");\n        if (enemy.eyeVx === 0) {\n          powerTicks = 120;\n        }\n      } else {\n        play(\"hit\");\n      }\n      addScore(multiplier);\n      return true;\n    }\n  });\n  const evx =\n    enemy.eyeVx !== 0\n      ? enemy.eyeVx\n      : (player.x > enemy.x ? 1 : -1) * (powerTicks > 0 ? -1 : 1);\n  enemy.x = clamp(\n    enemy.x +\n      evx *\n        (powerTicks > 0 ? 0.25 : enemy.eyeVx !== 0 ? 0.75 : 0.55) *\n        difficulty,\n    0,\n    100\n  );\n  if ((enemy.eyeVx < 0 && enemy.x < 1) || (enemy.eyeVx > 0 && enemy.x > 99)) {\n    enemy.eyeVx = 0;\n  }\n  color(\n    powerTicks > 0\n      ? powerTicks < 30 && powerTicks % 10 < 5\n        ? \"black\"\n        : \"blue\"\n      : enemy.eyeVx !== 0\n      ? \"black\"\n      : \"red\"\n  );\n  const c = char(\n    enemy.eyeVx !== 0 ? \"h\" : addWithCharCode(\"d\", floor(animTicks / 7) % 2),\n    enemy.x,\n    30,\n    {\n      // @ts-ignore\n      mirror: { x: evx },\n    }\n  ).isColliding.char;\n  if (enemy.eyeVx === 0 && (c.a || c.b || c.c)) {\n    if (powerTicks > 0) {\n      play(\"powerUp\");\n      addScore(10 * multiplier, enemy.x, 30);\n      enemy.eyeVx = player.x > 50 ? -1 : 1;\n      powerTicks = 0;\n      multiplier++;\n    } else {\n      play(\"explosion\");\n      end();\n    }\n  }\n  powerTicks -= difficulty;\n  if (dots.length === 0) {\n    play(\"coin\");\n    addDots();\n  }\n}\n\nfunction addDots() {\n  let pi = player.x > 50 ? rndi(1, 6) : rndi(10, 15);\n  dots = times(16, (i) => ({ x: i * 6 + 5, isPower: i === pi }));\n  multiplier++;\n}\n"
+  },
+  "component": {
+    "id": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+    "sourceSha256": "7cfd9475696ca744982fb7c00d988aae982840d06b0fa198f111d42bba2d18bc",
+    "javascript": "// component.ts\nvar F = Math.fround;\nfunction cfg(c) {\n  return { walkingSpeed: c?.walkingSpeed ?? 2, dashDistance: c?.dashDistance ?? 60, cooldownTicks: c?.cooldownTicks ?? 25, initialCooldownTicks: c?.initialCooldownTicks ?? 10 };\n}\nfunction norm(x, y) {\n  x = F(x);\n  y = F(y);\n  const d = F(Math.sqrt(F(F(x * x) + F(y * y))));\n  if (d === 0) return [0, 0];\n  const inv = F(1 / d);\n  return [F(x * inv), F(y * inv)];\n}\nfunction inputDir(b) {\n  let x = 0, y = 0;\n  if (b & 32) x += 1;\n  if (b & 16) x -= 1;\n  if (b & 128) y += 1;\n  if (b & 64) y -= 1;\n  return norm(x, y);\n}\nfunction init(c) {\n  const k = cfg(c);\n  return { dirX: 0, dirY: 0, remaining: 0, cooldown: k.initialCooldownTicks | 0, cooldownFresh: false };\n}\nfunction step(state, input, c) {\n  const k = cfg(c);\n  const s = { ...state };\n  const b = input?.buttons | 0;\n  const events = [];\n  const width = Math.max(1, Math.round(Number(input?.sourceBodyWidth) || 8));\n  if (s.remaining > 0) {\n    const speed = F(k.dashDistance / width);\n    const dx2 = F(s.dirX * speed), dy2 = F(s.dirY * speed);\n    s.remaining = s.remaining - 1 | 0;\n    if (s.remaining === 0) events.push(\"dash-end\");\n    return { state: s, output: { ownsMotion: true, displacement: { x: dx2, y: dy2 }, events } };\n  }\n  if ((b & 1) !== 0 && s.cooldown === 0) {\n    let [dx2, dy2] = inputDir(b);\n    if (dx2 === 0 && dy2 === 0) {\n      dx2 = 1;\n      dy2 = 0;\n    }\n    s.dirX = dx2;\n    s.dirY = dy2;\n    s.cooldown = k.cooldownTicks | 0;\n    s.cooldownFresh = true;\n    s.remaining = width;\n    const speed = F(k.dashDistance / width);\n    const mx = F(s.dirX * speed), my = F(s.dirY * speed);\n    s.remaining = s.remaining - 1 | 0;\n    events.push(\"dash-start\");\n    if (s.remaining === 0) events.push(\"dash-end\");\n    return { state: s, output: { ownsMotion: true, displacement: { x: mx, y: my }, events } };\n  }\n  const [wx, wy] = inputDir(b);\n  const dx = F(wx * F(k.walkingSpeed)), dy = F(wy * F(k.walkingSpeed));\n  if (s.cooldown > 0) s.cooldown = s.cooldown - 1 | 0;\n  return { state: s, output: { ownsMotion: false, displacement: { x: dx, y: dy }, events } };\n}\nexport {\n  init,\n  step\n};\n",
+    "contract": {
+      "name": "Recovered dash and walking controller",
+      "scope": "Standalone 60Hz movement only: walking, dash activation/active motion, direction storage, cooldown. Excludes registries, allocation, damage, scoring, rendering and effects; no cartridge/runtime/assets.",
+      "defaults": {
+        "walkingSpeed": 2,
+        "dashDistance": 60,
+        "cooldownTicks": 25,
+        "initialCooldownTicks": 10
+      },
+      "stateDescription": "JSON state {dirX,dirY,remaining,cooldown,cooldownFresh}: float32 dash direction (initial 0,0), int remaining dash ticks, int cooldown ticks initialized from initialCooldownTicks and decremented on non-dash ticks.",
+      "rules": [
+        {
+          "description": "Cooldown decrements once per non-dash tick when >0; initial 10 shows 9 after tick 1, and dash is blocked until cooldown was 0 at tick start.",
+          "evidence": [
+            "dev:idle",
+            "dev:cooldown-boundary",
+            "binary:func9"
+          ]
+        },
+        {
+          "description": "Activation requires X (bit1) held/pressed with cooldown 0, even if held continuously; retrigger occurs on first tick after cooldown reaches 0 on a prior tick.",
+          "evidence": [
+            "dev:startup-held",
+            "dev:held-retrigger",
+            "dev:cooldown-boundary"
+          ]
+        },
+        {
+          "description": "On activation set cooldown=cooldownTicks, emit dash-start, move same tick; cooldown does not decrement during dash.",
+          "evidence": [
+            "dev:tap-right",
+            "dev:startup-held"
+          ]
+        },
+        {
+          "description": "Dash lasts sourceBodyWidth ticks (8 ticks at width 8) moving fround(dashDistance/width) per tick along direction; dash-end on last tick when remaining transitions to 0; ownsMotion on all dash ticks.",
+          "evidence": [
+            "dev:tap-right",
+            "dev:tap-up-down",
+            "binary:func9"
+          ]
+        },
+        {
+          "description": "Input direction from left16/right32/up64/down128, float32-normalized (func102); conflicting axes cancel. During dash direction is frozen despite input changes.",
+          "evidence": [
+            "binary:func70",
+            "binary:func102",
+            "dev:conflicting-inputs",
+            "dev:change-direction"
+          ]
+        },
+        {
+          "description": "Dash activation with zero input direction defaults to (1,0); stored direction is not reused for neutral activation; new directional activation replaces stored direction.",
+          "evidence": [
+            "dev:neutral-dash",
+            "binary:func9",
+            "dev:tap-up-down"
+          ]
+        },
+        {
+          "description": "When not dashing, walking displacement is normalized input direction times walkingSpeed in float32, including diagonals and zero for cancelled inputs.",
+          "evidence": [
+            "dev:walking-directions",
+            "dev:diagonal",
+            "binary:func70"
+          ]
+        }
+      ],
+      "limitations": [
+        "Dash duration inferred as sourceBodyWidth ticks with per-tick dashDistance/width; traces only confirm this at width 8, distance 60.",
+        "Only X activation is evidenced; Z and other buttons have no observed dash effect and are ignored.",
+        "Exact float32 rounding of donor sqrt/division approximated with Math.fround operations."
+      ],
+      "interfaceVersion": 1,
+      "tickRate": 60,
+      "units": "source-pixels-per-tick",
+      "numericDomain": "sourceBodyWidth=8; default donor configuration; tested button masks"
+    }
+  },
+  "port": "import { validateAdapterOutput } from '/assets/transfer-output.js';\n\nexport function createMotionPort(adapter, recovered, config) {\n  let state, coreState, output, origin, dash = false, initCalls = 0, stepCalls = 0, replayControls = [];\n  const frozen = Object.freeze({ motion: Object.freeze(config.motion), unitScale: config.unitScale });\n  const motion = Object.freeze({\n    init(config) { initCalls++; coreState = recovered.init(config); return coreState; },\n    step(state, input, config) {\n      if (input.sourceBodyWidth !== 8) throw Error('Transfer changed verified source geometry');\n      stepCalls++;\n      const result = recovered.step(state, input, config);\n      coreState = structuredClone(result.state);\n      return result;\n    },\n  });\n  const port = {\n    reset(replay = false) {\n      initCalls = stepCalls = 0;\n      state = adapter.init(motion, frozen);\n      if (initCalls !== 1) throw Error('Adapter must initialize the recovered component once');\n      output = null;\n      if (!replay) replayControls = [];\n    },\n    setDash(value) { dash = Boolean(value); },\n    move(frame) {\n      const down = window.isReplaying ? Boolean(replayControls[frame.tick]) : dash;\n      if (!window.isReplaying) replayControls[frame.tick] = down;\n      origin = frame.position;\n      const before = stepCalls;\n      const result = adapter.step(state, Object.freeze({ ...frame, dash: down }), motion, frozen);\n      if (stepCalls !== before + 1 || initCalls !== 1) throw Error('Adapter must step the recovered component once per update');\n      validateAdapterOutput(result.output);\n      if (!result.output.ownsMotion && result.output.displacement !== frame.normalDisplacement) throw Error('Adapter changed ordinary recipient movement');\n      state = result.state;\n      output = structuredClone(result.output);\n      return output;\n    },\n    paint(output, glyph, y, facing) {\n      if (!output.ownsMotion || !output.sweep.length) return;\n      window.color('light_green');\n      for (const offset of output.sweep) window.char(glyph, origin + offset, y, { mirror: { x: facing } });\n      window.color('green');\n    },\n    snapshot() { return { core: coreState, output, initCalls, stepCalls, dashHeld: dash }; },\n  };\n  document.addEventListener('keydown', event => {\n    if (event.code !== 'KeyD') return;\n    port.setDash(true); event.preventDefault(); event.stopImmediatePropagation();\n  }, true);\n  document.addEventListener('keyup', event => {\n    if (event.code !== 'KeyD') return;\n    port.setDash(false); event.preventDefault(); event.stopImmediatePropagation();\n  }, true);\n  window.addEventListener('blur', () => port.setDash(false));\n  window.addEventListener('message', event => {\n    if (event.origin === location.origin && event.source === parent && event.data?.type === 'dash') port.setDash(event.data.pressed);\n  });\n  return port;\n}\n",
+  "policy": {
+    "unitScale": 0.5,
+    "sourceBodyWidth": 8,
+    "tickRate": 60,
+    "inactiveMotion": "preserve recipient",
+    "collisionOrder": "recipient dots then ghost",
+    "addedInput": "D held; independent from turn"
+  }
+}

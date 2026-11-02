@@ -3,7 +3,7 @@ const INSPECTION_TOOLS = ['inspect_function', 'decompile_function', 'trace_write
 const INSPECTION_EVIDENCE = ['wat', 'decompilation', 'writer-trace'];
 const FOLLOWUP_TOOLS = ['record_finding', 'run_experiment', 'run_experiment_program', 'read_experiment', 'select_component_evidence', 'annotate_function'];
 
-function managedExperiments(toolCalls) {
+export function managedExperiments(toolCalls) {
   return toolCalls.filter(call => call.ok).flatMap(call => {
     const results = call.name === 'run_experiment' ? [call.result]
       : call.name === 'run_experiment_program' ? call.result.experiments ?? [] : [];
@@ -13,7 +13,7 @@ function managedExperiments(toolCalls) {
   });
 }
 
-function hasFollowup(toolCalls, { call, result }) {
+export function hasFollowup(toolCalls, { call, result }) {
   return toolCalls.some(next => {
     if (!(next.ok && next.requestAttempt > call.requestAttempt && FOLLOWUP_TOOLS.includes(next.name))) return false;
     const evidenceIds = [result.experimentId, result.artifactRef.id,
@@ -58,6 +58,13 @@ export function requireInvestigationConclusion(report, publicMessages) {
   }
   if (report.requirements?.componentAcceptance && !report.session?.recovery?.acceptedAttempt) {
     throw new Error('No new component passed separate acceptance; recovery remains incomplete');
+  }
+  if (report.requirements?.selectedRecoveryEvidence) {
+    const accepted = report.session?.recovery?.attempts.find(item => item.attempt === report.session.recovery.acceptedAttempt);
+    if (!accepted || !report.toolCalls.some(call => call.ok && call.name === 'submit_component_candidate'
+      && call.result?.candidateId === accepted.candidateId && citedManaged.some(({ result }) => result.experimentId === call.recoveryEvidence?.experimentId))) {
+      throw new Error('Accepted recovery must link its inspected code and candidate contract to a cited controlled experiment and later evidence-selection action');
+    }
   }
   return conclusion;
 }

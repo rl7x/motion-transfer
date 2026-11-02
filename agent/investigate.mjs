@@ -95,7 +95,8 @@ export async function investigate({
     delete report.error;
     delete report.finishedAt;
   }
-  const catalog = createToolDiscovery({ mode: report.toolDiscovery?.mode ?? toolDiscovery, model, state: report.toolDiscovery });
+  const catalog = createToolDiscovery({ mode: report.toolDiscovery?.mode ?? toolDiscovery, model, state: report.toolDiscovery,
+    profile: report.requirements?.componentAcceptance ? 'recovery' : 'general' });
   report.toolDiscovery = catalog.state;
   const controller = new AbortController();
   const cancel = () => controller.abort();

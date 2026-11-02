@@ -17,12 +17,12 @@ test('the deterministic ZIP preserves exact component identity and detects edits
   assert.ok(!Object.keys(project.files).some(path => path.endsWith('.wasm') || path.includes('.env')));
   const extracted = await extractIntegration(project);
   try {
-    const result = await exec(process.execPath, ['--test', 'verify.test.mjs'], { cwd: extracted.directory, env: cleanEnv() });
+    const result = await exec(process.execPath, ['--test', '--test-reporter=tap', 'verify.test.mjs'], { cwd: extracted.directory, env: cleanEnv() });
     assert.match(result.stdout, /# pass 3/);
     const component = join(extracted.directory, 'component/component.js');
     assert.equal(await readFile(component, 'utf8'), project.files['component/component.js']);
     await writeFile(component, project.files['component/component.js'] + '\n// changed\n');
-    await assert.rejects(exec(process.execPath, ['--test', 'verify.test.mjs'], { cwd: extracted.directory, env: cleanEnv() }), error => error.stdout.includes('Modified file: component/component.js'));
+    await assert.rejects(exec(process.execPath, ['--test', '--test-reporter=tap', 'verify.test.mjs'], { cwd: extracted.directory, env: cleanEnv() }), error => error.stdout.includes('Modified file: component/component.js'));
   } finally { await extracted.close(); }
   for (const path of ['../secret', '/secret', 'a/../../secret', 'a//b', 'a\\b']) assert.throws(() => projectZip({ [path]: 'x' }), /Invalid project path/);
 });

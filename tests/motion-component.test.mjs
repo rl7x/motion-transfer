@@ -32,6 +32,8 @@ test('TypeScript components build without imports and each rollout gets a fresh 
   assert.deepEqual(results.map(trace => trace.frames.map(frame => frame.displacement.x)), [[1, 2], [1, 2]]);
   await assert.rejects(compileMotion('import fs from "node:fs"; export const init = fs.readFileSync;'), /imports are not allowed/);
   await assert.rejects(compileMotion('x'.repeat(16_385)), /1–16 KB/);
+  await assert.rejects(compileMotion('function init(){return {}}; function step(){}'), /must export named ES module functions init and step/);
+  await assert.rejects(compileMotion('export default {init(){return {}},step(){}}'), /must export named ES module functions init and step/);
 });
 
 test('candidate execution rejects invalid JSON, outputs, and non-terminating code', async () => {
@@ -57,6 +59,11 @@ test('the donor evaluator accepts walking and rejects incorrect dash timing and 
   }]);
   assert.equal(dash.passed, false);
   assert.deepEqual(dash.results[0].firstDivergence.expected.events, ['dash-start']);
+  assert.deepEqual(dash.results[0].firstDivergence.preceding.map(frame => frame.tick), [9, 10]);
+  assert.deepEqual(dash.results[0].firstDivergence.preceding.map(frame => frame.expected.position), [{x:0,y:0}, {x:0,y:0}]);
+  assert.deepEqual(dash.results[0].firstDivergence.inputs, [{buttons:0,frames:10}, {buttons:33,frames:1}]);
+  const heldout = await evaluateMotion(walking, { walkingSpeed: 2 }, [{name:'heldout-fixture',steps:[{buttons:0,frames:10},{buttons:33,frames:1}]}], {suite:'acceptance'});
+  assert.equal(heldout.results[0].firstDivergence.preceding, undefined, 'Repair context is development-only');
 });
 
 test('acceptance inputs are repeatable per seed and independent from development cases', () => {

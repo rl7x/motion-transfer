@@ -40,6 +40,9 @@ export function createComponentWorkbench(session,{evaluate=evaluateMotion,seed=(
       frozen();if(state.attempts.length>=3)throw Error('Component development attempt limit reached');
       const selection=state.selections.find(item=>item.id===args.selectionId);if(!selection)throw Error('Unknown component evidence selection');
       const submitted={source:args.source,contract:args.contract};validateMotionCandidate(submitted,selection.evidence);
+      // Structural errors retain their source and cost in the tool journal but
+      // do not consume one of the three behavioral evaluations.
+      await compileMotion(args.source);
       const entry={attempt:state.attempts.length+1,selectionId:selection.id,candidate:submitted,timerFields:args.timerFields,sourceSha256:digest(args.source),candidateId:digest(JSON.stringify({candidate:submitted,timerFields:args.timerFields}))};state.attempts.push(entry);
       try{entry.development=await evaluate(args.source,args.contract.defaults,[...DEVELOPMENT_CASES,...MOTION_REGRESSIONS],{suite:'development',timerFields:args.timerFields});}
       catch(error){entry.development={passed:false,error:String(error.message).slice(0,1000)};}

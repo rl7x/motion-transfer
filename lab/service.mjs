@@ -1,13 +1,16 @@
 import { randomUUID } from 'node:crypto';
 import { investigate } from '../agent/investigate.mjs';
 import { createLabStore,artifactId } from './store.mjs';
+import { finishRecoveryIntegration } from '../integration/recovery.mjs';
+import { createIntegrationPublication } from '../integration/publication.mjs';
+import { recoveryTask } from './recovery-task.mjs';
 
 export const LAB_BUDGET_USD=10;
 export const INVESTIGATION_QUESTIONS=Object.freeze({
   held:'Does holding dash behave differently from pressing and releasing it? Choose controlled donor experiments, inspect the compiled instructions, and cite the actual observations. Do not assume a familiar dash implementation.',
   neutral:'After a LEFT directional dash and full recovery, what happens when dash is activated without any directional input: does it keep the previous left direction or choose another? Choose contrasting donor experiments with the same preparation and elapsed time, inspect compiled instructions, and use actual motion readings to discriminate explanations. Do not assume the answer. Distinguish observations from hypotheses, cite experiments and report uncertainty honestly.',
   memory:'Choose and test a motion hypothesis through run_experiment_program or prepare_checkpoint plus run_experiment. You choose the inputs and interventions; the host creates verified paired branches. Use actual returned checkpoint targets, keeping human-mapped hints distinct from discoveries. Inspect code through sdk.static or loaded static tools. Complete one controlled trial, then in a subsequent model turn choose a follow-up, evidence read or record_finding linked to the actual experiment ID. Select at most one informative image initially. Record supported/rejected/unresolved interpretations honestly and cite the experiment ID. Do not manually invent branch names or browse the whole binary.',
-  extraction:'Investigate and recover a NEW standalone motion candidate from the compiled donor. Choose functions yourself, use persistent execution and a controlled memory comparison to test a hypothesis, select your inspected code and execution evidence, submit source, inspect real development first divergences and revise if needed. Freeze a passed candidate and then run separate acceptance. No pre-existing recovered implementation is available. Report incomplete work honestly; human-mapped motion fields and finite evaluators are assistance, not independent discoveries.',
+  extraction:'Developer request: bring the compiled donor’s dash into JUJUMP while retaining its timing and the platformer’s own physics. Recover a NEW standalone motion candidate. Prefer a compact experiment program to inspect the binary and chosen function bodies and run a checkpoint-bound controlled memory comparison. Choose hypotheses, code and inputs yourself. In a later model turn, use the actual result to choose evidence or a follow-up. Select inspected code and execution evidence, submit source, inspect real development first divergences and revise if needed. Use cooldown and remaining as the timer state field names for the current recipient instrumentation; infer their values and rules. Freeze a development-passed candidate and call separate acceptance, then conclude with actual experiment citations. The host checks the recipient only after recovery; you cannot claim recipient success. No pre-existing recovered implementation is available. Report incomplete work honestly; mapped fields, ABI, evaluators and recipient adapter are human assistance.',
 });
 /** @typedef {'investigation' | 'roadster'} LabJobKind */
 /** @typedef {{idempotencyKey: string, questionId?: string, parentArtifactId?: string, prompt?: string}} LabRequest */
@@ -60,7 +63,8 @@ function investigationOptions(job) {
       maxCostUsd: job.maxCostUsd,
       ...(extended ? { maxModelCalls: extraction ? 16 : 12, maxToolCalls: 24, maxOutputTokens: extraction ? 4000 : 2000 } : {}),
     },
-    requirements: extended ? { branchComparison: true, codeInspection: true, componentAcceptance: extraction, followupDecision: !extraction } : {},
+    requirements: extended ? { branchComparison: true, codeInspection: true, componentAcceptance: extraction, followupDecision: true,
+      ...(extraction ? { selectedRecoveryEvidence: true } : {}) } : {},
     toolDiscovery: extended ? 'client' : 'none',
     reasoningEffort: extended ? 'low' : 'high',
   };
@@ -73,9 +77,11 @@ function investigationOptions(job) {
  */
 export async function createLabService({
   directory, apiKey, client, investigateRun = investigate, generateTransfer, baseArtifact, budgetUsd = LAB_BUDGET_USD,
+  integrateRecovery = finishRecoveryIntegration,
 } = {}) {
   if (!Number.isFinite(budgetUsd) || budgetUsd <= 0 || budgetUsd > LAB_BUDGET_USD) throw Error('Invalid lab budget');
   const store = await createLabStore(directory);
+  const integrations = createIntegrationPublication(directory);
   const jobs = new Map();
   let active = null, admitting = false, closed = false;
   const scrub = value => JSON.parse(JSON.stringify(value).replaceAll(apiKey || '\0', '[redacted]'));
@@ -104,6 +110,8 @@ export async function createLabService({
   const publicJob = job => scrub({
     id: job.id, kind: job.kind, request: job.request, status: job.status, events: job.events,
     report: job.report, artifactId: job.artifactId ?? null, error: job.error ?? null,
+    ...(job.request.questionId === 'extraction' ? { task: recoveryTask(job) } : {}),
+    ...(job.report?.origin === 'local-verification' ? { origin: 'local-verification' } : {}),
   });
 
   async function parent(id) {
@@ -129,6 +137,11 @@ export async function createLabService({
         const report = await investigateRun({ apiKey, client, ...investigationOptions(job), onUpdate: update });
         if (report.status !== 'completed') throw Error('Investigation did not reach an evidence-backed conclusion');
         await update(report);
+        if (job.request.questionId === 'extraction') {
+          const result = await integrateRecovery({ directory, report, onStage: status => transition(job, status) });
+          await transition(job, 'publishing');
+          job.integration = await integrations.publish(result);
+        }
       } else {
         const result = await generateTransfer({
           apiKey, client, parent: selected, prompt: job.request.prompt, maxCostUsd: job.maxCostUsd,
@@ -162,6 +175,8 @@ export async function createLabService({
       return publicJob(job);
     },
     async artifact(id) { return parent(id); },
+    async integration(id) { return integrations.read(id); },
+    async previewIntegration(id) { return integrations.preview(id); },
     /** @param {LabJobKind} kind @param {LabRequest} value */
     async submit(kind, value) {
       if (closed) throw Error('Lab service is closed');
@@ -199,6 +214,7 @@ export async function createLabService({
     async close() {
       closed = true;
       if (active?.promise) await active.promise;
+      await integrations.close();
       await store.close();
     },
   };

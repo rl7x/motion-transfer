@@ -11,8 +11,10 @@ test('the default Roadster transfer and guided comparison execute without model 
     const posts=[];page.on('request',request=>{if(request.method()==='POST')posts.push(request.url());});
     await page.goto(harness.origin);await page.waitForFunction(()=>window.currentDestination==='roadster'&&document.querySelector('#transfer-status').textContent==='VERIFIED TRANSFER');
     assert.equal(await page.locator('[data-destination]').count(),3);assert.equal(await page.locator('#remix-details').isHidden(),true);
+    const players=await Promise.all(['#original-game','#transfer-game'].map(async selector=>(await page.$(selector)).contentFrame()));
     await page.locator('#watch-transfer').click();await page.waitForFunction(()=>['complete','failed'].includes(window.guidedState?.phase),{},{timeout:60000});
     const state=await page.evaluate(()=>window.guidedState);assert.equal(state.phase,'complete',state.error);assert.equal(state.activeUpdates,8);assert.ok(Math.abs(state.measuredMeters-6)<1e-8);
+    assert.ok(players.every(frame=>!frame.isDetached()),'The guided comparison should reuse the loaded saved transfer');
     assert.deepEqual(posts,[]);assert.deepEqual(errors,[]);
     await page.locator('[data-destination="paku-paku"]').click();await page.waitForFunction(()=>window.currentDestination==='paku-paku'&&document.querySelector('#transfer-status').textContent==='VERIFIED TRANSFER');
     assert.equal(await page.locator('#roadster-panel').isHidden(),true);

@@ -17,6 +17,7 @@ export async function evaluateMotion(source, config, cases, { suite = 'developme
   const results = references.map((reference, index) => {
     const position = { ...reference.initial.position };
     let maxPositionError = 0, firstDivergence = null;
+    const preceding = [];
     reference.frames.forEach((frame, tick) => {
       const output = actual[index].frames[tick];
       const timers=actual[index].timerSamples?.[tick];
@@ -26,14 +27,18 @@ export async function evaluateMotion(source, config, cases, { suite = 'developme
       if (![position.x, position.y].every(Number.isFinite)) throw new Error('Component trajectory became non-finite');
       const error = Math.hypot(position.x - frame.observation.position.x, position.y - frame.observation.position.y);
       maxPositionError = Math.max(maxPositionError, error);
+      const sample = {
+        tick: frame.tick, buttons: frame.buttons,
+        expected: { position: frame.observation.position, ownsMotion: frame.output.ownsMotion, events: frame.output.events,...(timerFields?{timers:{cooldown:frame.observation.cooldown,remaining:frame.observation.remaining}}:{}) },
+        actual: { position: { ...position }, ownsMotion: output.ownsMotion, events: output.events,...(timerFields?{timers}:{}) },
+      };
       if (!firstDivergence && (error > POSITION_TOLERANCE || output.ownsMotion !== frame.output.ownsMotion
         || JSON.stringify(output.events) !== JSON.stringify(frame.output.events)||timerMismatch)) {
-        firstDivergence = {
-          tick: frame.tick, buttons: frame.buttons,
-          expected: { position: frame.observation.position, ownsMotion: frame.output.ownsMotion, events: frame.output.events,...(timerFields?{timers:{cooldown:frame.observation.cooldown,remaining:frame.observation.remaining}}:{}) },
-          actual: { position: { ...position }, ownsMotion: output.ownsMotion, events: output.events,...(timerFields?{timers}:{}) },
-        };
+        firstDivergence = { ...sample,
+          ...(suite === 'development' ? { preceding: [...preceding], inputs: reference.steps } : {}) };
       }
+      preceding.push(sample);
+      if (preceding.length > 2) preceding.shift();
     });
     return { name: reference.name, ticks: reference.frames.length, passed: firstDivergence === null, maxPositionError, firstDivergence };
   });

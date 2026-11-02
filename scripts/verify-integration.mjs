@@ -12,7 +12,7 @@ try {
   let checkpoint = performance.now();
   extracted = await extractIntegration(project); stages.extractionMs = performance.now() - checkpoint;
   checkpoint = performance.now();
-  const local = await exec(process.execPath, ['--test', 'verify.test.mjs'], { cwd: extracted.directory, env: cleanEnv() });
+  const local = await exec(process.execPath, ['--test', '--test-reporter=tap', 'verify.test.mjs'], { cwd: extracted.directory, env: cleanEnv() });
   assert.match(local.stdout, /# pass 3/); stages.nodeChecksMs = performance.now() - checkpoint;
   checkpoint = performance.now();
   server = await serveIntegration(extracted.directory); harness = await integrationBrowser(server.origin);

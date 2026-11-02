@@ -14,7 +14,9 @@ globalThis.roadsterPort=port;
 const app=new App(document.querySelector('#scene'),document.querySelector('#ui'));
 const testing=new URLSearchParams(location.search).get('test')==='1';
 presentation=createDashVisuals(app,{enabled:config.transferred&&new URLSearchParams(location.search).get('presentation')!=='off',reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches});
-const draw=app.renderer.render.bind(app.renderer);app.renderer.render=()=>presentation.render(draw);
+let renderBatchDepth=0;
+const draw=app.renderer.render.bind(app.renderer);app.renderer.render=()=>{if(!renderBatchDepth)presentation.render(draw);};
+function renderBatch(run){renderBatchDepth++;try{return run();}finally{renderBatchDepth--;if(!renderBatchDepth)app.renderer.render();}}
 window.roadsterPresentation=()=>presentation.snapshot();
 let dash=false,guided=false,guideDriver;
 const release=()=>{dash=false;port.setDash(false);};
@@ -27,7 +29,7 @@ window.roadsterStart=start;
 window.roadsterSnapshot=()=>({status:app.state==='running'?'playing':app.state,car:window.__game.car(),game:window.__game.state(),motion:port.snapshot(app.physics),componentId:config.transferred?config.componentId:null});
 window.roadsterAdvance=(frames=1,options={})=>{if(options.dash!==undefined){dash=Boolean(options.dash);port.setDash(dash);}window.__game.advance(frames/60,options.driver??'autopilot');return window.roadsterSnapshot();};
 window.roadsterGuideStart=()=>{start(false);guided=true;guideDriver=createAutopilot(app.level);window.__game.realtime(false);return window.roadsterSnapshot();};
-window.roadsterGuideRecord=frames=>{const controls=[];for(let i=0;i<frames;i++){const input={...guideDriver(app.physics.car,1/60)};controls.push(input);window.__game.advance(1/60,input);}return{controls,state:window.roadsterSnapshot()};};
+window.roadsterGuideRecord=frames=>renderBatch(()=>{const controls=[];for(let i=0;i<frames;i++){const input={...guideDriver(app.physics.car,1/60)};controls.push(input);window.__game.advance(1/60,input);}return{controls,state:window.roadsterSnapshot()};});
 if(testing)window.roadsterFixture=values=>{
   const physics=app.physics;
   const map={x:'px',y:'py',vx:'vx',vy:'vy',pitch:'pitch',roll:'roll',gas:'gas'};
@@ -48,7 +50,7 @@ window.addEventListener('message',event=>{
   if(type==='roadster-guide-step'){
     const inputs=event.data.controls;
     if(!Array.isArray(inputs)||inputs.length>12||inputs.some(input=>!input||Object.keys(input).sort().join(',')!=='brake,spin,throttle,thrust'||!Number.isFinite(input.throttle)||input.throttle<0||input.throttle>1||!Number.isFinite(input.brake)||input.brake<0||input.brake>1||!Number.isFinite(input.spin)||Math.abs(input.spin)>1||typeof input.thrust!=='boolean'))return;
-    for(const input of inputs)window.roadsterAdvance(1,{driver:input,dash:Boolean(event.data.dash)});
+    renderBatch(()=>{for(const input of inputs)window.roadsterAdvance(1,{driver:input,dash:Boolean(event.data.dash)});});
     parent.postMessage({type:'roadster-guide-result',channel,requestId:event.data.requestId,state:window.roadsterSnapshot()},'*');
   }
   if(type==='roadster-guide-finish'){guided=false;release();if(!testing)window.__game.realtime(true);}
