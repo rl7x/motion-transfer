@@ -25,7 +25,8 @@
     "tools:session-smoke": "node scripts/investigation-smoke.mjs",
     "tools:experiment-smoke": "node scripts/experiment-smoke.mjs",
     "test": "node --test tests/*.test.mjs",
-    "build:frontend": "npm run typecheck && node scripts/build-frontend.mjs"
+    "build:frontend": "npm run typecheck && node scripts/build-frontend.mjs",
+    "test:frontend": "node --test tests/react-frontend.test.mjs tests/experience.test.mjs tests/developer-task.test.mjs tests/experiment-web.test.mjs tests/investigation-web.test.mjs tests/lab-web.test.mjs tests/roadster-experience.test.mjs tests/transfer-preview.test.mjs tests/integration-export.test.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
