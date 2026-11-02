@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createHash } from 'node:crypto';
 import { createPakuBrowser } from '../evaluator/browser-harness.mjs';
+import { reveal } from './helpers/app-navigation.mjs';
 
 test('the developer task links a verified download and working standalone comparison without inference', async () => {
   const harness = await createPakuBrowser();
@@ -10,7 +11,9 @@ test('the developer task links a verified download and working standalone compar
     const requests = []; page.on('request', request => requests.push(request.method()));
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto(harness.origin + '/?destination=paku-paku#developer-task');
-    await page.waitForSelector('#developer-download:not([hidden])');
+    await reveal(page, '#developer-download');
+    await reveal(page, '#developer-history');
+    await reveal(page, '#developer-effort');
     assert.match(await page.locator('#developer-recovery').textContent(), /53 saved traces/);
     assert.match(await page.locator('#developer-history').textContent(), /1 candidate failing acceptance/);
     assert.match(await page.locator('#developer-effort').textContent(), /time savings were not measured/);

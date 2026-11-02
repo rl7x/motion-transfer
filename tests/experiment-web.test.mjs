@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFile} from 'node:fs/promises';
 import {createPakuBrowser} from '../evaluator/browser-harness.mjs';
+import {reveal} from './helpers/app-navigation.mjs';
 import {digest} from '../component/build.mjs';
 
 test('the workbench displays programs, managed pairs, actual evidence and downloads on desktop and mobile',async()=>{
@@ -9,7 +10,7 @@ test('the workbench displays programs, managed pairs, actual evidence and downlo
   try{
     const {page,errors}=await harness.page(),posts=[];page.on('request',request=>{if(request.method()==='POST')posts.push(request.url());});
     await page.setViewportSize({width:1440,height:1000});await page.goto(harness.origin+'/?destination=paku-paku');
-    await page.locator('#view-programmatic-control').click();await page.waitForFunction(()=>document.querySelectorAll('.managed-comparison').length===3);
+    await reveal(page,'#view-programmatic-control');await page.locator('#view-programmatic-control').click();await page.waitForFunction(()=>document.querySelectorAll('.managed-comparison').length===3);
     assert.equal(await page.locator('#lab-mode').innerText(),'LOCAL VERIFICATION');
     assert.match(await page.locator('#investigation-programs').innerText(),/Human-scripted local verification/);
     assert.match(await page.locator('#investigation-programs').innerText(),/sdk.sweep/);
@@ -27,7 +28,7 @@ test('the workbench displays programs, managed pairs, actual evidence and downlo
     const payload=JSON.parse(bytes);assert.equal(payload.trace.length,8);assert.equal(payload.edits[0].newValue,40);assert.equal(payload.trace.at(-1).control.normalized.dx,60);assert.equal(payload.trace.at(-1).intervention.normalized.dx,16);
     const evidenceId=payload.experimentId;await page.locator('#investigation-findings a').first().click();assert.equal(await page.evaluate(()=>decodeURIComponent(location.hash)),'#evidence-'+evidenceId);
     await page.setViewportSize({width:320,height:740});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
-    await page.locator('#view-investigation').click();await page.waitForFunction(()=>document.querySelector('#lab-mode').textContent==='SAVED RECORDING');
+    await reveal(page,'#view-investigation');await page.locator('#view-investigation').click();await page.waitForFunction(()=>document.querySelector('#lab-mode').textContent==='SAVED RECORDING');
     assert.equal(await page.locator('.program-card:visible').count(),0);assert.equal(await page.locator('.managed-branch:visible').count(),0);
     assert.deepEqual(posts,[]);assert.deepEqual(errors,[]);
   }finally{await harness.close();}
@@ -46,7 +47,7 @@ test('the saved Meta program failure shows the completed trial and later decisio
   const harness=await createPakuBrowser();
   try{
     const {page,errors}=await harness.page(),posts=[];page.on('request',request=>{if(request.method()==='POST')posts.push(request.url());});
-    await page.goto(harness.origin+'/?destination=paku-paku');await page.locator('#view-programmatic-investigation').click();
+    await page.goto(harness.origin+'/?destination=paku-paku');await reveal(page,'#view-programmatic-investigation');await page.locator('#view-programmatic-investigation').click();
     await page.waitForFunction(()=>document.querySelectorAll('.program-card').length===2);
     assert.equal(await page.locator('#lab-mode').innerText(),'SAVED RECORDING');assert.match(await page.locator('#lab-progress').innerText(),/code inspection/);
     assert.match(await page.locator('#investigation-conclusion').innerText(),/INCOMPLETE RUN/);
