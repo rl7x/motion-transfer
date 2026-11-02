@@ -115,6 +115,37 @@ export interface Job<T = InvestigationReport> {
   report?: T;
   events: JobEvent[];
   artifactId?: string;
+  task?: RecoveryTask;
+}
+export interface RecoveryTask {
+  request: string;
+  status: string;
+  origin: 'meta' | 'local-verification';
+  sessionId: string | null;
+  candidateId: string | null;
+  milestones: { id: string; label: string; complete: boolean }[];
+  integration: {
+    id: string;
+    componentId: string;
+    packageId: string;
+    archiveBytes: number;
+    fileCount: number;
+  } | null;
+  measurements: {
+    modelRequests: number;
+    estimatedCostUsd: number;
+    reservedCostUsd: number;
+    recoveryElapsedMs: number | null;
+    taskElapsedMs: number | null;
+    developmentAttempts: number;
+    acceptanceTraces: number;
+    acceptanceUpdates: number;
+    humanElapsedMinutes: number | null;
+    manualTimeSavedMinutes: number | null;
+  };
+  humanAssistance: string[];
+  assistanceScope: string;
+  error: string | null;
 }
 export interface NormalizedMotion {
   dx: number;

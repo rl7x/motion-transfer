@@ -1381,3 +1381,24 @@ body.player-expanded::before {
 #lab-progress {
   overflow-wrap: anywhere;
 }
+.recovery-task {
+  margin: 1.5rem 0;
+  padding: clamp(1rem, 3vw, 2rem);
+  border: 1px solid #839c63;
+  border-radius: 12px;
+  background: #171e18;
+  overflow-wrap: anywhere;
+}
+.recovery-milestones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
+  gap: 0.6rem 1.5rem;
+  list-style: none;
+  padding: 0;
+}
+.recovery-milestones li {
+  color: #a7b0a2;
+}
+.recovery-milestones li[data-complete='true'] {
+  color: #c5eb91;
+}

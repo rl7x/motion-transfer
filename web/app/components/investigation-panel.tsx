@@ -4,6 +4,8 @@ import { useJob } from '../hooks/use-job';
 import type { InvestigationReport, Job, ServiceStatus } from '../types';
 import { InvestigationView } from './investigation-view';
 import { JsonDetails, MeasurementTable } from './shared';
+import { RecoveryTaskView } from './recovery-task';
+import { useResource } from '../hooks/use-resource';
 
 interface Request {
   questionId: string;
@@ -37,6 +39,9 @@ const recordings = [
   ],
 ];
 export function InvestigationPanel({ status }: { status: ServiceStatus | null }) {
+  const { data: recoveryRecordings } = useResource<{ id: string; title: string }[]>(
+    '/api/investigations/recordings',
+  );
   const flow = useJob<Request, InvestigationReport>({
     storageKey: 'motion-transfer-investigation',
     submitPath: '/api/investigations',
@@ -100,6 +105,40 @@ export function InvestigationPanel({ status }: { status: ServiceStatus | null })
         short experiment program can test several values and choose a follow-up from the
         measurements.
       </p>
+      <RecoveryTaskView
+        task={job?.task}
+        disabled={
+          flow.running ||
+          Boolean(flow.pending && flow.pending.request.questionId !== 'extraction') ||
+          (!flow.reconnect &&
+            (!status?.enabled ||
+              Boolean(status.activeRunId || status.unsettled) ||
+              (budget?.remainingUsd ?? 0) < 0.005))
+        }
+        reconnect={flow.reconnect && flow.pending?.request.questionId === 'extraction'}
+        recover={() => {
+          setSaved(null);
+          setQuestion('extraction');
+          void flow.submit({ questionId: 'extraction', idempotencyKey: crypto.randomUUID() });
+        }}
+      />
+      {recoveryRecordings?.map((record) => (
+        <button
+          key={record.id}
+          type="button"
+          className="recorded-recovery"
+          disabled={Boolean(flow.pending || flow.submitting)}
+          onClick={() => {
+            const path = '/api/investigations/saved/' + record.id;
+            setLoadError('');
+            void fetchJson<Job>(path)
+              .then((job) => setSaved({ job, path, note: ' Saved outcome; no new model request.' }))
+              .catch((error: unknown) => setLoadError(errorMessage(error)));
+          }}
+        >
+          {record.title} · saved outcome ↗
+        </button>
+      ))}
       <p className="recording-controls">
         {recordings.map(([id, name, label, note]) => (
           <button

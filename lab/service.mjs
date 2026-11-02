@@ -110,6 +110,7 @@ export async function createLabService({
     id: job.id, kind: job.kind, request: job.request, status: job.status, events: job.events,
     report: job.report, artifactId: job.artifactId ?? null, error: job.error ?? null,
     ...(job.request.questionId === 'extraction' ? { task: recoveryTask(job) } : {}),
+    ...(job.report?.origin === 'local-verification' ? { origin: 'local-verification' } : {}),
   });
 
   async function parent(id) {

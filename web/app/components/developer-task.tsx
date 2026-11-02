@@ -47,6 +47,9 @@ export function DeveloperTask() {
         Porting a game mechanic means preserving its timing and quirks. Start with a compiled
         reference. Finish with editable source and a working integration.
       </p>
+      <p>
+        <a href="#recovery-task">Recover a fresh component for this project with Meta ↓</a>
+      </p>
       <div className="developer-steps">
         <article>
           <span className="eyebrow">01 / COMPILED REFERENCE</span>

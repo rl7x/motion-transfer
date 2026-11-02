@@ -14,7 +14,10 @@ export async function experienceAssets({allowUnverified=false,adapter,roadster}=
   const component=await loadRecoveredMotion(),recipient=await loadJujump(),jujump=await loadJujumpTransfer({allowUnverified});
   const assets=new Map();
   const json=(path,data)=>assets.set(path,['application/json',JSON.stringify(data)]);
-  for(const record of await savedInvestigations())json('/api/investigations/saved/'+record.id,record.job);
+  const recordings = await savedInvestigations();
+  for(const record of recordings)json('/api/investigations/saved/'+record.id,record.job);
+  json('/api/investigations/recordings', recordings.filter(record => record.job.request?.questionId === 'extraction')
+    .map(({ id, title }) => ({ id, title })));
   assets.set('/evidence/experiment-benchmark.json',['application/json',await readFile(new URL('../lab/recordings/experiment-benchmark.json',import.meta.url),'utf8')]);
   assets.set('/donor/play',['text/html',await buildDonorFrame()]);
   assets.set('/assets/jujump-game.js',['text/javascript',recipient.source+'\n'+jujumpObservationSource()]);
