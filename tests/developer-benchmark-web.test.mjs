@@ -18,6 +18,7 @@ async function localFixture(t) {
   const verification = { conformance: { passed: true, results: [{ name: 'route fixture only', passed: true }] },
     browser: { passed: true, results: [{ name: 'not a gameplay verification', passed: true }] } };
   const artifactRef = await store.saveEvidence(campaign.id, { html: '<!doctype html><title>Local route fixture</title><p>Protocol fixture only</p>', evaluation: verification });
+  const jobRef = await store.saveEvidence(campaign.id, { origin: 'local-verification', error: 'Injected lost direction after second edit' });
   const measurements = { passed: true, issues: [], origin: 'local-verification', modelRequests: 0, estimatedCostUsd: 0,
     reservedCostUsd: 0, elapsedMachineMs: 1200, evaluations: [], manualInterventionsDuringRun: 0,
     interventionScope: 'Local UI fixture only; no model or gameplay result.' };
@@ -26,7 +27,7 @@ async function localFixture(t) {
     return { id: randomUUID(), stage, status: 'completed', maxCostUsd: 0.03, request, requestSha256: digest(JSON.stringify(request)), measurements };
   };
   campaign.attempts = [attempt('roadster'), { ...attempt('paku-first'), artifactRef },
-    { ...attempt('paku-final'), status: 'failed', measurements: { ...measurements, passed: false, issues: ['Injected lost direction after second edit'],
+    { ...attempt('paku-final'), jobRef, status: 'failed', measurements: { ...measurements, passed: false, issues: ['Injected lost direction after second edit'],
       evaluations: [{ name: 'local protocol fixture', observedCases: 1, failedCases: 1, maxPositionError: 12, firstFailures: [{ name: 'direction', firstDivergence: { frame: 1 } }], error: null }] } }];
   campaign.status = 'incomplete'; await store.write(campaign);
   return { directory, store, campaign, assets: developerBenchmarkAssets({ directory, savedDirectory: join(directory, 'saved') }) };
@@ -39,6 +40,8 @@ test('benchmark routes verify evidence, block unverified play and preserve sandb
   assert.equal(index[0].summary.completedTasks, 1);
   assert.equal(index[0].summary.tasks[2].partial, true);
   assert.equal(JSON.parse((await assets(base + '/source')).body).evaluation.browser.passed, true);
+  const failed = campaign.attempts[2];
+  assert.match(JSON.parse((await assets('/api/developer-benchmarks/' + campaign.id + '/' + failed.id + '/report')).body).error, /Injected lost direction/);
   assert.equal((await assets('/developer-benchmarks/' + campaign.id + '/' + attempt.id + '/play.html')).sandbox, true);
   const bad = await store.saveEvidence(campaign.id, { html: '<p>Failed fixture</p>', evaluation: { conformance: { passed: true, results: [{ passed: false }] }, browser: { passed: true, results: [] } } });
   attempt.artifactRef = bad; await store.write(campaign);
@@ -63,6 +66,7 @@ test('React task results label local fixtures, expose partial failure and fit mo
     assert.match(await page.locator('#developer-benchmarks').textContent(), /Historical setup effort is unmeasured/);
     await page.locator('.benchmark-attempt').last().locator('summary').first().click();
     assert.match(await page.locator('.benchmark-attempt').last().textContent(), /Injected lost direction/);
+    assert.equal(await page.getByText('Full task report and investigation evidence').count(), 1);
     assert.equal(await page.locator('a').filter({ hasText: 'Play recorded output' }).count(), 1);
     const play = '/developer-benchmarks/' + campaign.id + '/' + campaign.attempts[1].id + '/play.html';
     const response = await fetch(harness.origin + play);

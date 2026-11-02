@@ -11,12 +11,14 @@ export function developerBenchmarkAssets({ directory = fileURLToPath(new URL('..
         id, status, origin: definition.origin, createdAt: definition.createdAt, updatedAt, summary,
       }))) };
     }
-    const match = path.match(/^\/(api\/developer-benchmarks|developer-benchmarks)\/([a-f0-9-]{36})(?:\/([a-f0-9-]{36})\/(source|verification|play\.html))?$/);
+    const match = path.match(/^\/(api\/developer-benchmarks|developer-benchmarks)\/([a-f0-9-]{36})(?:\/([a-f0-9-]{36})\/(source|verification|report|play\.html))?$/);
     if (!match) return null;
     const [, prefix, id, attemptId, file] = match;
     const campaign = await store.read(id);
     if (!attemptId) return prefix === 'api/developer-benchmarks' ? { type: 'application/json', body: JSON.stringify(campaign) } : null;
     const attempt = campaign.attempts.find(item => item.id === attemptId);
+    if (file === 'report' && attempt?.jobRef) return { type: 'application/json',
+      body: JSON.stringify(await store.evidence(id, attempt.jobRef.sha256)), download: 'benchmark-' + attempt.stage + '-report.json' };
     if (!attempt?.artifactRef) return null;
     const artifact = await store.evidence(id, attempt.artifactRef.sha256);
     if (file === 'source') return { type: 'application/json', body: JSON.stringify(artifact), download: 'benchmark-' + attempt.stage + '.json' };

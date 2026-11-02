@@ -29,6 +29,7 @@ interface Attempt {
   jobId?: string;
   artifactId?: string;
   artifactRef?: { sha256: string };
+  jobRef?: { sha256: string };
   measurements?: Measurement;
   accounting?: { estimatedCostUsd: number; reservedCostUsd: number };
   error?: string;
@@ -179,8 +180,10 @@ function CampaignResult({ index }: { index: CampaignIndex }) {
             <summary>
               {attempt.stage} · {attempt.status} ·{' '}
               {measurements
-                ? measurements.evaluations.reduce((sum, item) => sum + item.failedCases, 0) +
-                  ' observed failed checks'
+                ? measurements.evaluations.length
+                  ? measurements.evaluations.reduce((sum, item) => sum + item.failedCases, 0) +
+                    ' observed failed checks'
+                  : 'no behavioral evaluation ran'
                 : 'verification pending'}
             </summary>
             <p>
@@ -188,6 +191,13 @@ function CampaignResult({ index }: { index: CampaignIndex }) {
             </p>
             <p>{measurements?.interventionScope}</p>
             {attempt.jobId && <p>Job {attempt.jobId}</p>}
+            {attempt.jobRef && (
+              <p>
+                <a href={base + '/report'} download>
+                  Full task report and investigation evidence ↓
+                </a>
+              </p>
+            )}
             {attempt.artifactRef && (
               <p className="evidence-links">
                 <a href={base + '/source'} download>
