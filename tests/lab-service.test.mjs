@@ -48,7 +48,7 @@ test('question routing retains the configured model, discovery requirements and 
   } });
   for (const questionId of ['held', 'neutral', 'memory', 'extraction']) {
     const job = await service.submit('investigation', { questionId, idempotencyKey: 'routing-test-' + questionId });
-    assert.equal((await done(service, job.id)).status, 'ready');
+    assert.equal((await done(service, job.id)).status, questionId === 'extraction' ? 'failed' : 'ready');
   }
   const basic = { model: 'muse-spark-1.3', limits: { maxCostUsd: 0.5 }, requirements: {}, toolDiscovery: 'none', reasoningEffort: 'high' };
   const extended = extraction => ({

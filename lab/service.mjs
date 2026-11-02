@@ -1,6 +1,9 @@
 import { randomUUID } from 'node:crypto';
 import { investigate } from '../agent/investigate.mjs';
 import { createLabStore,artifactId } from './store.mjs';
+import { finishRecoveryIntegration } from '../integration/recovery.mjs';
+import { createIntegrationPublication } from '../integration/publication.mjs';
+import { recoveryTask } from './recovery-task.mjs';
 
 export const LAB_BUDGET_USD=10;
 export const INVESTIGATION_QUESTIONS=Object.freeze({
@@ -73,9 +76,11 @@ function investigationOptions(job) {
  */
 export async function createLabService({
   directory, apiKey, client, investigateRun = investigate, generateTransfer, baseArtifact, budgetUsd = LAB_BUDGET_USD,
+  integrateRecovery = finishRecoveryIntegration,
 } = {}) {
   if (!Number.isFinite(budgetUsd) || budgetUsd <= 0 || budgetUsd > LAB_BUDGET_USD) throw Error('Invalid lab budget');
   const store = await createLabStore(directory);
+  const integrations = createIntegrationPublication(directory);
   const jobs = new Map();
   let active = null, admitting = false, closed = false;
   const scrub = value => JSON.parse(JSON.stringify(value).replaceAll(apiKey || '\0', '[redacted]'));
@@ -104,6 +109,7 @@ export async function createLabService({
   const publicJob = job => scrub({
     id: job.id, kind: job.kind, request: job.request, status: job.status, events: job.events,
     report: job.report, artifactId: job.artifactId ?? null, error: job.error ?? null,
+    ...(job.request.questionId === 'extraction' ? { task: recoveryTask(job) } : {}),
   });
 
   async function parent(id) {
@@ -129,6 +135,11 @@ export async function createLabService({
         const report = await investigateRun({ apiKey, client, ...investigationOptions(job), onUpdate: update });
         if (report.status !== 'completed') throw Error('Investigation did not reach an evidence-backed conclusion');
         await update(report);
+        if (job.request.questionId === 'extraction') {
+          const result = await integrateRecovery({ directory, report, onStage: status => transition(job, status) });
+          await transition(job, 'publishing');
+          job.integration = await integrations.publish(result);
+        }
       } else {
         const result = await generateTransfer({
           apiKey, client, parent: selected, prompt: job.request.prompt, maxCostUsd: job.maxCostUsd,
@@ -162,6 +173,8 @@ export async function createLabService({
       return publicJob(job);
     },
     async artifact(id) { return parent(id); },
+    async integration(id) { return integrations.read(id); },
+    async previewIntegration(id) { return integrations.preview(id); },
     /** @param {LabJobKind} kind @param {LabRequest} value */
     async submit(kind, value) {
       if (closed) throw Error('Lab service is closed');
@@ -199,6 +212,7 @@ export async function createLabService({
     async close() {
       closed = true;
       if (active?.promise) await active.promise;
+      await integrations.close();
       await store.close();
     },
   };
