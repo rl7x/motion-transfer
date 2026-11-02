@@ -91,3 +91,73 @@ test('provider overruns and journal tampering are recorded or rejected without f
   await writeFile(path, JSON.stringify(edited));
   await assert.rejects(createPhaseBudget(directory), /integrity mismatch/);
 });
+
+test('an explicit allowance increase preserves spending, uncertainty and the previous definition', async t => {
+  const { directory, budget } = await setup(t);
+  await budget.reserve({ id: 'pending', category: 'recovery', maxCostUsd: 0.5 });
+  await budget.settle({ id: 'pending', estimatedCostUsd: 0.018, uncertain: true });
+  const before = await budget.journal(), second = await createPhaseBudget(directory);
+  assert.equal((await second.status()).limitUsd, 45);
+  await assert.rejects(budget.approveAllowanceIncrease({ maxCostUsd: 51, reason: 'not authorized' }), /explicit \$50/);
+  await assert.rejects(budget.approveAllowanceIncrease({ maxCostUsd: 50, reason: '' }), /reason/);
+  await Promise.all([budget, second].map(client => client.approveAllowanceIncrease({ maxCostUsd: 50, reason: 'User authorized $50 total' })));
+  const after = await budget.journal(), status = await second.status();
+  assert.equal(after.allowanceMigrations.length, 1);
+  assert.deepEqual(after.allowanceMigrations[0].previousDefinition, before.definition);
+  assert.deepEqual(after.reservations, before.reservations);
+  assert.equal(after.createdAt, before.createdAt);
+  assert.equal(status.limitUsd, 50);
+  assert.equal(status.categories.reserve.limitUsd, 10);
+  assert.equal(status.categories.recovery.limitUsd, 6);
+  assert.equal(status.settledUsd + status.reservedUsd, 0.5);
+  assert.equal(status.remainingUsd, 49.5);
+  assert.equal(status.uncertain, true);
+  await assert.rejects(budget.reserve({ id: 'still-blocked', category: 'video', maxCostUsd: 1 }), /billing is uncertain/);
+  assert.equal((await (await createPhaseBudget(directory)).status()).limitUsd, 50);
+});
+
+test('acknowledged unknown billing retains its full bound while allowing only other jobs', async t => {
+  const { directory, budget } = await setup(t);
+  const request = { id: 'pending', category: 'recovery', maxCostUsd: 0.5 };
+  await budget.reserve(request);
+  await assert.rejects(budget.reconcileBoundedUnknown({ id: request.id, reason: 'still running' }), /Only an uncertain/);
+  await budget.settle({ id: request.id, estimatedCostUsd: 0.018, uncertain: true });
+  await assert.rejects(budget.reconcileBoundedUnknown({ id: request.id, reason: ' ' }), /reason/);
+  await budget.reconcileBoundedUnknown({ id: request.id, reason: 'User acknowledged interrupted request; retain whole job ceiling' });
+  const reopened = await createPhaseBudget(directory), status = await reopened.status();
+  assert.equal(status.uncertain, false);
+  assert.equal(status.unresolvedBilling, true);
+  assert.equal(status.boundedUnknownReservations, 1);
+  assert.equal(status.settledUsd, 0.018);
+  assert.equal(status.settledUsd + status.reservedUsd, 0.5);
+  await assert.rejects(reopened.reserve(request), /completed or externally owned/);
+  await assert.rejects(reopened.settle({ id: request.id, estimatedCostUsd: 0.01, uncertain: false }), /cannot be reduced/);
+  await reopened.reserve({ id: 'different-job', category: 'video', maxCostUsd: 1 });
+  await reopened.settle({ id: request.id, estimatedCostUsd: 0.02, uncertain: true });
+  assert.equal((await reopened.status()).uncertain, false);
+  assert.equal((await reopened.status()).reservedUsd, 1.48);
+  await reopened.settle({ id: request.id, estimatedCostUsd: 0.025, uncertain: false });
+  assert.equal((await reopened.status()).unresolvedBilling, false);
+  assert.equal((await reopened.status()).reservedUsd, 1);
+  const entry = (await reopened.journal()).reservations[0];
+  assert.equal(entry.boundedUnknown.knownCostUsd, 0.018);
+  assert.equal(entry.boundedUnknown.resolution.estimatedCostUsd, 0.025);
+  await assert.rejects(reopened.reserve(request), /completed or externally owned/);
+});
+
+test('bounded unknown costs cannot overcommit a category and a late overrun blocks new jobs', async t => {
+  const { directory, budget } = await setup(t);
+  await budget.approveAllowanceIncrease({ maxCostUsd: 50, reason: 'Authorized ceiling' });
+  await budget.reserve({ id: 'pending', category: 'recovery', maxCostUsd: 0.5 });
+  await budget.settle({ id: 'pending', estimatedCostUsd: 0.01, uncertain: true });
+  await budget.reconcileBoundedUnknown({ id: 'pending', reason: 'Retain full bound' });
+  const second = await createPhaseBudget(directory);
+  const results = await Promise.allSettled([budget, second].map((client, index) =>
+    client.reserve({ id: 'parallel-' + index, category: 'recovery', maxCostUsd: 3 })));
+  assert.equal(results.filter(result => result.status === 'fulfilled').length, 1);
+  await budget.reserve({ id: 'new-reserve-allocation', category: 'reserve', maxCostUsd: 10 });
+  await budget.settle({ id: 'pending', estimatedCostUsd: 0.51, uncertain: false });
+  assert.equal((await budget.status()).overrun, true);
+  assert.equal((await budget.status()).settledUsd, 0.51);
+  await assert.rejects(second.reserve({ id: 'blocked', category: 'video', maxCostUsd: 1 }), /exceeded a reservation/);
+});

@@ -9,41 +9,65 @@ export const PHASE_ALLOCATIONS = Object.freeze({ recovery: 6, wonder: 12, video:
 const controls = { schemaVersion: 1, name: 'motion-transfer-additional-inference-v1',
   maxCostUsd: 45, allocations: PHASE_ALLOCATIONS, historicalSpendingIncluded: false };
 const definition = Object.freeze({ ...controls, id: digest(JSON.stringify(controls)) });
+const increasedControls = { ...controls, name: 'motion-transfer-additional-inference-v2',
+  maxCostUsd: 50, allocations: Object.freeze({ ...PHASE_ALLOCATIONS, reserve: 10 }) };
+const increasedDefinition = Object.freeze({ ...increasedControls, id: digest(JSON.stringify(increasedControls)) });
 const validId = id => typeof id === 'string' && /^[a-zA-Z0-9][a-zA-Z0-9:._-]{0,179}$/.test(id);
 const validCost = value => Number.isFinite(value) && value >= 0;
+const validReason = value => typeof value === 'string' && value.trim().length > 0 && value.length <= 2000;
 const alive = pid => {
   try { process.kill(pid, 0); return true; }
   catch (error) { if (error.code === 'ESRCH') return false; throw error; }
 };
 
 function summary(journal) {
-  const categories = Object.fromEntries(Object.entries(PHASE_ALLOCATIONS).map(([name, limitUsd]) => [name,
+  const categories = Object.fromEntries(Object.entries(journal.definition.allocations).map(([name, limitUsd]) => [name,
     { limitUsd, settledUsd: 0, reservedUsd: 0, remainingUsd: limitUsd }]));
   let settledUsd = 0, reservedUsd = 0;
   for (const entry of journal.reservations) {
-    const remaining = ['reserved', 'uncertain'].includes(entry.status) ? Math.max(0, entry.maxCostUsd - entry.estimatedCostUsd) : 0;
+    const remaining = ['reserved', 'uncertain', 'bounded-unknown'].includes(entry.status) ? Math.max(0, entry.maxCostUsd - entry.estimatedCostUsd) : 0;
     settledUsd += entry.estimatedCostUsd; reservedUsd += remaining;
     categories[entry.category].settledUsd += entry.estimatedCostUsd;
     categories[entry.category].reservedUsd += remaining;
   }
   for (const category of Object.values(categories)) category.remainingUsd = Math.max(0, category.limitUsd - category.settledUsd - category.reservedUsd);
-  return { limitUsd: 45, settledUsd, reservedUsd, remainingUsd: Math.max(0, 45 - settledUsd - reservedUsd),
+  return { limitUsd: journal.definition.maxCostUsd, settledUsd, reservedUsd,
+    remainingUsd: Math.max(0, journal.definition.maxCostUsd - settledUsd - reservedUsd),
     uncertain: journal.reservations.some(entry => entry.status === 'uncertain'),
+    unresolvedBilling: journal.reservations.some(entry => ['uncertain', 'bounded-unknown'].includes(entry.status)),
+    boundedUnknownReservations: journal.reservations.filter(entry => entry.status === 'bounded-unknown').length,
     overrun: journal.reservations.some(entry => entry.status === 'overrun'), categories,
     reservations: journal.reservations.length };
 }
 
 function validate(journal) {
   assert.equal(journal.schemaVersion, 1, 'Unsupported phase budget journal');
-  assert.deepEqual(journal.definition, definition, 'Phase budget controls changed; existing spending cannot be reset');
+  if (journal.definition.id === increasedDefinition.id) {
+    assert.deepEqual(journal.definition, increasedDefinition, 'Phase budget controls changed');
+    assert.equal(journal.allowanceMigrations?.length, 1, 'The allowance increase requires its audit record');
+    const migration = journal.allowanceMigrations[0];
+    assert.deepEqual(migration.previousDefinition, definition);
+    assert.equal(migration.nextDefinitionId, increasedDefinition.id);
+    assert.ok(validReason(migration.reason) && Number.isFinite(Date.parse(migration.at)));
+    assert.match(migration.previousJournalSha256, /^[a-f0-9]{64}$/);
+  } else {
+    assert.deepEqual(journal.definition, definition, 'Phase budget controls changed; existing spending cannot be reset');
+    assert.equal(journal.allowanceMigrations?.length ?? 0, 0, 'Unexpected allowance migration');
+  }
   assert.ok(Array.isArray(journal.reservations));
   const ids = new Set();
   for (const entry of journal.reservations) {
     assert.ok(validId(entry.id) && !ids.has(entry.id), 'Invalid or duplicate phase reservation'); ids.add(entry.id);
     assert.ok(Object.hasOwn(PHASE_ALLOCATIONS, entry.category));
-    assert.ok(validCost(entry.maxCostUsd) && entry.maxCostUsd > 0 && entry.maxCostUsd <= PHASE_ALLOCATIONS[entry.category]);
+    assert.ok(validCost(entry.maxCostUsd) && entry.maxCostUsd > 0 && entry.maxCostUsd <= journal.definition.allocations[entry.category]);
     assert.ok(validCost(entry.estimatedCostUsd));
-    assert.ok(['reserved', 'settled', 'uncertain', 'overrun'].includes(entry.status));
+    assert.ok(['reserved', 'settled', 'uncertain', 'bounded-unknown', 'overrun'].includes(entry.status));
+    if (entry.status === 'bounded-unknown' || entry.boundedUnknown) {
+      const audit = entry.boundedUnknown;
+      assert.ok(audit && validReason(audit.reason) && Number.isFinite(Date.parse(audit.at)), 'Missing bounded uncertainty audit');
+      assert.equal(audit.maxCostUsd, entry.maxCostUsd);
+      assert.ok(validCost(audit.knownCostUsd) && audit.knownCostUsd <= entry.estimatedCostUsd);
+    }
     assert.ok(Number.isSafeInteger(entry.ownerPid) && entry.ownerPid > 0);
     assert.equal(entry.requestSha256, digest(JSON.stringify({ id: entry.id, category: entry.category,
       maxCostUsd: entry.maxCostUsd, metadata: entry.metadata })), 'Phase reservation request changed');
@@ -51,7 +75,7 @@ function validate(journal) {
   }
   const totals = summary(journal);
   if (!totals.overrun) {
-    assert.ok(totals.settledUsd + totals.reservedUsd <= 45 + 1e-9, 'Phase budget is overcommitted');
+    assert.ok(totals.settledUsd + totals.reservedUsd <= journal.definition.maxCostUsd + 1e-9, 'Phase budget is overcommitted');
     for (const value of Object.values(totals.categories)) assert.ok(value.settledUsd + value.reservedUsd <= value.limitUsd + 1e-9, 'Phase category is overcommitted');
   }
 }
@@ -133,14 +157,36 @@ export async function createPhaseBudget(directory) {
     directory: root,
     async status() { return locked(async () => { const journal = await read(); return { definition: journal.definition, ...summary(journal) }; }); },
     async journal() { return locked(read); },
+    async approveAllowanceIncrease({ maxCostUsd, reason }) {
+      if (maxCostUsd !== 50 || !validReason(reason)) throw Error('Only an explicit $50 allowance with a reason is supported');
+      return locked(async () => {
+        const journal = await read();
+        if (journal.definition.id === increasedDefinition.id) return structuredClone(journal.definition);
+        const migration = { previousDefinition: journal.definition, nextDefinitionId: increasedDefinition.id,
+          previousJournalSha256: digest(JSON.stringify(journal)), at: new Date().toISOString(), reason: reason.trim() };
+        journal.allowanceMigrations = [migration]; journal.definition = increasedDefinition;
+        await save(journal); return structuredClone(journal.definition);
+      });
+    },
+    async reconcileBoundedUnknown({ id, reason }) {
+      if (!validId(id) || !validReason(reason)) throw Error('Bounded uncertainty requires a reservation ID and reason');
+      return locked(async () => {
+        const journal = await read(), entry = journal.reservations.find(value => value.id === id);
+        if (!entry || entry.status !== 'uncertain') throw Error('Only an uncertain reservation can be conservatively reconciled');
+        entry.boundedUnknown = { at: new Date().toISOString(), reason: reason.trim(),
+          maxCostUsd: entry.maxCostUsd, knownCostUsd: entry.estimatedCostUsd };
+        entry.status = 'bounded-unknown';
+        await save(journal); return structuredClone(entry);
+      });
+    },
     async reserve({ id, category, maxCostUsd, metadata = {} }) {
-      if (!validId(id) || !Object.hasOwn(PHASE_ALLOCATIONS, category) || !validCost(maxCostUsd) || maxCostUsd <= 0
-        || maxCostUsd > PHASE_ALLOCATIONS[category]) throw Error('Invalid phase budget reservation');
+      if (!validId(id) || !Object.hasOwn(PHASE_ALLOCATIONS, category) || !validCost(maxCostUsd) || maxCostUsd <= 0) throw Error('Invalid phase budget reservation');
       const request = JSON.parse(JSON.stringify({ id, category, maxCostUsd, metadata }));
       if (Buffer.byteLength(JSON.stringify(request)) > 32768) throw Error('Phase reservation metadata is too large');
       const requestSha256 = digest(JSON.stringify(request));
       return locked(async () => {
         const journal = await read(), totals = summary(journal);
+        if (maxCostUsd > journal.definition.allocations[category]) throw Error('Invalid phase budget reservation');
         if (totals.uncertain || totals.overrun) throw Error('Phase billing is uncertain or exceeded a reservation; no further inference admitted');
         const existing = journal.reservations.find(entry => entry.id === id);
         if (existing) {
@@ -165,9 +211,14 @@ export async function createPhaseBudget(directory) {
           if (entry.estimatedCostUsd !== estimatedCostUsd || uncertain) throw Error('A final phase settlement cannot be changed');
           return structuredClone(entry);
         }
+        const previousStatus = entry.status;
         entry.estimatedCostUsd = estimatedCostUsd;
-        entry.status = estimatedCostUsd > entry.maxCostUsd + 1e-9 ? 'overrun' : uncertain ? 'uncertain' : 'settled';
+        entry.status = estimatedCostUsd > entry.maxCostUsd + 1e-9 ? 'overrun'
+          : uncertain ? (previousStatus === 'bounded-unknown' ? 'bounded-unknown' : 'uncertain') : 'settled';
         entry.settledAt = new Date().toISOString();
+        if (entry.boundedUnknown && entry.status !== 'bounded-unknown') {
+          entry.boundedUnknown.resolution = { at: entry.settledAt, estimatedCostUsd, status: entry.status };
+        }
         await save(journal); return structuredClone(entry);
       });
     },
