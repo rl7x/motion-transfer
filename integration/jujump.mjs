@@ -106,5 +106,6 @@ export async function buildJujumpIntegration({ component, transfer, componentFil
   const manifest = { schemaVersion: 1, componentId: component.provenance.id, recipient: 'jujump', files: Object.fromEntries(Object.entries(files).sort(([a], [b]) => a.localeCompare(b)).map(([path, source]) => [path, { sha256: digest(source), bytes: Buffer.byteLength(source) }])) };
   manifest.id = digest(JSON.stringify(manifest)); files['manifest.json'] = json(manifest);
   const zip = projectZip(files);
-  return { files, manifest, caseStudy, zip, zipSha256: digest(zip) };
+  // Optional history fields must match the actual JSON delivered in the ZIP.
+  return { files, manifest, caseStudy: JSON.parse(files['case-study.json']), zip, zipSha256: digest(zip) };
 }

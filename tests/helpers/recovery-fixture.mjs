@@ -6,7 +6,7 @@ import { saveInvestigationEvidence } from '../../lab/investigation-evidence.mjs'
 
 // Explicit human-scripted fixture. Never supplied to a live model or advertised
 // as a new recovery. Real development and separately generated acceptance run.
-export async function acceptedRecoveryFixture(directory) {
+export async function acceptedRecoveryFixture(directory, { failedAttempt = false } = {}) {
   const target = await loadTarget(), session = await createInvestigationSession(target.bytes);
   session.recordStatic({ id: 'binary:func9', functionIndex: 9, kind: 'wat' });
   const observation = (await session.execute('session_advance', { branchId: 'main', hypothesis: 'Human-scripted local integration fixture.', watches: [],
@@ -19,6 +19,13 @@ export async function acceptedRecoveryFixture(directory) {
   const contract = JSON.parse(await readFile(new URL('../../components/dashy-dango-dash/contract.json', import.meta.url), 'utf8'));
   for (const key of ['interfaceVersion', 'tickRate', 'units', 'numericDomain']) delete contract[key];
   contract.rules = [{ description: 'Fixture behavior is supplied by a human for local pipeline verification.', evidence: [observation.observationId] }];
+  if (failedAttempt) {
+    const failed = (await workbench.execute('submit_component_candidate', {
+      source: 'export function init(){return {cooldown:0,remaining:0};} export function step(state){return {state,output:{displacement:{x:0,y:0},ownsMotion:false,events:[]}};}',
+      contract, selectionId: selection.selectionId, timerFields: { cooldown: 'cooldown', remaining: 'remaining' },
+    })).result;
+    if (failed.development.passed) throw Error('Negative integration fixture unexpectedly passed');
+  }
   const submitted = (await workbench.execute('submit_component_candidate', { source, contract, selectionId: selection.selectionId,
     timerFields: { cooldown: 'cooldown', remaining: 'remaining' } })).result;
   if (!submitted.development.passed) throw Error('Local fixture development failed: ' + JSON.stringify(submitted.development));
