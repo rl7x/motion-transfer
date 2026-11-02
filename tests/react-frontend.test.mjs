@@ -6,6 +6,31 @@ import test from 'node:test';
 import { createLabService } from '../lab/service.mjs';
 import { createPakuBrowser } from '../evaluator/browser-harness.mjs';
 
+test('an offscreen Roadster receives visibility after delayed player initialization', async () => {
+  const harness = await createPakuBrowser();
+  try {
+    const { page } = await harness.page();
+    await page.setViewportSize({ width: 1200, height: 400 });
+    await page.addInitScript(() => {
+      window.visibilityEvidence = [];
+      window.addEventListener('message', event => {
+        if (event.data?.type === 'roadster-visibility')
+          window.visibilityEvidence.push({ ready: window.roadsterReady === true, visible: event.data.pressed });
+      });
+    });
+    await page.route('**/roadster/artifacts/*/play.html*', async route => {
+      const response = await route.fetch();
+      const body = (await response.text()).replace('<script>', '<script>setTimeout(() => {').replace('</script>', '}, 400);</script>');
+      await route.fulfill({ response, body });
+    });
+    await page.goto(harness.origin);
+    await page.waitForFunction(() => document.querySelector('#transfer-status').textContent === 'VERIFIED TRANSFER');
+    const frame = await (await page.$('#transfer-game')).contentFrame();
+    await frame.waitForFunction(() => window.visibilityEvidence.some(event => event.ready && event.visible === false));
+    assert.equal(await frame.evaluate(() => window.visibilityEvidence.at(-1).visible), false);
+  } finally { await harness.close(); }
+});
+
 test('a failed status read reconnects through GET without submitting another paid job', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'react-job-read-'));
   let calls = 0;
