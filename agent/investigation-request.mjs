@@ -1,5 +1,6 @@
 import { evidenceHistory } from './evidence.mjs';
 import { readUsage } from './accounting.mjs';
+import { recoveryGuidance } from './recovery-progress.mjs';
 
 const INSTRUCTIONS = `You are investigating a compiled game through a restricted experiment harness.
 You have only a registered cartridge, WASM-4 host documentation in tool descriptions, and the listed tools.
@@ -104,7 +105,8 @@ export async function requestInvestigationTurn({
     : '';
   const request = {
     model,
-    instructions: INSTRUCTIONS + turnInstructions + finalInstructions,
+    instructions: INSTRUCTIONS + turnInstructions
+      + (report.requirements?.componentAcceptance ? recoveryGuidance(report) : '') + finalInstructions,
     input: history,
     tools: finalizing ? [] : catalog.definitions(),
     store: false,

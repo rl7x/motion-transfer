@@ -60,7 +60,7 @@ function investigationOptions(job) {
       maxCostUsd: job.maxCostUsd,
       ...(extended ? { maxModelCalls: extraction ? 16 : 12, maxToolCalls: 24, maxOutputTokens: extraction ? 4000 : 2000 } : {}),
     },
-    requirements: extended ? { branchComparison: true, codeInspection: true, componentAcceptance: extraction, followupDecision: !extraction } : {},
+    requirements: extended ? { branchComparison: true, codeInspection: true, componentAcceptance: extraction, followupDecision: true } : {},
     toolDiscovery: extended ? 'client' : 'none',
     reasoningEffort: extended ? 'low' : 'high',
   };
