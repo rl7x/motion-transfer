@@ -76,17 +76,18 @@ export async function createPhaseBudget(directory) {
             // Only one reclaimer may inspect/remove a stale lock. A second
             // reclaimer must reread ownership after the first has finished.
             const recoveryLock = lock + '.recovering';
-            let reclaiming = false;
+            let reclaiming = false, removed = false;
             try {
               await mkdir(recoveryLock); reclaiming = true;
               const current = JSON.parse(await readFile(join(lock, 'owner.json'), 'utf8'));
               if (current.token === owner.token && !alive(current.pid)) {
                 const stale = lock + '.stale-' + token;
                 await rename(lock, stale); await rm(stale, { recursive: true, force: true });
+                removed = true;
               }
             } catch (failure) { if (!['ENOENT', 'EEXIST'].includes(failure.code)) throw failure; }
             finally { if (reclaiming) await rm(recoveryLock, { recursive: true }); }
-            continue;
+            if (removed) continue;
           }
         } catch (failure) { if (failure.code !== 'ENOENT') throw failure; }
         if (Date.now() >= deadline) throw Error('Phase budget is busy or has an incomplete lock; no inference admitted');

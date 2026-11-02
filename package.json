@@ -13,6 +13,7 @@
     "replay": "node scripts/replay.mjs",
     "investigate": "node scripts/investigate.mjs",
     "recover:motion": "node scripts/recover-motion.mjs",
+    "recover:campaign": "node scripts/recovery-campaign.mjs",
     "verify:motion": "node scripts/verify-motion.mjs",
     "transfer:paku": "node scripts/transfer-paku.mjs",
     "verify:transfer": "node scripts/verify-paku-transfer.mjs",

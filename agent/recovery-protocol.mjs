@@ -79,7 +79,7 @@ export function reportRecoveryProtocol(report) {
   return protocol ?? sessionProtocol;
 }
 
-const protocolDirectories = ['agent', 'component', 'evaluator', 'experiment', 'integration', 'lab', 'runtime', 'transfer', 'roadster'];
+const protocolDirectories = ['agent', 'campaign', 'component', 'evaluator', 'experiment', 'integration', 'lab', 'runtime', 'transfer', 'roadster'];
 
 /** Freeze local executable inputs before a campaign, without reading credentials. */
 export async function snapshotRecoveryProtocol(options = {}) {
@@ -93,6 +93,10 @@ export async function snapshotRecoveryProtocol(options = {}) {
     }
   }
   sourceHashes['targets/dashy-dango/cart.wasm'] = digest(await readFile(new URL('../targets/dashy-dango/cart.wasm', import.meta.url)));
+  for (const path of ['scripts/recovery-campaign.mjs', 'web/server.mjs', 'web/roadster-entry.js',
+    'targets/dashy-dango/target.lock.json', 'recipients/roadster/recipient.lock.json', 'package-lock.json']) {
+    sourceHashes[path] = digest(await readFile(new URL('../' + path, import.meta.url)));
+  }
   return createRecoveryProtocol({ ...options, sourceHashes });
 }
 
