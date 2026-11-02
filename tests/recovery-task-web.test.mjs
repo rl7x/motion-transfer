@@ -7,6 +7,24 @@ import { createLabService } from '../lab/service.mjs';
 import { createPakuBrowser } from '../evaluator/browser-harness.mjs';
 import { acceptedRecoveryFixture } from './helpers/recovery-fixture.mjs';
 
+test('the saved Meta attempt shows its real contrast and incomplete recovery without a paid request', async () => {
+  const harness = await createPakuBrowser();
+  try {
+    const { page, errors } = await harness.page(), posts = [];
+    page.on('request', request => { if (request.method() === 'POST') posts.push(request.url()); });
+    await page.goto(harness.origin + '/?destination=jujump');
+    await page.locator('.recorded-recovery').filter({ hasText: 'Meta recovery attempt' }).click();
+    await page.waitForFunction(() => document.querySelector('#recovery-task-status')?.textContent.includes('RECOVERY INCOMPLETE'));
+    assert.equal(await page.locator('#lab-mode').textContent(), 'SAVED RECORDING');
+    assert.match(await page.locator('#recovery-task-measurements').textContent(), /16 model requests/);
+    assert.equal(await page.locator('#recovery-download').count(), 0);
+    assert.equal(await page.locator('#recovery-play').count(), 0);
+    assert.match(await page.locator('#investigation-conclusion').textContent(), /No component candidate submitted/);
+    assert.equal(await page.locator('#investigation-report').getAttribute('href'), '/api/investigations/saved/recovery-handoff');
+    assert.deepEqual(posts, []); assert.deepEqual(errors, []);
+  } finally { await harness.close(); }
+});
+
 test('the developer task publishes only the new checked project and reconnects without duplicate generation', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'recovery-task-ui-'));
   const report = await acceptedRecoveryFixture(directory);

@@ -37,6 +37,13 @@
       "sha256": "643ff2c12721096c382ea000fcf69f959c168e00c2330b039ef063cf18cbe5e9",
       "title": "Meta-chosen position intervention and later evidence read; code inspection incomplete",
       "runId": "6562bd42-9997-49b8-8b03-eeb6b5fcb1da"
+    },
+    {
+      "id": "recovery-handoff",
+      "file": "recovery-handoff.json",
+      "sha256": "1578cf51ba467fd0077edf4a21feaa90fdfcedfcf738a3c7e0bf465a7f5e787f",
+      "title": "Meta recovery attempt · incomplete",
+      "runId": "5e570dca-e9aa-4b69-9d65-74d69bcc6e5f"
     }
   ]
 }
