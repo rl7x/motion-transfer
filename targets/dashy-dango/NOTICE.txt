@@ -1,0 +1,24 @@
+Dashy Dango by samX500 and willGuimont
+https://github.com/willGuimont/dashy-dango
+
+The authors' willGuimont/dashy-dango@1.0.0 Wasmer package declares ISC.
+Its build/cart.wasm is byte-identical to this repository's pinned cartridge.
+See target.lock.json and README.md for the distribution record and hashes.
+This notice accompanies the cartridge and components recovered from it; it
+does not assign a blanket license to other bundled games or generated code.
+
+ISC License
+
+Copyright (c) samX500 and willGuimont
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.

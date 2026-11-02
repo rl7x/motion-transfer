@@ -24,10 +24,21 @@
     "scope": "Candidate for dash movement and cooldown extraction; no recovery performed."
   },
   "licenseReview": {
-    "status": "unresolved",
+    "status": "documented-isc-distribution",
     "packageDeclaration": "ISC",
     "packageMetadataUrl": "https://github.com/willGuimont/dashy-dango/blob/9b899e81790fb3c67243f4707244b3859a91e1c6/wapm.toml",
     "galleryLabel": "CC BY-NC-SA",
-    "note": "Existing research found differing package and gallery license labels. Confirm applicable permissions and notices before redistributing the cartridge or derived assets."
+    "registryUrl": "https://wasmer.io/willGuimont/dashy-dango",
+    "registryPackage": "willGuimont/dashy-dango@1.0.0",
+    "registryLicense": "ISC",
+    "registryArchiveUrl": "https://cdn.wasmer.io/packages/willGuimont/dashy-dango/dashy-dango-1.0.0.tar.gz",
+    "registryArchiveSha256": "b12afa8a93b0a53e2a9c7ab7e966050b350681be4b7dab0fbfe779692aacec56",
+    "registryArtifactPath": "build/cart.wasm",
+    "registryArtifactSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+    "registryArtifactByteIdentical": true,
+    "distributionGuideUrl": "https://wasm4.org/docs/guides/distribution/",
+    "notice": "NOTICE.txt",
+    "verifiedAt": "2026-11-02",
+    "note": "The authors' ISC registry release contains the identical pinned cartridge. WASM-4's guide permits authors to distribute under another license elsewhere. Include NOTICE.txt in new distributions; retain separate recipient notices. No author endorsement is implied."
   }
 }
