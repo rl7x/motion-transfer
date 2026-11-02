@@ -23,6 +23,13 @@ export function createToolDiscovery({mode='none',model,state,profile='general'}=
   const byName=new Map(TOOLS.map(tool=>[tool.name,tool]));
   return{
     state:record,
+    resetDeferredContext(){
+      // Compaction starts a fresh stateless context with no pending calls. Keep
+      // the original exchanges for audit, but require rediscovery before routing
+      // a specialized namespace that is no longer present in model context.
+      for(const exchange of record.exchanges)exchange.replay=false;
+      record.loadedNamespaces=[];
+    },
     definitions(){return mode==='none'?TOOLS:[...available.map(name=>byName.get(name)),search];},
     validateResponse(output){
       for(const item of output)if(item.type==='tool_search_call'&&(mode!=='client'||item.execution!=='client'))throw Error('Hosted or unsupported tool search cannot fit the existing reservation controls; no retry or provider switch was made');
@@ -48,4 +55,4 @@ export function createToolDiscovery({mode='none',model,state,profile='general'}=
   };
 }
 
-export function discoveryReplay(report){return(report.toolDiscovery?.exchanges??[]).flatMap(exchange=>[exchange.call,exchange.output]);}
+export function discoveryReplay(report){return(report.toolDiscovery?.exchanges??[]).filter(exchange=>exchange.replay!==false).flatMap(exchange=>[exchange.call,exchange.output]);}

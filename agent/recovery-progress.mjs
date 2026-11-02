@@ -36,6 +36,8 @@ export function recoveryGuidance(report) {
     + ' Function-body inspection and all four component-development tools are directly callable in the recovery profile; specialized tracing and memory tools can still use discovery.'
     + ' Paired branches receive identical inputs. With no edit they are a reproducibility control, not different input conditions. A final inactive state does not prove no dash occurred; inspect event and timer observations within the trace.'
     + ' Prefer one compact program for orientation, targeted code inspection and an experiment; return only measurements and IDs.'
+    + ' All tools listed in this request are immediately callable; do not load namespaces speculatively. Search only for a missing specialized tool.'
+    + ' In program output include only a chosen short code excerpt and the measurements you need, not whole result objects. Full experiment summaries arrive automatically even when the output limit rejects your return value.'
     + ' Use a subsequent model turn to interpret its actual result and select the evidence. Reserve remaining calls for candidate development, freezing, separate acceptance and conclusion.'
     + ' For recovery, choose select_component_evidence in a later model turn after the controlled trial, with a public scope explaining your next action. Cite both selected binary code and that actual experiment in your candidate contract.'
     + ' A development failure is feedback for a revision; an acceptance failure is terminal and cannot be repaired in this run.';

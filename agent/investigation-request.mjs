@@ -122,6 +122,13 @@ export async function requestInvestigationTurn({
     history.splice(0, history.length, ...evidenceHistory(report));
     report.contextCompactions.push({ at: new Date().toISOString(), reason: 'input-token-limit' });
     inputTokens = await client.countInputTokens(request, signal);
+    if (inputTokens > limits.maxInputTokens && report.requirements?.componentAcceptance && catalog.state.mode === 'client') {
+      catalog.resetDeferredContext();
+      history.splice(0, history.length, ...evidenceHistory(report));
+      report.contextCompactions.push({ at: new Date().toISOString(), reason: 'deferred-context-limit',
+        scope: 'Old search exchanges retained for audit, dropped from this fresh context; specialized tools require rediscovery.' });
+      inputTokens = await client.countInputTokens(request, signal);
+    }
   }
   checkTime();
   if (!Number.isSafeInteger(inputTokens) || inputTokens < 0 || inputTokens > limits.maxInputTokens) {
