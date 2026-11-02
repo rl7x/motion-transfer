@@ -89,14 +89,14 @@ export async function runDeveloperBenchmark({ store, campaignId, transport, prot
     }
     if (!successful && allowRecovery) await execute('recovery', { questionId: 'extraction' });
     if (!campaign.attempts.some(item => item.stage === 'roadster' && ['completed', 'failed'].includes(item.status))) {
-      await execute('roadster', { parentArtifactId: campaign.definition.snapshot.roadsterParentId, prompt: stageDefinition('roadster').request });
+      await execute('roadster', { parentArtifactId: campaign.definition.snapshot.roadsterParentId, prompt: stageDefinition('roadster', campaign.definition.tasks).request });
     }
     let first = campaign.attempts.find(item => item.stage === 'paku-first' && item.status === 'completed');
     if (!first && !campaign.attempts.some(item => item.stage === 'paku-first' && item.status === 'failed')) {
-      first = await execute('paku-first', { parentArtifactId: campaign.definition.snapshot.pakuParentId, prompt: stageDefinition('paku-first').request });
+      first = await execute('paku-first', { parentArtifactId: campaign.definition.snapshot.pakuParentId, prompt: stageDefinition('paku-first', campaign.definition.tasks).request });
     }
     if (first?.status === 'completed' && !campaign.attempts.some(item => item.stage === 'paku-final' && ['completed', 'failed'].includes(item.status))) {
-      await execute('paku-final', { parentArtifactId: first.artifactId, prompt: stageDefinition('paku-final').request });
+      await execute('paku-final', { parentArtifactId: first.artifactId, prompt: stageDefinition('paku-final', campaign.definition.tasks).request });
     }
     campaign.status = campaignMetrics(campaign).completedTasks === 3 ? 'completed' : 'incomplete';
     campaign.finishedAt = new Date().toISOString(); await save();

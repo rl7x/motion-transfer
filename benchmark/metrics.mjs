@@ -3,6 +3,8 @@ import { requireInvestigationConclusion } from '../agent/investigation-completio
 import { stageDefinition } from './definition.mjs';
 
 const finite = value => typeof value === 'number' && Number.isFinite(value);
+export const passedSuite = report => report?.passed === true && Array.isArray(report.results)
+  && report.results.length > 0 && report.results.every(result => result.passed === true);
 export function evaluationMetrics(report, name) {
   const results = report?.results ?? [];
   return { name, passed: report?.passed === true, observedCases: results.length,
@@ -44,14 +46,14 @@ export function measureTaskAttempt(stage, job, artifact, definition, request) {
     check(verification?.browser?.passed && verification?.browser?.results?.length === 7, 'Independent browser checks did not pass');
     if (verification?.browser) evaluations.push(evaluationMetrics(verification.browser, 'standalone-browser'));
   } else {
-    const expected = stageDefinition(stage)?.expectedIntent;
+    const expected = stageDefinition(stage, definition.tasks)?.expectedIntent;
     check(isDeepStrictEqual(artifact?.intent, expected), 'Delivered intent does not match the predefined developer request');
     check(artifact?.parentArtifactId === request.parentArtifactId, 'Parent lineage does not match the requested parent');
     check(artifact?.componentId === definition.snapshot.componentId, 'The existing frozen component identity changed');
     let verification;
     if (stage === 'roadster' && artifact?.files?.['verification.json']) verification = JSON.parse(artifact.files['verification.json']);
     else verification = artifact?.evaluation;
-    check(verification?.conformance?.passed && verification?.browser?.passed, 'Recipient conformance or browser checks failed');
+    check(passedSuite(verification?.conformance) && passedSuite(verification?.browser), 'Recipient conformance or browser checks failed');
     if (verification) for (const suite of ['conformance', 'browser']) evaluations.push(evaluationMetrics(verification[suite], suite));
   }
   const times = job.events?.map(event => Date.parse(event.at)).filter(Number.isFinite) ?? [];
@@ -62,7 +64,9 @@ export function measureTaskAttempt(stage, job, artifact, definition, request) {
     reservedCostUsd: report.reservedCostUsd ?? job.reservedCostUsd ?? 0,
     elapsedMachineMs: times.length >= 2 ? Math.max(...times) - Math.min(...times) : null,
     tokens: requests.length ? requests.reduce((sum, request) => {
-      for (const field of ['inputTokens', 'outputTokens', 'cachedInputTokens', 'reasoningTokens']) sum[field] += request.usage?.[field] ?? 0;
+      for (const field of ['inputTokens', 'outputTokens', 'cachedInputTokens', 'reasoningTokens']) {
+        sum[field] = sum[field] === null || !finite(request.usage?.[field]) ? null : sum[field] + request.usage[field];
+      }
       return sum;
     }, { inputTokens: 0, outputTokens: 0, cachedInputTokens: 0, reasoningTokens: 0 }) : null,
     evaluations, manualInterventionsDuringRun: 0,

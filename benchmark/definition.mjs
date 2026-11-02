@@ -26,6 +26,6 @@ export function benchmarkDefinition(snapshot, { id, origin = 'fresh-meta', setup
   return { ...definition, sha256: digest(JSON.stringify(definition)) };
 }
 
-export function stageDefinition(stage) {
-  return TASKS.find(task => task.id === stage) ?? TASKS[2].stages.find(item => item.id === stage);
+export function stageDefinition(stage, tasks = TASKS) {
+  return tasks.find(task => task.id === stage) ?? tasks.flatMap(task => task.stages ?? []).find(item => item.id === stage);
 }

@@ -108,3 +108,21 @@ test('journal and evidence tampering fail without falling back to a successful r
   value.status = 'completed'; await writeFile(path, JSON.stringify(value));
   await assert.rejects(store.read(campaignId), /integrity/);
 });
+
+test('measurements use the frozen task definition and do not invent missing usage', async t => {
+  const { store, campaignId } = await setup(t), transport = fixtureTransport();
+  const campaign = await runDeveloperBenchmark({ store, campaignId, transport, protocol });
+  const attempt = campaign.attempts.find(item => item.stage === 'roadster');
+  const job = await store.evidence(campaignId, attempt.jobRef.sha256);
+  const artifact = await store.evidence(campaignId, attempt.artifactRef.sha256);
+  const definition = structuredClone(campaign.definition);
+  definition.tasks.find(task => task.id === 'roadster').expectedIntent.direction = 'facing';
+  job.report.requests = [{ usage: { inputTokens: 10 } }];
+  const result = measureTaskAttempt('roadster', job, artifact, definition, attempt.request);
+  assert.equal(result.passed, false);
+  assert.equal(result.tokens.inputTokens, 10);
+  assert.equal(result.tokens.outputTokens, null);
+  artifact.evaluation.browser.results[0].passed = false;
+  artifact.files['verification.json'] = JSON.stringify(artifact.evaluation);
+  assert.match(measureTaskAttempt('roadster', job, artifact, campaign.definition, attempt.request).issues.join(' '), /browser checks failed/);
+});
