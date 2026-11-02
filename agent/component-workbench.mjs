@@ -3,6 +3,7 @@ import {SUBMIT_MOTION,validateMotionCandidate} from '../component/contract.mjs';
 import {compileMotion,digest} from '../component/build.mjs';
 import {evaluateMotion} from '../evaluator/motion.mjs';
 import {DEVELOPMENT_CASES,MOTION_REGRESSIONS,acceptanceCases} from '../evaluator/cases.mjs';
+import {recoveryPolicy} from './recovery-protocol.mjs';
 
 export const COMPONENT_TOOLS=[{
   type:'function',name:'select_component_evidence',strict:true,
@@ -18,12 +19,13 @@ export const COMPONENT_TOOLS=[{
 
 export function createComponentWorkbench(session,{evaluate=evaluateMotion,seed=()=>randomBytes(4).readUInt32LE()}={}){
   const state=session.recovery;
+  const policy=recoveryPolicy(state.protocol);
   for(const entry of state.attempts)if(entry.sourceSha256!==digest(entry.candidate.source)||entry.candidateId!==digest(JSON.stringify({candidate:entry.candidate,timerFields:entry.timerFields})))throw Error('Component development identity mismatch');
   const candidate=id=>{const value=state.attempts.find(item=>item.candidateId===id);if(!value)throw Error('Unknown component candidate');return value;};
   const frozen=()=>{if(state.frozenCandidateId)throw Error('Candidate is frozen; development and selection cannot be revised after acceptance begins');};
   return{async execute(name,args){
     if(name==='select_component_evidence'){
-      frozen();if(state.selections.length>=3)throw Error('Component selection limit reached');
+      frozen();if(state.selections.length>=policy.maxSelections)throw Error('Component selection limit reached');
       const snapshot=session.snapshot(),code=snapshot.staticEvidence.filter(item=>Number.isInteger(item.functionIndex));
       if(args.functionIndices.some(index=>!code.some(item=>item.functionIndex===index)))throw Error('Inspect or decompile each selected function first');
       const experiments=snapshot.staticEvidence.filter(item=>item.kind==='experiment').flatMap(item=>[item.id,item.artifactId].map(id=>[id,{...item.summary,artifactId:item.artifactId,origin:'Actual checkpoint-bound experiment; full immutable evidence is stored separately'}]));
@@ -37,16 +39,16 @@ export function createComponentWorkbench(session,{evaluate=evaluateMotion,seed=(
       return{result:{selectionId:selection.id,evidence,interface:'init(config) -> JSON state; step(state,{buttons,sourceBodyWidth},config) -> {state,output:{ownsMotion,displacement:{x,y},events}}. config: walkingSpeed,dashDistance,cooldownTicks,initialCooldownTicks. Keep timers in state and declare their field names. Inputs use WASM-4 masks; exact dash-start/dash-end events, float32 accumulated positions, fixed 60 Hz. Defaults and rules must be inferred, not copied from another recovery.',development:'Finite human-authored rollouts compare normalized motion, cooldown, remaining and exact event timing. Development failures are available for repair. Acceptance cases remain hidden until freezing.'}};
     }
     if(name==='submit_component_candidate'){
-      frozen();if(state.attempts.length>=3)throw Error('Component development attempt limit reached');
+      frozen();if(state.attempts.length>=policy.maxDevelopmentAttempts)throw Error('Component development attempt limit reached');
       const selection=state.selections.find(item=>item.id===args.selectionId);if(!selection)throw Error('Unknown component evidence selection');
       const submitted={source:args.source,contract:args.contract};validateMotionCandidate(submitted,selection.evidence);
       // Structural errors retain their source and cost in the tool journal but
-      // do not consume one of the three behavioral evaluations.
+      // do not consume one of the recorded behavioral evaluations.
       await compileMotion(args.source);
       const entry={attempt:state.attempts.length+1,selectionId:selection.id,candidate:submitted,timerFields:args.timerFields,sourceSha256:digest(args.source),candidateId:digest(JSON.stringify({candidate:submitted,timerFields:args.timerFields}))};state.attempts.push(entry);
       try{entry.development=await evaluate(args.source,args.contract.defaults,[...DEVELOPMENT_CASES,...MOTION_REGRESSIONS],{suite:'development',timerFields:args.timerFields});}
       catch(error){entry.development={passed:false,error:String(error.message).slice(0,1000)};}
-      return{result:{candidateId:entry.candidateId,attempt:entry.attempt,sourceSha256:entry.sourceSha256,development:entry.development,canRevise:!entry.development.passed&&state.attempts.length<3,acceptanceRun:false}};
+      return{result:{candidateId:entry.candidateId,attempt:entry.attempt,sourceSha256:entry.sourceSha256,development:entry.development,canRevise:!entry.development.passed&&state.attempts.length<policy.maxDevelopmentAttempts,acceptanceRun:false}};
     }
     const entry=candidate(args.candidateId);
     if(name==='freeze_component'){
@@ -61,7 +63,7 @@ export function createComponentWorkbench(session,{evaluate=evaluateMotion,seed=(
       state.acceptanceStarted=true;state.acceptanceSeed=seed();
       const compiled=await compileMotion(entry.candidate.source);
       if(compiled.sourceSha256!==entry.sourceSha256)throw Error('Frozen component source identity changed');
-      try{entry.acceptance=await evaluate(entry.candidate.source,entry.candidate.contract.defaults,acceptanceCases(state.acceptanceSeed),{suite:'acceptance',timerFields:entry.timerFields});}
+      try{entry.acceptance=await evaluate(entry.candidate.source,entry.candidate.contract.defaults,acceptanceCases(state.acceptanceSeed,policy.acceptanceCaseCount),{suite:'acceptance',timerFields:entry.timerFields});}
       catch(error){entry.acceptance={passed:false,error:error.message};}
       if(entry.acceptance.passed)state.acceptedAttempt=entry.attempt;
       return{result:{candidateId:entry.candidateId,passed:entry.acceptance.passed,status:entry.acceptance.passed?'accepted':'acceptance-failed',canRevise:false,scope:'Finite separately generated motion/timer/event rollouts only. Recipient-specific integration gates have not run for this new component.'}};

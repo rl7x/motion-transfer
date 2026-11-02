@@ -1,6 +1,7 @@
 import { evidenceHistory } from './evidence.mjs';
 import { readUsage } from './accounting.mjs';
-import { recoveryGuidance, recoveryStep, RECOVERY_INSTRUCTIONS } from './recovery-progress.mjs';
+import { recoveryGuidance, recoveryStep, recoveryInstructions } from './recovery-progress.mjs';
+import { recoveryPolicy, reportRecoveryProtocol } from './recovery-protocol.mjs';
 
 const INSTRUCTIONS = `You are investigating a compiled game through a restricted experiment harness.
 You have only a registered cartridge, WASM-4 host documentation in tool descriptions, and the listed tools.
@@ -88,6 +89,8 @@ export async function requestInvestigationTurn({
   reasoningEffort, signal, checkTime, onProgress, onUpdate,
 }) {
   const recovery = report.requirements?.componentAcceptance ? recoveryStep(report) : null;
+  const protocol = recovery ? reportRecoveryProtocol(report) : null;
+  const policy = recoveryPolicy(protocol);
   const finalizing = turn === limits.maxModelCalls - 1 || recovery?.stage === 'conclude';
   if (finalizing) {
     history.splice(0, history.length, ...evidenceHistory(report, { includeDiscovery: false }));
@@ -111,11 +114,11 @@ export async function requestInvestigationTurn({
     : '';
   const request = {
     model,
-    instructions: (recovery ? RECOVERY_INSTRUCTIONS : INSTRUCTIONS) + turnInstructions
+    instructions: (recovery ? recoveryInstructions(protocol) : INSTRUCTIONS) + turnInstructions
       + (recovery ? recoveryGuidance(report, { remainingRequests: limits.maxModelCalls - turn }) : '') + finalInstructions,
     input: history,
     tools: finalizing ? [] : catalog.definitions(recovery ? { stage: recovery.stage,
-      reserveDevelopment: limits.maxModelCalls - turn <= 7,
+      reserveDevelopment: limits.maxModelCalls - turn <= policy.developmentRequestReserve,
       programsRemaining: (report.session?.experimentWorkbench?.programs?.length ?? 0) < 2 } : undefined),
     store: false,
     include: ['reasoning.encrypted_content'],

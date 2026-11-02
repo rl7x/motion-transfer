@@ -55,7 +55,7 @@ export function createCartridgeTools({signal,timeoutMs=10_000,onCheckpoint=async
   return{
     get pid(){return child.pid;},
     get sessionState(){return lastState;},
-    open(sessionState){return request('$open',{sessionState});},
+    open(sessionState,recoveryProtocol){return request('$open',{sessionState,recoveryProtocol});},
     async run(name,args,options){validateToolInput(name,args);return request(name,args,options);},
     async close(){
       signal?.removeEventListener('abort',aborted);

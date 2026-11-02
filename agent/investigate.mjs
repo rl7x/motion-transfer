@@ -7,6 +7,7 @@ import { createToolDiscovery } from './tool-discovery.mjs';
 import { requestInvestigationTurn } from './investigation-request.mjs';
 import { requireInvestigationConclusion } from './investigation-completion.mjs';
 import { createInvestigationToolRunner } from './investigation-tools.mjs';
+import { validateRecoveryProtocol, assertRecoveryProtocolSources, RECOVERY_REQUIREMENTS } from './recovery-protocol.mjs';
 
 export const DEFAULT_QUESTION = 'Determine whether holding the dash button behaves differently from pressing and releasing it. Choose controlled experiments and cite the observations supporting your conclusion.';
 
@@ -39,7 +40,7 @@ function validateLimits(limits) {
  */
 export async function investigate({
   apiKey,
-  model = 'muse-wonder-1.0',
+  model,
   question = DEFAULT_QUESTION,
   limits: overrides = {},
   client,
@@ -49,15 +50,31 @@ export async function investigate({
   resumeReport,
   signal,
   requirements = {},
-  reasoningEffort = 'high',
-  toolDiscovery = 'none',
+  reasoningEffort,
+  toolDiscovery,
+  recoveryProtocol,
 } = {}) {
-  const limits = { ...DEFAULT_LIMITS, ...overrides };
+  const protocol = recoveryProtocol ? validateRecoveryProtocol(recoveryProtocol) : null;
+  model ??= protocol?.model ?? 'muse-wonder-1.0';
+  reasoningEffort ??= protocol?.reasoningEffort ?? 'high';
+  toolDiscovery ??= protocol?.toolDiscovery ?? 'none';
+  const limits = { ...DEFAULT_LIMITS, ...protocol?.limits, ...overrides };
   validateLimits(limits);
-  if (!Object.hasOwn(PRICES, model)) throw new Error('Supported models are muse-wonder-1.0 and muse-spark-1.3');
+  if (!Object.hasOwn(PRICES, model)) throw new Error('Unsupported investigation model');
   if (typeof question !== 'string' || !question.trim() || question.length > 2_000) throw new Error('Question must contain 1–2,000 characters');
   if (!['minimal', 'low', 'medium', 'high'].includes(reasoningEffort)) throw Error('Invalid investigation reasoning effort');
-  client ??= createMetaClient(apiKey);
+  if (protocol) {
+    if (model !== protocol.model || reasoningEffort !== protocol.reasoningEffort || toolDiscovery !== protocol.toolDiscovery
+      || JSON.stringify(limits) !== JSON.stringify({ ...DEFAULT_LIMITS, ...protocol.limits })) {
+      throw Error('Investigation must retain its recorded recovery protocol controls');
+    }
+    if (Object.keys(requirements).some(key => !Object.hasOwn(RECOVERY_REQUIREMENTS, key) || requirements[key] !== true)) {
+      throw Error('Recovery protocol requirements cannot be relaxed or extended');
+    }
+    requirements = { ...RECOVERY_REQUIREMENTS };
+    await assertRecoveryProtocolSources(protocol);
+  }
+  client ??= createMetaClient(apiKey, protocol ? { requestTimeoutMs: protocol.requestTimeoutMs } : undefined);
   const target = await loadTarget();
   let report = {
     schemaVersion: 1,
@@ -77,6 +94,7 @@ export async function investigate({
     humanAssistance: ['Registered and hash-guarded the compiled donor', 'Mapped read-only motion registry fields; this mapping is not a model discovery', 'Authored the experiment tools and completion checks'],
     contextCompactions: [],
     requirements,
+    ...(protocol ? { recoveryProtocol: protocol, reasoningEffort } : {}),
   };
   if (resumeReport) {
     if (resumeReport.schemaVersion !== 1 || resumeReport.model !== model || resumeReport.question !== question
@@ -88,6 +106,9 @@ export async function investigate({
       throw new Error('Cannot resume this report: target/model mismatch, completed run, or unsettled usage');
     }
     if (JSON.stringify(resumeReport.limits) !== JSON.stringify(limits)) throw new Error('Resume must retain the original limits');
+    if ((resumeReport.recoveryProtocol?.id ?? null) !== (protocol?.id ?? null)) throw Error('Resume must retain the original recovery protocol');
+    if ((resumeReport.session?.recovery?.protocol?.id ?? null) !== (protocol?.id ?? null)) throw Error('Resume must retain the original session recovery protocol');
+    if (resumeReport.recoveryProtocol) validateRecoveryProtocol(resumeReport.recoveryProtocol);
     report = structuredClone(resumeReport);
     report.contextCompactions ??= [];
     report.contextCompactions.push({ at: new Date().toISOString(), reason: 'resume-from-public-evidence', previousError: report.error });
@@ -96,7 +117,7 @@ export async function investigate({
     delete report.finishedAt;
   }
   const catalog = createToolDiscovery({ mode: report.toolDiscovery?.mode ?? toolDiscovery, model, state: report.toolDiscovery,
-    profile: report.requirements?.componentAcceptance ? 'recovery' : 'general' });
+    profile: report.requirements?.componentAcceptance ? 'recovery' : 'general', recoveryProtocol: protocol });
   report.toolDiscovery = catalog.state;
   const controller = new AbortController();
   const cancel = () => controller.abort();
@@ -116,14 +137,13 @@ export async function investigate({
   const price = PRICES[model];
   const checkTime = () => { if (controller.signal.aborted) throw new Error('Investigation exceeded its wall-clock limit'); };
 
-  const runToolCall = createInvestigationToolRunner({
-    report, history, catalog, dispatch, worker, limits, signal: controller.signal,
-    checkTime, onProgress, onUpdate,
-  });
-
   try {
+    const runToolCall = createInvestigationToolRunner({
+      report, history, catalog, dispatch, worker, limits, signal: controller.signal,
+      checkTime, onProgress, onUpdate,
+    });
     if (worker) {
-      await worker.open(report.session);
+      await worker.open(report.session, protocol);
       report.session = worker.sessionState;
     }
     await onUpdate(report);

@@ -129,7 +129,7 @@ export function createToolDispatcher({ target, persistCheckpoint }) {
   async function execute(name, args) {
     if (name === '$open') {
       if (session) throw Error('Investigation session is already open');
-      session = await createInvestigationSession(target.bytes, args.sessionState);
+      session = await createInvestigationSession(target.bytes, args.sessionState, { recoveryProtocol: args.recoveryProtocol });
       if (args.sessionState?.experimentWorkbench) await experimentTools(args.sessionState.experimentWorkbench);
       return { result: { sessionId: session.id, identity: session.identity, restored: Boolean(args.sessionState) } };
     }

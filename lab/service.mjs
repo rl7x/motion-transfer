@@ -4,6 +4,7 @@ import { createLabStore,artifactId } from './store.mjs';
 import { finishRecoveryIntegration } from '../integration/recovery.mjs';
 import { createIntegrationPublication } from '../integration/publication.mjs';
 import { recoveryTask } from './recovery-task.mjs';
+import { validateRecoveryProtocol } from '../agent/recovery-protocol.mjs';
 
 export const LAB_BUDGET_USD=10;
 export const INVESTIGATION_QUESTIONS=Object.freeze({
@@ -56,6 +57,10 @@ function calculateBudget(jobs, limitUsd) {
 function investigationOptions(job) {
   const extended = ['memory', 'extraction'].includes(job.request.questionId);
   const extraction = job.request.questionId === 'extraction';
+  if (extraction && job.recoveryProtocol) return {
+    question: INVESTIGATION_QUESTIONS.extraction,
+    recoveryProtocol: validateRecoveryProtocol(job.recoveryProtocol),
+  };
   return {
     model: 'muse-spark-1.3',
     question: INVESTIGATION_QUESTIONS[job.request.questionId],
@@ -78,8 +83,10 @@ function investigationOptions(job) {
 export async function createLabService({
   directory, apiKey, client, investigateRun = investigate, generateTransfer, baseArtifact, budgetUsd = LAB_BUDGET_USD,
   integrateRecovery = finishRecoveryIntegration,
+  recoveryProtocol, phaseBudget,
 } = {}) {
   if (!Number.isFinite(budgetUsd) || budgetUsd <= 0 || budgetUsd > LAB_BUDGET_USD) throw Error('Invalid lab budget');
+  const protocol = recoveryProtocol ? validateRecoveryProtocol(recoveryProtocol) : null;
   const store = await createLabStore(directory);
   const integrations = createIntegrationPublication(directory);
   const jobs = new Map();
@@ -96,10 +103,13 @@ export async function createLabService({
   try {
     for (const job of await store.jobs()) {
       validateSavedJob(job);
+      if (job.recoveryProtocol) validateRecoveryProtocol(job.recoveryProtocol);
       if (!terminal(job)) {
         job.error = 'Server restarted before completion; unsettled spending remains reserved.';
         await transition(job, 'failed');
       }
+      if (phaseBudget && job.phaseReservationId) await phaseBudget.settle({ id: job.phaseReservationId,
+        estimatedCostUsd: job.report?.estimatedCostUsd ?? 0, uncertain: (job.report?.reservedCostUsd ?? 0) > 0 });
       jobs.set(job.id, job);
     }
   } catch (error) {
@@ -135,8 +145,8 @@ export async function createLabService({
       await transition(job, 'generating');
       if (job.kind === 'investigation') {
         const report = await investigateRun({ apiKey, client, ...investigationOptions(job), onUpdate: update });
-        if (report.status !== 'completed') throw Error('Investigation did not reach an evidence-backed conclusion');
         await update(report);
+        if (report.status !== 'completed') throw Error('Investigation did not reach an evidence-backed conclusion');
         if (job.request.questionId === 'extraction') {
           const result = await integrateRecovery({ directory, report, onStage: status => transition(job, status) });
           await transition(job, 'publishing');
@@ -157,7 +167,10 @@ export async function createLabService({
       job.error = String(error.message).replaceAll(apiKey || '\0', '[redacted]').slice(0, 1200);
       await transition(job, 'failed');
     } finally {
-      active = null;
+      try {
+        if (phaseBudget && job.phaseReservationId) await phaseBudget.settle({ id: job.phaseReservationId,
+          estimatedCostUsd: job.report?.estimatedCostUsd ?? 0, uncertain: (job.report?.reservedCostUsd ?? 0) > 0 });
+      } finally { active = null; }
     }
   }
 
@@ -193,7 +206,11 @@ export async function createLabService({
       if (!apiKey && !client) throw Error('Live investigation needs MODEL_API_KEY in the server .env');
       if (this.status().unsettled) throw Error('Previous lab billing is uncertain; no further paid requests will start');
       if (kind === 'roadster' && (!generateTransfer || !baseArtifact)) throw Error('Roadster live transfers are not available yet');
-      const maxCostUsd = Math.min(kind === 'investigation' ? 0.50 : 0.05, budget().remainingUsd);
+      const selectedProtocol = kind === 'investigation' && request.questionId === 'extraction' ? protocol : null;
+      if (selectedProtocol && !phaseBudget) throw Error('New recovery requires the durable phase budget before inference');
+      const ceiling = selectedProtocol?.limits.maxCostUsd ?? (kind === 'investigation' ? 0.50 : 0.05);
+      if (selectedProtocol && budget().remainingUsd + 1e-9 < ceiling) throw Error('Existing lab budget cannot cover the recorded recovery protocol');
+      const maxCostUsd = Math.min(ceiling, budget().remainingUsd);
       if (maxCostUsd < 0.005) throw Error('Development budget is exhausted');
 
       // Hold admission across parent lookup and the first durable job write.
@@ -201,7 +218,18 @@ export async function createLabService({
       try {
         const selected = kind === 'roadster' ? await parent(request.parentArtifactId) : null;
         const job = { schemaVersion: 1, id: randomUUID(), kind, request, maxCostUsd, status: 'queued', events: [], report: null };
-        await transition(job, 'queued');
+        if (selectedProtocol) job.recoveryProtocol = selectedProtocol;
+        if (phaseBudget) {
+          job.phaseReservationId = 'lab:' + job.id;
+          await phaseBudget.reserve({ id: job.phaseReservationId,
+            category: kind === 'roadster' ? 'remix' : selectedProtocol?.model === 'muse-wonder-1.0' ? 'wonder' : 'recovery',
+            maxCostUsd, metadata: { jobId: job.id, kind, protocolId: selectedProtocol?.id ?? null } });
+        }
+        try { await transition(job, 'queued'); }
+        catch (error) {
+          if (phaseBudget && job.phaseReservationId) await phaseBudget.settle({ id: job.phaseReservationId, estimatedCostUsd: 0, uncertain: false });
+          throw error;
+        }
         jobs.set(job.id, job);
         active = { id: job.id, promise: null };
         active.promise = execute(job, selected);
