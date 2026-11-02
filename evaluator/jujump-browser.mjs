@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { createPakuBrowser } from './browser-harness.mjs';
 import { init, step } from '../components/dashy-dango-dash/component.js';
 import { jujumpEnvironment } from '../transfer/jujump.mjs';
+import { compileMotion } from '../component/build.mjs';
+import { executeMotion } from '../component/run.mjs';
 
 export const JUJUMP_CHECKS=['ordinary-play-matches-original','native-jumps-gravity-and-landing','airborne-dash-retains-gravity',
   'swept-platform-contact','held-timing-and-frozen-direction','death-restart-resets-controller','dash-controls-replay'];
@@ -9,6 +11,7 @@ export const JUJUMP_CHECKS=['ordinary-play-matches-original','native-jumps-gravi
 export async function verifyJujumpBrowser(compiled,{onProgress=()=>{},
   createHarness=()=>createPakuBrowser({adapter:compiled,allowUnverified:true}),
   playerPath=mode=>`/jujump/play?mode=${mode}&test=1`,
+  component,
 }={}) {
   const environment=await jujumpEnvironment(),harness=await createHarness();
   const results=[],traces={};
@@ -99,11 +102,16 @@ export async function verifyJujumpBrowser(compiled,{onProgress=()=>{},
         }
         return states;
       }));
-      let core=init(compiled.defaults);const starts=[],ends=[];
+      const direct = component ? (await executeMotion(await compileMotion(component.source), [{ name: 'recipient-timing',
+        inputs: frames.map((state, index) => ({ buttons: (state.jumpWay < 0 ? 16 : 32) | (index >= 10 ? 1 : 0), sourceBodyWidth: 8 })) }], compiled.defaults,
+        { timerFields: { cooldown: 'cooldown', remaining: 'remaining' } }))[0] : null;
+      let core=component ? null : init(compiled.defaults);const starts=[],ends=[];
       for(let index=0;index<frames.length;index++){
         const state=frames[index],buttons=(state.jumpWay<0?16:32)|(index>=10?1:0);
-        const expected=step(core,{buttons,sourceBodyWidth:8},compiled.defaults);core=expected.state;
-        assert.deepEqual(state.motion.core,core);assert.deepEqual(state.motion.output.events,expected.output.events);
+        const expected=direct ? { output: direct.frames[index] } : step(core,{buttons,sourceBodyWidth:8},compiled.defaults);
+        if (direct) assert.deepEqual({ cooldown: state.motion.core.cooldown, remaining: state.motion.core.remaining }, direct.timerSamples[index]);
+        else { core=expected.state; assert.deepEqual(state.motion.core,core); }
+        assert.deepEqual(state.motion.output.events,expected.output.events);
         if(expected.output.ownsMotion)assert.equal(state.motion.output.displacement,expected.output.displacement.x*0.5);
         if(expected.output.events.includes('dash-start'))starts.push(index+1);
         if(expected.output.events.includes('dash-end'))ends.push(index+1);
