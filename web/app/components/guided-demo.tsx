@@ -71,7 +71,7 @@ function ask(
   });
 }
 export function GuidedDemo() {
-  const { savedRoadsterId, openRoadsterArtifact } = useTransfer();
+  const { destination, artifact, savedRoadsterId, openRoadsterArtifact } = useTransfer();
   const [running, setRunning] = useState(false),
     [progress, setProgress] = useState('A recorded-input demonstration. No model call.');
   const controller = useRef<AbortController | null>(null);
@@ -95,7 +95,8 @@ export function GuidedDemo() {
         throw Error(
           'The Roadster demonstration needs a verified transfer and WebGL2. The other destinations remain playable.',
         );
-      await openRoadsterArtifact(savedRoadsterId);
+      if (destination?.id !== 'roadster' || artifact?.id !== savedRoadsterId)
+        await openRoadsterArtifact(savedRoadsterId);
       await delay(50);
       before = frame('original-game');
       after = frame('transfer-game');
