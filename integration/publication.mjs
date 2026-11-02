@@ -16,6 +16,8 @@ function verifyProject(project, verification) {
   }
   assert.deepEqual(JSON.parse(project.files['manifest.json']), project.manifest);
   assert.equal(digest(projectZip(project.files)), project.zipSha256, 'Integration ZIP identity mismatch');
+  if (project.zip) assert.equal(digest(project.zip), project.zipSha256, 'Delivered ZIP identity mismatch');
+  assert.deepEqual(JSON.parse(project.files['case-study.json']), project.caseStudy);
   assert.equal(verification.passed, true, 'Standalone verification must pass before publication');
   assert.equal(verification.packageId, id); assert.equal(verification.zipSha256, project.zipSha256);
   assert.equal(verification.componentId, manifest.componentId);
@@ -55,6 +57,9 @@ export function createIntegrationPublication(directory) {
       assert.equal(storedId, id); assert.equal(digest(JSON.stringify(receipt)), id);
       assert.equal(digest(JSON.stringify(project)), receipt.projectSha256);
       assert.equal(digest(JSON.stringify(verification)), receipt.verificationSha256);
+      assert.equal(project.manifest.id, receipt.packageId);
+      assert.equal(project.manifest.componentId, receipt.componentId);
+      assert.equal(project.zipSha256, receipt.zipSha256);
       assert.equal(verification.candidateId, receipt.candidateId); assert.equal(verification.sessionId, receipt.sessionId);
       verifyProject(project, verification);
       return { id, receipt, project: { ...project, zip: projectZip(project.files) }, verification };
