@@ -28,6 +28,9 @@ test('an injected agent inspects real code, reacts to an actual experiment and d
   const client = { countInputTokens: async () => 1000, respond: async request => {
     turn++; let output;
     assert.match(request.instructions, /Unfinished milestones/);
+    assert.match(request.instructions, /ALREADY-INVOKED async function BODY/);
+    if(turn===1) for(const name of ['inspect_function','submit_component_candidate','freeze_component','accept_component'])
+      assert.ok(request.tools.some(tool=>tool.name===name));
     const previous = results(request).at(-1);
     if (turn === 1) output = [tool(turn, 'run_experiment_program', { requestId: 'local-recovery-program', hypothesis: 'Local fixture program.', language: 'javascript', source: program })];
     if (turn === 2) {

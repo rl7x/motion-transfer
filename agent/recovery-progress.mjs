@@ -31,6 +31,10 @@ export function recoveryGuidance(report) {
   return '\nRecovery task progress (evidence presence, not verified interpretation): ' + JSON.stringify(progress)
     + '\nUnfinished milestones: ' + (missing.join('; ') || 'none; conclude with the actual experiment citations') + '.'
     + '\nChoose scientific hypotheses, code and interventions yourself. Do not repeat satisfied milestones without a reason.'
+    + ' Program source is an ALREADY-INVOKED async function BODY: put awaited SDK calls directly in it. Defining async function main() without calling it performs zero operations.'
+    + ' Static methods are sdk.static.inspectWasm/listFunctions/inspectFunction/decompileFunction; sdk.inspectWasm does not exist.'
+    + ' Function-body inspection and all four component-development tools are directly callable in the recovery profile; specialized tracing and memory tools can still use discovery.'
+    + ' Paired branches receive identical inputs. With no edit they are a reproducibility control, not different input conditions. A final inactive state does not prove no dash occurred; inspect event and timer observations within the trace.'
     + ' Prefer one compact program for orientation, targeted code inspection and an experiment; return only measurements and IDs.'
     + ' Use a subsequent model turn to interpret its actual result and select the evidence. Reserve remaining calls for candidate development, freezing, separate acceptance and conclusion.'
     + ' A development failure is feedback for a revision; an acceptance failure is terminal and cannot be repaired in this run.';

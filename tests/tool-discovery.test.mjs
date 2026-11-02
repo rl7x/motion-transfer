@@ -6,6 +6,16 @@ import {investigate} from '../agent/investigate.mjs';
 const usage={input_tokens:1000,output_tokens:100,input_tokens_details:{cached_tokens:0},output_tokens_details:{reasoning_tokens:0}};
 const tool=(id,name,args,namespace)=>({type:'function_call',call_id:id,status:'completed',name,arguments:JSON.stringify(args),...(namespace?{namespace}:{})});
 const search={type:'tool_search_call',id:'native-search',execution:'client',call_id:'native-search-call',status:'completed',arguments:{namespace:'execution'}};
+test('recovery keeps inspection and development directly available while deferring specialized tools',()=>{
+  const catalog=createToolDiscovery({mode:'client',model:'muse-spark-1.3',profile:'recovery'});
+  const definitions=catalog.definitions();
+  for(const name of ['inspect_function','list_functions','select_component_evidence','submit_component_candidate','freeze_component','accept_component']){
+    assert.ok(definitions.some(tool=>tool.name===name));assert.equal(catalog.route({name}),name);
+  }
+  assert.ok(!definitions.some(tool=>tool.name==='trace_writers'));
+  assert.throws(()=>catalog.route({name:'trace_writers',namespace:'static'}),/unloaded/);
+  assert.equal(catalog.state.profile,'recovery');
+});
 test('client-native discovery defers focused definitions and routes only loaded namespaces',()=>{
   const catalog=createToolDiscovery({mode:'client',model:'muse-spark-1.3'}),definitions=catalog.definitions();
   assert.equal(definitions.filter(tool=>tool.type==='tool_search').length,1);assert.equal(definitions.find(tool=>tool.type==='tool_search').execution,'client');
