@@ -7,6 +7,8 @@
 ## Idea
 My core idea is to do some component extraction and transfer between programs. I will start with some games first. I picked dashy dango cause i was thinking of a matcha parfait i had in kyoto, and dango came to mind.
 
+The [Motion Transfer implementation checklist](docs/motion-transfer-implementation.md) tracks the next phase: a playable challenge, public remixes, fresh recovery measurements, and integrations by other developers.
+
 ## Try the extraction and transfer experience
 
 ```sh
@@ -22,9 +24,9 @@ The frontend is React with strict TypeScript. See [the frontend guide](web/READM
 
 **Measured developer tasks** records fresh recovery and two predefined adapter-editing workflows, including inherited changes, actual verification failures, setup disclosures and API cost. Run `npm run benchmark:verify` before `npm run benchmark:developer`; see [the fixed tasks, spending limits and interruption behavior](docs/developer-benchmark.md). These are self-run measurements, with no claimed productivity baseline or independent adoption.
 
-The [November 2 campaign](benchmark/recordings/README.md) completed **2 of 3 tasks** for an estimated **$0.7299**, with no unsettled reservations. Roadster's requested edit and both PAKU child edits passed their recipient checks. Three fresh Meta recovery trials inspected code and executed experiments but submitted no candidate; new development, acceptance and export remain incomplete. All outcomes and two repairs between trials are preserved. Final local validation passed **194 tests**, TypeScript, lint, formatting and the frontend build; the report UI was also checked at 390px and 320px without inference.
+The [November 2 campaign](benchmark/recordings/README.md) completed **2 of 3 tasks** for an estimated **$0.7299**, with no unsettled reservations. Roadster's requested edit and both PAKU child edits passed their recipient checks. Three fresh Meta recovery trials inspected code and executed experiments but submitted no candidate; new development, acceptance and export remain incomplete. All outcomes and two repairs between trials are preserved. Campaign-time local validation passed **194 tests**, TypeScript, lint, formatting and the frontend build; the report UI was also checked at 390px and 320px without inference.
 
-**Recover for JUJUMP** starts a fresh Meta-led investigation through candidate development and separate frozen acceptance. Only a newly accepted candidate that also passes recipient checks and independent final-ZIP verification receives its own play/download links. The complete workflow passes local injected-client/runtime tests. The single new live attempt remains **incomplete**: Meta ran a real intervention and a later evidence-linked action, but did not inspect a function body or submit a candidate. Its unmodified recording is available without inference. See [the recovery task, measured spending and limitations](docs/recovery-handoff.md).
+**Recover for JUJUMP** starts a fresh Meta-led investigation through evidence selection, candidate development and separate frozen acceptance. Only a newly accepted candidate that also passes recipient checks and independent final-ZIP verification receives its own play/download links. The UI shows actual donor-versus-candidate development failures. Two later development trials cost **$0.640187**: one reached **0/13 → 9/13 → 10/13** development checks; the other selected evidence too late to submit a candidate. Neither passed acceptance or published a project. Both complete failed recordings and all earlier outcomes remain available without inference. The final scheduling fix reserves requests for development and has local validation only. See [the recovery task, measured spending and limitations](docs/recovery-handoff.md).
 
 ```sh
 npm run export:jujump
