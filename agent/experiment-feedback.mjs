@@ -1,4 +1,5 @@
 import { digest } from '../component/build.mjs';
+import { inputDiagnostics } from './input-diagnostics.mjs';
 
 const SDK_HELP = 'source is an already-invoked async function body. Await SDK calls directly, or call a helper you define. Static methods are sdk.static.inspectWasm, sdk.static.listFunctions, sdk.static.inspectFunction and sdk.static.decompileFunction; sdk.inspectWasm does not exist. Core inspection and recovery tools can also be called directly. No program allowance is refunded.';
 
@@ -30,7 +31,11 @@ export function experimentFeedback(name, result, session) {
   });
   const executionFeedback = name === 'run_experiment_program' && result.operations === 0
     ? { didExecuteCapabilities: false, message: 'No SDK host operations ran. ' + SDK_HELP } : undefined;
-  const augmented = { ...result, ...(activity.length ? { activity } : {}), ...(executionFeedback ? { executionFeedback } : {}) };
+  const failedOperation = name === 'run_experiment_program' && session?.experimentWorkbench?.programs
+    .find(program => program.id === result.programId)?.operations.findLast(operation => operation.status === 'failed');
+  const inputFeedback = failedOperation ? inputDiagnostics(failedOperation.name, failedOperation.args) : null;
+  const augmented = { ...result, ...(activity.length ? { activity } : {}), ...(executionFeedback ? { executionFeedback } : {}),
+    ...(inputFeedback ? { inputFeedback: { operation: failedOperation.name, ...inputFeedback } } : {}) };
   // Preserve the existing transport bound; full evidence remains in the session.
   return Buffer.byteLength(JSON.stringify(augmented)) <= 32768 ? augmented : result;
 }

@@ -5,6 +5,8 @@ import { evidenceHistory } from '../agent/evidence.mjs';
 import { createToolDiscovery, discoveryReplay } from '../agent/tool-discovery.mjs';
 import { requestInvestigationTurn } from '../agent/investigation-request.mjs';
 import { PRICES } from '../agent/accounting.mjs';
+import { experimentFeedback } from '../agent/experiment-feedback.mjs';
+import { inputDiagnostics, recoverySelectionHelp } from '../agent/input-diagnostics.mjs';
 
 const recorded = async () => JSON.parse(await readFile(new URL('../lab/recordings/benchmark-recovery-one.json', import.meta.url)));
 test('recorded context-limit failure compacts actual experiments once and keeps errors and identities', async () => {
@@ -51,4 +53,37 @@ test('recovery preflight drops stale deferred context before generation without 
   assert.throws(() => catalog.route({ name: 'read_memory', namespace: 'memory' }), /unloaded/);
   assert.equal(catalog.route({ name: 'submit_component_candidate' }), 'submit_component_candidate');
   assert.equal(report.contextCompactions.at(-1).reason, 'deferred-context-limit');
+});
+
+test('the second recorded failure compacts duplicate metadata while preserving code, evidence and selection', async () => {
+  const { report } = JSON.parse(await readFile(new URL('../lab/recordings/benchmark-recovery-two.json', import.meta.url)));
+  const before = JSON.stringify(report);
+  const history = evidenceHistory(report, { includeDiscovery: false });
+  assert.ok(Buffer.byteLength(JSON.stringify(history)) < 28000);
+  const text = history[1].content[0].text, ledger = JSON.parse(text.slice(text.indexOf('\n') + 1));
+  const original = report.toolCalls.filter(call => call.name === 'inspect_function' && call.ok).at(-1).result;
+  const compact = ledger.observations.filter(call => call.tool === 'inspect_function' && call.ok).at(-1).result;
+  assert.equal(compact.evidenceId, original.evidenceId);
+  assert.deepEqual(compact.lines.map(line => line[1]), original.lines.map(line => line.text));
+  assert.equal(compact.nextLine, original.nextLine); assert.equal(compact.indirectCallsResolved, false);
+  const selection = ledger.observations.find(call => call.tool === 'select_component_evidence' && call.ok).result;
+  assert.equal(selection.evidence.sha256, report.session.recovery.selections[0].evidence.sha256);
+  assert.deepEqual(selection.evidence.traces.map(trace => trace.id), report.session.recovery.selections[0].evidence.traces.map(trace => trace.id));
+  assert.equal(JSON.stringify(report), before);
+});
+
+test('actual malformed SDK and direct requests receive structural feedback without repaired inputs or answers', async () => {
+  const { report } = JSON.parse(await readFile(new URL('../lab/recordings/benchmark-recovery-two.json', import.meta.url)));
+  const program = report.toolCalls.find(call => call.name === 'run_experiment_program');
+  const result = experimentFeedback(program.name, program.result, report.session);
+  assert.equal(result.status, 'failed'); assert.equal(result.inputFeedback.path, 'tool.steps[0]');
+  assert.deepEqual(result.inputFeedback.missingFields, ['checkpoint']);
+  const trial = report.toolCalls.find(call => call.name === 'run_experiment' && !call.ok);
+  assert.deepEqual(inputDiagnostics(trial.name, trial.args).missingFields, ['captures']);
+  const selection = report.toolCalls.find(call => call.name === 'select_component_evidence' && !call.ok);
+  const help = recoverySelectionHelp(selection.name, report.session, selection.error);
+  assert.ok(help.availableExecutionIds.includes('experiment-c7153953-3293-4f3b-85e0-501ccd69441d'));
+  assert.doesNotMatch(JSON.stringify(result.inputFeedback), /dashDistance|cooldownTicks|walkingSpeed/);
+  assert.equal(inputDiagnostics('prepare_checkpoint', { requestId: 'fixture-key', hypothesis: 'local schema fixture',
+    steps: [{ buttons: 1, frames: 1, checkpoint: 'label' }], watches: [] }), null);
 });

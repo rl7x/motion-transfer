@@ -1,5 +1,6 @@
 import { experimentFeedback, experimentErrorHelp } from './experiment-feedback.mjs';
 import { validateRecoveryEvidence } from './recovery-evidence.mjs';
+import { inputDiagnostics, recoverySelectionHelp } from './input-diagnostics.mjs';
 
 /**
  * @typedef {object} ToolOutput
@@ -90,13 +91,15 @@ export function createInvestigationToolRunner({
     } catch (error) {
       if (worker?.sessionState) report.session = worker.sessionState;
       entry.error = error.message;
+      const feedback = inputDiagnostics(entry.name, entry.args) ?? recoverySelectionHelp(entry.name, report.session, entry.error);
+      if (feedback) entry.inputFeedback = feedback;
       if (call.type === 'tool_search_call') {
         history.push(catalog.failedSearch(call), { role: 'user', content: [
           { type: 'input_text', text: 'Local tool discovery failed: ' + entry.error },
         ] });
       } else {
         history.push({ type: 'function_call_output', call_id: call.call_id,
-          output: JSON.stringify({ ...toolError(entry.error, report.session), ...experimentErrorHelp(call.name) }) });
+          output: JSON.stringify({ ...toolError(entry.error, report.session), ...experimentErrorHelp(call.name), ...(feedback ? { inputFeedback: feedback } : {}) }) });
       }
     }
     entry.finishedAt = new Date().toISOString();
