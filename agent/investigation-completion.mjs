@@ -59,5 +59,12 @@ export function requireInvestigationConclusion(report, publicMessages) {
   if (report.requirements?.componentAcceptance && !report.session?.recovery?.acceptedAttempt) {
     throw new Error('No new component passed separate acceptance; recovery remains incomplete');
   }
+  if (report.requirements?.selectedRecoveryEvidence) {
+    const accepted = report.session?.recovery?.attempts.find(item => item.attempt === report.session.recovery.acceptedAttempt);
+    if (!accepted || !report.toolCalls.some(call => call.ok && call.name === 'submit_component_candidate'
+      && call.result?.candidateId === accepted.candidateId && citedManaged.some(({ result }) => result.experimentId === call.recoveryEvidence?.experimentId))) {
+      throw new Error('Accepted recovery must link its inspected code and candidate contract to a cited controlled experiment and later evidence-selection action');
+    }
+  }
   return conclusion;
 }

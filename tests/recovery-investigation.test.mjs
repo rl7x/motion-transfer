@@ -24,7 +24,7 @@ test('an injected agent inspects real code, reacts to an actual experiment and d
   const results = request => request.input.filter(item => item.type === 'function_call_output').map(item => JSON.parse(item.output));
   const contract = evidenceId => ({ name: 'Local injected fixture', scope: 'Motion only; fixture for real host execution.',
     defaults: { walkingSpeed: 2, dashDistance: 60, cooldownTicks: 25, initialCooldownTicks: 10 }, stateDescription: 'Fixture state.',
-    rules: [{ description: 'Human-supplied fixture behavior; not independent discovery.', evidence: [evidenceId] }], limitations: ['Injected responses are not real Meta inference.'] });
+    rules: [{ description: 'Human-supplied fixture behavior; not independent discovery.', evidence: [evidenceId, 'binary:func9'] }], limitations: ['Injected responses are not real Meta inference.'] });
   const client = { countInputTokens: async () => 1000, respond: async request => {
     turn++; let output;
     assert.match(request.instructions, /Unfinished milestones/);
@@ -59,7 +59,7 @@ test('an injected agent inspects real code, reacts to an actual experiment and d
   } };
   try {
     const report = await investigate({ client, model: 'muse-spark-1.3', toolDiscovery: 'client', limits: { maxModelCalls: 16, maxToolCalls: 24 },
-      requirements: { codeInspection: true, branchComparison: true, followupDecision: true, componentAcceptance: true },
+      requirements: { codeInspection: true, branchComparison: true, followupDecision: true, componentAcceptance: true, selectedRecoveryEvidence: true },
       onUpdate: report => saveInvestigationEvidence(directory, report.session, report) });
     assert.equal(report.status, 'completed'); assert.equal(turn, 9); assert.equal(sawFailure, true);
     const component = await loadAcceptedComponent(directory, report);

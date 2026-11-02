@@ -1,3 +1,6 @@
+import { experimentFeedback, experimentErrorHelp } from './experiment-feedback.mjs';
+import { validateRecoveryEvidence } from './recovery-evidence.mjs';
+
 /**
  * @typedef {object} ToolOutput
  * @property {object} result Bounded model-visible measurements or artifact references.
@@ -64,13 +67,16 @@ export function createInvestigationToolRunner({
         throw new Error('Tool arguments exceed 32 KB or are invalid');
       }
       entry.args = JSON.parse(call.arguments);
+      if (report.requirements?.selectedRecoveryEvidence && call.name === 'submit_component_candidate') {
+        entry.recoveryEvidence = validateRecoveryEvidence(report, entry.args, turn + 1);
+      }
       entry.startedAt = new Date().toISOString();
       await onUpdate(report);
       onProgress(`Running ${call.name}`);
       const { result, evidence, images } = await dispatch(call.name, entry.args, { signal });
       if (worker) report.session = worker.sessionState;
       entry.ok = true;
-      entry.result = result;
+      entry.result = experimentFeedback(call.name, result, report.session);
       if (evidence) entry.evidence = evidence;
       if (['run_original', 'session_advance', 'compare_branches'].includes(call.name)) {
         entry.experimentId = `exp-${String(++experiments).padStart(3, '0')}`;
@@ -90,7 +96,7 @@ export function createInvestigationToolRunner({
         ] });
       } else {
         history.push({ type: 'function_call_output', call_id: call.call_id,
-          output: JSON.stringify(toolError(entry.error, report.session)) });
+          output: JSON.stringify({ ...toolError(entry.error, report.session), ...experimentErrorHelp(call.name) }) });
       }
     }
     entry.finishedAt = new Date().toISOString();
