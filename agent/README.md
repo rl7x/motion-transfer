@@ -85,3 +85,6 @@ Successful input experiments receive IDs such as `exp-001`; branch comparisons a
 The model only receives the question, fixed host/control instructions, its own outputs, and tool results. It is not given the repo's design notes, donor source, or prewritten explanations of the mechanic.
 
 Sources: [Meta model availability](https://dev.meta.ai/docs/models), [Responses continuation](https://dev.meta.ai/docs/protocols/responses), [tool calling](https://dev.meta.ai/docs/tool-calling), [token counting](https://dev.meta.ai/docs/token-counting), [standard pricing](https://dev.meta.ai/docs/pricing-rate-limits).
+## Backend structure
+
+See [the backend architecture](../docs/backend-architecture.md) for the investigation coordinator, provider/request handling, worker protocol, persistent tool dispatcher and source identity boundaries. The public tools and report formats are unchanged.
