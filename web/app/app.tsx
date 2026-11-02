@@ -39,16 +39,19 @@ function Experience() {
     <main>
       <Header />
       <Intro />
-      <Destinations />
       <Players />
-      <TransferExplanation />
-      <DeveloperTask />
-      <DeveloperBenchmarks />
-      <Proof />
-      <InvestigationPanel status={status} />
-      <RecoveryDetails />
       <RemixPanel status={status} />
-      <ArtifactDetails />
+      <Destinations />
+      <details className="evidence-drawer" id="evidence-details">
+        <summary>Explore the recovery, source and verification</summary>
+        <TransferExplanation />
+        <DeveloperTask />
+        <DeveloperBenchmarks />
+        <Proof />
+        <InvestigationPanel status={status} />
+        <RecoveryDetails />
+        <ArtifactDetails />
+      </details>
       <Footer />
     </main>
   );

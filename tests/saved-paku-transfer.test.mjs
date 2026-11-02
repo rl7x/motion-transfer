@@ -8,6 +8,7 @@ import { compileAdapter } from '../transfer/adapter.mjs';
 import { checkPakuPackage, loadPakuTransfer } from '../transfer/saved-paku.mjs';
 import { evaluatePakuAdapter } from '../evaluator/paku-adapter.mjs';
 import { verifyPakuBrowser } from '../evaluator/paku-browser.mjs';
+import { pakuEnvironment } from '../transfer/paku-environment.mjs';
 
 test('the frozen Meta adapter passes conformance and playable browser integration', async () => {
   const saved = await loadPakuTransfer();
@@ -18,7 +19,16 @@ test('the frozen Meta adapter passes conformance and playable browser integratio
   assert.equal(conformance.passed, true);
   assert.equal(browser.passed, true, JSON.stringify(browser.results.filter(result => !result.passed)));
   assert.equal(browser.results.length, 8);
-  assert.deepEqual(browser.environment, saved.receipt.environment);
+  assert.deepEqual(browser.environment, await pakuEnvironment());
+  assert.equal(browser.componentId, saved.componentId);
+});
+
+test('historical playback preserves its proof while current-host publication rejects a stale environment', async () => {
+  const saved = await loadPakuTransfer();
+  assert.equal(saved.receipt.id.length, 64);
+  await assert.rejects(loadPakuTransfer({ currentEnvironment: true }), /environment is stale/);
+  const current = await pakuEnvironment();
+  assert.throws(() => checkPakuPackage(saved, current), /environment is stale/);
 });
 
 test('promotion rejects changed source, stale identity, missing checks, and failed browser evidence', async () => {

@@ -1,5 +1,4 @@
 import { useResource } from '../hooks/use-resource';
-import { GuidedDemo } from './guided-demo';
 interface Measurements {
   measurements: { traceCount: number; updates: number; maxPositionError: number };
 }
@@ -28,22 +27,17 @@ export function Intro() {
   return (
     <section className="intro">
       <div>
-        <p className="eyebrow">SOFTWARE HAS ABILITIES WORTH KEEPING.</p>
+        <p className="eyebrow">BORROW A MOVE. MAKE A GAME.</p>
         <h1>
-          Extract an ability from
+          One game&apos;s move.
           <br />
-          compiled software.
-          <br />
-          <em>Give it a new home.</em>
+          <em>Your next stunt.</em>
         </h1>
         <p>
-          What if a Roadster could dash in mid-air?
-          <br />
-          Give it the same ability recovered from a compiled game.
+          Play a car stunt. Borrow a dash from another game. Make a version you can play and keep.
         </p>
-        <GuidedDemo />
       </div>
-      <aside className="ability-card" aria-label="Recovered ability">
+      <aside className="ability-card compact-ability" aria-label="Recovered ability">
         <div className="ability-heading">
           <span className="ability-icon" aria-hidden="true">
             ↠
@@ -51,33 +45,17 @@ export function Intro() {
           <span className="pill">SAVED RECOVERY</span>
         </div>
         <p className="eyebrow">EXTRACTED FROM DASHY DANGO</p>
-        <h2>Dash</h2>
-        <p>
-          A burst of movement with its own direction,
-          <br />
-          duration, and recharge.
-        </p>
-        <div className="ability-rules">
-          <span>
-            <strong>~0.13s</strong> burst of movement
-          </span>
-          <span>
-            <strong>~0.42s</strong> to recharge
-          </span>
-        </div>
-        <p className="ability-origin">
-          Recovered by Meta models. Reused as a standalone component.
-        </p>
+        <h2>Borrow the dash ↠</h2>
+        <p>One recovered move, with its own burst and recharge. Try it in the car below.</p>
         <div className="ability-links">
-          <a href="#developer-task">Use it in your project ↓</a>
+          <a href="/donor/play" target="_blank" rel="noreferrer">
+            Play Dashy Dango ↗
+          </a>
           <a href="/component/export" download="recovered-dash.json">
             Component source ↗
           </a>
-          <a href="#recovery-details">Recovery evidence ↓</a>
+          <a href="#evidence-details">Recovery evidence ↓</a>
         </div>
-        <p className="saved-note">
-          This is a saved recovery. Choosing a destination makes no model request.
-        </p>
       </aside>
     </section>
   );

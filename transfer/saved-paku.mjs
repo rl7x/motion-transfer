@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { mkdir, readFile, writeFile, rename } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { digest } from '../component/build.mjs';
+import { compileAdapter } from './adapter.mjs';
 import { pakuEnvironment } from './paku-environment.mjs';
 import { BROWSER_CHECKS, CONFORMANCE_CHECKS } from './paku-policy.mjs';
 
@@ -78,7 +79,7 @@ export async function savePakuTransfer(candidate, directory) {
   return receipt;
 }
 
-export async function loadPakuTransfer({ directory, optional = false } = {}) {
+export async function loadPakuTransfer({ directory, optional = false, currentEnvironment = false } = {}) {
   if (!directory) {
     try {
       const current = JSON.parse(await readFile(new URL('current.json', savedPakuDirectory), 'utf8'));
@@ -98,9 +99,20 @@ export async function loadPakuTransfer({ directory, optional = false } = {}) {
   assert.deepEqual(Object.keys(receipt.files).sort(), [...packageFiles].sort(), 'Transfer file set mismatch');
   for (const name of packageFiles) assert.equal(digest(candidate.files[name]), receipt.files[name], `Transfer integrity mismatch: ${name}`);
   const environment = await pakuEnvironment();
-  assert.deepEqual(receipt.environment, environment, 'Saved transfer environment is stale; verify and export a new artifact');
-  assert.equal(receipt.id, digest(JSON.stringify({ files: receipt.files, environment })), 'Transfer receipt identity mismatch');
-  const identity = checkPakuPackage(candidate, environment);
+  // The immutable proof includes its original server and compiler. Playback
+  // still requires every executable game/runtime input to match. New saves use
+  // checkPakuPackage against the complete current environment above.
+  const playbackEnvironment = structuredClone(environment);
+  if (!currentEnvironment) for (const path of ['web/server.mjs', 'transfer/adapter.mjs']) {
+    assert.match(receipt.environment.files[path], /^[a-f0-9]{64}$/);
+    playbackEnvironment.files[path] = receipt.environment.files[path];
+  }
+  assert.deepEqual(receipt.environment, playbackEnvironment, 'Saved transfer environment is stale; verify and export a new artifact');
+  assert.equal(receipt.id, digest(JSON.stringify({ files: receipt.files, environment: receipt.environment })), 'Transfer receipt identity mismatch');
+  const compiled = await compileAdapter(candidate.source);
+  assert.equal(compiled.javascript, candidate.javascript, 'Saved adapter JavaScript differs from its source');
+  assert.equal(compiled.componentId, receipt.componentId, 'Saved component identity differs');
+  const identity = checkPakuPackage(candidate, receipt.environment);
   for (const [key, value] of Object.entries(identity)) assert.equal(receipt[key], value, `Receipt identity mismatch: ${key}`);
   return { ...candidate, ...identity, receipt, directory };
 }

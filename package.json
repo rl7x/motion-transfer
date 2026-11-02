@@ -21,6 +21,7 @@
     "export:jujump": "node scripts/export-jujump.mjs",
     "verify:integration": "node scripts/verify-integration.mjs",
     "verify:roadster": "node scripts/verify-roadster.mjs",
+    "verify:challenge": "node scripts/verify-challenge.mjs",
     "verify:guided": "node scripts/verify-guided-demo.mjs",
     "benchmark:developer": "node scripts/benchmark-developer.mjs",
     "benchmark:verify": "node scripts/verify-developer-benchmark.mjs",
