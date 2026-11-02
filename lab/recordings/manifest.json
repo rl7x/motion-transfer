@@ -58,6 +58,13 @@
       "sha256": "03b13d8fa8aebf05087aba86d9284cc3aadb6fd9501d3f69e72a2a3329b058d3",
       "title": "Measured recovery trial 2 · evidence selected; context limit before candidate",
       "runId": "963be909-6ca9-469f-bcb8-d9543d34e36b"
+    },
+    {
+      "id": "benchmark-recovery-three",
+      "file": "benchmark-recovery-three.json",
+      "sha256": "4832c34d2ed41a9f8fab1c2a9b2dc9ec494586c0eb0f58099e1d8af5cca73f91",
+      "title": "Measured recovery trial 3 · experiments executed; no candidate",
+      "runId": "de204b97-127e-4f27-9244-42a4d89f3b17"
     }
   ]
 }

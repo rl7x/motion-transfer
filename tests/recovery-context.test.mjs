@@ -87,3 +87,14 @@ test('actual malformed SDK and direct requests receive structural feedback witho
   assert.equal(inputDiagnostics('prepare_checkpoint', { requestId: 'fixture-key', hypothesis: 'local schema fixture',
     steps: [{ buttons: 1, frames: 1, checkpoint: 'label' }], watches: [] }), null);
 });
+
+test('the final recorded program preserves its array-shape diagnostics without another inference attempt', async () => {
+  const { report } = JSON.parse(await readFile(new URL('../lab/recordings/benchmark-recovery-three.json', import.meta.url)));
+  const program = report.toolCalls.find(call => call.name === 'run_experiment_program');
+  const result = experimentFeedback(program.name, program.result, report.session);
+  assert.equal(result.status, 'failed'); assert.equal(result.inputFeedback.path, 'tool.steps');
+  assert.equal(result.inputFeedback.expectedType, 'array');
+  assert.equal(result.error, 'Invalid array at tool.steps');
+  assert.equal(report.session.recovery.attempts.length, 0);
+  assert.equal(report.reservedCostUsd, 0);
+});
