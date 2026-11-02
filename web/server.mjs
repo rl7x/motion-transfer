@@ -7,6 +7,7 @@ import { loadPakuTransfer } from '../transfer/saved-paku.mjs';
 import { PAKU_POLICY } from '../transfer/paku-policy.mjs';
 import { experienceAssets } from './experience-assets.mjs';
 import { loadSavedRoadster } from '../roadster/saved.mjs';
+import { buildFrontend } from './build.mjs';
 
 export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapter, remixes, lab, allowUnverified = false } = {}) {
   if (adapter === undefined) adapter = await loadPakuTransfer({ optional: true });
@@ -14,6 +15,7 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
   const recovered = await loadRecoveredMotion();
   const roadster=await loadSavedRoadster({optional:true});
   const assets = new Map([
+    ['/assets/app.js', ['text/javascript', await buildFrontend()]],
     ['/assets/runtime.js', ['text/javascript', clockedPakuRuntime(recipient.runtime)]],
     ['/assets/sound.js', ['text/javascript', recipient.sound]],
     ['/assets/game.js', ['text/javascript', recipient.source + '\n' + pakuObservationSource()]],
@@ -35,14 +37,6 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
     ['/', 'index.html', 'text/html'], ['/style.css', 'style.css', 'text/css'],
     ['/play', 'play.html', 'text/html'], ['/assets/clock.js', 'clock.js', 'text/javascript'],
     ['/assets/boot.js', 'boot.js', 'text/javascript'], ['/assets/port.js', 'port.js', 'text/javascript'],
-    ['/preview.js', 'preview.js', 'text/javascript'],
-    ['/remix.js', 'remix.js', 'text/javascript'],
-    ['/evidence.js', 'evidence.js', 'text/javascript'],
-    ['/lab.js', 'lab.js', 'text/javascript'],
-    ['/investigation-view.js', 'investigation-view.js', 'text/javascript'],
-    ['/roadster.js', 'roadster.js', 'text/javascript'],
-    ['/guided.js', 'guided.js', 'text/javascript'],
-    ['/developer-task.js', 'developer-task.js', 'text/javascript'],
   ]) assets.set(path, [type, await readFile(new URL(file, import.meta.url), 'utf8')]);
   if (adapter) {
     assets.set('/assets/adapter.js', ['text/javascript', adapter.javascript]);

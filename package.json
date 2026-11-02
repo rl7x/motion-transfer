@@ -24,7 +24,8 @@
     "tools:smoke": "node scripts/tools-smoke.mjs",
     "tools:session-smoke": "node scripts/investigation-smoke.mjs",
     "tools:experiment-smoke": "node scripts/experiment-smoke.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "build:frontend": "npm run typecheck && node scripts/build-frontend.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
