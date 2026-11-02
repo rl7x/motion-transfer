@@ -1402,6 +1402,28 @@ body.player-expanded::before {
 .recovery-milestones li[data-complete='true'] {
   color: #c5eb91;
 }
+.recovery-next {
+  border-left: 3px solid #c5eb91;
+  padding-left: 1rem;
+}
+.recovery-development article {
+  margin: 0.8rem 0;
+  padding: 1rem;
+  border: 1px solid #7e7156;
+  border-radius: 8px;
+  background: #111711;
+}
+.recovery-development article[data-passed='true'] {
+  border-color: #839c63;
+}
+.recovery-development dt {
+  color: #c5eb91;
+  font-weight: 600;
+}
+.recovery-development dd {
+  margin: 0.3rem 0 1rem;
+  font-variant-numeric: tabular-nums;
+}
 .benchmark-campaign {
   margin-top: 1.5rem;
   overflow-wrap: anywhere;

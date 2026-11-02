@@ -21,7 +21,12 @@ test('an injected agent inspects real code, reacts to an actual experiment and d
   const directory = await mkdtemp(join(tmpdir(), 'recovery-injected-agent-'));
   const goodSource = '// Local injected client fixture; not a Meta recovery.\n' + await readFile(new URL('../components/dashy-dango-dash/component.ts', import.meta.url), 'utf8');
   let turn = 0, experimentId, selectionId, candidateId, sawFailure = false;
-  const results = request => request.input.filter(item => item.type === 'function_call_output').map(item => JSON.parse(item.output));
+  const results = request => request.input.flatMap(item => {
+    if (item.type === 'function_call_output') return [JSON.parse(item.output)];
+    const ledgerText = item.content?.find(block => block.text?.includes('ledger contains actual'))?.text;
+    return ledgerText ? JSON.parse(ledgerText.slice(ledgerText.indexOf('\n') + 1)).observations
+      .filter(call => call.ok).map(call => call.result) : [];
+  });
   const contract = evidenceId => ({ name: 'Local injected fixture', scope: 'Motion only; fixture for real host execution.',
     defaults: { walkingSpeed: 2, dashDistance: 60, cooldownTicks: 25, initialCooldownTicks: 10 }, stateDescription: 'Fixture state.',
     rules: [{ description: 'Human-supplied fixture behavior; not independent discovery.', evidence: [evidenceId, 'binary:func9'] }], limitations: ['Injected responses are not real Meta inference.'] });
@@ -29,31 +34,34 @@ test('an injected agent inspects real code, reacts to an actual experiment and d
     turn++; let output;
     assert.match(request.instructions, /Unfinished milestones/);
     assert.match(request.instructions, /ALREADY-INVOKED async function BODY/);
-    if(turn===1) for(const name of ['inspect_function','submit_component_candidate','freeze_component','accept_component'])
+    assert.ok(!request.tools.some(tool=>tool.type==='tool_search'));
+    if(turn===1) for(const name of ['inspect_function','select_component_evidence'])
       assert.ok(request.tools.some(tool=>tool.name===name));
     const previous = results(request).at(-1);
     if (turn === 1) output = [tool(turn, 'run_experiment_program', { requestId: 'local-recovery-program', hypothesis: 'Local fixture program.', language: 'javascript', source: program })];
     if (turn === 2) {
       assert.equal(previous.status, 'completed'); assert.notEqual(previous.output.control, previous.output.intervention);
       experimentId = previous.output.experimentId;
-      output = [tool(turn, 'record_finding', { claim: `Observed ${previous.output.control} vs ${previous.output.intervention}; choose this evidence for the local candidate.`, status: 'supported', confidence: 'medium', evidenceIds: [experimentId] })];
+      output = [tool(turn, 'select_component_evidence', { functionIndices: [9], evidenceIds: [experimentId],
+        scope: `Observed ${previous.output.control} vs ${previous.output.intervention}; choose this evidence for the local candidate.` })];
     }
-    if (turn === 3) output = [{ type: 'tool_search_call', execution: 'client', call_id: 'local-recovery-search', status: 'completed', arguments: { namespace: 'recovery' } }];
-    if (turn === 4) output = [tool(turn, 'select_component_evidence', { functionIndices: [9], evidenceIds: [experimentId], scope: 'Actual local tool execution with injected agent choices.' }, 'recovery')];
-    if (turn === 5) {
+    if (turn === 3) {
+      assert.match(request.instructions, /Current stage: develop/);
       selectionId = previous.selectionId;
       output = [tool(turn, 'submit_component_candidate', { selectionId,
         source: 'export function init(){return {cooldown:0,remaining:0}};export function step(state){return {state,output:{ownsMotion:false,displacement:{x:0,y:0},events:[]}}}',
-        contract: contract(experimentId), timerFields: { cooldown: 'cooldown', remaining: 'remaining' } }, 'recovery')];
+        contract: contract(experimentId), timerFields: { cooldown: 'cooldown', remaining: 'remaining' } })];
     }
-    if (turn === 6) {
+    if (turn === 4) {
       assert.equal(previous.development.passed, false); assert.equal(previous.acceptanceRun, false);
-      sawFailure = previous.development.results.some(result => result.firstDivergence?.expected.timers);
-      output = [tool(turn, 'submit_component_candidate', { selectionId, source: goodSource, contract: contract(experimentId), timerFields: { cooldown: 'cooldown', remaining: 'remaining' } }, 'recovery')];
+      sawFailure = previous.development.firstFailures.some(result => result.firstDivergence?.expected.timers);
+      assert.equal(previous.development.firstFailures.length, previous.development.failedCases);
+      assert.ok(previous.development.firstFailures.length > 2, 'Keep all actual failures for repair');
+      output = [tool(turn, 'submit_component_candidate', { selectionId, source: goodSource, contract: contract(experimentId), timerFields: { cooldown: 'cooldown', remaining: 'remaining' } })];
     }
-    if (turn === 7) { assert.equal(previous.development.passed, true); candidateId = previous.candidateId; output = [tool(turn, 'freeze_component', { candidateId }, 'recovery')]; }
-    if (turn === 8) { assert.equal(previous.status, 'frozen-awaiting-acceptance'); output = [tool(turn, 'accept_component', { candidateId }, 'recovery')]; }
-    if (turn === 9) { assert.equal(previous.passed, true); output = [{ type: 'message', content: [{ type: 'output_text', text: `Local injected recovery completed using ${experimentId}. Finite checks only; human fixture implementation, no real Meta inference.` }] }]; }
+    if (turn === 5) { assert.deepEqual(request.tools.map(tool=>tool.name),['freeze_component']); assert.equal(previous.development.passed, true); candidateId = previous.candidateId; output = [tool(turn, 'freeze_component', { candidateId })]; }
+    if (turn === 6) { assert.deepEqual(request.tools.map(tool=>tool.name),['accept_component']); assert.equal(previous.status, 'frozen-awaiting-acceptance'); output = [tool(turn, 'accept_component', { candidateId })]; }
+    if (turn === 7) { assert.deepEqual(request.tools,[]); assert.equal(previous.passed, true); output = [{ type: 'message', content: [{ type: 'output_text', text: `Local injected recovery completed using ${experimentId}. Finite checks only; human fixture implementation, no real Meta inference.` }] }]; }
     return { id: 'local-recovery-response-' + turn, model: 'muse-spark-1.3', status: 'completed', output,
       usage: { input_tokens: 1000, output_tokens: 100, input_tokens_details: { cached_tokens: 0 }, output_tokens_details: { reasoning_tokens: 0 } } };
   } };
@@ -61,11 +69,14 @@ test('an injected agent inspects real code, reacts to an actual experiment and d
     const report = await investigate({ client, model: 'muse-spark-1.3', toolDiscovery: 'client', limits: { maxModelCalls: 16, maxToolCalls: 24 },
       requirements: { codeInspection: true, branchComparison: true, followupDecision: true, componentAcceptance: true, selectedRecoveryEvidence: true },
       onUpdate: report => saveInvestigationEvidence(directory, report.session, report) });
-    assert.equal(report.status, 'completed'); assert.equal(turn, 9); assert.equal(sawFailure, true);
+    assert.equal(report.status, 'completed'); assert.equal(turn, 7); assert.equal(sawFailure, true);
     const component = await loadAcceptedComponent(directory, report);
     assert.equal(component.source, goodSource); assert.equal(component.candidateId, candidateId);
     assert.equal(report.session.recovery.attempts.length, 2);
     assert.equal(report.reservedCostUsd, 0);
+    assert.equal(report.requests[1].recoveryStage, 'select');
+    assert.deepEqual(report.requests[4].availableTools, ['freeze_component']);
+    assert.ok(report.contextCompactions.some(item => item.reason === 'recovery-handoff' && item.stage === 'develop'));
     assert.ok(report.session.staticEvidence.some(item => item.kind === 'wat' && item.functionIndex === 9));
   } finally { await rm(directory, { recursive: true, force: true }); }
 });

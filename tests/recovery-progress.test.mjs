@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { recoveryProgress, recoveryGuidance } from '../agent/recovery-progress.mjs';
+import { recoveryProgress, recoveryGuidance, recoveryStep } from '../agent/recovery-progress.mjs';
 import { requireInvestigationConclusion } from '../agent/investigation-completion.mjs';
 
 test('recovery guidance describes missing work without supplying behavioral answers', () => {
@@ -11,6 +11,38 @@ test('recovery guidance describes missing work without supplying behavioral answ
   report.toolCalls.push({ name: 'inspect_wasm', ok: true });
   report.session.staticEvidence = [{ kind: 'function-list' }];
   assert.equal(recoveryProgress(report).next, 'code');
+});
+
+test('recovery stages use actual evaluations and never reopen failed acceptance or exhausted development', () => {
+  const recovery = { selections: [{ id: 'selection-1', evidence: { traces: [], functions: [] } }], attempts: [] };
+  const report = { toolCalls: [], session: { recovery } };
+  assert.equal(recoveryStep(report).stage, 'develop');
+  assert.match(recoveryGuidance(report, { remainingRequests: 6 }), /6 generation requests remain/);
+  const candidate = { candidateId: 'a'.repeat(64), development: { passed: false } };
+  recovery.attempts.push(candidate);
+  assert.equal(recoveryStep(report).stage, 'develop');
+  candidate.development.passed = true;
+  assert.equal(recoveryStep(report).stage, 'freeze');
+  recovery.frozenCandidateId = candidate.candidateId;
+  assert.equal(recoveryStep(report).stage, 'accept');
+  recovery.acceptanceStarted = true;
+  assert.equal(recoveryStep(report).stage, 'conclude');
+  assert.match(recoveryStep(report).action, /Acceptance failed/);
+  delete recovery.acceptanceStarted; delete recovery.frozenCandidateId;
+  candidate.development.passed = false;
+  recovery.attempts.push(structuredClone(candidate), structuredClone(candidate));
+  assert.equal(recoveryStep(report).stage, 'conclude');
+});
+
+test('inspection plus a completed intervention advances to selection before more exploration', () => {
+  const report = { toolCalls: [{ name: 'inspect_wasm', ok: true }, { name: 'run_experiment', ok: true, requestAttempt: 1,
+    result: { status: 'completed', experimentId: 'experiment-fixture', artifactRef: { id: 'a'.repeat(64) },
+      frameCount: 8, initialEditDifference: { edits: [{ value: 40 }] } } }],
+    session: { staticEvidence: [], recovery: {} } };
+  assert.equal(recoveryStep(report).stage, 'investigate');
+  report.session.staticEvidence.push({ kind: 'wat', functionIndex: 9 });
+  assert.equal(recoveryStep(report).stage, 'select');
+  assert.equal(recoveryProgress(report).milestones.find(item => item.id === 'decision').complete, false);
 });
 
 test('an accepted extraction still needs a later model action based on the actual experiment', () => {

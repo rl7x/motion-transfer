@@ -65,6 +65,20 @@
       "sha256": "4832c34d2ed41a9f8fab1c2a9b2dc9ec494586c0eb0f58099e1d8af5cca73f91",
       "title": "Measured recovery trial 3 · experiments executed; no candidate",
       "runId": "de204b97-127e-4f27-9244-42a4d89f3b17"
+    },
+    {
+      "id": "stage-guided-recovery",
+      "file": "stage-guided-recovery.json",
+      "sha256": "96b7b7d225ea5867564679e644bbe36fd2d5436b3183a3ce26f3c5970556d0a4",
+      "title": "Stage-guided recovery · 10 of 13 development checks; incomplete",
+      "runId": "dec3cd86-cbbe-48dd-8e73-36b6ad79db44"
+    },
+    {
+      "id": "development-trace-recovery",
+      "file": "development-trace-recovery.json",
+      "sha256": "9f57976512473efa0c6f94e36b364b6f1452b50b4c38ff33a643a2ba710709cf",
+      "title": "Development-trace recovery · selection too late; incomplete",
+      "runId": "6a53d6da-c6f4-4dec-a53f-c2d638769885"
     }
   ]
 }

@@ -39,7 +39,8 @@ test('recovery preflight drops stale deferred context before generation without 
     },
     respond: async request => {
       generations++; assert.equal(request.max_output_tokens, 4000);
-      assert.ok(request.tools.some(tool => tool.name === 'submit_component_candidate'));
+      assert.ok(request.tools.some(tool => tool.name === 'select_component_evidence'));
+      assert.ok(!request.tools.some(tool => tool.type === 'tool_search'));
       return { id: 'injected-context-regression', status: 'completed', output: [], usage: { input_tokens: 1000, output_tokens: 10 } };
     },
   };
@@ -50,8 +51,8 @@ test('recovery preflight drops stale deferred context before generation without 
   assert.ok(report.estimatedCostUsd > priorCost); assert.equal(report.limits.maxInputTokens, 20000);
   assert.equal(discoveryReplay(report).length, 0);
   assert.equal(report.toolDiscovery.exchanges.length, 4, 'Retain original search exchanges for audit');
-  assert.throws(() => catalog.route({ name: 'read_memory', namespace: 'memory' }), /unloaded/);
-  assert.equal(catalog.route({ name: 'submit_component_candidate' }), 'submit_component_candidate');
+  assert.throws(() => catalog.route({ name: 'read_memory', namespace: 'memory' }), /current recovery stage/);
+  assert.equal(catalog.route({ name: 'select_component_evidence' }), 'select_component_evidence');
   assert.equal(report.contextCompactions.at(-1).reason, 'deferred-context-limit');
 });
 
@@ -97,4 +98,27 @@ test('the final recorded program preserves its array-shape diagnostics without a
   assert.equal(result.error, 'Invalid array at tool.steps');
   assert.equal(report.session.recovery.attempts.length, 0);
   assert.equal(report.reservedCostUsd, 0);
+});
+
+test('compacting a trace page preserves measured inputs, motion, timers and watches while dropping repeated fingerprints', async () => {
+  const { report } = await recorded();
+  const artifact = report.session.experimentWorkbench.artifacts.find(item => item.payload.kind === 'experiment');
+  const payload = artifact.payload;
+  const result = { experimentId: payload.experimentId, artifactRef: { id: artifact.id },
+    initialEditDifference: payload.initialEditDifference, frames: payload.trace.slice(0, 4),
+    final: payload.final, totalFrames: payload.trace.length };
+  report.toolCalls.push({ name: 'read_experiment', ok: true, result, requestAttempt: 8 });
+  const original = JSON.stringify(report);
+  const text = evidenceHistory(report, { includeDiscovery: false })[1].content[0].text;
+  const compact = JSON.parse(text.slice(text.indexOf('\n') + 1)).observations.at(-1).result;
+  assert.equal(compact.artifactRef.id, artifact.id);
+  assert.deepEqual(compact.frames.map(frame => [frame.frame, frame.elapsedFrame, frame.buttons]),
+    result.frames.map(frame => [frame.frame, frame.elapsedFrame, frame.buttons]));
+  for (const branch of ['control', 'intervention']) {
+    assert.deepEqual(compact.frames.map(frame => frame[branch].normalized), result.frames.map(frame => frame[branch].normalized));
+    assert.deepEqual(compact.frames.map(frame => frame[branch].memory), result.frames.map(frame => frame[branch].memory));
+    assert.deepEqual(compact.final[branch].motion.position, result.final[branch].motion.position);
+  }
+  assert.ok(JSON.stringify(compact).length < JSON.stringify(result).length * 0.75);
+  assert.equal(JSON.stringify(report), original);
 });

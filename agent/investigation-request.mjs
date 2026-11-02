@@ -1,6 +1,6 @@
 import { evidenceHistory } from './evidence.mjs';
 import { readUsage } from './accounting.mjs';
-import { recoveryGuidance } from './recovery-progress.mjs';
+import { recoveryGuidance, recoveryStep, RECOVERY_INSTRUCTIONS } from './recovery-progress.mjs';
 
 const INSTRUCTIONS = `You are investigating a compiled game through a restricted experiment harness.
 You have only a registered cartridge, WASM-4 host documentation in tool descriptions, and the listed tools.
@@ -87,10 +87,16 @@ export async function requestInvestigationTurn({
   report, history, catalog, client, model, limits, price, turn, requirements,
   reasoningEffort, signal, checkTime, onProgress, onUpdate,
 }) {
-  const finalizing = turn === limits.maxModelCalls - 1;
+  const recovery = report.requirements?.componentAcceptance ? recoveryStep(report) : null;
+  const finalizing = turn === limits.maxModelCalls - 1 || recovery?.stage === 'conclude';
   if (finalizing) {
     history.splice(0, history.length, ...evidenceHistory(report, { includeDiscovery: false }));
     report.contextCompactions.push({ at: new Date().toISOString(), reason: 'final-conclusion' });
+  } else if (recovery && report.toolCalls.at(-1)?.ok
+    && ['select_component_evidence', 'submit_component_candidate', 'freeze_component'].includes(report.toolCalls.at(-1)?.name)) {
+    catalog.resetDeferredContext();
+    history.splice(0, history.length, ...evidenceHistory(report, { includeDiscovery: false }));
+    report.contextCompactions.push({ at: new Date().toISOString(), reason: 'recovery-handoff', stage: recovery.stage });
   }
   const branchGuidance = catalog.state.mode === 'client'
     ? 'Use managed experiments rather than manual branch creation.'
@@ -105,10 +111,12 @@ export async function requestInvestigationTurn({
     : '';
   const request = {
     model,
-    instructions: INSTRUCTIONS + turnInstructions
-      + (report.requirements?.componentAcceptance ? recoveryGuidance(report) : '') + finalInstructions,
+    instructions: (recovery ? RECOVERY_INSTRUCTIONS : INSTRUCTIONS) + turnInstructions
+      + (recovery ? recoveryGuidance(report, { remainingRequests: limits.maxModelCalls - turn }) : '') + finalInstructions,
     input: history,
-    tools: finalizing ? [] : catalog.definitions(),
+    tools: finalizing ? [] : catalog.definitions(recovery ? { stage: recovery.stage,
+      reserveDevelopment: limits.maxModelCalls - turn <= 7,
+      programsRemaining: (report.session?.experimentWorkbench?.programs?.length ?? 0) < 2 } : undefined),
     store: false,
     include: ['reasoning.encrypted_content'],
     reasoning: { effort: reasoningEffort },
@@ -139,6 +147,7 @@ export async function requestInvestigationTurn({
     throw new Error('Cost budget cannot cover the next request; generation was not started');
   }
   const record = { attempt: turn + 1, inputTokenCount: inputTokens, reservedCostUsd: reservation, status: 'pending' };
+  if (recovery) { record.recoveryStage = recovery.stage; record.availableTools = request.tools.map(tool => tool.name); }
   report.requests.push(record);
   report.reservedCostUsd += reservation;
   await onUpdate(report);

@@ -58,7 +58,7 @@ async function checkProject(project, adapter, component, { node = false, onProgr
   try {
     let nodeChecks = null;
     if (node) {
-      const result = await exec(process.execPath, ['--test', 'verify.test.mjs'], { cwd: extracted.directory, env: cleanEnv(), timeout: 15_000, maxBuffer: 128 * 1024 });
+      const result = await exec(process.execPath, ['--test', '--test-reporter=tap', 'verify.test.mjs'], { cwd: extracted.directory, env: cleanEnv(), timeout: 15_000, maxBuffer: 128 * 1024 });
       assert.match(result.stdout, /# pass 3/);
       nodeChecks = { passed: true, count: 3, output: result.stdout };
     }

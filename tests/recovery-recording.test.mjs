@@ -23,3 +23,13 @@ test('the single live recovery remains incomplete despite its real intervention 
   assert.equal(programs[0].operations.length, 0); assert.equal(programs[0].output, null);
   assert.match(programs[1].error, /not a function/);
 });
+
+test('the stage-guided trial preserves candidate failures and never claims an accepted project', async () => {
+  const { job } = (await savedInvestigations()).find(record => record.id === 'stage-guided-recovery');
+  assert.equal(job.id, 'dec3cd86-cbbe-48dd-8e73-36b6ad79db44');
+  assert.equal(job.status, 'failed'); assert.equal(job.task.integration, null);
+  assert.equal(job.report.estimatedCostUsd, 0.312026); assert.equal(job.report.reservedCostUsd, 0);
+  assert.deepEqual(job.task.development.map(item => item.passedChecks), [0, 9, 10]);
+  assert.equal(job.report.session.recovery.acceptedAttempt, undefined);
+  assert.equal(job.report.toolCalls.filter(call => call.name === 'submit_component_candidate' && call.ok).length, 3);
+});

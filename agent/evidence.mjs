@@ -3,7 +3,7 @@ export function evidenceHistory(report,{includeDiscovery=true}={}) {
   const captures=[...(report.session?.captures??[]),...(report.session?.experimentWorkbench?.artifacts??[]).flatMap(item=>item.payload.captures??[])];
   const selectedId=report.toolCalls.flatMap(call=>call.images??[]).at(-1)?.evidenceId;
   const latestCapture=captures.find(item=>item.evidenceId===selectedId)??captures.at(-1);
-  if (report.requirements?.componentAcceptance && report.toolCalls.some(call => call.name === 'run_experiment_program')) {
+  if (report.requirements?.componentAcceptance && report.session?.experimentWorkbench) {
     return recoveryEvidenceHistory(report, latestCapture, { includeDiscovery });
   }
   const observations = report.toolCalls.filter(call => call.ok).map(call => {

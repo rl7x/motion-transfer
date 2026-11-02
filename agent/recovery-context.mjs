@@ -1,14 +1,24 @@
 import { discoveryReplay } from './tool-discovery.mjs';
 
 const pick = (object, keys) => Object.fromEntries(keys.filter(key => object?.[key] !== undefined).map(key => [key, object[key]]));
-function development(report) {
+function development(report, retainFailures) {
   if (!report) return report;
   return { ...pick(report, ['passed', 'error', 'suite', 'sourceSha256', 'javascriptSha256']),
     observedCases: report.results?.length ?? 0, failedCases: report.results?.filter(result => !result.passed).length ?? 0,
-    firstFailures: report.results?.filter(result => !result.passed).slice(0, 2) ?? [],
-    scope: 'First two actual development failures; the complete finite evaluation remains in the saved report.' };
+    ...(retainFailures ? { firstFailures: report.results?.filter(result => !result.passed) ?? [] } : {}),
+    scope: retainFailures ? 'Actual first divergence for each failed development case; acceptance inputs remain withheld.'
+      : 'Earlier attempt summarized; full development results remain in the saved report.' };
 }
-function compactResult(call, retainCode) {
+function compactMeasurement(value) {
+  return { ...pick(value, ['frame', 'normalized', 'memory']),
+    ...(value?.motion !== undefined ? { motion: value.motion === null ? null
+      : Object.fromEntries(Object.entries(value.motion).filter(([key]) => key !== 'fieldHints')) } : {}) };
+}
+function compactFrame(value) {
+  return value ? { ...pick(value, ['elapsedFrame', 'frame', 'buttons', 'inputCheckpoint']),
+    control: compactMeasurement(value.control), intervention: compactMeasurement(value.intervention) } : value;
+}
+function compactResult(call, retainCode, latestCandidate) {
   const result = call.result;
   if (call.name === 'tool_search') return result;
   if (call.name === 'list_functions') return { ...pick(result, ['nextIndex', 'totalFunctions']),
@@ -16,7 +26,14 @@ function compactResult(call, retainCode) {
     functions: result.functions.map(fn => [fn.index, fn.name, fn.exports, fn.lineCount, fn.directCalleeCount, fn.memoryInstructionCount]) };
   if (call.name === 'run_experiment_program') return pick(result,
     ['programId', 'status', 'sourceSha256', 'operations', 'output', 'error', 'experiments', 'activity', 'artifactRefs', 'executionFeedback', 'inputFeedback']);
-  if (call.name === 'submit_component_candidate') return { ...result, development: development(result.development) };
+  if (call.name === 'submit_component_candidate') return { ...result, development: development(result.development, latestCandidate) };
+  if (call.name === 'read_experiment') return {
+    ...pick(result, ['experimentId', 'artifactRef', 'totalFrames']),
+    initialEditDifference: { ...pick(result.initialEditDifference, ['frame', 'edits']),
+      control: compactMeasurement(result.initialEditDifference.control), intervention: compactMeasurement(result.initialEditDifference.intervention) },
+    frames: result.frames.map(compactFrame), final: compactFrame(result.final),
+    notice: 'Actual requested frame measurements; repeated render/storage fingerprints omitted. Full evidence remains in the hash-bound artifact.',
+  };
   if (['inspect_function', 'decompile_function'].includes(call.name)) return {
     ...pick(result, ['sha256', 'evidenceId', 'index', 'name', 'signature', 'startLine', 'lineCount', 'nextLine', 'indirectCallsResolved']),
     directCallees: result.directCallees?.map(callee => pick(callee, ['index', 'sites'])),
@@ -44,8 +61,9 @@ function compactResult(call, retainCode) {
 export function recoveryEvidenceHistory(report, capture, { includeDiscovery = true } = {}) {
   const session = report.session;
   const codeWindows = new Set(report.toolCalls.filter(call => call.ok && ['inspect_function', 'decompile_function'].includes(call.name)).slice(-2));
+  const latestCandidate = report.toolCalls.findLast(call => call.ok && call.name === 'submit_component_candidate');
   const observations = report.toolCalls.map(call => ({ tool: call.name, requestAttempt: call.requestAttempt, ok: call.ok,
-    ...(call.ok ? { result: compactResult(call, !session.recovery?.attempts.length && codeWindows.has(call)) } : { error: call.error, inputFeedback: call.inputFeedback }),
+    ...(call.ok ? { result: compactResult(call, codeWindows.has(call), call === latestCandidate) } : { error: call.error, inputFeedback: call.inputFeedback }),
     ...(call.images?.length ? { images: call.images } : {}) }));
   const ledger = { observations, currentSession: {
     id: session.id, identity: session.identity,

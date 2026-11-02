@@ -124,6 +124,20 @@ export interface RecoveryTask {
   sessionId: string | null;
   candidateId: string | null;
   milestones: { id: string; label: string; complete: boolean }[];
+  development?: {
+    attempt: number;
+    passed: boolean;
+    checks: number;
+    passedChecks: number;
+    error: string | null;
+    firstFailure: {
+      name: string;
+      tick: number;
+      buttons: number;
+      expected: DevelopmentObservation;
+      actual: DevelopmentObservation;
+    } | null;
+  }[];
   integration: {
     id: string;
     componentId: string;
@@ -146,6 +160,12 @@ export interface RecoveryTask {
   humanAssistance: string[];
   assistanceScope: string;
   error: string | null;
+}
+export interface DevelopmentObservation {
+  position: { x: number; y: number };
+  ownsMotion: boolean;
+  events: string[];
+  timers?: { cooldown: number; remaining: number };
 }
 export interface NormalizedMotion {
   dx: number;

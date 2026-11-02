@@ -91,7 +91,7 @@ export function createInvestigationToolRunner({
     } catch (error) {
       if (worker?.sessionState) report.session = worker.sessionState;
       entry.error = error.message;
-      const feedback = inputDiagnostics(entry.name, entry.args) ?? recoverySelectionHelp(entry.name, report.session, entry.error);
+      const feedback = error.inputFeedback ?? inputDiagnostics(entry.name, entry.args) ?? recoverySelectionHelp(entry.name, report.session, entry.error);
       if (feedback) entry.inputFeedback = feedback;
       if (call.type === 'tool_search_call') {
         history.push(catalog.failedSearch(call), { role: 'user', content: [

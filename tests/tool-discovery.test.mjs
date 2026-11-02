@@ -6,14 +6,31 @@ import {investigate} from '../agent/investigate.mjs';
 const usage={input_tokens:1000,output_tokens:100,input_tokens_details:{cached_tokens:0},output_tokens_details:{reasoning_tokens:0}};
 const tool=(id,name,args,namespace)=>({type:'function_call',call_id:id,status:'completed',name,arguments:JSON.stringify(args),...(namespace?{namespace}:{})});
 const search={type:'tool_search_call',id:'native-search',execution:'client',call_id:'native-search-call',status:'completed',arguments:{namespace:'execution'}};
-test('recovery keeps inspection and development directly available while deferring specialized tools',()=>{
+test('recovery exposes direct evidence tools, then development and separate freeze/accept stages',()=>{
   const catalog=createToolDiscovery({mode:'client',model:'muse-spark-1.3',profile:'recovery'});
   const definitions=catalog.definitions();
-  for(const name of ['inspect_function','list_functions','select_component_evidence','submit_component_candidate','freeze_component','accept_component']){
+  for(const name of ['inspect_function','list_functions','select_component_evidence','trace_writers','read_experiment']){
     assert.ok(definitions.some(tool=>tool.name===name));assert.equal(catalog.route({name}),name);
   }
-  assert.ok(!definitions.some(tool=>tool.name==='trace_writers'));
-  assert.throws(()=>catalog.route({name:'trace_writers',namespace:'static'}),/unloaded/);
+  assert.ok(!definitions.some(tool=>tool.type==='tool_search'||tool.name==='submit_component_candidate'));
+  assert.throws(()=>catalog.load(search),/no tool search/);
+  assert.throws(()=>catalog.route({name:'freeze_component'}),/current recovery stage/);
+  assert.ok(!catalog.definitions({programsRemaining:false}).some(tool=>tool.name==='run_experiment_program'));
+  const selection=catalog.definitions({stage:'select'});
+  assert.ok(selection.some(tool=>tool.name==='select_component_evidence'));
+  assert.ok(selection.some(tool=>tool.name==='read_experiment'));
+  assert.ok(!selection.some(tool=>tool.name==='run_experiment'));
+  assert.deepEqual(catalog.definitions({stage:'select',reserveDevelopment:true}).map(tool=>tool.name),['select_component_evidence']);
+  assert.throws(()=>catalog.route({name:'read_experiment'}),/current recovery stage/);
+  const development=catalog.definitions({stage:'develop'});
+  assert.ok(development.some(tool=>tool.name==='submit_component_candidate'));
+  assert.ok(!development.some(tool=>tool.name==='list_functions'));
+  assert.equal(catalog.route({name:'submit_component_candidate'}),'submit_component_candidate');
+  assert.deepEqual(catalog.definitions({stage:'freeze'}).map(tool=>tool.name),['freeze_component']);
+  assert.throws(()=>catalog.route({name:'submit_component_candidate'}),/current recovery stage/);
+  assert.deepEqual(catalog.definitions({stage:'accept'}).map(tool=>tool.name),['accept_component']);
+  assert.throws(()=>catalog.route({name:'accept_component',namespace:'recovery'}),/directly listed/);
+  assert.deepEqual(catalog.definitions({stage:'conclude'}),[]);
   assert.equal(catalog.state.profile,'recovery');
 });
 test('client-native discovery defers focused definitions and routes only loaded namespaces',()=>{

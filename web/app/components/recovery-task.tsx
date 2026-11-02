@@ -1,5 +1,9 @@
-import type { RecoveryTask } from '../types';
+import type { DevelopmentObservation, RecoveryTask } from '../types';
 import { JsonDetails } from './shared';
+
+function observation(value: DevelopmentObservation) {
+  return `Position (${value.position.x.toFixed(2)}, ${value.position.y.toFixed(2)}) · ${value.ownsMotion ? 'dash owns movement' : 'ordinary movement'} · ${value.events.join(', ') || 'no event'}${value.timers ? ` · cooldown ${value.timers.cooldown}, remaining ${value.timers.remaining}` : ''}`;
+}
 
 export function RecoveryTaskView({
   task,
@@ -14,6 +18,9 @@ export function RecoveryTaskView({
 }) {
   const m = task?.measurements;
   const base = task?.integration ? '/recovery-projects/' + task.integration.id : null;
+  const active =
+    task && !['ready', 'recovery-incomplete', 'integration-failed'].includes(task.status);
+  const next = active ? task.milestones.find((item) => !item.complete) : null;
   return (
     <div className="recovery-task" id="recovery-task">
       <p className="eyebrow">DEVELOPER REQUEST / COMPILED REFERENCE TO WORKING PROJECT</p>
@@ -52,6 +59,52 @@ export function RecoveryTaskView({
               </li>
             ))}
           </ol>
+          {next && (
+            <p className="recovery-next" role="status">
+              Working toward: <strong>{next.label}</strong>
+            </p>
+          )}
+          {Boolean(task.development?.length) && (
+            <div className="recovery-development" aria-label="Actual candidate development results">
+              <h4>What the checks caught</h4>
+              <p>
+                Each candidate runs against the compiled donor. Failed checks guide the next
+                revision.
+              </p>
+              {task.development?.map((attempt) => (
+                <article key={attempt.attempt} data-passed={attempt.passed}>
+                  <strong>
+                    Candidate {attempt.attempt} ·{' '}
+                    {attempt.passed ? 'Development passed' : 'Mismatch found'}
+                  </strong>
+                  <p>
+                    {attempt.checks > 0
+                      ? `${attempt.passedChecks} of ${attempt.checks} development checks passed`
+                      : 'No behavioral checks completed'}
+                  </p>
+                  {attempt.error && <p>{attempt.error}</p>}
+                  {attempt.firstFailure && (
+                    <details open={!attempt.passed && attempt.attempt === m?.developmentAttempts}>
+                      <summary>
+                        First mismatch: {attempt.firstFailure.name} · update{' '}
+                        {attempt.firstFailure.tick}
+                      </summary>
+                      <dl>
+                        <dt>Compiled donor</dt>
+                        <dd>{observation(attempt.firstFailure.expected)}</dd>
+                        <dt>This candidate</dt>
+                        <dd>{observation(attempt.firstFailure.actual)}</dd>
+                      </dl>
+                    </details>
+                  )}
+                </article>
+              ))}
+              <p className="saved-note">
+                Development is the repair loop. Separate acceptance and project checks still
+                determine whether a download is available.
+              </p>
+            </div>
+          )}
           {m && (
             <p id="recovery-task-measurements">
               {m.modelRequests} model requests · ${m.estimatedCostUsd.toFixed(4)} estimated · $

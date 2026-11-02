@@ -21,6 +21,14 @@ test('the saved Meta attempt shows its real contrast and incomplete recovery wit
     assert.equal(await page.locator('#recovery-play').count(), 0);
     assert.match(await page.locator('#investigation-conclusion').textContent(), /No component candidate submitted/);
     assert.equal(await page.locator('#investigation-report').getAttribute('href'), '/api/investigations/saved/recovery-handoff');
+    await page.locator('.recorded-recovery').filter({ hasText: 'Stage-guided recovery' }).click();
+    await page.waitForFunction(() => document.querySelectorAll('.recovery-development article').length === 3);
+    const development = await page.locator('.recovery-development').textContent();
+    assert.match(development, /10 of 13 development checks passed/);
+    assert.match(development, /Compiled donor/);
+    assert.match(development, /This candidate/);
+    assert.match(development, /startup-held · update 10/);
+    assert.equal(await page.locator('#recovery-download').count(), 0);
     assert.deepEqual(posts, []); assert.deepEqual(errors, []);
   } finally { await harness.close(); }
 });
@@ -48,6 +56,9 @@ test('the developer task publishes only the new checked project and reconnects w
     release();
     await page.waitForFunction(() => document.querySelector('#recovery-task-status')?.textContent.includes('CHECKED PROJECT READY'), {}, { timeout: 60000 });
     assert.equal(modelRuns, 1);
+    assert.match(await page.locator('.recovery-development').textContent(), /Candidate 1 · Development passed/);
+    const development = report.session.recovery.attempts[0].development;
+    assert.match(await page.locator('.recovery-development').textContent(), new RegExp(`${development.results.length} of ${development.results.length} development checks passed`));
     assert.match(await page.locator('#recovery-task-measurements').textContent(), /0 model requests/);
     const download = await page.locator('#recovery-download').getAttribute('href');
     const archive = await fetch(harness.origin + download);
