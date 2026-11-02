@@ -5,8 +5,8 @@ import { buildRoadsterFrame } from '../roadster/build.mjs';
 import { digest } from '../component/build.mjs';
 import { ROADSTER_INTENT } from '../roadster/port.mjs';
 
-export async function verifyRoadsterBrowser(source,intent=ROADSTER_INTENT,{onProgress=()=>{}}={}){
-  const original=await buildRoadsterFrame(),transfer=await buildRoadsterFrame({source,intent});
+export async function verifyRoadsterBrowser(source,intent=ROADSTER_INTENT,{onProgress=()=>{},componentRef}={}){
+  const original=await buildRoadsterFrame({componentRef}),transfer=await buildRoadsterFrame({source,intent,componentRef});
   const server=createServer((req,res)=>{res.setHeader('Content-Type','text/html');res.setHeader('Content-Security-Policy','sandbox allow-scripts');res.end(req.url.startsWith('/original')?original.html:transfer.html);});
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const origin='http://127.0.0.1:'+server.address().port;
   let browser;const results=[],errors=[];
