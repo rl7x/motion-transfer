@@ -6,7 +6,7 @@ import { createToolDiscovery, discoveryReplay } from '../agent/tool-discovery.mj
 import { requestInvestigationTurn } from '../agent/investigation-request.mjs';
 import { PRICES } from '../agent/accounting.mjs';
 
-const recorded = async () => JSON.parse(await readFile(new URL('../lab/recordings/benchmark-recovery-1.json', import.meta.url)));
+const recorded = async () => JSON.parse(await readFile(new URL('../lab/recordings/benchmark-recovery-one.json', import.meta.url)));
 test('recorded context-limit failure compacts actual experiments once and keeps errors and identities', async () => {
   const { report } = await recorded(), original = JSON.stringify(report);
   const history = evidenceHistory(report, { includeDiscovery: false });
