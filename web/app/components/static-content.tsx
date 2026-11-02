@@ -46,7 +46,7 @@ export function Intro() {
         </div>
         <p className="eyebrow">EXTRACTED FROM DASHY DANGO</p>
         <h2>Borrow the dash ↠</h2>
-        <p>One recovered move, with its own burst and recharge. Try it in the car below.</p>
+        <p>One saved recovery, with its own burst and recharge. Try it in the car below.</p>
         <div className="ability-links">
           <a href="/donor/play" target="_blank" rel="noreferrer">
             Play Dashy Dango ↗
@@ -138,9 +138,9 @@ export function Footer() {
         Dashy Dango by willGuimont · PAKU PAKU &amp; JUJUMP by Kenta Cho / ABA Games · RDSTR Stunts
         by sebayaki · <a href="/licenses">PAKU notices</a> ·{' '}
         <a href="/jujump/licenses">JUJUMP notices</a> ·{' '}
-        <a href="/roadster/notices">Roadster notices</a>
+        <a href="/roadster/notices">Roadster notices</a> · <a href="#privacy-note">Privacy</a>
       </span>
-      <span>Local preview · one recovered dash, different worlds</span>
+      <span>Local preview · adults 18 and older · one saved dash, different worlds</span>
     </footer>
   );
 }

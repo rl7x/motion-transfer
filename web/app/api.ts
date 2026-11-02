@@ -1,4 +1,10 @@
+import { injectedResource } from './data-source';
+
 export async function fetchJson<T>(path: string, options?: RequestInit): Promise<T> {
+  if ((options?.method ?? 'GET') === 'GET' && typeof window !== 'undefined') {
+    const injected = injectedResource(path);
+    if (injected !== undefined) return injected as T;
+  }
   const response = await fetch(path, options);
   const body: unknown = await response.json();
   if (!response.ok) {

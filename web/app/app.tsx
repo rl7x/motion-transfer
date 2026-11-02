@@ -2,6 +2,8 @@ import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
 import { TransferProvider } from './transfer-context';
 import { useLabStatus } from './hooks/use-job';
+import { AgeAcknowledgment, AgeProvider } from './components/age-acknowledgment';
+import { PrivacyNote } from './components/privacy-note';
 import { Header, Intro, RecoveryDetails, Footer } from './components/static-content';
 import { Destinations, Players } from './components/players';
 import { DeveloperTask } from './components/developer-task';
@@ -38,6 +40,7 @@ function Experience() {
   return (
     <main>
       <Header />
+      <AgeAcknowledgment />
       <Intro />
       <Players />
       <RemixPanel status={status} />
@@ -52,6 +55,7 @@ function Experience() {
         <RecoveryDetails />
         <ArtifactDetails />
       </details>
+      <PrivacyNote />
       <Footer />
     </main>
   );
@@ -59,9 +63,11 @@ function Experience() {
 export function App() {
   return (
     <AppBoundary>
-      <TransferProvider>
-        <Experience />
-      </TransferProvider>
+      <AgeProvider>
+        <TransferProvider>
+          <Experience />
+        </TransferProvider>
+      </AgeProvider>
     </AppBoundary>
   );
 }

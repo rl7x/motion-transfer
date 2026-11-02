@@ -90,8 +90,15 @@ export interface GuidedState {
   trace?: unknown[];
   error?: string;
 }
+export type GenerationMode = 'local' | 'public-standard' | 'playback-only';
+/** Static playback injects GET payloads here. Missing keys still use the network. */
+export interface MotionDataSource {
+  generation?: GenerationMode;
+  resources?: Record<string, unknown>;
+}
 declare global {
   interface Window {
+    __MOTION_TRANSFER__?: MotionDataSource;
     currentDestination?: DestinationId;
     currentArtifact?: Artifact | null;
     currentRoadsterArtifact?: Artifact | null;

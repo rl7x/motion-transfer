@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { errorMessage, fetchJson } from './api';
+import { describeShare, type ShareMessage } from './data-source';
 import type { Ability, Artifact, Destination, DestinationId } from './types';
 
 interface TransferState {
@@ -16,6 +17,7 @@ interface TransferController extends TransferState {
   selectDestination(id: DestinationId): Promise<void>;
   openRoadsterArtifact(id: string): Promise<void>;
   savedRoadsterId?: string;
+  shareMessage: ShareMessage | null;
   share(): Promise<void>;
 }
 const TransferContext = createContext<TransferController | null>(null);
@@ -45,6 +47,7 @@ export function TransferProvider({ children }: { children: ReactNode }) {
   });
   const cache = useRef<{ paku?: Artifact; roadster?: Artifact }>({});
   const version = useRef(0);
+  const [shareMessage, setShareMessage] = useState<ShareMessage | null>(null);
   const choose = useCallback(
     (destination: Destination, artifact: Artifact | null, navigate = false) => {
       version.current++;
@@ -56,6 +59,7 @@ export function TransferProvider({ children }: { children: ReactNode }) {
         error: null,
         note: `${destination.name}: playing a saved ${artifact?.parentArtifactId ? 'remix' : 'transfer'}. Choosing a destination makes no model request.`,
       }));
+      setShareMessage(null);
       if (navigate)
         history.pushState(
           {},
@@ -206,19 +210,26 @@ export function TransferProvider({ children }: { children: ReactNode }) {
           ? '/play/' + artifact.id
           : '/?destination=' + destination.id;
     const url = new URL(path, location.origin).href;
+    let copied = false;
     try {
+      if (!navigator.clipboard?.writeText) throw Error('Clipboard unavailable');
       await navigator.clipboard.writeText(url);
-      setState((current) => ({
-        ...current,
-        note: 'Playable link copied. This local server must be available.',
-      }));
+      copied = true;
     } catch {
-      setState((current) => ({ ...current, note: url }));
+      /* Leave the address visible when the clipboard is blocked or unavailable. */
     }
+    setShareMessage(describeShare(url, copied));
   }
   return (
     <TransferContext
-      value={{ ...state, selectDestination, openRoadsterArtifact, savedRoadsterId, share }}
+      value={{
+        ...state,
+        selectDestination,
+        openRoadsterArtifact,
+        savedRoadsterId,
+        shareMessage,
+        share,
+      }}
     >
       {children}
     </TransferContext>

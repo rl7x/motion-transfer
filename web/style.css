@@ -201,7 +201,11 @@ button:hover {
   background: #323a30;
 }
 button:focus-visible,
-a:focus-visible {
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+summary:focus-visible {
   outline: 2px solid #c3ed89;
   outline-offset: 4px;
 }
@@ -1521,7 +1525,10 @@ body.player-expanded::before {
 }
 @media (max-width: 600px) {
   .compact-ability {
-    display: none;
+    padding: 12px 14px;
+  }
+  .compact-ability h2 {
+    font-size: 20px;
   }
   .intro h1 {
     font-size: 32px;
@@ -1536,9 +1543,127 @@ body.player-expanded::before {
   .challenge-section iframe {
     height: 370px;
   }
+  .challenge-controls {
+    flex-wrap: wrap;
+  }
   .challenge-controls button {
     flex: 1 1 auto;
     padding: 10px;
+  }
+}
+.age-acknowledgment,
+.privacy-note {
+  margin: 16px 0;
+  padding: 12px 14px;
+  border: 1px solid #51663d;
+  border-radius: 10px;
+  background: #1a2117;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.age-acknowledgment {
+  margin: 8px 0 10px;
+  padding: 7px 12px;
+}
+.age-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+}
+.age-acknowledgment label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.age-acknowledgment p,
+.age-row a {
+  margin: 0;
+}
+.age-policy {
+  margin-top: 2px;
+  color: #c5d0c2;
+}
+.age-acknowledgment input {
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  flex: none;
+}
+.age-required {
+  color: #edc48a;
+}
+.supported-capabilities,
+.inherited-intent {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #c5d0c2;
+}
+.supported-capabilities {
+  padding-left: 1.1rem;
+}
+.inherited-intent {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px 12px;
+}
+.inherited-intent dt {
+  color: #a2b0a5;
+}
+.challenge-card .saved-note {
+  margin: 8px 16px;
+  color: #aeb7ad;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.share-status {
+  margin: 2px 16px 0;
+  color: #8f998c;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.share-status p {
+  margin: 0;
+}
+.share-fallback {
+  display: block;
+  width: min(100%, 420px);
+  max-width: 100%;
+  margin-top: 4px;
+  font: inherit;
+  font-size: 10px;
+  color: #c5d0c2;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #3d463c;
+  border-radius: 0;
+  padding: 2px 0;
+}
+@media (max-width: 390px) {
+  .toolbar,
+  .challenge-secondary,
+  header,
+  footer,
+  .card-heading {
+    flex-wrap: wrap;
+  }
+  .edition {
+    max-width: none;
+  }
+  .age-acknowledgment,
+  .privacy-note,
+  .share-status {
+    margin-inline: 0;
+  }
+  .challenge-section .play-area,
+  .challenge-section iframe {
+    height: 280px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 .benchmark-campaign {

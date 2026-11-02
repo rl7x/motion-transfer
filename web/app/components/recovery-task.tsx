@@ -34,8 +34,8 @@ export function RecoveryTaskView({
         {reconnect ? 'Reconnect to recovery ↗' : 'Recover for JUJUMP ↗'}
       </button>
       <p className="saved-note">
-        Starts a fresh Meta task, up to $0.50. The saved transfers above use the earlier recovered
-        component. No successful result is substituted if this task fails.
+        Starts a fresh Meta task, up to $0.50, after the 18+ confirmation. The saved transfers above
+        use the earlier recovered component. No successful result is substituted if this task fails.
       </p>
       {task && (
         <>

@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTransfer } from '../transfer-context';
+import { readGenerationMode } from '../data-source';
 import { useResource } from '../hooks/use-resource';
 import { HoldButton } from './hold-button';
 import { useExpanded, ExpandButton } from './player-expansion';
+import { ShareStatus } from './share-status';
 
 interface ChallengeInfo {
   id: string;
@@ -230,9 +232,16 @@ export function ChallengePlayer() {
             </a>
           )}
         </div>
+        <ShareStatus id="challenge-share-status" fallback />
+        {readGenerationMode() !== 'playback-only' && (
+          <p id="audience-notice" className="saved-note">
+            The download is a playable game for adults 18 and older. It makes no model request.
+            Opened on its own, a Roadster file shows that notice.
+          </p>
+        )}
         <p className="saved-note" id="guided-progress">
-          A saved challenge. Borrowing and replaying make no model request. The car&apos;s native
-          physics, landing and collisions stay active.
+          Saved ability. Borrowing and replaying make no model request. The car&apos;s native
+          physics, landing, and collisions stay active.
         </p>
         <p className="controls" id="transfer-controls">
           An assisted launch drives the car. You choose the dash timing with X or the ability
