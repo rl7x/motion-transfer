@@ -23,6 +23,7 @@
     "verify:guided": "node scripts/verify-guided-demo.mjs",
     "benchmark:developer": "node scripts/benchmark-developer.mjs",
     "benchmark:verify": "node scripts/verify-developer-benchmark.mjs",
+    "score:candidate": "node scripts/score-candidate.mjs",
     "compare:transfers": "node scripts/compare-transfers.mjs",
     "tools:smoke": "node scripts/tools-smoke.mjs",
     "tools:session-smoke": "node scripts/investigation-smoke.mjs",
