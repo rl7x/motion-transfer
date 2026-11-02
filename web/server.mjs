@@ -8,8 +8,9 @@ import { PAKU_POLICY } from '../transfer/paku-policy.mjs';
 import { experienceAssets } from './experience-assets.mjs';
 import { loadSavedRoadster } from '../roadster/saved.mjs';
 import { buildFrontend } from './build.mjs';
+import { developerBenchmarkAssets } from '../benchmark/assets.mjs';
 
-export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapter, remixes, lab, allowUnverified = false } = {}) {
+export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapter, remixes, lab, allowUnverified = false, benchmarks = developerBenchmarkAssets() } = {}) {
   if (adapter === undefined) adapter = await loadPakuTransfer({ optional: true });
   const recipient = await loadPakuPaku();
   const recovered = await loadRecoveredMotion();
@@ -75,6 +76,13 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
       json(202, await remixes.submit(JSON.parse(body))); return;
     }
     if (!['GET', 'HEAD'].includes(request.method)) { send(404, 'text/plain', 'Not found'); return; }
+    if (/^\/(api\/)?developer-benchmarks(?:\/|$)/.test(path)) {
+      const asset = await benchmarks(path);
+      if (!asset) { send(404, 'text/plain', 'Benchmark not found'); return; }
+      if (asset.sandbox) response.setHeader('Content-Security-Policy', 'sandbox allow-scripts');
+      if (asset.download) response.setHeader('Content-Disposition', `attachment; filename="${asset.download}"`);
+      send(200, asset.type, asset.body); return;
+    }
     if(path==='/api/lab/status'){json(200,lab?.status()??{enabled:false,activeRunId:null,budget:null});return;}
     const labRun=path.match(/^\/api\/(investigations|roadster\/transfers)\/([a-f0-9-]{36})$/);
     if(labRun&&lab){const job=await lab.run(labRun[2]);if(job.kind!==(labRun[1]==='investigations'?'investigation':'roadster')){json(404,{error:'Run not found'});return;}json(200,job);return;}

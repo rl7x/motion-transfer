@@ -1402,3 +1402,10 @@ body.player-expanded::before {
 .recovery-milestones li[data-complete='true'] {
   color: #c5eb91;
 }
+.benchmark-campaign {
+  margin-top: 1.5rem;
+  overflow-wrap: anywhere;
+}
+.benchmark-attempt {
+  margin: 1rem 0;
+}
