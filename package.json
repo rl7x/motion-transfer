@@ -4,6 +4,10 @@
   "private": true,
   "description": "Local WASM-4 player for game targets",
   "scripts": {
+    "typecheck": "tsc -p web/tsconfig.json --noEmit",
+    "lint": "eslint web/app",
+    "format": "prettier --write web/app web/style.css web/index.html web/tsconfig.json eslint.config.mjs .prettierrc.json",
+    "format:check": "prettier --check web/app web/style.css web/index.html web/tsconfig.json eslint.config.mjs .prettierrc.json",
     "dev": "w4 run targets/dashy-dango/cart.wasm --no-qr",
     "dev:transfer": "node scripts/preview.mjs",
     "replay": "node scripts/replay.mjs",
@@ -31,5 +35,9 @@
     "three": "0.186.1",
     "wabt": "1.0.39",
     "wasm4": "2.7.1"
+  },
+  "dependencies": {
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   }
 }
