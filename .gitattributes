@@ -1,3 +1,10 @@
 # Preserve the pinned upstream bytes, including its original CRLF line endings.
 recipients/paku-paku/upstream/* -text whitespace=cr-at-eol
 recipients/jujump/upstream/* -text whitespace=cr-at-eol
+
+# Pinned third-party sources remain in the repository for reproducible builds.
+recipients/*/upstream/** linguist-vendored
+
+# Self-contained players bundle compiled JavaScript, styles, and assets.
+# Keep recovered component/adapter source visible in language stats and diffs.
+transfers/roadster/versions/*/frame.html linguist-generated
