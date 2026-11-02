@@ -466,14 +466,39 @@ function RecipientPair() {
   );
 }
 export function Players() {
-  const { destination, revision } = useTransfer();
+  const { destination, revision, error } = useTransfer();
   return (
     <section
       className="games"
       aria-label="Donor, recipient before transfer, recipient after transfer"
     >
       <DonorPlayer />
-      {destination && <RecipientPair key={revision} />}
+      {destination ? (
+        <RecipientPair key={revision} />
+      ) : (
+        <>
+          <article className="game-card" aria-busy={!error}>
+            <div className="card-heading">
+              <h2>Recipient</h2>
+              <span className="pill neutral">BEFORE</span>
+            </div>
+            <div className="play-area">
+              <p className="controls">{error ?? 'Loading the recipient…'}</p>
+            </div>
+          </article>
+          <article className="game-card transferred" aria-busy={!error}>
+            <div className="card-heading">
+              <h2>Recipient + dash</h2>
+              <span className="pill" id="transfer-status" role="status">
+                {error ? 'UNAVAILABLE' : 'LOADING'}
+              </span>
+            </div>
+            <div className="play-area">
+              <p className="controls">{error ?? 'Loading the saved transfer…'}</p>
+            </div>
+          </article>
+        </>
+      )}
     </section>
   );
 }
