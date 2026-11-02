@@ -44,6 +44,13 @@
       "sha256": "1578cf51ba467fd0077edf4a21feaa90fdfcedfcf738a3c7e0bf465a7f5e787f",
       "title": "Meta recovery attempt · incomplete",
       "runId": "5e570dca-e9aa-4b69-9d65-74d69bcc6e5f"
+    },
+    {
+      "id": "benchmark-recovery-1",
+      "file": "benchmark-recovery-1.json",
+      "sha256": "7cf3ef3dfcb2fbcb8659fe8916b8e67ca0ade1df8e0c4cf222823264990fd8de",
+      "title": "Measured recovery trial 1 · code inspected; context limit before candidate",
+      "runId": "44282d6e-ac4d-4097-b637-10b709001363"
     }
   ]
 }
