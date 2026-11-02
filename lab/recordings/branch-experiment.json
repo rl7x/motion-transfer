@@ -1,0 +1,4299 @@
+{
+  "id": "bec1a9ce-8b91-423e-9b01-e252516223bb",
+  "kind": "investigation",
+  "request": {
+    "idempotencyKey": "340d58c7-9f92-4a6c-a79a-4afdd42608e5",
+    "questionId": "memory"
+  },
+  "status": "failed",
+  "events": [
+    {
+      "sequence": 1,
+      "status": "queued",
+      "at": "2026-11-01T21:07:48.215Z"
+    },
+    {
+      "sequence": 2,
+      "status": "generating",
+      "at": "2026-11-01T21:07:48.216Z"
+    },
+    {
+      "sequence": 3,
+      "status": "failed",
+      "at": "2026-11-01T21:08:21.159Z"
+    }
+  ],
+  "report": {
+    "schemaVersion": 1,
+    "status": "failed",
+    "model": "muse-spark-1.3",
+    "question": "Use persistent investigation tools to test a motion hypothesis of your choice. Inspect actual code, enter gameplay, choose a checkpoint, fork an unchanged control and experimental branch, select a bounded typed mutation, and compare identical inputs. You may use explicitly human-mapped field hints, but must not claim you discovered their layout. Base your next action on the returned measurements. Capture one informative framebuffer if useful. Record supported/rejected/unresolved findings and cite the comparison ID in your conclusion. Prioritize one complete controlled experiment; do not browse the entire binary.",
+    "limits": {
+      "maxModelCalls": 12,
+      "maxToolCalls": 24,
+      "maxOutputTokens": 2000,
+      "maxInputTokens": 20000,
+      "maxCostUsd": 0.5,
+      "timeoutMs": 180000
+    },
+    "startedAt": "2026-11-01T21:07:48.218Z",
+    "target": {
+      "id": "target-001",
+      "sha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "bytes": 47101
+    },
+    "pricingPerMillionTokens": {
+      "input": 1.25,
+      "cached": 0.15,
+      "output": 4.25
+    },
+    "usage": {
+      "inputTokens": 188389,
+      "outputTokens": 4081,
+      "cachedInputTokens": 625,
+      "reasoningTokens": 2329
+    },
+    "estimatedCostUsd": 0.25214299999999995,
+    "reservedCostUsd": 0,
+    "requests": [
+      {
+        "attempt": 1,
+        "inputTokenCount": 7754,
+        "reservedCostUsd": 0.0181925,
+        "status": "completed",
+        "usage": {
+          "inputTokens": 7611,
+          "outputTokens": 168,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 66
+        },
+        "responseId": "resp_6ae7aa25f849cdc7a93748c9",
+        "estimatedCostUsd": 0.01022775
+      },
+      {
+        "attempt": 2,
+        "inputTokenCount": 8130,
+        "reservedCostUsd": 0.0186625,
+        "status": "completed",
+        "usage": {
+          "inputTokens": 7987,
+          "outputTokens": 76,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 11
+        },
+        "responseId": "resp_6ae7aa27211f40df43b54468",
+        "estimatedCostUsd": 0.01030675
+      },
+      {
+        "attempt": 3,
+        "inputTokenCount": 11750,
+        "reservedCostUsd": 0.0231875,
+        "status": "completed",
+        "usage": {
+          "inputTokens": 11607,
+          "outputTokens": 95,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 14
+        },
+        "responseId": "resp_6ae7aa287b3ff1b7db6340b7",
+        "estimatedCostUsd": 0.0149125
+      },
+      {
+        "attempt": 4,
+        "inputTokenCount": 15146,
+        "reservedCostUsd": 0.0274325,
+        "status": "completed",
+        "usage": {
+          "inputTokens": 15003,
+          "outputTokens": 279,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 115
+        },
+        "responseId": "resp_6ae7aa2b35224dc027b84975",
+        "estimatedCostUsd": 0.0199395
+      },
+      {
+        "attempt": 5,
+        "inputTokenCount": 18187,
+        "reservedCostUsd": 0.03123375,
+        "status": "completed",
+        "usage": {
+          "inputTokens": 18044,
+          "outputTokens": 431,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 342
+        },
+        "responseId": "resp_6ae7aa2eb04e8942e4f744f2",
+        "estimatedCostUsd": 0.02438675
+      },
+      {
+        "attempt": 6,
+        "inputTokenCount": 18855,
+        "reservedCostUsd": 0.03206875,
+        "status": "completed",
+        "usage": {
+          "inputTokens": 18712,
+          "outputTokens": 99,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 5
+        },
+        "responseId": "resp_6ae7aa2f35f949c3b3ab443d",
+        "estimatedCostUsd": 0.02381075
+      },
+      {
+        "attempt": 7,
+        "inputTokenCount": 18993,
+        "reservedCostUsd": 0.03224125,
+        "status": "completed",
+        "usage": {
+          "inputTokens": 18850,
+          "outputTokens": 174,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 80
+        },
+        "responseId": "resp_6ae7aa319652d5d6491e4294",
+        "estimatedCostUsd": 0.024302
+      },
+      {
+        "attempt": 8,
+        "inputTokenCount": 19440,
+        "reservedCostUsd": 0.0328,
+        "status": "completed",
+        "usage": {
+          "inputTokens": 19297,
+          "outputTokens": 421,
+          "cachedInputTokens": 625,
+          "reasoningTokens": 312
+        },
+        "responseId": "resp_6ae7aa36b4d7b6fe00af4354",
+        "estimatedCostUsd": 0.025223
+      },
+      {
+        "attempt": 9,
+        "inputTokenCount": 19632,
+        "reservedCostUsd": 0.03304,
+        "status": "completed",
+        "usage": {
+          "inputTokens": 19489,
+          "outputTokens": 583,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 461
+        },
+        "responseId": "resp_6ae7aa391a27e2483e634585",
+        "estimatedCostUsd": 0.026839
+      },
+      {
+        "attempt": 10,
+        "inputTokenCount": 19632,
+        "reservedCostUsd": 0.03304,
+        "status": "completed",
+        "usage": {
+          "inputTokens": 19489,
+          "outputTokens": 594,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 450
+        },
+        "responseId": "resp_6ae7aa3e70a2083e2aa54d3d",
+        "estimatedCostUsd": 0.02688575
+      },
+      {
+        "attempt": 11,
+        "inputTokenCount": 19632,
+        "reservedCostUsd": 0.03304,
+        "status": "completed",
+        "usage": {
+          "inputTokens": 19489,
+          "outputTokens": 463,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 341
+        },
+        "responseId": "resp_6ae7aa414d1bc0ac016a4138",
+        "estimatedCostUsd": 0.026329
+      },
+      {
+        "attempt": 12,
+        "inputTokenCount": 12954,
+        "reservedCostUsd": 0.0246925,
+        "status": "completed",
+        "usage": {
+          "inputTokens": 12811,
+          "outputTokens": 698,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 132
+        },
+        "responseId": "resp_6ae7aa45a3b3292b9448457f",
+        "estimatedCostUsd": 0.01898025
+      }
+    ],
+    "turns": [
+      {
+        "responseId": "resp_6ae7aa25f849cdc7a93748c9",
+        "model": "muse-spark-1.3",
+        "status": "completed",
+        "messages": [
+          {
+            "phase": "commentary",
+            "text": "Starting a controlled motion test \u2014 inspecting code then measuring gameplay.",
+            "refused": false
+          }
+        ]
+      },
+      {
+        "responseId": "resp_6ae7aa27211f40df43b54468",
+        "model": "muse-spark-1.3",
+        "status": "completed",
+        "messages": []
+      },
+      {
+        "responseId": "resp_6ae7aa287b3ff1b7db6340b7",
+        "model": "muse-spark-1.3",
+        "status": "completed",
+        "messages": []
+      },
+      {
+        "responseId": "resp_6ae7aa2b35224dc027b84975",
+        "model": "muse-spark-1.3",
+        "status": "completed",
+        "messages": []
+      },
+      {
+        "responseId": "resp_6ae7aa2eb04e8942e4f744f2",
+        "model": "muse-spark-1.3",
+        "status": "completed",
+        "messages": [
+          {
+            "phase": "commentary",
+            "text": "Gameplay measured \u2014 now setting up a controlled position experiment.",
+            "refused": false
+          }
+        ]
+      },
+      {
+        "responseId": "resp_6ae7aa2f35f949c3b3ab443d",
+        "model": "muse-spark-1.3",
+        "status": "completed",
+        "messages": []
+      },
+      {
+        "responseId": "resp_6ae7aa319652d5d6491e4294",
+        "model": "muse-spark-1.3",
+        "status": "completed",
+        "messages": []
+      },
+      {
+        "responseId": "resp_6ae7aa36b4d7b6fe00af4354",
+        "model": "muse-spark-1.3",
+        "status": "completed",
+        "messages": [
+          {
+            "phase": "commentary",
+            "text": "Testing your motion idea with a controlled branch comparison \u2014 first mapping code and forking experiment arms.",
+            "refused": false
+          }
+        ]
+      },
+      {
+        "responseId": "resp_6ae7aa391a27e2483e634585",
+        "model": "muse-spark-1.3",
+        "status": "completed",
+        "messages": [
+          {
+            "phase": "commentary",
+            "text": "Testing your motion idea with a controlled branch comparison \u2014 forking the experiment and inspecting the motion code.",
+            "refused": false
+          }
+        ]
+      },
+      {
+        "responseId": "resp_6ae7aa3e70a2083e2aa54d3d",
+        "model": "muse-spark-1.3",
+        "status": "completed",
+        "messages": [
+          {
+            "phase": "commentary",
+            "text": "Testing your motion hypothesis with a controlled branch comparison \u2014 forking the next experiment.",
+            "refused": false
+          }
+        ]
+      },
+      {
+        "responseId": "resp_6ae7aa414d1bc0ac016a4138",
+        "model": "muse-spark-1.3",
+        "status": "completed",
+        "messages": [
+          {
+            "phase": "commentary",
+            "text": "Testing a motion hypothesis with a controlled branch comparison \u2014 forking an experimental branch to perturb world position.",
+            "refused": false
+          }
+        ]
+      },
+      {
+        "responseId": "resp_6ae7aa45a3b3292b9448457f",
+        "model": "muse-spark-1.3",
+        "status": "completed",
+        "messages": [
+          {
+            "phase": "final",
+            "text": "Concise conclusion from recorded evidence only:\n\nObservations:\n- `inspect_wasm` target-001 sha256 `152d44c6e9ef...` : WASM-4 `update` export + `start`.\n- `list_functions` + `inspect_function` binary:func11 `$update`: frame dispatch on `i32.load8_u [18480]-1 br_table`, title branch draws rects/text via `$env.rect/$env.textUtf8/$f86`. Code inspection only; no motion-store traced.\n- `exp-001` main:\n  - obs-0001 start-game frame 10: text `Wave:1 Enemies:0 Score:99`, motion `x:0 y:0 cooldown:1` hints x@22397/y@22401.\n  - obs-0002 settle frame 40: `Enemies:1 Score:96`, motion `x:0 y:0 cooldown:0`.\n  - obs-0003 move-right frame 70: after 30f right-hold, text `Enemies:1 Score:93`, motion `x:60 y:0` hints x@22013/y@22017, player-like sprite `17050: [86,76]` vs prior `76,76` sprites, background group `17640` shifted `22->122` etc.\n- checkpoint `cp-add78e465ef6200e69a9` frame 70 verified.\n- fork `ctrl` obs-0004 frame 70 hash-identical restore verified.\n\nInterpretation:\n- Correlational only: sustained right input associated with +60 world-x in HUMAN-MAPPED registry and ~+10px sprite shift plus background scroll. Consistent with rightward motion/camera hypothesis, not proven causal.\n- Score `99->96->93` ticks down over time independent of claimed move; wave/enemy text changed 0->1 between obs-0001/obs-0002.\n- Field hints are HUMAN-MAPPED assistance per motionNotice; layout not independently discovered. Watch names are hypotheses.\n\nRemaining / inconclusive:\n- No `compare_branches` completed, so `branchComparison:true` requirement unsatisfied. No causality claim.\n- No `diff_memory`, `trace_writers`, `call_graph/decompile`, `capture_frame`, controlled mutation, or `record_finding`/`submit_component_candidate`.\n- No extracted candidate; acceptance not attempted.\n- Motion source (player vs camera), speed/frames, cooldown/remaining meaning, sprite identity unresolved.\n\nCited: exp-001, obs-0001, obs-0002, obs-0003, obs-0004, cp-add78e465ef6200e69a9.\n",
+            "refused": false
+          }
+        ]
+      }
+    ],
+    "toolCalls": [
+      {
+        "callId": "call_bf37da8b-cb61-487f-9494-ca0266e04f16",
+        "name": "inspect_wasm",
+        "ok": true,
+        "args": {
+          "lineCount": 50,
+          "startLine": 1,
+          "view": "overview"
+        },
+        "startedAt": "2026-11-01T21:07:50.068Z",
+        "result": {
+          "target": "target-001",
+          "bytes": 47101,
+          "sha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+          "imports": [
+            {
+              "module": "env",
+              "name": "rect",
+              "kind": "function"
+            },
+            {
+              "module": "env",
+              "name": "textUtf8",
+              "kind": "function"
+            },
+            {
+              "module": "env",
+              "name": "diskw",
+              "kind": "function"
+            },
+            {
+              "module": "env",
+              "name": "diskr",
+              "kind": "function"
+            },
+            {
+              "module": "env",
+              "name": "tone",
+              "kind": "function"
+            },
+            {
+              "module": "env",
+              "name": "blit",
+              "kind": "function"
+            },
+            {
+              "module": "env",
+              "name": "memory",
+              "kind": "memory"
+            }
+          ],
+          "exports": [
+            {
+              "name": "start",
+              "kind": "function"
+            },
+            {
+              "name": "update",
+              "kind": "function"
+            },
+            {
+              "name": "__data_end",
+              "kind": "global"
+            },
+            {
+              "name": "__heap_base",
+              "kind": "global"
+            }
+          ]
+        },
+        "finishedAt": "2026-11-01T21:07:50.072Z"
+      },
+      {
+        "callId": "call_e1220996-3bdd-42dc-a568-1937eb5c303d",
+        "name": "list_functions",
+        "ok": true,
+        "args": {
+          "limit": 50,
+          "startIndex": 0
+        },
+        "startedAt": "2026-11-01T21:07:52.089Z",
+        "result": {
+          "sha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+          "totalFunctions": 252,
+          "functions": [
+            {
+              "index": 0,
+              "name": "$env.rect",
+              "imported": {
+                "module": "env",
+                "name": "rect",
+                "kind": "function"
+              },
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32",
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 30,
+              "lineCount": 1,
+              "directCalleeCount": 0,
+              "directCallerCount": 3,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 0
+            },
+            {
+              "index": 1,
+              "name": "$env.textUtf8",
+              "imported": {
+                "module": "env",
+                "name": "textUtf8",
+                "kind": "function"
+              },
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32",
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 31,
+              "lineCount": 1,
+              "directCalleeCount": 0,
+              "directCallerCount": 5,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 0
+            },
+            {
+              "index": 2,
+              "name": "$env.diskw",
+              "imported": {
+                "module": "env",
+                "name": "diskw",
+                "kind": "function"
+              },
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": [
+                  "i32"
+                ]
+              },
+              "startLine": 32,
+              "lineCount": 1,
+              "directCalleeCount": 0,
+              "directCallerCount": 1,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 0
+            },
+            {
+              "index": 3,
+              "name": "$env.diskr",
+              "imported": {
+                "module": "env",
+                "name": "diskr",
+                "kind": "function"
+              },
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": [
+                  "i32"
+                ]
+              },
+              "startLine": 33,
+              "lineCount": 1,
+              "directCalleeCount": 0,
+              "directCallerCount": 1,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 0
+            },
+            {
+              "index": 4,
+              "name": "$env.tone",
+              "imported": {
+                "module": "env",
+                "name": "tone",
+                "kind": "function"
+              },
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32",
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 34,
+              "lineCount": 1,
+              "directCalleeCount": 0,
+              "directCallerCount": 1,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 0
+            },
+            {
+              "index": 5,
+              "name": "$env.blit",
+              "imported": {
+                "module": "env",
+                "name": "blit",
+                "kind": "function"
+              },
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32",
+                  "i32",
+                  "i32",
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 35,
+              "lineCount": 1,
+              "directCalleeCount": 0,
+              "directCallerCount": 1,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 0
+            },
+            {
+              "index": 6,
+              "name": "$f6",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 37,
+              "lineCount": 1464,
+              "directCalleeCount": 20,
+              "directCallerCount": 0,
+              "indirectCallCount": 2,
+              "memoryInstructionCount": 146
+            },
+            {
+              "index": 7,
+              "name": "$f7",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 1501,
+              "lineCount": 1124,
+              "directCalleeCount": 22,
+              "directCallerCount": 0,
+              "indirectCallCount": 10,
+              "memoryInstructionCount": 158
+            },
+            {
+              "index": 8,
+              "name": "$f8",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 2625,
+              "lineCount": 1053,
+              "directCalleeCount": 32,
+              "directCallerCount": 0,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 135
+            },
+            {
+              "index": 9,
+              "name": "$f9",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 3678,
+              "lineCount": 960,
+              "directCalleeCount": 30,
+              "directCallerCount": 0,
+              "indirectCallCount": 2,
+              "memoryInstructionCount": 126
+            },
+            {
+              "index": 10,
+              "name": "$f10",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 4638,
+              "lineCount": 841,
+              "directCalleeCount": 19,
+              "directCallerCount": 0,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 115
+            },
+            {
+              "index": 11,
+              "name": "$update",
+              "imported": null,
+              "exports": [
+                "update"
+              ],
+              "signature": {
+                "params": [],
+                "results": []
+              },
+              "startLine": 5479,
+              "lineCount": 823,
+              "directCalleeCount": 20,
+              "directCallerCount": 0,
+              "indirectCallCount": 1,
+              "memoryInstructionCount": 98
+            },
+            {
+              "index": 12,
+              "name": "$f12",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32",
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 6302,
+              "lineCount": 729,
+              "directCalleeCount": 15,
+              "directCallerCount": 2,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 57
+            },
+            {
+              "index": 13,
+              "name": "$f13",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 7031,
+              "lineCount": 647,
+              "directCalleeCount": 25,
+              "directCallerCount": 2,
+              "indirectCallCount": 1,
+              "memoryInstructionCount": 100
+            },
+            {
+              "index": 14,
+              "name": "$f14",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 7678,
+              "lineCount": 456,
+              "directCalleeCount": 23,
+              "directCallerCount": 0,
+              "indirectCallCount": 2,
+              "memoryInstructionCount": 62
+            },
+            {
+              "index": 15,
+              "name": "$f15",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32",
+                  "i64",
+                  "i32",
+                  "i32"
+                ],
+                "results": [
+                  "i32"
+                ]
+              },
+              "startLine": 8134,
+              "lineCount": 439,
+              "directCalleeCount": 13,
+              "directCallerCount": 21,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 71
+            },
+            {
+              "index": 16,
+              "name": "$f16",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 8573,
+              "lineCount": 398,
+              "directCalleeCount": 10,
+              "directCallerCount": 3,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 70
+            },
+            {
+              "index": 17,
+              "name": "$f17",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 8971,
+              "lineCount": 370,
+              "directCalleeCount": 5,
+              "directCallerCount": 2,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 31
+            },
+            {
+              "index": 18,
+              "name": "$f18",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 9341,
+              "lineCount": 370,
+              "directCalleeCount": 0,
+              "directCallerCount": 1,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 18
+            },
+            {
+              "index": 19,
+              "name": "$f19",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 9711,
+              "lineCount": 343,
+              "directCalleeCount": 6,
+              "directCallerCount": 9,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 69
+            },
+            {
+              "index": 20,
+              "name": "$f20",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 10054,
+              "lineCount": 352,
+              "directCalleeCount": 14,
+              "directCallerCount": 0,
+              "indirectCallCount": 2,
+              "memoryInstructionCount": 43
+            },
+            {
+              "index": 21,
+              "name": "$f21",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 10406,
+              "lineCount": 315,
+              "directCalleeCount": 2,
+              "directCallerCount": 1,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 39
+            },
+            {
+              "index": 22,
+              "name": "$f22",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 10721,
+              "lineCount": 318,
+              "directCalleeCount": 15,
+              "directCallerCount": 0,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 45
+            },
+            {
+              "index": 23,
+              "name": "$f23",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32",
+                  "i32",
+                  "f32",
+                  "f32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 11039,
+              "lineCount": 310,
+              "directCalleeCount": 11,
+              "directCallerCount": 1,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 48
+            },
+            {
+              "index": 24,
+              "name": "$f24",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32",
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 11349,
+              "lineCount": 282,
+              "directCalleeCount": 4,
+              "directCallerCount": 3,
+              "indirectCallCount": 1,
+              "memoryInstructionCount": 23
+            },
+            {
+              "index": 25,
+              "name": "$f25",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 11631,
+              "lineCount": 262,
+              "directCalleeCount": 11,
+              "directCallerCount": 0,
+              "indirectCallCount": 2,
+              "memoryInstructionCount": 34
+            },
+            {
+              "index": 26,
+              "name": "$f26",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 11893,
+              "lineCount": 254,
+              "directCalleeCount": 9,
+              "directCallerCount": 0,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 29
+            },
+            {
+              "index": 27,
+              "name": "$f27",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "f32"
+                ],
+                "results": [
+                  "f32"
+                ]
+              },
+              "startLine": 12147,
+              "lineCount": 190,
+              "directCalleeCount": 0,
+              "directCallerCount": 1,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 0
+            },
+            {
+              "index": 28,
+              "name": "$f28",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 12337,
+              "lineCount": 237,
+              "directCalleeCount": 11,
+              "directCallerCount": 0,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 30
+            },
+            {
+              "index": 29,
+              "name": "$f29",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 12574,
+              "lineCount": 232,
+              "directCalleeCount": 8,
+              "directCallerCount": 1,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 32
+            },
+            {
+              "index": 30,
+              "name": "$f30",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 12806,
+              "lineCount": 210,
+              "directCalleeCount": 6,
+              "directCallerCount": 1,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 27
+            },
+            {
+              "index": 31,
+              "name": "$f31",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 13016,
+              "lineCount": 201,
+              "directCalleeCount": 7,
+              "directCallerCount": 1,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 23
+            },
+            {
+              "index": 32,
+              "name": "$f32",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 13217,
+              "lineCount": 200,
+              "directCalleeCount": 6,
+              "directCallerCount": 1,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 25
+            },
+            {
+              "index": 33,
+              "name": "$f33",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32"
+                ],
+                "results": [
+                  "i32"
+                ]
+              },
+              "startLine": 13417,
+              "lineCount": 192,
+              "directCalleeCount": 2,
+              "directCallerCount": 1,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 30
+            },
+            {
+              "index": 34,
+              "name": "$f34",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32"
+                ],
+                "results": [
+                  "i32"
+                ]
+              },
+              "startLine": 13609,
+              "lineCount": 182,
+              "directCalleeCount": 5,
+              "directCallerCount": 6,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 45
+            },
+            {
+              "index": 35,
+              "name": "$f35",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32",
+                  "i32"
+                ],
+                "results": [
+                  "i32"
+                ]
+              },
+              "startLine": 13791,
+              "lineCount": 170,
+              "directCalleeCount": 0,
+              "directCallerCount": 1,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 9
+            },
+            {
+              "index": 36,
+              "name": "$f36",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32"
+                ],
+                "results": [
+                  "i64"
+                ]
+              },
+              "startLine": 13961,
+              "lineCount": 165,
+              "directCalleeCount": 0,
+              "directCallerCount": 2,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 6
+            },
+            {
+              "index": 37,
+              "name": "$f37",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 14126,
+              "lineCount": 141,
+              "directCalleeCount": 2,
+              "directCallerCount": 3,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 3
+            },
+            {
+              "index": 38,
+              "name": "$f38",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 14267,
+              "lineCount": 137,
+              "directCalleeCount": 4,
+              "directCallerCount": 0,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 13
+            },
+            {
+              "index": 39,
+              "name": "$f39",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 14404,
+              "lineCount": 122,
+              "directCalleeCount": 1,
+              "directCallerCount": 2,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 11
+            },
+            {
+              "index": 40,
+              "name": "$f40",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 14526,
+              "lineCount": 111,
+              "directCalleeCount": 5,
+              "directCallerCount": 2,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 16
+            },
+            {
+              "index": 41,
+              "name": "$f41",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 14637,
+              "lineCount": 107,
+              "directCalleeCount": 2,
+              "directCallerCount": 14,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 12
+            },
+            {
+              "index": 42,
+              "name": "$f42",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": [
+                  "i32"
+                ]
+              },
+              "startLine": 14744,
+              "lineCount": 128,
+              "directCalleeCount": 0,
+              "directCallerCount": 1,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 6
+            },
+            {
+              "index": 43,
+              "name": "$f43",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i64",
+                  "i64",
+                  "i64"
+                ],
+                "results": [
+                  "i64"
+                ]
+              },
+              "startLine": 14872,
+              "lineCount": 102,
+              "directCalleeCount": 2,
+              "directCallerCount": 3,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 17
+            },
+            {
+              "index": 44,
+              "name": "$f44",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32",
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 14974,
+              "lineCount": 105,
+              "directCalleeCount": 2,
+              "directCallerCount": 3,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 15
+            },
+            {
+              "index": 45,
+              "name": "$f45",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 15079,
+              "lineCount": 99,
+              "directCalleeCount": 2,
+              "directCallerCount": 1,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 11
+            },
+            {
+              "index": 46,
+              "name": "$f46",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 15178,
+              "lineCount": 105,
+              "directCalleeCount": 2,
+              "directCallerCount": 2,
+              "indirectCallCount": 1,
+              "memoryInstructionCount": 13
+            },
+            {
+              "index": 47,
+              "name": "$f47",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32",
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 15283,
+              "lineCount": 98,
+              "directCalleeCount": 1,
+              "directCallerCount": 2,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 13
+            },
+            {
+              "index": 48,
+              "name": "$f48",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32",
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 15381,
+              "lineCount": 91,
+              "directCalleeCount": 4,
+              "directCallerCount": 4,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 15
+            },
+            {
+              "index": 49,
+              "name": "$f49",
+              "imported": null,
+              "exports": [],
+              "signature": {
+                "params": [
+                  "i32",
+                  "i32"
+                ],
+                "results": []
+              },
+              "startLine": 15472,
+              "lineCount": 96,
+              "directCalleeCount": 3,
+              "directCallerCount": 1,
+              "indirectCallCount": 0,
+              "memoryInstructionCount": 13
+            }
+          ],
+          "nextIndex": 50
+        },
+        "finishedAt": "2026-11-01T21:07:52.129Z"
+      },
+      {
+        "callId": "call_9f95357f-5337-4825-92a4-48fd0fb04db6",
+        "name": "inspect_function",
+        "ok": true,
+        "args": {
+          "functionIndex": 11,
+          "lineCount": 100,
+          "startLine": 1
+        },
+        "startedAt": "2026-11-01T21:07:53.046Z",
+        "result": {
+          "sha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+          "evidenceId": "binary:func11",
+          "index": 11,
+          "name": "$update",
+          "imported": null,
+          "exports": [
+            "update"
+          ],
+          "signature": {
+            "params": [],
+            "results": []
+          },
+          "startLine": 5479,
+          "lineCount": 823,
+          "directCalleeCount": 20,
+          "directCallerCount": 0,
+          "indirectCallCount": 1,
+          "memoryInstructionCount": 98,
+          "directCallees": [
+            {
+              "index": 0,
+              "name": "$env.rect",
+              "sites": 10
+            },
+            {
+              "index": 86,
+              "name": "$f86",
+              "sites": 27
+            },
+            {
+              "index": 1,
+              "name": "$env.textUtf8",
+              "sites": 4
+            },
+            {
+              "index": 85,
+              "name": "$f85",
+              "sites": 1
+            },
+            {
+              "index": 13,
+              "name": "$f13",
+              "sites": 1
+            },
+            {
+              "index": 219,
+              "name": "$f219",
+              "sites": 2
+            },
+            {
+              "index": 21,
+              "name": "$f21",
+              "sites": 5
+            },
+            {
+              "index": 98,
+              "name": "$f98",
+              "sites": 1
+            },
+            {
+              "index": 106,
+              "name": "$f106",
+              "sites": 2
+            },
+            {
+              "index": 82,
+              "name": "$f82",
+              "sites": 1
+            },
+            {
+              "index": 41,
+              "name": "$f41",
+              "sites": 1
+            },
+            {
+              "index": 39,
+              "name": "$f39",
+              "sites": 2
+            },
+            {
+              "index": 37,
+              "name": "$f37",
+              "sites": 5
+            },
+            {
+              "index": 158,
+              "name": "$f158",
+              "sites": 5
+            },
+            {
+              "index": 167,
+              "name": "$f167",
+              "sites": 2
+            },
+            {
+              "index": 65,
+              "name": "$f65",
+              "sites": 1
+            },
+            {
+              "index": 159,
+              "name": "$f159",
+              "sites": 1
+            },
+            {
+              "index": 221,
+              "name": "$f221",
+              "sites": 3
+            },
+            {
+              "index": 56,
+              "name": "$f56",
+              "sites": 1
+            },
+            {
+              "index": 153,
+              "name": "$f153",
+              "sites": 1
+            }
+          ],
+          "omittedDirectCallees": 0,
+          "directCallers": [],
+          "omittedDirectCallers": 0,
+          "indirectCallsResolved": false,
+          "windowReferences": {
+            "directCalls": [
+              {
+                "line": 5506,
+                "functionLine": 28,
+                "calleeIndex": 0
+              },
+              {
+                "line": 5511,
+                "functionLine": 33,
+                "calleeIndex": 0
+              },
+              {
+                "line": 5516,
+                "functionLine": 38,
+                "calleeIndex": 0
+              },
+              {
+                "line": 5521,
+                "functionLine": 43,
+                "calleeIndex": 0
+              },
+              {
+                "line": 5528,
+                "functionLine": 50,
+                "calleeIndex": 86
+              },
+              {
+                "line": 5532,
+                "functionLine": 54,
+                "calleeIndex": 86
+              },
+              {
+                "line": 5536,
+                "functionLine": 58,
+                "calleeIndex": 86
+              },
+              {
+                "line": 5540,
+                "functionLine": 62,
+                "calleeIndex": 86
+              },
+              {
+                "line": 5544,
+                "functionLine": 66,
+                "calleeIndex": 86
+              },
+              {
+                "line": 5548,
+                "functionLine": 70,
+                "calleeIndex": 86
+              },
+              {
+                "line": 5552,
+                "functionLine": 74,
+                "calleeIndex": 86
+              },
+              {
+                "line": 5557,
+                "functionLine": 79,
+                "calleeIndex": 1
+              },
+              {
+                "line": 5562,
+                "functionLine": 84,
+                "calleeIndex": 1
+              },
+              {
+                "line": 5567,
+                "functionLine": 89,
+                "calleeIndex": 1
+              },
+              {
+                "line": 5572,
+                "functionLine": 94,
+                "calleeIndex": 1
+              },
+              {
+                "line": 5576,
+                "functionLine": 98,
+                "calleeIndex": 86
+              }
+            ],
+            "indirectCalls": [],
+            "memoryAccesses": [
+              {
+                "line": 5494,
+                "functionLine": 16,
+                "instruction": "i32.load8_u",
+                "offset": 0
+              },
+              {
+                "line": 5501,
+                "functionLine": 23,
+                "instruction": "i32.store16",
+                "offset": 0
+              },
+              {
+                "line": 5524,
+                "functionLine": 46,
+                "instruction": "i32.store16",
+                "offset": 0
+              },
+              {
+                "line": 5578,
+                "functionLine": 100,
+                "instruction": "i32.load8_u",
+                "offset": 0
+              }
+            ]
+          },
+          "lines": [
+            {
+              "number": 5479,
+              "functionLine": 1,
+              "text": "  (func $update (type $t8)",
+              "truncated": false
+            },
+            {
+              "number": 5480,
+              "functionLine": 2,
+              "text": "    (local $l0 i32) (local $l1 i32) (local $l2 i32) (local $l3 i32) (local $l4 i32) (local $l5 i32) (local $l6 i32) (local $l7 i32) (local $l8 i32) (local $l9 i32) (local $l10 i64)",
+              "truncated": false
+            },
+            {
+              "number": 5481,
+              "functionLine": 3,
+              "text": "    global.get $g0",
+              "truncated": false
+            },
+            {
+              "number": 5482,
+              "functionLine": 4,
+              "text": "    i32.const 224",
+              "truncated": false
+            },
+            {
+              "number": 5483,
+              "functionLine": 5,
+              "text": "    i32.sub",
+              "truncated": false
+            },
+            {
+              "number": 5484,
+              "functionLine": 6,
+              "text": "    local.tee $l0",
+              "truncated": false
+            },
+            {
+              "number": 5485,
+              "functionLine": 7,
+              "text": "    global.set $g0",
+              "truncated": false
+            },
+            {
+              "number": 5486,
+              "functionLine": 8,
+              "text": "    block $B0",
+              "truncated": false
+            },
+            {
+              "number": 5487,
+              "functionLine": 9,
+              "text": "      block $B1",
+              "truncated": false
+            },
+            {
+              "number": 5488,
+              "functionLine": 10,
+              "text": "        block $B2",
+              "truncated": false
+            },
+            {
+              "number": 5489,
+              "functionLine": 11,
+              "text": "          block $B3",
+              "truncated": false
+            },
+            {
+              "number": 5490,
+              "functionLine": 12,
+              "text": "            block $B4",
+              "truncated": false
+            },
+            {
+              "number": 5491,
+              "functionLine": 13,
+              "text": "              block $B5",
+              "truncated": false
+            },
+            {
+              "number": 5492,
+              "functionLine": 14,
+              "text": "                block $B6",
+              "truncated": false
+            },
+            {
+              "number": 5493,
+              "functionLine": 15,
+              "text": "                  i32.const 18480",
+              "truncated": false
+            },
+            {
+              "number": 5494,
+              "functionLine": 16,
+              "text": "                  i32.load8_u",
+              "truncated": false
+            },
+            {
+              "number": 5495,
+              "functionLine": 17,
+              "text": "                  i32.const 1",
+              "truncated": false
+            },
+            {
+              "number": 5496,
+              "functionLine": 18,
+              "text": "                  i32.sub",
+              "truncated": false
+            },
+            {
+              "number": 5497,
+              "functionLine": 19,
+              "text": "                  br_table $B5 $B3 $B4 $B6",
+              "truncated": false
+            },
+            {
+              "number": 5498,
+              "functionLine": 20,
+              "text": "                end",
+              "truncated": false
+            },
+            {
+              "number": 5499,
+              "functionLine": 21,
+              "text": "                i32.const 20",
+              "truncated": false
+            },
+            {
+              "number": 5500,
+              "functionLine": 22,
+              "text": "                i32.const 66",
+              "truncated": false
+            },
+            {
+              "number": 5501,
+              "functionLine": 23,
+              "text": "                i32.store16",
+              "truncated": false
+            },
+            {
+              "number": 5502,
+              "functionLine": 24,
+              "text": "                i32.const 30",
+              "truncated": false
+            },
+            {
+              "number": 5503,
+              "functionLine": 25,
+              "text": "                i32.const 3",
+              "truncated": false
+            },
+            {
+              "number": 5504,
+              "functionLine": 26,
+              "text": "                i32.const 99",
+              "truncated": false
+            },
+            {
+              "number": 5505,
+              "functionLine": 27,
+              "text": "                i32.const 19",
+              "truncated": false
+            },
+            {
+              "number": 5506,
+              "functionLine": 28,
+              "text": "                call $env.rect",
+              "truncated": false
+            },
+            {
+              "number": 5507,
+              "functionLine": 29,
+              "text": "                i32.const 2",
+              "truncated": false
+            },
+            {
+              "number": 5508,
+              "functionLine": 30,
+              "text": "                i32.const 28",
+              "truncated": false
+            },
+            {
+              "number": 5509,
+              "functionLine": 31,
+              "text": "                i32.const 155",
+              "truncated": false
+            },
+            {
+              "number": 5510,
+              "functionLine": 32,
+              "text": "                i32.const 43",
+              "truncated": false
+            },
+            {
+              "number": 5511,
+              "functionLine": 33,
+              "text": "                call $env.rect",
+              "truncated": false
+            },
+            {
+              "number": 5512,
+              "functionLine": 34,
+              "text": "                i32.const 2",
+              "truncated": false
+            },
+            {
+              "number": 5513,
+              "functionLine": 35,
+              "text": "                i32.const 76",
+              "truncated": false
+            },
+            {
+              "number": 5514,
+              "functionLine": 36,
+              "text": "                i32.const 155",
+              "truncated": false
+            },
+            {
+              "number": 5515,
+              "functionLine": 37,
+              "text": "                i32.const 35",
+              "truncated": false
+            },
+            {
+              "number": 5516,
+              "functionLine": 38,
+              "text": "                call $env.rect",
+              "truncated": false
+            },
+            {
+              "number": 5517,
+              "functionLine": 39,
+              "text": "                i32.const 8",
+              "truncated": false
+            },
+            {
+              "number": 5518,
+              "functionLine": 40,
+              "text": "                i32.const 138",
+              "truncated": false
+            },
+            {
+              "number": 5519,
+              "functionLine": 41,
+              "text": "                i32.const 142",
+              "truncated": false
+            },
+            {
+              "number": 5520,
+              "functionLine": 42,
+              "text": "                i32.const 11",
+              "truncated": false
+            },
+            {
+              "number": 5521,
+              "functionLine": 43,
+              "text": "                call $env.rect",
+              "truncated": false
+            },
+            {
+              "number": 5522,
+              "functionLine": 44,
+              "text": "                i32.const 20",
+              "truncated": false
+            },
+            {
+              "number": 5523,
+              "functionLine": 45,
+              "text": "                i32.const 17187",
+              "truncated": false
+            },
+            {
+              "number": 5524,
+              "functionLine": 46,
+              "text": "                i32.store16",
+              "truncated": false
+            },
+            {
+              "number": 5525,
+              "functionLine": 47,
+              "text": "                i32.const 15818",
+              "truncated": false
+            },
+            {
+              "number": 5526,
+              "functionLine": 48,
+              "text": "                i32.const 10",
+              "truncated": false
+            },
+            {
+              "number": 5527,
+              "functionLine": 49,
+              "text": "                i32.const 5",
+              "truncated": false
+            },
+            {
+              "number": 5528,
+              "functionLine": 50,
+              "text": "                call $f86",
+              "truncated": false
+            },
+            {
+              "number": 5529,
+              "functionLine": 51,
+              "text": "                i32.const 15828",
+              "truncated": false
+            },
+            {
+              "number": 5530,
+              "functionLine": 52,
+              "text": "                i32.const 12",
+              "truncated": false
+            },
+            {
+              "number": 5531,
+              "functionLine": 53,
+              "text": "                i32.const 13",
+              "truncated": false
+            },
+            {
+              "number": 5532,
+              "functionLine": 54,
+              "text": "                call $f86",
+              "truncated": false
+            },
+            {
+              "number": 5533,
+              "functionLine": 55,
+              "text": "                i32.const 15840",
+              "truncated": false
+            },
+            {
+              "number": 5534,
+              "functionLine": 56,
+              "text": "                i32.const 14",
+              "truncated": false
+            },
+            {
+              "number": 5535,
+              "functionLine": 57,
+              "text": "                i32.const 30",
+              "truncated": false
+            },
+            {
+              "number": 5536,
+              "functionLine": 58,
+              "text": "                call $f86",
+              "truncated": false
+            },
+            {
+              "number": 5537,
+              "functionLine": 59,
+              "text": "                i32.const 15854",
+              "truncated": false
+            },
+            {
+              "number": 5538,
+              "functionLine": 60,
+              "text": "                i32.const 19",
+              "truncated": false
+            },
+            {
+              "number": 5539,
+              "functionLine": 61,
+              "text": "                i32.const 38",
+              "truncated": false
+            },
+            {
+              "number": 5540,
+              "functionLine": 62,
+              "text": "                call $f86",
+              "truncated": false
+            },
+            {
+              "number": 5541,
+              "functionLine": 63,
+              "text": "                i32.const 15873",
+              "truncated": false
+            },
+            {
+              "number": 5542,
+              "functionLine": 64,
+              "text": "                i32.const 17",
+              "truncated": false
+            },
+            {
+              "number": 5543,
+              "functionLine": 65,
+              "text": "                i32.const 46",
+              "truncated": false
+            },
+            {
+              "number": 5544,
+              "functionLine": 66,
+              "text": "                call $f86",
+              "truncated": false
+            },
+            {
+              "number": 5545,
+              "functionLine": 67,
+              "text": "                i32.const 15890",
+              "truncated": false
+            },
+            {
+              "number": 5546,
+              "functionLine": 68,
+              "text": "                i32.const 17",
+              "truncated": false
+            },
+            {
+              "number": 5547,
+              "functionLine": 69,
+              "text": "                i32.const 54",
+              "truncated": false
+            },
+            {
+              "number": 5548,
+              "functionLine": 70,
+              "text": "                call $f86",
+              "truncated": false
+            },
+            {
+              "number": 5549,
+              "functionLine": 71,
+              "text": "                i32.const 15907",
+              "truncated": false
+            },
+            {
+              "number": 5550,
+              "functionLine": 72,
+              "text": "                i32.const 18",
+              "truncated": false
+            },
+            {
+              "number": 5551,
+              "functionLine": 73,
+              "text": "                i32.const 62",
+              "truncated": false
+            },
+            {
+              "number": 5552,
+              "functionLine": 74,
+              "text": "                call $f86",
+              "truncated": false
+            },
+            {
+              "number": 5553,
+              "functionLine": 75,
+              "text": "                i32.const 15925",
+              "truncated": false
+            },
+            {
+              "number": 5554,
+              "functionLine": 76,
+              "text": "                i32.const 9",
+              "truncated": false
+            },
+            {
+              "number": 5555,
+              "functionLine": 77,
+              "text": "                i32.const 5",
+              "truncated": false
+            },
+            {
+              "number": 5556,
+              "functionLine": 78,
+              "text": "                i32.const 78",
+              "truncated": false
+            },
+            {
+              "number": 5557,
+              "functionLine": 79,
+              "text": "                call $env.textUtf8",
+              "truncated": false
+            },
+            {
+              "number": 5558,
+              "functionLine": 80,
+              "text": "                i32.const 15934",
+              "truncated": false
+            },
+            {
+              "number": 5559,
+              "functionLine": 81,
+              "text": "                i32.const 10",
+              "truncated": false
+            },
+            {
+              "number": 5560,
+              "functionLine": 82,
+              "text": "                i32.const 5",
+              "truncated": false
+            },
+            {
+              "number": 5561,
+              "functionLine": 83,
+              "text": "                i32.const 86",
+              "truncated": false
+            },
+            {
+              "number": 5562,
+              "functionLine": 84,
+              "text": "                call $env.textUtf8",
+              "truncated": false
+            },
+            {
+              "number": 5563,
+              "functionLine": 85,
+              "text": "                i32.const 15944",
+              "truncated": false
+            },
+            {
+              "number": 5564,
+              "functionLine": 86,
+              "text": "                i32.const 12",
+              "truncated": false
+            },
+            {
+              "number": 5565,
+              "functionLine": 87,
+              "text": "                i32.const 5",
+              "truncated": false
+            },
+            {
+              "number": 5566,
+              "functionLine": 88,
+              "text": "                i32.const 94",
+              "truncated": false
+            },
+            {
+              "number": 5567,
+              "functionLine": 89,
+              "text": "                call $env.textUtf8",
+              "truncated": false
+            },
+            {
+              "number": 5568,
+              "functionLine": 90,
+              "text": "                i32.const 15956",
+              "truncated": false
+            },
+            {
+              "number": 5569,
+              "functionLine": 91,
+              "text": "                i32.const 15",
+              "truncated": false
+            },
+            {
+              "number": 5570,
+              "functionLine": 92,
+              "text": "                i32.const 5",
+              "truncated": false
+            },
+            {
+              "number": 5571,
+              "functionLine": 93,
+              "text": "                i32.const 102",
+              "truncated": false
+            },
+            {
+              "number": 5572,
+              "functionLine": 94,
+              "text": "                call $env.textUtf8",
+              "truncated": false
+            },
+            {
+              "number": 5573,
+              "functionLine": 95,
+              "text": "                i32.const 15971",
+              "truncated": false
+            },
+            {
+              "number": 5574,
+              "functionLine": 96,
+              "text": "                i32.const 17",
+              "truncated": false
+            },
+            {
+              "number": 5575,
+              "functionLine": 97,
+              "text": "                i32.const 140",
+              "truncated": false
+            },
+            {
+              "number": 5576,
+              "functionLine": 98,
+              "text": "                call $f86",
+              "truncated": false
+            },
+            {
+              "number": 5577,
+              "functionLine": 99,
+              "text": "                i32.const 22",
+              "truncated": false
+            },
+            {
+              "number": 5578,
+              "functionLine": 100,
+              "text": "                i32.load8_u",
+              "truncated": false
+            }
+          ],
+          "nextLine": 101
+        },
+        "finishedAt": "2026-11-01T21:07:53.049Z"
+      },
+      {
+        "callId": "call_14f2f2b5-7c24-452c-8a74-6da3d53f6ae6",
+        "name": "session_advance",
+        "ok": true,
+        "args": {
+          "branchId": "main",
+          "hypothesis": "X starts gameplay from title; rightward input moves world position",
+          "steps": [
+            {
+              "buttons": 1,
+              "checkpoint": "start-game",
+              "frames": 10
+            },
+            {
+              "buttons": 0,
+              "checkpoint": "settle",
+              "frames": 30
+            },
+            {
+              "buttons": 32,
+              "checkpoint": "move-right",
+              "frames": 30
+            }
+          ],
+          "watches": []
+        },
+        "startedAt": "2026-11-01T21:07:55.868Z",
+        "result": {
+          "experimentId": "exp-001",
+          "sessionId": "cc6aa76a-22bc-4cc2-8424-0321b7ff5a02",
+          "branchId": "main",
+          "hypothesis": "X starts gameplay from title; rightward input moves world position",
+          "checkpoints": [
+            {
+              "observationId": "obs-0001",
+              "sessionId": "cc6aa76a-22bc-4cc2-8424-0321b7ff5a02",
+              "branchId": "main",
+              "experimental": false,
+              "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+              "checkpoint": "start-game",
+              "frame": 10,
+              "framebufferHash": "3c18223f54192f9ac3af06d84e30733d57ae2dc7aef14c0c2185b6b965d5aad9",
+              "memoryHash": "5917d5c81debe50eef4031c16c1b00181758156f162802f6642dd044fe428969",
+              "storage": {
+                "bytes": 0,
+                "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "palette": [
+                16777215,
+                5855577,
+                12566463,
+                2434341
+              ],
+              "text": "Wave:\n1\nEnemies:\n0\nScore:\n99",
+              "textTruncated": false,
+              "sprites": [
+                {
+                  "pointer": 17640,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 48,
+                  "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                  "count": 10,
+                  "positions": [
+                    {
+                      "x": 22,
+                      "y": 6,
+                      "flags": 0
+                    },
+                    {
+                      "x": 78,
+                      "y": 31,
+                      "flags": 0
+                    },
+                    {
+                      "x": 117,
+                      "y": 109,
+                      "flags": 0
+                    },
+                    {
+                      "x": 2,
+                      "y": 58,
+                      "flags": 0
+                    }
+                  ],
+                  "omittedPositions": 6
+                },
+                {
+                  "pointer": 17540,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 833,
+                  "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                  "count": 1,
+                  "positions": [
+                    {
+                      "x": 76,
+                      "y": 76,
+                      "flags": 1
+                    }
+                  ],
+                  "omittedPositions": 0
+                },
+                {
+                  "pointer": 17556,
+                  "width": 3,
+                  "height": 2,
+                  "drawColors": 32,
+                  "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                  "count": 8,
+                  "positions": [
+                    {
+                      "x": 79,
+                      "y": 80,
+                      "flags": 0
+                    },
+                    {
+                      "x": 155,
+                      "y": 4,
+                      "flags": 0
+                    },
+                    {
+                      "x": 147,
+                      "y": 4,
+                      "flags": 0
+                    },
+                    {
+                      "x": 139,
+                      "y": 4,
+                      "flags": 0
+                    }
+                  ],
+                  "omittedPositions": 4
+                },
+                {
+                  "pointer": 17540,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 834,
+                  "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                  "count": 7,
+                  "positions": [
+                    {
+                      "x": 152,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 144,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 136,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 128,
+                      "y": 0,
+                      "flags": 1
+                    }
+                  ],
+                  "omittedPositions": 3
+                }
+              ],
+              "omittedSpriteGroups": 0,
+              "tones": [],
+              "memory": [],
+              "motion": {
+                "position": {
+                  "x": 0,
+                  "y": 0
+                },
+                "direction": {
+                  "x": 0,
+                  "y": 0
+                },
+                "cooldown": 1,
+                "remaining": 0,
+                "sourceBodyWidth": 8,
+                "fieldHints": {
+                  "source": "human-mapped-assistance",
+                  "x": {
+                    "address": 22397,
+                    "type": "f32"
+                  },
+                  "y": {
+                    "address": 22401,
+                    "type": "f32"
+                  },
+                  "cooldown": {
+                    "address": 22055,
+                    "type": "i16"
+                  },
+                  "remaining": {
+                    "address": 22057,
+                    "type": "i16"
+                  }
+                }
+              }
+            },
+            {
+              "observationId": "obs-0002",
+              "sessionId": "cc6aa76a-22bc-4cc2-8424-0321b7ff5a02",
+              "branchId": "main",
+              "experimental": false,
+              "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+              "checkpoint": "settle",
+              "frame": 40,
+              "framebufferHash": "49a59dd267c0dbab7138e89583720ead2b2c102d38a14e0013d9e45e67f71dfe",
+              "memoryHash": "7fde15c5cf329a56619b3d0382a97753989ae9281c9796c6f8bb65796502f059",
+              "storage": {
+                "bytes": 0,
+                "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "palette": [
+                16777215,
+                5855577,
+                12566463,
+                2434341
+              ],
+              "text": "Wave:\n1\nEnemies:\n1\nScore:\n96",
+              "textTruncated": false,
+              "sprites": [
+                {
+                  "pointer": 17640,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 48,
+                  "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                  "count": 10,
+                  "positions": [
+                    {
+                      "x": 22,
+                      "y": 6,
+                      "flags": 0
+                    },
+                    {
+                      "x": 78,
+                      "y": 31,
+                      "flags": 0
+                    },
+                    {
+                      "x": 117,
+                      "y": 109,
+                      "flags": 0
+                    },
+                    {
+                      "x": 2,
+                      "y": 58,
+                      "flags": 0
+                    }
+                  ],
+                  "omittedPositions": 6
+                },
+                {
+                  "pointer": 17648,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 17472,
+                  "spriteSha256": "1f604d81ff72d4256e1c59a5dbaffc7014b667aa8200f9b786aaaf676b9239ff",
+                  "count": 1,
+                  "positions": [
+                    {
+                      "x": 152,
+                      "y": 76,
+                      "flags": 2
+                    }
+                  ],
+                  "omittedPositions": 0
+                },
+                {
+                  "pointer": 17540,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 801,
+                  "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                  "count": 1,
+                  "positions": [
+                    {
+                      "x": 76,
+                      "y": 76,
+                      "flags": 1
+                    }
+                  ],
+                  "omittedPositions": 0
+                },
+                {
+                  "pointer": 17556,
+                  "width": 3,
+                  "height": 2,
+                  "drawColors": 32,
+                  "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                  "count": 8,
+                  "positions": [
+                    {
+                      "x": 79,
+                      "y": 80,
+                      "flags": 0
+                    },
+                    {
+                      "x": 155,
+                      "y": 4,
+                      "flags": 0
+                    },
+                    {
+                      "x": 147,
+                      "y": 4,
+                      "flags": 0
+                    },
+                    {
+                      "x": 139,
+                      "y": 4,
+                      "flags": 0
+                    }
+                  ],
+                  "omittedPositions": 4
+                },
+                {
+                  "pointer": 17540,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 834,
+                  "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                  "count": 7,
+                  "positions": [
+                    {
+                      "x": 152,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 144,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 136,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 128,
+                      "y": 0,
+                      "flags": 1
+                    }
+                  ],
+                  "omittedPositions": 3
+                }
+              ],
+              "omittedSpriteGroups": 0,
+              "tones": [],
+              "memory": [],
+              "motion": {
+                "position": {
+                  "x": 0,
+                  "y": 0
+                },
+                "direction": {
+                  "x": 0,
+                  "y": 0
+                },
+                "cooldown": 0,
+                "remaining": 0,
+                "sourceBodyWidth": 8,
+                "fieldHints": {
+                  "source": "human-mapped-assistance",
+                  "x": {
+                    "address": 22397,
+                    "type": "f32"
+                  },
+                  "y": {
+                    "address": 22401,
+                    "type": "f32"
+                  },
+                  "cooldown": {
+                    "address": 22055,
+                    "type": "i16"
+                  },
+                  "remaining": {
+                    "address": 22057,
+                    "type": "i16"
+                  }
+                }
+              }
+            },
+            {
+              "observationId": "obs-0003",
+              "sessionId": "cc6aa76a-22bc-4cc2-8424-0321b7ff5a02",
+              "branchId": "main",
+              "experimental": false,
+              "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+              "checkpoint": "move-right",
+              "frame": 70,
+              "framebufferHash": "c7c48e04ea61dcea09768e62a5d5120b039ace55d7b8ed44173e822deddff7b6",
+              "memoryHash": "8fce1cc9b0a4a8e00dcb3b79dc2bd713e0dc4cb0913bcc25733966f8e5702b5b",
+              "storage": {
+                "bytes": 0,
+                "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "palette": [
+                16777215,
+                5855577,
+                12566463,
+                2434341
+              ],
+              "text": "Wave:\n1\nEnemies:\n1\nScore:\n93",
+              "textTruncated": false,
+              "sprites": [
+                {
+                  "pointer": 17640,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 48,
+                  "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                  "count": 10,
+                  "positions": [
+                    {
+                      "x": 122,
+                      "y": 6,
+                      "flags": 0
+                    },
+                    {
+                      "x": 18,
+                      "y": 31,
+                      "flags": 0
+                    },
+                    {
+                      "x": 57,
+                      "y": 109,
+                      "flags": 0
+                    },
+                    {
+                      "x": 102,
+                      "y": 58,
+                      "flags": 0
+                    }
+                  ],
+                  "omittedPositions": 6
+                },
+                {
+                  "pointer": 17050,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 8498,
+                  "spriteSha256": "658312ebf10a52ac0e7e9ed31715071d575a9ed116bf9e70a2b00daa84595e4f",
+                  "count": 1,
+                  "positions": [
+                    {
+                      "x": 86,
+                      "y": 76,
+                      "flags": 1
+                    }
+                  ],
+                  "omittedPositions": 0
+                },
+                {
+                  "pointer": 17540,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 801,
+                  "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                  "count": 1,
+                  "positions": [
+                    {
+                      "x": 76,
+                      "y": 76,
+                      "flags": 1
+                    }
+                  ],
+                  "omittedPositions": 0
+                },
+                {
+                  "pointer": 17556,
+                  "width": 3,
+                  "height": 2,
+                  "drawColors": 32,
+                  "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                  "count": 8,
+                  "positions": [
+                    {
+                      "x": 80,
+                      "y": 80,
+                      "flags": 0
+                    },
+                    {
+                      "x": 155,
+                      "y": 4,
+                      "flags": 0
+                    },
+                    {
+                      "x": 147,
+                      "y": 4,
+                      "flags": 0
+                    },
+                    {
+                      "x": 139,
+                      "y": 4,
+                      "flags": 0
+                    }
+                  ],
+                  "omittedPositions": 4
+                },
+                {
+                  "pointer": 17540,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 834,
+                  "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                  "count": 7,
+                  "positions": [
+                    {
+                      "x": 152,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 144,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 136,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 128,
+                      "y": 0,
+                      "flags": 1
+                    }
+                  ],
+                  "omittedPositions": 3
+                }
+              ],
+              "omittedSpriteGroups": 0,
+              "tones": [],
+              "memory": [],
+              "motion": {
+                "position": {
+                  "x": 60,
+                  "y": 0
+                },
+                "direction": {
+                  "x": 0,
+                  "y": 0
+                },
+                "cooldown": 0,
+                "remaining": 0,
+                "sourceBodyWidth": 8,
+                "fieldHints": {
+                  "source": "human-mapped-assistance",
+                  "x": {
+                    "address": 22013,
+                    "type": "f32"
+                  },
+                  "y": {
+                    "address": 22017,
+                    "type": "f32"
+                  },
+                  "cooldown": {
+                    "address": 38602,
+                    "type": "i16"
+                  },
+                  "remaining": {
+                    "address": 38604,
+                    "type": "i16"
+                  }
+                }
+              }
+            }
+          ],
+          "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses."
+        },
+        "experimentId": "exp-001",
+        "finishedAt": "2026-11-01T21:07:55.895Z"
+      },
+      {
+        "callId": "call_23090ed3-a7bf-4aa4-85b2-a6622cef929c",
+        "name": "checkpoint_state",
+        "ok": true,
+        "args": {
+          "branchId": "main",
+          "label": "after-move-right"
+        },
+        "startedAt": "2026-11-01T21:07:58.454Z",
+        "result": {
+          "sessionId": "cc6aa76a-22bc-4cc2-8424-0321b7ff5a02",
+          "branchId": "main",
+          "checkpointId": "cp-add78e465ef6200e69a9",
+          "label": "after-move-right",
+          "verification": {
+            "frame": 70,
+            "memoryHash": "8fce1cc9b0a4a8e00dcb3b79dc2bd713e0dc4cb0913bcc25733966f8e5702b5b",
+            "framebufferHash": "c7c48e04ea61dcea09768e62a5d5120b039ace55d7b8ed44173e822deddff7b6",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          },
+          "restoration": "Replay from a clean instance; no memory-only snapshots"
+        },
+        "finishedAt": "2026-11-01T21:07:58.460Z"
+      },
+      {
+        "callId": "call_7e3f39d0-9bf4-43c7-99ed-cd1aab015817",
+        "name": "fork_checkpoint",
+        "ok": false,
+        "args": {
+          "branchId": "main",
+          "checkpointId": "cp-add78e465ef6200e69a9",
+          "watches": []
+        },
+        "startedAt": "2026-11-01T21:08:00.027Z",
+        "error": "Use a new branch identity; at most six branches",
+        "finishedAt": "2026-11-01T21:08:00.031Z"
+      },
+      {
+        "callId": "call_84f2a410-1c18-4a2e-9239-de0a4f000103",
+        "name": "fork_checkpoint",
+        "ok": true,
+        "args": {
+          "branchId": "ctrl",
+          "checkpointId": "cp-add78e465ef6200e69a9",
+          "watches": []
+        },
+        "startedAt": "2026-11-01T21:08:01.705Z",
+        "result": {
+          "observationId": "obs-0004",
+          "sessionId": "cc6aa76a-22bc-4cc2-8424-0321b7ff5a02",
+          "branchId": "ctrl",
+          "experimental": true,
+          "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+          "frame": 70,
+          "framebufferHash": "c7c48e04ea61dcea09768e62a5d5120b039ace55d7b8ed44173e822deddff7b6",
+          "memoryHash": "8fce1cc9b0a4a8e00dcb3b79dc2bd713e0dc4cb0913bcc25733966f8e5702b5b",
+          "storage": {
+            "bytes": 0,
+            "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "palette": [
+            16777215,
+            5855577,
+            12566463,
+            2434341
+          ],
+          "text": "Wave:\n1\nEnemies:\n1\nScore:\n93",
+          "textTruncated": false,
+          "sprites": [
+            {
+              "pointer": 17640,
+              "width": 8,
+              "height": 8,
+              "drawColors": 48,
+              "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+              "count": 10,
+              "positions": [
+                {
+                  "x": 122,
+                  "y": 6,
+                  "flags": 0
+                },
+                {
+                  "x": 18,
+                  "y": 31,
+                  "flags": 0
+                },
+                {
+                  "x": 57,
+                  "y": 109,
+                  "flags": 0
+                },
+                {
+                  "x": 102,
+                  "y": 58,
+                  "flags": 0
+                }
+              ],
+              "omittedPositions": 6
+            },
+            {
+              "pointer": 17050,
+              "width": 8,
+              "height": 8,
+              "drawColors": 8498,
+              "spriteSha256": "658312ebf10a52ac0e7e9ed31715071d575a9ed116bf9e70a2b00daa84595e4f",
+              "count": 1,
+              "positions": [
+                {
+                  "x": 86,
+                  "y": 76,
+                  "flags": 1
+                }
+              ],
+              "omittedPositions": 0
+            },
+            {
+              "pointer": 17540,
+              "width": 8,
+              "height": 8,
+              "drawColors": 801,
+              "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+              "count": 1,
+              "positions": [
+                {
+                  "x": 76,
+                  "y": 76,
+                  "flags": 1
+                }
+              ],
+              "omittedPositions": 0
+            },
+            {
+              "pointer": 17556,
+              "width": 3,
+              "height": 2,
+              "drawColors": 32,
+              "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+              "count": 8,
+              "positions": [
+                {
+                  "x": 80,
+                  "y": 80,
+                  "flags": 0
+                },
+                {
+                  "x": 155,
+                  "y": 4,
+                  "flags": 0
+                },
+                {
+                  "x": 147,
+                  "y": 4,
+                  "flags": 0
+                },
+                {
+                  "x": 139,
+                  "y": 4,
+                  "flags": 0
+                }
+              ],
+              "omittedPositions": 4
+            },
+            {
+              "pointer": 17540,
+              "width": 8,
+              "height": 8,
+              "drawColors": 834,
+              "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+              "count": 7,
+              "positions": [
+                {
+                  "x": 152,
+                  "y": 0,
+                  "flags": 1
+                },
+                {
+                  "x": 144,
+                  "y": 0,
+                  "flags": 1
+                },
+                {
+                  "x": 136,
+                  "y": 0,
+                  "flags": 1
+                },
+                {
+                  "x": 128,
+                  "y": 0,
+                  "flags": 1
+                }
+              ],
+              "omittedPositions": 3
+            }
+          ],
+          "omittedSpriteGroups": 0,
+          "tones": [],
+          "memory": [],
+          "motion": {
+            "position": {
+              "x": 60,
+              "y": 0
+            },
+            "direction": {
+              "x": 0,
+              "y": 0
+            },
+            "cooldown": 0,
+            "remaining": 0,
+            "sourceBodyWidth": 8,
+            "fieldHints": {
+              "source": "human-mapped-assistance",
+              "x": {
+                "address": 22013,
+                "type": "f32"
+              },
+              "y": {
+                "address": 22017,
+                "type": "f32"
+              },
+              "cooldown": {
+                "address": 38602,
+                "type": "i16"
+              },
+              "remaining": {
+                "address": 38604,
+                "type": "i16"
+              }
+            }
+          },
+          "restoredFrom": "cp-add78e465ef6200e69a9",
+          "restorationVerified": true
+        },
+        "finishedAt": "2026-11-01T21:08:01.719Z"
+      },
+      {
+        "callId": "call_22af0c1a-31ae-4b29-a8d3-8b0a211d893c",
+        "name": "inspect_wasm",
+        "ok": true,
+        "args": {
+          "lineCount": 50,
+          "startLine": 1,
+          "view": "overview"
+        },
+        "startedAt": "2026-11-01T21:08:06.184Z",
+        "result": {
+          "target": "target-001",
+          "bytes": 47101,
+          "sha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+          "imports": [
+            {
+              "module": "env",
+              "name": "rect",
+              "kind": "function"
+            },
+            {
+              "module": "env",
+              "name": "textUtf8",
+              "kind": "function"
+            },
+            {
+              "module": "env",
+              "name": "diskw",
+              "kind": "function"
+            },
+            {
+              "module": "env",
+              "name": "diskr",
+              "kind": "function"
+            },
+            {
+              "module": "env",
+              "name": "tone",
+              "kind": "function"
+            },
+            {
+              "module": "env",
+              "name": "blit",
+              "kind": "function"
+            },
+            {
+              "module": "env",
+              "name": "memory",
+              "kind": "memory"
+            }
+          ],
+          "exports": [
+            {
+              "name": "start",
+              "kind": "function"
+            },
+            {
+              "name": "update",
+              "kind": "function"
+            },
+            {
+              "name": "__data_end",
+              "kind": "global"
+            },
+            {
+              "name": "__heap_base",
+              "kind": "global"
+            }
+          ]
+        },
+        "finishedAt": "2026-11-01T21:08:06.187Z"
+      },
+      {
+        "callId": "call_8aaebcb9-37d3-48aa-9df4-8849933e51fc",
+        "name": "fork_checkpoint",
+        "ok": false,
+        "args": {
+          "branchId": "main",
+          "checkpointId": "cp-add78e465ef6200e69a9",
+          "watches": []
+        },
+        "startedAt": "2026-11-01T21:08:10.098Z",
+        "error": "Use a new branch identity; at most six branches",
+        "finishedAt": "2026-11-01T21:08:10.102Z"
+      },
+      {
+        "callId": "call_832b769f-bfe9-46e8-86c8-cb146ed0c76f",
+        "name": "fork_checkpoint",
+        "ok": false,
+        "args": {
+          "branchId": "main",
+          "checkpointId": "cp-add78e465ef6200e69a9",
+          "watches": [
+            {
+              "address": 22013,
+              "count": 1,
+              "name": "hyp-x",
+              "type": "f32"
+            }
+          ]
+        },
+        "startedAt": "2026-11-01T21:08:14.538Z",
+        "error": "Use a new branch identity; at most six branches",
+        "finishedAt": "2026-11-01T21:08:14.541Z"
+      },
+      {
+        "callId": "call_a246526f-70a6-4697-9174-f8ee6a3935a0",
+        "name": "fork_checkpoint",
+        "ok": false,
+        "args": {
+          "branchId": "main",
+          "checkpointId": "cp-add78e465ef6200e69a9",
+          "watches": []
+        },
+        "startedAt": "2026-11-01T21:08:17.922Z",
+        "error": "Use a new branch identity; at most six branches",
+        "finishedAt": "2026-11-01T21:08:17.926Z"
+      }
+    ],
+    "conclusion": null,
+    "conclusionVerified": false,
+    "humanAssistance": [
+      "Registered and hash-guarded the compiled donor",
+      "Mapped read-only motion registry fields; this mapping is not a model discovery",
+      "Authored the experiment tools and completion checks"
+    ],
+    "contextCompactions": [
+      {
+        "at": "2026-11-01T21:08:02.076Z",
+        "reason": "input-token-limit"
+      },
+      {
+        "at": "2026-11-01T21:08:06.614Z",
+        "reason": "input-token-limit"
+      },
+      {
+        "at": "2026-11-01T21:08:10.890Z",
+        "reason": "input-token-limit"
+      },
+      {
+        "at": "2026-11-01T21:08:15.102Z",
+        "reason": "input-token-limit"
+      },
+      {
+        "at": "2026-11-01T21:08:17.930Z",
+        "reason": "final-conclusion"
+      }
+    ],
+    "requirements": {
+      "branchComparison": true,
+      "codeInspection": true,
+      "componentAcceptance": false
+    },
+    "session": {
+      "schemaVersion": 1,
+      "id": "cc6aa76a-22bc-4cc2-8424-0321b7ff5a02",
+      "identity": {
+        "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+        "runtime": {
+          "name": "wasm4",
+          "version": "2.7.1",
+          "sources": {
+            "constants.ts": "bc357dc697bf62bd0ad1fba2295ce2dc82fc9da711952902e5556ce7471d2221",
+            "framebuffer.ts": "e00548a5d55a394f6d4980853517293a648c3c6499bb9701d82feff55a7662a2"
+          }
+        },
+        "hostSha256": "20dbfeb1d051198e811d7a9ba864df7651153ef4e51378998dcb805f8b3e4384"
+      },
+      "branches": [
+        {
+          "id": "main",
+          "actions": [
+            {
+              "kind": "advance",
+              "buttons": 1,
+              "frames": 10,
+              "hypothesis": "X starts gameplay from title; rightward input moves world position",
+              "after": {
+                "frame": 10,
+                "memoryHash": "5917d5c81debe50eef4031c16c1b00181758156f162802f6642dd044fe428969",
+                "framebufferHash": "3c18223f54192f9ac3af06d84e30733d57ae2dc7aef14c0c2185b6b965d5aad9",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            },
+            {
+              "kind": "advance",
+              "buttons": 0,
+              "frames": 30,
+              "hypothesis": "X starts gameplay from title; rightward input moves world position",
+              "after": {
+                "frame": 40,
+                "memoryHash": "7fde15c5cf329a56619b3d0382a97753989ae9281c9796c6f8bb65796502f059",
+                "framebufferHash": "49a59dd267c0dbab7138e89583720ead2b2c102d38a14e0013d9e45e67f71dfe",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            },
+            {
+              "kind": "advance",
+              "buttons": 32,
+              "frames": 30,
+              "hypothesis": "X starts gameplay from title; rightward input moves world position",
+              "after": {
+                "frame": 70,
+                "memoryHash": "8fce1cc9b0a4a8e00dcb3b79dc2bd713e0dc4cb0913bcc25733966f8e5702b5b",
+                "framebufferHash": "c7c48e04ea61dcea09768e62a5d5120b039ace55d7b8ed44173e822deddff7b6",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            }
+          ],
+          "experimental": false,
+          "verification": {
+            "frame": 70,
+            "memoryHash": "8fce1cc9b0a4a8e00dcb3b79dc2bd713e0dc4cb0913bcc25733966f8e5702b5b",
+            "framebufferHash": "c7c48e04ea61dcea09768e62a5d5120b039ace55d7b8ed44173e822deddff7b6",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          }
+        },
+        {
+          "id": "ctrl",
+          "experimental": true,
+          "parentCheckpointId": "cp-add78e465ef6200e69a9",
+          "actions": [
+            {
+              "kind": "advance",
+              "buttons": 1,
+              "frames": 10,
+              "hypothesis": "X starts gameplay from title; rightward input moves world position",
+              "after": {
+                "frame": 10,
+                "memoryHash": "5917d5c81debe50eef4031c16c1b00181758156f162802f6642dd044fe428969",
+                "framebufferHash": "3c18223f54192f9ac3af06d84e30733d57ae2dc7aef14c0c2185b6b965d5aad9",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            },
+            {
+              "kind": "advance",
+              "buttons": 0,
+              "frames": 30,
+              "hypothesis": "X starts gameplay from title; rightward input moves world position",
+              "after": {
+                "frame": 40,
+                "memoryHash": "7fde15c5cf329a56619b3d0382a97753989ae9281c9796c6f8bb65796502f059",
+                "framebufferHash": "49a59dd267c0dbab7138e89583720ead2b2c102d38a14e0013d9e45e67f71dfe",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            },
+            {
+              "kind": "advance",
+              "buttons": 32,
+              "frames": 30,
+              "hypothesis": "X starts gameplay from title; rightward input moves world position",
+              "after": {
+                "frame": 70,
+                "memoryHash": "8fce1cc9b0a4a8e00dcb3b79dc2bd713e0dc4cb0913bcc25733966f8e5702b5b",
+                "framebufferHash": "c7c48e04ea61dcea09768e62a5d5120b039ace55d7b8ed44173e822deddff7b6",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            }
+          ],
+          "verification": {
+            "frame": 70,
+            "memoryHash": "8fce1cc9b0a4a8e00dcb3b79dc2bd713e0dc4cb0913bcc25733966f8e5702b5b",
+            "framebufferHash": "c7c48e04ea61dcea09768e62a5d5120b039ace55d7b8ed44173e822deddff7b6",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          }
+        }
+      ],
+      "checkpoints": [
+        {
+          "label": "after-move-right",
+          "sourceBranchId": "main",
+          "identity": {
+            "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+            "runtime": {
+              "name": "wasm4",
+              "version": "2.7.1",
+              "sources": {
+                "constants.ts": "bc357dc697bf62bd0ad1fba2295ce2dc82fc9da711952902e5556ce7471d2221",
+                "framebuffer.ts": "e00548a5d55a394f6d4980853517293a648c3c6499bb9701d82feff55a7662a2"
+              }
+            },
+            "hostSha256": "20dbfeb1d051198e811d7a9ba864df7651153ef4e51378998dcb805f8b3e4384"
+          },
+          "actions": [
+            {
+              "kind": "advance",
+              "buttons": 1,
+              "frames": 10,
+              "hypothesis": "X starts gameplay from title; rightward input moves world position",
+              "after": {
+                "frame": 10,
+                "memoryHash": "5917d5c81debe50eef4031c16c1b00181758156f162802f6642dd044fe428969",
+                "framebufferHash": "3c18223f54192f9ac3af06d84e30733d57ae2dc7aef14c0c2185b6b965d5aad9",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            },
+            {
+              "kind": "advance",
+              "buttons": 0,
+              "frames": 30,
+              "hypothesis": "X starts gameplay from title; rightward input moves world position",
+              "after": {
+                "frame": 40,
+                "memoryHash": "7fde15c5cf329a56619b3d0382a97753989ae9281c9796c6f8bb65796502f059",
+                "framebufferHash": "49a59dd267c0dbab7138e89583720ead2b2c102d38a14e0013d9e45e67f71dfe",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            },
+            {
+              "kind": "advance",
+              "buttons": 32,
+              "frames": 30,
+              "hypothesis": "X starts gameplay from title; rightward input moves world position",
+              "after": {
+                "frame": 70,
+                "memoryHash": "8fce1cc9b0a4a8e00dcb3b79dc2bd713e0dc4cb0913bcc25733966f8e5702b5b",
+                "framebufferHash": "c7c48e04ea61dcea09768e62a5d5120b039ace55d7b8ed44173e822deddff7b6",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            }
+          ],
+          "verification": {
+            "frame": 70,
+            "memoryHash": "8fce1cc9b0a4a8e00dcb3b79dc2bd713e0dc4cb0913bcc25733966f8e5702b5b",
+            "framebufferHash": "c7c48e04ea61dcea09768e62a5d5120b039ace55d7b8ed44173e822deddff7b6",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          },
+          "id": "cp-add78e465ef6200e69a9"
+        }
+      ],
+      "observations": [
+        {
+          "id": "obs-0001",
+          "branchId": "main",
+          "actionCount": 1,
+          "verification": {
+            "frame": 10,
+            "memoryHash": "5917d5c81debe50eef4031c16c1b00181758156f162802f6642dd044fe428969",
+            "framebufferHash": "3c18223f54192f9ac3af06d84e30733d57ae2dc7aef14c0c2185b6b965d5aad9",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          },
+          "result": {
+            "observationId": "obs-0001",
+            "sessionId": "cc6aa76a-22bc-4cc2-8424-0321b7ff5a02",
+            "branchId": "main",
+            "experimental": false,
+            "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+            "frame": 10,
+            "framebufferHash": "3c18223f54192f9ac3af06d84e30733d57ae2dc7aef14c0c2185b6b965d5aad9",
+            "memoryHash": "5917d5c81debe50eef4031c16c1b00181758156f162802f6642dd044fe428969",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "palette": [
+              16777215,
+              5855577,
+              12566463,
+              2434341
+            ],
+            "text": "Wave:\n1\nEnemies:\n0\nScore:\n99",
+            "textTruncated": false,
+            "sprites": [
+              {
+                "pointer": 17640,
+                "width": 8,
+                "height": 8,
+                "drawColors": 48,
+                "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                "count": 10,
+                "positions": [
+                  {
+                    "x": 22,
+                    "y": 6,
+                    "flags": 0
+                  },
+                  {
+                    "x": 78,
+                    "y": 31,
+                    "flags": 0
+                  },
+                  {
+                    "x": 117,
+                    "y": 109,
+                    "flags": 0
+                  },
+                  {
+                    "x": 2,
+                    "y": 58,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 6
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 833,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 76,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17556,
+                "width": 3,
+                "height": 2,
+                "drawColors": 32,
+                "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                "count": 8,
+                "positions": [
+                  {
+                    "x": 79,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 155,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 147,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 139,
+                    "y": 4,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 4
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 834,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 7,
+                "positions": [
+                  {
+                    "x": 152,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 144,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 136,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 128,
+                    "y": 0,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 3
+              }
+            ],
+            "omittedSpriteGroups": 0,
+            "tones": [],
+            "memory": [],
+            "motion": {
+              "position": {
+                "x": 0,
+                "y": 0
+              },
+              "direction": {
+                "x": 0,
+                "y": 0
+              },
+              "cooldown": 1,
+              "remaining": 0,
+              "sourceBodyWidth": 8,
+              "fieldHints": {
+                "source": "human-mapped-assistance",
+                "x": {
+                  "address": 22397,
+                  "type": "f32"
+                },
+                "y": {
+                  "address": 22401,
+                  "type": "f32"
+                },
+                "cooldown": {
+                  "address": 22055,
+                  "type": "i16"
+                },
+                "remaining": {
+                  "address": 22057,
+                  "type": "i16"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "obs-0002",
+          "branchId": "main",
+          "actionCount": 2,
+          "verification": {
+            "frame": 40,
+            "memoryHash": "7fde15c5cf329a56619b3d0382a97753989ae9281c9796c6f8bb65796502f059",
+            "framebufferHash": "49a59dd267c0dbab7138e89583720ead2b2c102d38a14e0013d9e45e67f71dfe",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          },
+          "result": {
+            "observationId": "obs-0002",
+            "sessionId": "cc6aa76a-22bc-4cc2-8424-0321b7ff5a02",
+            "branchId": "main",
+            "experimental": false,
+            "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+            "frame": 40,
+            "framebufferHash": "49a59dd267c0dbab7138e89583720ead2b2c102d38a14e0013d9e45e67f71dfe",
+            "memoryHash": "7fde15c5cf329a56619b3d0382a97753989ae9281c9796c6f8bb65796502f059",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "palette": [
+              16777215,
+              5855577,
+              12566463,
+              2434341
+            ],
+            "text": "Wave:\n1\nEnemies:\n1\nScore:\n96",
+            "textTruncated": false,
+            "sprites": [
+              {
+                "pointer": 17640,
+                "width": 8,
+                "height": 8,
+                "drawColors": 48,
+                "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                "count": 10,
+                "positions": [
+                  {
+                    "x": 22,
+                    "y": 6,
+                    "flags": 0
+                  },
+                  {
+                    "x": 78,
+                    "y": 31,
+                    "flags": 0
+                  },
+                  {
+                    "x": 117,
+                    "y": 109,
+                    "flags": 0
+                  },
+                  {
+                    "x": 2,
+                    "y": 58,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 6
+              },
+              {
+                "pointer": 17648,
+                "width": 8,
+                "height": 8,
+                "drawColors": 17472,
+                "spriteSha256": "1f604d81ff72d4256e1c59a5dbaffc7014b667aa8200f9b786aaaf676b9239ff",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 152,
+                    "y": 76,
+                    "flags": 2
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 801,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 76,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17556,
+                "width": 3,
+                "height": 2,
+                "drawColors": 32,
+                "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                "count": 8,
+                "positions": [
+                  {
+                    "x": 79,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 155,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 147,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 139,
+                    "y": 4,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 4
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 834,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 7,
+                "positions": [
+                  {
+                    "x": 152,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 144,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 136,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 128,
+                    "y": 0,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 3
+              }
+            ],
+            "omittedSpriteGroups": 0,
+            "tones": [],
+            "memory": [],
+            "motion": {
+              "position": {
+                "x": 0,
+                "y": 0
+              },
+              "direction": {
+                "x": 0,
+                "y": 0
+              },
+              "cooldown": 0,
+              "remaining": 0,
+              "sourceBodyWidth": 8,
+              "fieldHints": {
+                "source": "human-mapped-assistance",
+                "x": {
+                  "address": 22397,
+                  "type": "f32"
+                },
+                "y": {
+                  "address": 22401,
+                  "type": "f32"
+                },
+                "cooldown": {
+                  "address": 22055,
+                  "type": "i16"
+                },
+                "remaining": {
+                  "address": 22057,
+                  "type": "i16"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "obs-0003",
+          "branchId": "main",
+          "actionCount": 3,
+          "verification": {
+            "frame": 70,
+            "memoryHash": "8fce1cc9b0a4a8e00dcb3b79dc2bd713e0dc4cb0913bcc25733966f8e5702b5b",
+            "framebufferHash": "c7c48e04ea61dcea09768e62a5d5120b039ace55d7b8ed44173e822deddff7b6",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          },
+          "result": {
+            "observationId": "obs-0003",
+            "sessionId": "cc6aa76a-22bc-4cc2-8424-0321b7ff5a02",
+            "branchId": "main",
+            "experimental": false,
+            "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+            "frame": 70,
+            "framebufferHash": "c7c48e04ea61dcea09768e62a5d5120b039ace55d7b8ed44173e822deddff7b6",
+            "memoryHash": "8fce1cc9b0a4a8e00dcb3b79dc2bd713e0dc4cb0913bcc25733966f8e5702b5b",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "palette": [
+              16777215,
+              5855577,
+              12566463,
+              2434341
+            ],
+            "text": "Wave:\n1\nEnemies:\n1\nScore:\n93",
+            "textTruncated": false,
+            "sprites": [
+              {
+                "pointer": 17640,
+                "width": 8,
+                "height": 8,
+                "drawColors": 48,
+                "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                "count": 10,
+                "positions": [
+                  {
+                    "x": 122,
+                    "y": 6,
+                    "flags": 0
+                  },
+                  {
+                    "x": 18,
+                    "y": 31,
+                    "flags": 0
+                  },
+                  {
+                    "x": 57,
+                    "y": 109,
+                    "flags": 0
+                  },
+                  {
+                    "x": 102,
+                    "y": 58,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 6
+              },
+              {
+                "pointer": 17050,
+                "width": 8,
+                "height": 8,
+                "drawColors": 8498,
+                "spriteSha256": "658312ebf10a52ac0e7e9ed31715071d575a9ed116bf9e70a2b00daa84595e4f",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 86,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 801,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 76,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17556,
+                "width": 3,
+                "height": 2,
+                "drawColors": 32,
+                "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                "count": 8,
+                "positions": [
+                  {
+                    "x": 80,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 155,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 147,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 139,
+                    "y": 4,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 4
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 834,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 7,
+                "positions": [
+                  {
+                    "x": 152,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 144,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 136,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 128,
+                    "y": 0,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 3
+              }
+            ],
+            "omittedSpriteGroups": 0,
+            "tones": [],
+            "memory": [],
+            "motion": {
+              "position": {
+                "x": 60,
+                "y": 0
+              },
+              "direction": {
+                "x": 0,
+                "y": 0
+              },
+              "cooldown": 0,
+              "remaining": 0,
+              "sourceBodyWidth": 8,
+              "fieldHints": {
+                "source": "human-mapped-assistance",
+                "x": {
+                  "address": 22013,
+                  "type": "f32"
+                },
+                "y": {
+                  "address": 22017,
+                  "type": "f32"
+                },
+                "cooldown": {
+                  "address": 38602,
+                  "type": "i16"
+                },
+                "remaining": {
+                  "address": 38604,
+                  "type": "i16"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "obs-0004",
+          "branchId": "ctrl",
+          "actionCount": 3,
+          "verification": {
+            "frame": 70,
+            "memoryHash": "8fce1cc9b0a4a8e00dcb3b79dc2bd713e0dc4cb0913bcc25733966f8e5702b5b",
+            "framebufferHash": "c7c48e04ea61dcea09768e62a5d5120b039ace55d7b8ed44173e822deddff7b6",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          },
+          "result": {
+            "observationId": "obs-0004",
+            "sessionId": "cc6aa76a-22bc-4cc2-8424-0321b7ff5a02",
+            "branchId": "ctrl",
+            "experimental": true,
+            "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+            "frame": 70,
+            "framebufferHash": "c7c48e04ea61dcea09768e62a5d5120b039ace55d7b8ed44173e822deddff7b6",
+            "memoryHash": "8fce1cc9b0a4a8e00dcb3b79dc2bd713e0dc4cb0913bcc25733966f8e5702b5b",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "palette": [
+              16777215,
+              5855577,
+              12566463,
+              2434341
+            ],
+            "text": "Wave:\n1\nEnemies:\n1\nScore:\n93",
+            "textTruncated": false,
+            "sprites": [
+              {
+                "pointer": 17640,
+                "width": 8,
+                "height": 8,
+                "drawColors": 48,
+                "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                "count": 10,
+                "positions": [
+                  {
+                    "x": 122,
+                    "y": 6,
+                    "flags": 0
+                  },
+                  {
+                    "x": 18,
+                    "y": 31,
+                    "flags": 0
+                  },
+                  {
+                    "x": 57,
+                    "y": 109,
+                    "flags": 0
+                  },
+                  {
+                    "x": 102,
+                    "y": 58,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 6
+              },
+              {
+                "pointer": 17050,
+                "width": 8,
+                "height": 8,
+                "drawColors": 8498,
+                "spriteSha256": "658312ebf10a52ac0e7e9ed31715071d575a9ed116bf9e70a2b00daa84595e4f",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 86,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 801,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 76,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17556,
+                "width": 3,
+                "height": 2,
+                "drawColors": 32,
+                "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                "count": 8,
+                "positions": [
+                  {
+                    "x": 80,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 155,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 147,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 139,
+                    "y": 4,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 4
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 834,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 7,
+                "positions": [
+                  {
+                    "x": 152,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 144,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 136,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 128,
+                    "y": 0,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 3
+              }
+            ],
+            "omittedSpriteGroups": 0,
+            "tones": [],
+            "memory": [],
+            "motion": {
+              "position": {
+                "x": 60,
+                "y": 0
+              },
+              "direction": {
+                "x": 0,
+                "y": 0
+              },
+              "cooldown": 0,
+              "remaining": 0,
+              "sourceBodyWidth": 8,
+              "fieldHints": {
+                "source": "human-mapped-assistance",
+                "x": {
+                  "address": 22013,
+                  "type": "f32"
+                },
+                "y": {
+                  "address": 22017,
+                  "type": "f32"
+                },
+                "cooldown": {
+                  "address": 38602,
+                  "type": "i16"
+                },
+                "remaining": {
+                  "address": 38604,
+                  "type": "i16"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "comparisons": [],
+      "staticEvidence": [
+        {
+          "id": "binary:func11",
+          "functionIndex": 11,
+          "kind": "wat"
+        }
+      ],
+      "annotations": [],
+      "captures": [],
+      "findings": [],
+      "recovery": {
+        "selections": [],
+        "attempts": []
+      }
+    },
+    "error": "Model ended without an inspection and two contrasting, cited experiments",
+    "finishedAt": "2026-11-01T21:08:21.157Z"
+  },
+  "artifactId": null,
+  "error": "Model ended without an inspection and two contrasting, cited experiments"
+}

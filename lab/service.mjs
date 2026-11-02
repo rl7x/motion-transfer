@@ -6,6 +6,8 @@ export const LAB_BUDGET_USD=10;
 export const INVESTIGATION_QUESTIONS=Object.freeze({
   held:'Does holding dash behave differently from pressing and releasing it? Choose controlled donor experiments, inspect the compiled instructions, and cite the actual observations. Do not assume a familiar dash implementation.',
   neutral:'After a LEFT directional dash and full recovery, what happens when dash is activated without any directional input: does it keep the previous left direction or choose another? Choose contrasting donor experiments with the same preparation and elapsed time, inspect compiled instructions, and use actual motion readings to discriminate explanations. Do not assume the answer. Distinguish observations from hypotheses, cite experiments and report uncertainty honestly.',
+  memory:'Use persistent investigation tools to test a motion hypothesis of your choice. Inspect actual code, enter gameplay, choose a checkpoint, fork an unchanged control and experimental branch, select a bounded typed mutation, and compare identical inputs. You may use explicitly human-mapped field hints, but must not claim you discovered their layout. Base your next action on the returned measurements. Capture one informative framebuffer if useful. Record supported/rejected/unresolved findings and cite the comparison ID in your conclusion. Prioritize one complete controlled experiment; do not browse the entire binary.',
+  extraction:'Investigate and recover a NEW standalone motion candidate from the compiled donor. Choose functions yourself, use persistent execution and a controlled memory comparison to test a hypothesis, select your inspected code and execution evidence, submit source, inspect real development first divergences and revise if needed. Freeze a passed candidate and then run separate acceptance. No pre-existing recovered implementation is available. Report incomplete work honestly; human-mapped motion fields and finite evaluators are assistance, not independent discoveries.',
 });
 const terminal=job=>['ready','failed'].includes(job.status);
 function validateRequest(kind,value){
@@ -33,7 +35,10 @@ export async function createLabService({directory,apiKey,client,investigateRun=i
     try{
       await transition(job,'generating');
       if(job.kind==='investigation'){
-        const report=await investigateRun({apiKey,client,model:'muse-spark-1.3',question:INVESTIGATION_QUESTIONS[job.request.questionId],limits:{maxCostUsd:job.maxCostUsd},onUpdate:update});
+        const extended=['memory','extraction'].includes(job.request.questionId),extraction=job.request.questionId==='extraction';
+        const report=await investigateRun({apiKey,client,model:'muse-spark-1.3',question:INVESTIGATION_QUESTIONS[job.request.questionId],
+          limits:{maxCostUsd:job.maxCostUsd,...(extended?{maxModelCalls:extraction?16:12,maxToolCalls:24,maxOutputTokens:extraction?4000:2000}:{})},
+          requirements:extended?{branchComparison:true,codeInspection:true,componentAcceptance:extraction}:{},reasoningEffort:extended?'low':'high',onUpdate:update});
         if(report.status!=='completed')throw Error('Investigation did not reach an evidence-backed conclusion');
         await update(report);
       }else{

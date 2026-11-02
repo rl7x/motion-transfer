@@ -13,3 +13,23 @@ test('the recorded Meta investigation retains contrasting actual motion observat
   assert.deepEqual(directions,[1,-1]);assert.match(report.conclusion,/rejects preservation hypothesis/);
   assert.ok(report.humanAssistance.some(note=>note.includes('Mapped read-only motion registry')));
 });
+
+test('the incomplete live branch recording retains its failure, actual motion and reproducible session',async()=>{
+  const records=await savedInvestigations(),record=records.find(item=>item.id==='branch-experiment'),report=record.job.report;
+  assert.equal(record.job.status,'failed');assert.equal(report.status,'failed');assert.equal(report.conclusion,null);
+  assert.equal(report.requests.length,12);assert.equal(report.reservedCostUsd,0);assert.ok(Math.abs(report.estimatedCostUsd-.252143)<1e-9);
+  const experiment=report.toolCalls.find(call=>call.name==='session_advance');
+  assert.equal(experiment.result.checkpoints.at(-1).motion.position.x,60);
+  assert.equal(report.session.branches.length,2);assert.equal(report.session.comparisons.length,0);
+  assert.ok(report.turns.at(-1).messages[0].text.includes('No `compare_branches` completed'));
+});
+
+test('local control evidence distinguishes human-scripted intervention from model activity',async()=>{
+  const record=(await savedInvestigations()).find(item=>item.id==='local-control'),report=record.job.report;
+  assert.equal(record.kind,'local-verification');assert.equal(report.model,'none');assert.equal(report.requests.length,0);
+  const comparison=report.session.comparisons[0];assert.equal(comparison.firstBehaviorDivergence.elapsedFrame,1);
+  assert.equal(comparison.normalizedTrace.at(-1).control.dx,60);assert.equal(comparison.normalizedTrace.at(-1).experimental.dx,16);
+  assert.equal(report.session.captures.length,2);
+  const writers=report.toolCalls.filter(call=>call.name==='trace_writers');
+  assert.equal(writers[0].result.matchingWrites,0);assert.ok(writers[1].result.matchingWrites>0);assert.ok(writers.every(call=>call.result.behavioralComparison.passed));
+});

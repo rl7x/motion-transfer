@@ -2,44 +2,34 @@ import { loadTarget } from './target.mjs';
 import { validateToolInput } from './tool-schema.mjs';
 import { createReplayRuntime } from '../runtime/replay.mjs';
 import { replayTrace } from '../runtime/trace.mjs';
-import { createWasmInspection, inspectFunction, listFunctions } from './wasm-inspection.mjs';
+import { createWasmInspection, inspectFunction, listFunctions,navigateCallGraph } from './wasm-inspection.mjs';
+import {decompileWasm,decompileFunction} from './decompile.mjs';
+import {traceMemoryWriters} from './write-instrumentation.mjs';
+import {createComponentWorkbench,COMPONENT_TOOLS} from './component-workbench.mjs';
+import { summarizeObservation } from './observation.mjs';
 import { observeDonorMotion } from '../runtime/donor-observation.mjs';
+import { createInvestigationSession } from '../runtime/investigation-session.mjs';
+import {digest} from '../component/build.mjs';
 
-function summarize(observation) {
-  const groups = new Map();
-  for (const call of observation.drawCalls) {
-    if (call.name !== 'blit') continue;
-    const [pointer, x, y, width, height, flags] = call.args;
-    const key = `${pointer}:${width}:${height}:${call.drawColors}:${call.spriteSha256}`;
-    if (!groups.has(key)) groups.set(key, {
-      pointer, width, height, drawColors: call.drawColors, spriteSha256: call.spriteSha256, count: 0, positions: [],
-    });
-    const group = groups.get(key);
-    group.count++;
-    if (group.positions.length < 4) group.positions.push({ x, y, flags });
-  }
-  const text = observation.drawCalls.filter(call => call.name === 'textUtf8').map(call => call.text);
-  return {
-    checkpoint: observation.checkpoint,
-    frame: observation.frame,
-    framebufferHash: observation.framebufferHash,
-    memoryHash: observation.memoryHash,
-    palette: observation.palette,
-    text: text.join('\n').slice(0, 1_000),
-    textTruncated: text.join('\n').length > 1_000,
-    sprites: [...groups.values()].slice(0, 8).map(group => ({
-      ...group, omittedPositions: group.count - group.positions.length,
-    })),
-    omittedSpriteGroups: Math.max(0, groups.size - 8),
-    tones: observation.tones,
-    memory: observation.memory ?? [],
-    motion: observation.motion??null,
-  };
-}
+const target=await loadTarget();
+let session,inspection,decompilation,workbench;
+
 
 async function execute(name, args) {
+  if(name==='$open'){
+    if(session)throw Error('Investigation session is already open');
+    session=await createInvestigationSession(target.bytes,args.sessionState);
+    return{result:{sessionId:session.id,identity:session.identity,restored:Boolean(args.sessionState)}};
+  }
   validateToolInput(name, args);
-  const target = await loadTarget();
+  if(COMPONENT_TOOLS.some(tool=>tool.name===name)){
+    if(!session)throw Error('Inspect code and collect session execution evidence first');
+    workbench??=createComponentWorkbench(session);return workbench.execute(name,args);
+  }
+  if(name.startsWith('session_')||['read_memory','checkpoint_state','fork_checkpoint','write_memory','diff_memory','compare_branches','capture_frame','record_finding'].includes(name)){
+    session??=await createInvestigationSession(target.bytes);
+    return session.execute(name,args);
+  }
   if (name === 'run_original') {
     const runtime = await createReplayRuntime(target.bytes);
     const evidence = replayTrace(runtime, { schemaVersion: 1, steps: args.steps }, { watches: args.watches,checkpointData:runtime=>{
@@ -53,7 +43,7 @@ async function execute(name, args) {
         frames: evidence.frames.length,
         memoryWatches: args.watches,
         motionNotice:'Motion fields are read from the actual binary through a HUMAN-MAPPED, hash-guarded registry. The agent did not discover that mapping. Null means the mapping was unavailable (for example outside gameplay). World position is distinct from camera-relative sprites. No expected outputs or recovered controller were used.',
-        checkpoints: evidence.checkpoints.map(summarize),
+        checkpoints: evidence.checkpoints.map(summarizeObservation),
       },
       evidence,
     };
@@ -66,9 +56,28 @@ async function execute(name, args) {
       imports: WebAssembly.Module.imports(module), exports: WebAssembly.Module.exports(module),
     },
   };
-  const inspection = await createWasmInspection(target.bytes);
+  inspection??=await createWasmInspection(target.bytes);
+  if(name==='trace_writers'){
+    if(!session)throw Error('Create an investigation checkpoint first');
+    const result=await traceMemoryWriters(session,inspection,target.bytes,args);
+    result.evidenceId='writers:'+digest(JSON.stringify(result)).slice(0,24);
+    session.recordStatic({id:result.evidenceId,kind:'writer-trace',passed:result.behavioralComparison.passed});return{result};
+  }
+  if(name==='decompile_function'){
+    decompilation??=await decompileWasm(target.bytes);
+    const result={sha256:target.sha256,...decompileFunction(decompilation,args)};
+    session?.recordStatic({id:result.evidenceId,functionIndex:args.functionIndex,kind:'decompilation'});return{result};
+  }
+  if(name==='call_graph')return{result:{sha256:target.sha256,...navigateCallGraph(inspection,args)}};
+  if(name==='annotate_function'){
+    if(!inspection.functions[args.functionIndex])throw Error('Unknown function index');
+    session??=await createInvestigationSession(target.bytes);return session.annotate(args);
+  }
   if (name === 'list_functions') return { result: { sha256: target.sha256, ...listFunctions(inspection, args) } };
-  if (name === 'inspect_function') return { result: { sha256: target.sha256, ...inspectFunction(inspection, args) } };
+  if (name === 'inspect_function'){
+    const evidenceId=`binary:func${args.functionIndex}`;const result={sha256:target.sha256,evidenceId,...inspectFunction(inspection,args)};
+    session?.recordStatic({id:evidenceId,functionIndex:args.functionIndex,kind:'wat'});return{result};
+  }
   const { lines } = inspection;
   if (args.startLine > lines.length) throw new Error(`startLine exceeds the ${lines.length} WAT lines`);
   return {
@@ -83,15 +92,19 @@ async function execute(name, args) {
   };
 }
 
-try {
-  let input = '';
-  for await (const chunk of process.stdin) {
-    input += chunk;
-    if (Buffer.byteLength(input) > 8_192) throw new Error('Tool request exceeds 8 KB');
+let buffer='';
+process.stdin.setEncoding('utf8');
+for await(const chunk of process.stdin){
+  buffer+=chunk.toString('utf8');
+  if(Buffer.byteLength(buffer)>2*1024*1024)throw Error('Worker input limit exceeded');
+  let end;
+  while((end=buffer.indexOf('\n'))>=0){
+    const line=buffer.slice(0,end);buffer=buffer.slice(end+1);let id;
+    try{
+      const request=JSON.parse(line);id=request.id;
+      if(!Number.isSafeInteger(id))throw Error('Invalid worker request identity');
+      const output=await execute(request.name,request.args);
+      process.stdout.write(JSON.stringify({id,ok:true,...output,...(session?{sessionState:session.snapshot()}:{} )})+'\n');
+    }catch(error){process.stdout.write(JSON.stringify({id,ok:false,error:String(error.message).slice(0,1000),...(session?{sessionState:session.snapshot()}:{} )})+'\n');}
   }
-  const { name, args } = JSON.parse(input);
-  process.stdout.write(JSON.stringify({ ok: true, ...await execute(name, args) }));
-} catch (error) {
-  process.stdout.write(JSON.stringify({ ok: false, error: error.message }));
-  process.exitCode = 1;
 }

@@ -1,0 +1,5949 @@
+{
+  "id": "783b7cb3-e85e-4ff7-a93b-c2871ceb3ba5",
+  "kind": "investigation",
+  "origin": "local-verification",
+  "status": "ready",
+  "events": [],
+  "error": null,
+  "report": {
+    "schemaVersion": 1,
+    "status": "completed",
+    "model": "none",
+    "origin": "local-verification",
+    "startedAt": "2026-11-01T21:19:28.860Z",
+    "finishedAt": "2026-11-01T21:19:29.266Z",
+    "target": {
+      "id": "target-001",
+      "sha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f"
+    },
+    "requests": [],
+    "turns": [],
+    "toolCalls": [
+      {
+        "name": "session_advance",
+        "args": {
+          "branchId": "main",
+          "hypothesis": "Human-scripted setup reaches a ready donor state.",
+          "watches": [],
+          "steps": [
+            {
+              "buttons": 1,
+              "frames": 1,
+              "checkpoint": "gameplay"
+            },
+            {
+              "buttons": 0,
+              "frames": 10,
+              "checkpoint": "ready"
+            }
+          ]
+        },
+        "result": {
+          "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+          "branchId": "main",
+          "hypothesis": "Human-scripted setup reaches a ready donor state.",
+          "checkpoints": [
+            {
+              "observationId": "obs-0001",
+              "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+              "branchId": "main",
+              "experimental": false,
+              "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+              "checkpoint": "gameplay",
+              "frame": 1,
+              "framebufferHash": "e0d606614f64711c6ef9cedf843b1929af1313b5e5e0c932419dfeae46d79291",
+              "memoryHash": "f1484fc0ee594ecab0ab7c4a57458bfa17019bc1dfeb7249daefae3b63365945",
+              "storage": {
+                "bytes": 0,
+                "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "palette": [
+                16777215,
+                5855577,
+                12566463,
+                2434341
+              ],
+              "text": "Welcome to\nDashy Dango!\nHelp the Dango\nsurvive by fighting\nwaves of enemies.\nDash into enemies\nto eliminate them.\nControls:\n-X to dash\n-Z to switch\n colour palette\nPress x to start!",
+              "textTruncated": false,
+              "sprites": [],
+              "omittedSpriteGroups": 0,
+              "tones": [],
+              "memory": [],
+              "motion": {
+                "position": {
+                  "x": 0,
+                  "y": 0
+                },
+                "direction": {
+                  "x": 0,
+                  "y": 0
+                },
+                "cooldown": 10,
+                "remaining": 0,
+                "sourceBodyWidth": 8,
+                "fieldHints": {
+                  "source": "human-mapped-assistance",
+                  "x": {
+                    "address": 22397,
+                    "type": "f32"
+                  },
+                  "y": {
+                    "address": 22401,
+                    "type": "f32"
+                  },
+                  "cooldown": {
+                    "address": 22055,
+                    "type": "i16"
+                  },
+                  "remaining": {
+                    "address": 22057,
+                    "type": "i16"
+                  }
+                }
+              }
+            },
+            {
+              "observationId": "obs-0002",
+              "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+              "branchId": "main",
+              "experimental": false,
+              "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+              "checkpoint": "ready",
+              "frame": 11,
+              "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+              "memoryHash": "ead5656c66877c4562ae7a3ac21f7765fcc3c067b02e0d22b53475d1c260d943",
+              "storage": {
+                "bytes": 0,
+                "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "palette": [
+                16777215,
+                5855577,
+                12566463,
+                2434341
+              ],
+              "text": "Wave:\n1\nEnemies:\n0\nScore:\n99",
+              "textTruncated": false,
+              "sprites": [
+                {
+                  "pointer": 17640,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 48,
+                  "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                  "count": 10,
+                  "positions": [
+                    {
+                      "x": 22,
+                      "y": 6,
+                      "flags": 0
+                    },
+                    {
+                      "x": 78,
+                      "y": 31,
+                      "flags": 0
+                    },
+                    {
+                      "x": 117,
+                      "y": 109,
+                      "flags": 0
+                    },
+                    {
+                      "x": 2,
+                      "y": 58,
+                      "flags": 0
+                    }
+                  ],
+                  "omittedPositions": 6
+                },
+                {
+                  "pointer": 17540,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 801,
+                  "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                  "count": 1,
+                  "positions": [
+                    {
+                      "x": 76,
+                      "y": 76,
+                      "flags": 1
+                    }
+                  ],
+                  "omittedPositions": 0
+                },
+                {
+                  "pointer": 17556,
+                  "width": 3,
+                  "height": 2,
+                  "drawColors": 32,
+                  "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                  "count": 8,
+                  "positions": [
+                    {
+                      "x": 79,
+                      "y": 80,
+                      "flags": 0
+                    },
+                    {
+                      "x": 155,
+                      "y": 4,
+                      "flags": 0
+                    },
+                    {
+                      "x": 147,
+                      "y": 4,
+                      "flags": 0
+                    },
+                    {
+                      "x": 139,
+                      "y": 4,
+                      "flags": 0
+                    }
+                  ],
+                  "omittedPositions": 4
+                },
+                {
+                  "pointer": 17540,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 834,
+                  "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                  "count": 7,
+                  "positions": [
+                    {
+                      "x": 152,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 144,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 136,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 128,
+                      "y": 0,
+                      "flags": 1
+                    }
+                  ],
+                  "omittedPositions": 3
+                }
+              ],
+              "omittedSpriteGroups": 0,
+              "tones": [],
+              "memory": [],
+              "motion": {
+                "position": {
+                  "x": 0,
+                  "y": 0
+                },
+                "direction": {
+                  "x": 0,
+                  "y": 0
+                },
+                "cooldown": 0,
+                "remaining": 0,
+                "sourceBodyWidth": 8,
+                "fieldHints": {
+                  "source": "human-mapped-assistance",
+                  "x": {
+                    "address": 18941,
+                    "type": "f32"
+                  },
+                  "y": {
+                    "address": 18945,
+                    "type": "f32"
+                  },
+                  "cooldown": {
+                    "address": 22439,
+                    "type": "i16"
+                  },
+                  "remaining": {
+                    "address": 22441,
+                    "type": "i16"
+                  }
+                }
+              }
+            }
+          ],
+          "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses."
+        },
+        "ok": true,
+        "author": "human-script"
+      },
+      {
+        "name": "checkpoint_state",
+        "args": {
+          "branchId": "main",
+          "label": "local control before intervention"
+        },
+        "result": {
+          "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+          "branchId": "main",
+          "checkpointId": "cp-46ae40a2b28f3685af58",
+          "label": "local control before intervention",
+          "verification": {
+            "frame": 11,
+            "memoryHash": "ead5656c66877c4562ae7a3ac21f7765fcc3c067b02e0d22b53475d1c260d943",
+            "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          },
+          "restoration": "Replay from a clean instance; no memory-only snapshots"
+        },
+        "ok": true,
+        "author": "human-script"
+      },
+      {
+        "name": "fork_checkpoint",
+        "args": {
+          "checkpointId": "cp-46ae40a2b28f3685af58",
+          "branchId": "control",
+          "watches": []
+        },
+        "result": {
+          "observationId": "obs-0003",
+          "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+          "branchId": "control",
+          "experimental": true,
+          "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+          "frame": 11,
+          "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+          "memoryHash": "ead5656c66877c4562ae7a3ac21f7765fcc3c067b02e0d22b53475d1c260d943",
+          "storage": {
+            "bytes": 0,
+            "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "palette": [
+            16777215,
+            5855577,
+            12566463,
+            2434341
+          ],
+          "text": "Wave:\n1\nEnemies:\n0\nScore:\n99",
+          "textTruncated": false,
+          "sprites": [
+            {
+              "pointer": 17640,
+              "width": 8,
+              "height": 8,
+              "drawColors": 48,
+              "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+              "count": 10,
+              "positions": [
+                {
+                  "x": 22,
+                  "y": 6,
+                  "flags": 0
+                },
+                {
+                  "x": 78,
+                  "y": 31,
+                  "flags": 0
+                },
+                {
+                  "x": 117,
+                  "y": 109,
+                  "flags": 0
+                },
+                {
+                  "x": 2,
+                  "y": 58,
+                  "flags": 0
+                }
+              ],
+              "omittedPositions": 6
+            },
+            {
+              "pointer": 17540,
+              "width": 8,
+              "height": 8,
+              "drawColors": 801,
+              "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+              "count": 1,
+              "positions": [
+                {
+                  "x": 76,
+                  "y": 76,
+                  "flags": 1
+                }
+              ],
+              "omittedPositions": 0
+            },
+            {
+              "pointer": 17556,
+              "width": 3,
+              "height": 2,
+              "drawColors": 32,
+              "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+              "count": 8,
+              "positions": [
+                {
+                  "x": 79,
+                  "y": 80,
+                  "flags": 0
+                },
+                {
+                  "x": 155,
+                  "y": 4,
+                  "flags": 0
+                },
+                {
+                  "x": 147,
+                  "y": 4,
+                  "flags": 0
+                },
+                {
+                  "x": 139,
+                  "y": 4,
+                  "flags": 0
+                }
+              ],
+              "omittedPositions": 4
+            },
+            {
+              "pointer": 17540,
+              "width": 8,
+              "height": 8,
+              "drawColors": 834,
+              "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+              "count": 7,
+              "positions": [
+                {
+                  "x": 152,
+                  "y": 0,
+                  "flags": 1
+                },
+                {
+                  "x": 144,
+                  "y": 0,
+                  "flags": 1
+                },
+                {
+                  "x": 136,
+                  "y": 0,
+                  "flags": 1
+                },
+                {
+                  "x": 128,
+                  "y": 0,
+                  "flags": 1
+                }
+              ],
+              "omittedPositions": 3
+            }
+          ],
+          "omittedSpriteGroups": 0,
+          "tones": [],
+          "memory": [],
+          "motion": {
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "direction": {
+              "x": 0,
+              "y": 0
+            },
+            "cooldown": 0,
+            "remaining": 0,
+            "sourceBodyWidth": 8,
+            "fieldHints": {
+              "source": "human-mapped-assistance",
+              "x": {
+                "address": 18941,
+                "type": "f32"
+              },
+              "y": {
+                "address": 18945,
+                "type": "f32"
+              },
+              "cooldown": {
+                "address": 22439,
+                "type": "i16"
+              },
+              "remaining": {
+                "address": 22441,
+                "type": "i16"
+              }
+            }
+          },
+          "restoredFrom": "cp-46ae40a2b28f3685af58",
+          "restorationVerified": true
+        },
+        "ok": true,
+        "author": "human-script"
+      },
+      {
+        "name": "fork_checkpoint",
+        "args": {
+          "checkpointId": "cp-46ae40a2b28f3685af58",
+          "branchId": "variant",
+          "watches": []
+        },
+        "result": {
+          "observationId": "obs-0004",
+          "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+          "branchId": "variant",
+          "experimental": true,
+          "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+          "frame": 11,
+          "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+          "memoryHash": "ead5656c66877c4562ae7a3ac21f7765fcc3c067b02e0d22b53475d1c260d943",
+          "storage": {
+            "bytes": 0,
+            "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "palette": [
+            16777215,
+            5855577,
+            12566463,
+            2434341
+          ],
+          "text": "Wave:\n1\nEnemies:\n0\nScore:\n99",
+          "textTruncated": false,
+          "sprites": [
+            {
+              "pointer": 17640,
+              "width": 8,
+              "height": 8,
+              "drawColors": 48,
+              "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+              "count": 10,
+              "positions": [
+                {
+                  "x": 22,
+                  "y": 6,
+                  "flags": 0
+                },
+                {
+                  "x": 78,
+                  "y": 31,
+                  "flags": 0
+                },
+                {
+                  "x": 117,
+                  "y": 109,
+                  "flags": 0
+                },
+                {
+                  "x": 2,
+                  "y": 58,
+                  "flags": 0
+                }
+              ],
+              "omittedPositions": 6
+            },
+            {
+              "pointer": 17540,
+              "width": 8,
+              "height": 8,
+              "drawColors": 801,
+              "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+              "count": 1,
+              "positions": [
+                {
+                  "x": 76,
+                  "y": 76,
+                  "flags": 1
+                }
+              ],
+              "omittedPositions": 0
+            },
+            {
+              "pointer": 17556,
+              "width": 3,
+              "height": 2,
+              "drawColors": 32,
+              "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+              "count": 8,
+              "positions": [
+                {
+                  "x": 79,
+                  "y": 80,
+                  "flags": 0
+                },
+                {
+                  "x": 155,
+                  "y": 4,
+                  "flags": 0
+                },
+                {
+                  "x": 147,
+                  "y": 4,
+                  "flags": 0
+                },
+                {
+                  "x": 139,
+                  "y": 4,
+                  "flags": 0
+                }
+              ],
+              "omittedPositions": 4
+            },
+            {
+              "pointer": 17540,
+              "width": 8,
+              "height": 8,
+              "drawColors": 834,
+              "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+              "count": 7,
+              "positions": [
+                {
+                  "x": 152,
+                  "y": 0,
+                  "flags": 1
+                },
+                {
+                  "x": 144,
+                  "y": 0,
+                  "flags": 1
+                },
+                {
+                  "x": 136,
+                  "y": 0,
+                  "flags": 1
+                },
+                {
+                  "x": 128,
+                  "y": 0,
+                  "flags": 1
+                }
+              ],
+              "omittedPositions": 3
+            }
+          ],
+          "omittedSpriteGroups": 0,
+          "tones": [],
+          "memory": [],
+          "motion": {
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "direction": {
+              "x": 0,
+              "y": 0
+            },
+            "cooldown": 0,
+            "remaining": 0,
+            "sourceBodyWidth": 8,
+            "fieldHints": {
+              "source": "human-mapped-assistance",
+              "x": {
+                "address": 18941,
+                "type": "f32"
+              },
+              "y": {
+                "address": 18945,
+                "type": "f32"
+              },
+              "cooldown": {
+                "address": 22439,
+                "type": "i16"
+              },
+              "remaining": {
+                "address": 22441,
+                "type": "i16"
+              }
+            }
+          },
+          "restoredFrom": "cp-46ae40a2b28f3685af58",
+          "restorationVerified": true
+        },
+        "ok": true,
+        "author": "human-script"
+      },
+      {
+        "name": "write_memory",
+        "args": {
+          "branchId": "variant",
+          "edits": [
+            {
+              "address": 22439,
+              "type": "i16",
+              "value": 40,
+              "hypothesis": "Human-selected intervention: increasing this human-mapped timer may delay activation."
+            }
+          ],
+          "watches": []
+        },
+        "result": {
+          "observationId": "obs-0005",
+          "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+          "branchId": "variant",
+          "experimental": true,
+          "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+          "frame": 11,
+          "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+          "memoryHash": "63aa0369b5bfcb6feed773f246bc14718793c93f7f7938d3baa2fdc9501e6a61",
+          "storage": {
+            "bytes": 0,
+            "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "palette": [
+            16777215,
+            5855577,
+            12566463,
+            2434341
+          ],
+          "text": "Wave:\n1\nEnemies:\n0\nScore:\n99",
+          "textTruncated": false,
+          "sprites": [
+            {
+              "pointer": 17640,
+              "width": 8,
+              "height": 8,
+              "drawColors": 48,
+              "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+              "count": 10,
+              "positions": [
+                {
+                  "x": 22,
+                  "y": 6,
+                  "flags": 0
+                },
+                {
+                  "x": 78,
+                  "y": 31,
+                  "flags": 0
+                },
+                {
+                  "x": 117,
+                  "y": 109,
+                  "flags": 0
+                },
+                {
+                  "x": 2,
+                  "y": 58,
+                  "flags": 0
+                }
+              ],
+              "omittedPositions": 6
+            },
+            {
+              "pointer": 17540,
+              "width": 8,
+              "height": 8,
+              "drawColors": 801,
+              "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+              "count": 1,
+              "positions": [
+                {
+                  "x": 76,
+                  "y": 76,
+                  "flags": 1
+                }
+              ],
+              "omittedPositions": 0
+            },
+            {
+              "pointer": 17556,
+              "width": 3,
+              "height": 2,
+              "drawColors": 32,
+              "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+              "count": 8,
+              "positions": [
+                {
+                  "x": 79,
+                  "y": 80,
+                  "flags": 0
+                },
+                {
+                  "x": 155,
+                  "y": 4,
+                  "flags": 0
+                },
+                {
+                  "x": 147,
+                  "y": 4,
+                  "flags": 0
+                },
+                {
+                  "x": 139,
+                  "y": 4,
+                  "flags": 0
+                }
+              ],
+              "omittedPositions": 4
+            },
+            {
+              "pointer": 17540,
+              "width": 8,
+              "height": 8,
+              "drawColors": 834,
+              "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+              "count": 7,
+              "positions": [
+                {
+                  "x": 152,
+                  "y": 0,
+                  "flags": 1
+                },
+                {
+                  "x": 144,
+                  "y": 0,
+                  "flags": 1
+                },
+                {
+                  "x": 136,
+                  "y": 0,
+                  "flags": 1
+                },
+                {
+                  "x": 128,
+                  "y": 0,
+                  "flags": 1
+                }
+              ],
+              "omittedPositions": 3
+            }
+          ],
+          "omittedSpriteGroups": 0,
+          "tones": [],
+          "memory": [],
+          "motion": {
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "direction": {
+              "x": 0,
+              "y": 0
+            },
+            "cooldown": 40,
+            "remaining": 0,
+            "sourceBodyWidth": 8,
+            "fieldHints": {
+              "source": "human-mapped-assistance",
+              "x": {
+                "address": 18941,
+                "type": "f32"
+              },
+              "y": {
+                "address": 18945,
+                "type": "f32"
+              },
+              "cooldown": {
+                "address": 22439,
+                "type": "i16"
+              },
+              "remaining": {
+                "address": 22441,
+                "type": "i16"
+              }
+            }
+          },
+          "edits": [
+            {
+              "kind": "write",
+              "address": 22439,
+              "type": "i16",
+              "value": 40,
+              "hypothesis": "Human-selected intervention: increasing this human-mapped timer may delay activation.",
+              "frame": 11,
+              "previousValue": 0,
+              "previousBytesHex": "0000",
+              "newValue": 40,
+              "newBytesHex": "2800",
+              "after": {
+                "frame": 11,
+                "memoryHash": "63aa0369b5bfcb6feed773f246bc14718793c93f7f7938d3baa2fdc9501e6a61",
+                "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            }
+          ],
+          "notice": "Experimental linear-memory writes only; the original cartridge bytes are unchanged."
+        },
+        "ok": true,
+        "author": "human-script"
+      },
+      {
+        "name": "compare_branches",
+        "args": {
+          "controlBranchId": "control",
+          "experimentalBranchId": "variant",
+          "hypothesis": "Human-scripted comparison: apply identical right-dash inputs to both branches.",
+          "watches": [],
+          "steps": [
+            {
+              "buttons": 33,
+              "frames": 8,
+              "checkpoint": "same-eight-inputs"
+            }
+          ]
+        },
+        "result": {
+          "comparisonId": "cmp-001",
+          "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+          "hypothesis": "Human-scripted comparison: apply identical right-dash inputs to both branches.",
+          "checkpointId": "cp-46ae40a2b28f3685af58",
+          "controlBranchId": "control",
+          "experimentalBranchId": "variant",
+          "identicalInputs": [
+            {
+              "buttons": 33,
+              "frames": 8,
+              "checkpoint": "same-eight-inputs"
+            }
+          ],
+          "edits": [
+            {
+              "kind": "write",
+              "address": 22439,
+              "type": "i16",
+              "value": 40,
+              "hypothesis": "Human-selected intervention: increasing this human-mapped timer may delay activation.",
+              "frame": 11,
+              "previousValue": 0,
+              "previousBytesHex": "0000",
+              "newValue": 40,
+              "newBytesHex": "2800",
+              "after": {
+                "frame": 11,
+                "memoryHash": "63aa0369b5bfcb6feed773f246bc14718793c93f7f7938d3baa2fdc9501e6a61",
+                "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            }
+          ],
+          "firstDivergence": {
+            "elapsedFrame": 1,
+            "frame": 12,
+            "control": {
+              "frame": 12,
+              "framebufferHash": "b684e026e27064a598cc28432cc9140218045fb16e8f6501de79ef960fc5241d",
+              "memoryHash": "6e950ed459d63fe1e824f0d4eac781a53a0a75350a63c09dfd9333ae7e46cec2",
+              "storage": {
+                "bytes": 0,
+                "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "palette": [
+                16777215,
+                5855577,
+                12566463,
+                2434341
+              ],
+              "text": "Wave:\n1\nEnemies:\n1\nScore:\n99",
+              "textTruncated": false,
+              "sprites": [
+                {
+                  "pointer": 17640,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 48,
+                  "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                  "count": 11,
+                  "positions": [
+                    {
+                      "x": 14,
+                      "y": 6,
+                      "flags": 0
+                    },
+                    {
+                      "x": 70,
+                      "y": 31,
+                      "flags": 0
+                    },
+                    {
+                      "x": 109,
+                      "y": 109,
+                      "flags": 0
+                    },
+                    {
+                      "x": -5,
+                      "y": 58,
+                      "flags": 0
+                    }
+                  ],
+                  "omittedPositions": 7
+                },
+                {
+                  "pointer": 17648,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 17472,
+                  "spriteSha256": "1f604d81ff72d4256e1c59a5dbaffc7014b667aa8200f9b786aaaf676b9239ff",
+                  "count": 1,
+                  "positions": [
+                    {
+                      "x": 152,
+                      "y": 76,
+                      "flags": 2
+                    }
+                  ],
+                  "omittedPositions": 0
+                },
+                {
+                  "pointer": 17540,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 833,
+                  "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                  "count": 1,
+                  "positions": [
+                    {
+                      "x": 76,
+                      "y": 76,
+                      "flags": 1
+                    }
+                  ],
+                  "omittedPositions": 0
+                },
+                {
+                  "pointer": 17556,
+                  "width": 3,
+                  "height": 2,
+                  "drawColors": 32,
+                  "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                  "count": 8,
+                  "positions": [
+                    {
+                      "x": 79,
+                      "y": 80,
+                      "flags": 0
+                    },
+                    {
+                      "x": 155,
+                      "y": 4,
+                      "flags": 0
+                    },
+                    {
+                      "x": 147,
+                      "y": 4,
+                      "flags": 0
+                    },
+                    {
+                      "x": 139,
+                      "y": 4,
+                      "flags": 0
+                    }
+                  ],
+                  "omittedPositions": 4
+                },
+                {
+                  "pointer": 17540,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 834,
+                  "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                  "count": 7,
+                  "positions": [
+                    {
+                      "x": 152,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 144,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 136,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 128,
+                      "y": 0,
+                      "flags": 1
+                    }
+                  ],
+                  "omittedPositions": 3
+                }
+              ],
+              "omittedSpriteGroups": 0,
+              "tones": [
+                [
+                  0,
+                  4096,
+                  100,
+                  2
+                ]
+              ],
+              "memory": [],
+              "motion": {
+                "position": {
+                  "x": 7.5,
+                  "y": 0
+                },
+                "direction": {
+                  "x": 1,
+                  "y": 0
+                },
+                "cooldown": 25,
+                "remaining": 7,
+                "sourceBodyWidth": 8,
+                "fieldHints": {
+                  "source": "human-mapped-assistance",
+                  "x": {
+                    "address": 38560,
+                    "type": "f32"
+                  },
+                  "y": {
+                    "address": 38564,
+                    "type": "f32"
+                  },
+                  "cooldown": {
+                    "address": 18983,
+                    "type": "i16"
+                  },
+                  "remaining": {
+                    "address": 18985,
+                    "type": "i16"
+                  }
+                }
+              }
+            },
+            "experimental": {
+              "frame": 12,
+              "framebufferHash": "b1d975877e70523157c95d4c0f1de405404673cb4f8dcc7618aa902d967778e0",
+              "memoryHash": "45235c39b46a8a6b3724aff9ad6ec27a142590d1a25ded7a215d82415e750bc5",
+              "storage": {
+                "bytes": 0,
+                "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "palette": [
+                16777215,
+                5855577,
+                12566463,
+                2434341
+              ],
+              "text": "Wave:\n1\nEnemies:\n1\nScore:\n99",
+              "textTruncated": false,
+              "sprites": [
+                {
+                  "pointer": 17640,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 48,
+                  "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                  "count": 11,
+                  "positions": [
+                    {
+                      "x": 20,
+                      "y": 6,
+                      "flags": 0
+                    },
+                    {
+                      "x": 76,
+                      "y": 31,
+                      "flags": 0
+                    },
+                    {
+                      "x": 115,
+                      "y": 109,
+                      "flags": 0
+                    },
+                    {
+                      "x": 0,
+                      "y": 58,
+                      "flags": 0
+                    }
+                  ],
+                  "omittedPositions": 7
+                },
+                {
+                  "pointer": 17648,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 17472,
+                  "spriteSha256": "1f604d81ff72d4256e1c59a5dbaffc7014b667aa8200f9b786aaaf676b9239ff",
+                  "count": 1,
+                  "positions": [
+                    {
+                      "x": 152,
+                      "y": 76,
+                      "flags": 2
+                    }
+                  ],
+                  "omittedPositions": 0
+                },
+                {
+                  "pointer": 17540,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 801,
+                  "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                  "count": 1,
+                  "positions": [
+                    {
+                      "x": 76,
+                      "y": 76,
+                      "flags": 1
+                    }
+                  ],
+                  "omittedPositions": 0
+                },
+                {
+                  "pointer": 17556,
+                  "width": 3,
+                  "height": 2,
+                  "drawColors": 32,
+                  "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                  "count": 8,
+                  "positions": [
+                    {
+                      "x": 79,
+                      "y": 80,
+                      "flags": 0
+                    },
+                    {
+                      "x": 155,
+                      "y": 4,
+                      "flags": 0
+                    },
+                    {
+                      "x": 147,
+                      "y": 4,
+                      "flags": 0
+                    },
+                    {
+                      "x": 139,
+                      "y": 4,
+                      "flags": 0
+                    }
+                  ],
+                  "omittedPositions": 4
+                },
+                {
+                  "pointer": 17540,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 834,
+                  "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                  "count": 7,
+                  "positions": [
+                    {
+                      "x": 152,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 144,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 136,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 128,
+                      "y": 0,
+                      "flags": 1
+                    }
+                  ],
+                  "omittedPositions": 3
+                }
+              ],
+              "omittedSpriteGroups": 0,
+              "tones": [],
+              "memory": [],
+              "motion": {
+                "position": {
+                  "x": 2,
+                  "y": 0
+                },
+                "direction": {
+                  "x": 0,
+                  "y": 0
+                },
+                "cooldown": 39,
+                "remaining": 0,
+                "sourceBodyWidth": 8,
+                "fieldHints": {
+                  "source": "human-mapped-assistance",
+                  "x": {
+                    "address": 18877,
+                    "type": "f32"
+                  },
+                  "y": {
+                    "address": 18881,
+                    "type": "f32"
+                  },
+                  "cooldown": {
+                    "address": 18983,
+                    "type": "i16"
+                  },
+                  "remaining": {
+                    "address": 18985,
+                    "type": "i16"
+                  }
+                }
+              }
+            }
+          },
+          "checkpoints": [
+            {
+              "label": "same-eight-inputs",
+              "frames": 8,
+              "control": {
+                "observationId": "obs-0006",
+                "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+                "branchId": "control",
+                "experimental": true,
+                "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+                "frame": 19,
+                "framebufferHash": "2e3523d64a10bbf23e43e3f416becf48c76ee4ff89e0a8614430fe205670665c",
+                "memoryHash": "7111c95f7d2eff283244c98dd2c5b04e1337ebd0dc5cd8789f91a8d89ea56edb",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "palette": [
+                  16777215,
+                  5855577,
+                  12566463,
+                  2434341
+                ],
+                "text": "Wave:\n1\nEnemies:\n1\nScore:\n98",
+                "textTruncated": false,
+                "sprites": [
+                  {
+                    "pointer": 17640,
+                    "width": 8,
+                    "height": 8,
+                    "drawColors": 48,
+                    "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                    "count": 10,
+                    "positions": [
+                      {
+                        "x": 122,
+                        "y": 6,
+                        "flags": 0
+                      },
+                      {
+                        "x": 18,
+                        "y": 31,
+                        "flags": 0
+                      },
+                      {
+                        "x": 57,
+                        "y": 109,
+                        "flags": 0
+                      },
+                      {
+                        "x": 102,
+                        "y": 58,
+                        "flags": 0
+                      }
+                    ],
+                    "omittedPositions": 6
+                  },
+                  {
+                    "pointer": 17540,
+                    "width": 8,
+                    "height": 8,
+                    "drawColors": 833,
+                    "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                    "count": 6,
+                    "positions": [
+                      {
+                        "x": 68,
+                        "y": 76,
+                        "flags": 1
+                      },
+                      {
+                        "x": 46,
+                        "y": 76,
+                        "flags": 1
+                      },
+                      {
+                        "x": 61,
+                        "y": 76,
+                        "flags": 1
+                      },
+                      {
+                        "x": 76,
+                        "y": 76,
+                        "flags": 1
+                      }
+                    ],
+                    "omittedPositions": 2
+                  },
+                  {
+                    "pointer": 17556,
+                    "width": 3,
+                    "height": 2,
+                    "drawColors": 32,
+                    "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                    "count": 14,
+                    "positions": [
+                      {
+                        "x": 50,
+                        "y": 80,
+                        "flags": 0
+                      },
+                      {
+                        "x": 73,
+                        "y": 80,
+                        "flags": 0
+                      },
+                      {
+                        "x": 65,
+                        "y": 80,
+                        "flags": 0
+                      },
+                      {
+                        "x": 79,
+                        "y": 80,
+                        "flags": 0
+                      }
+                    ],
+                    "omittedPositions": 10
+                  },
+                  {
+                    "pointer": 17050,
+                    "width": 8,
+                    "height": 8,
+                    "drawColors": 8498,
+                    "spriteSha256": "658312ebf10a52ac0e7e9ed31715071d575a9ed116bf9e70a2b00daa84595e4f",
+                    "count": 1,
+                    "positions": [
+                      {
+                        "x": 112,
+                        "y": 76,
+                        "flags": 1
+                      }
+                    ],
+                    "omittedPositions": 0
+                  },
+                  {
+                    "pointer": 17540,
+                    "width": 8,
+                    "height": 8,
+                    "drawColors": 834,
+                    "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                    "count": 7,
+                    "positions": [
+                      {
+                        "x": 152,
+                        "y": 0,
+                        "flags": 1
+                      },
+                      {
+                        "x": 144,
+                        "y": 0,
+                        "flags": 1
+                      },
+                      {
+                        "x": 136,
+                        "y": 0,
+                        "flags": 1
+                      },
+                      {
+                        "x": 128,
+                        "y": 0,
+                        "flags": 1
+                      }
+                    ],
+                    "omittedPositions": 3
+                  }
+                ],
+                "omittedSpriteGroups": 0,
+                "tones": [
+                  [
+                    0,
+                    4106,
+                    100,
+                    2
+                  ]
+                ],
+                "memory": [],
+                "motion": {
+                  "position": {
+                    "x": 60,
+                    "y": 0
+                  },
+                  "direction": {
+                    "x": 1,
+                    "y": 0
+                  },
+                  "cooldown": 25,
+                  "remaining": 0,
+                  "sourceBodyWidth": 8,
+                  "fieldHints": {
+                    "source": "human-mapped-assistance",
+                    "x": {
+                      "address": 35824,
+                      "type": "f32"
+                    },
+                    "y": {
+                      "address": 35828,
+                      "type": "f32"
+                    },
+                    "cooldown": {
+                      "address": 38730,
+                      "type": "i16"
+                    },
+                    "remaining": {
+                      "address": 38732,
+                      "type": "i16"
+                    }
+                  }
+                }
+              },
+              "experimental": {
+                "observationId": "obs-0007",
+                "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+                "branchId": "variant",
+                "experimental": true,
+                "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+                "frame": 19,
+                "framebufferHash": "6f5b7e3d31991a6da3fcef1ef55ba35c9f81486ace7239c8bc4f445635b194a0",
+                "memoryHash": "9101dd272d6db335f39bb486a6d0c415c1f7c92beea6286eb5c3fe19bad1b085",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "palette": [
+                  16777215,
+                  5855577,
+                  12566463,
+                  2434341
+                ],
+                "text": "Wave:\n1\nEnemies:\n1\nScore:\n98",
+                "textTruncated": false,
+                "sprites": [
+                  {
+                    "pointer": 17640,
+                    "width": 8,
+                    "height": 8,
+                    "drawColors": 48,
+                    "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                    "count": 11,
+                    "positions": [
+                      {
+                        "x": 6,
+                        "y": 6,
+                        "flags": 0
+                      },
+                      {
+                        "x": 62,
+                        "y": 31,
+                        "flags": 0
+                      },
+                      {
+                        "x": 101,
+                        "y": 109,
+                        "flags": 0
+                      },
+                      {
+                        "x": 146,
+                        "y": 58,
+                        "flags": 0
+                      }
+                    ],
+                    "omittedPositions": 7
+                  },
+                  {
+                    "pointer": 17050,
+                    "width": 8,
+                    "height": 8,
+                    "drawColors": 8498,
+                    "spriteSha256": "658312ebf10a52ac0e7e9ed31715071d575a9ed116bf9e70a2b00daa84595e4f",
+                    "count": 1,
+                    "positions": [
+                      {
+                        "x": 156,
+                        "y": 76,
+                        "flags": 1
+                      }
+                    ],
+                    "omittedPositions": 0
+                  },
+                  {
+                    "pointer": 17540,
+                    "width": 8,
+                    "height": 8,
+                    "drawColors": 801,
+                    "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                    "count": 1,
+                    "positions": [
+                      {
+                        "x": 76,
+                        "y": 76,
+                        "flags": 1
+                      }
+                    ],
+                    "omittedPositions": 0
+                  },
+                  {
+                    "pointer": 17556,
+                    "width": 3,
+                    "height": 2,
+                    "drawColors": 32,
+                    "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                    "count": 8,
+                    "positions": [
+                      {
+                        "x": 80,
+                        "y": 80,
+                        "flags": 0
+                      },
+                      {
+                        "x": 155,
+                        "y": 4,
+                        "flags": 0
+                      },
+                      {
+                        "x": 147,
+                        "y": 4,
+                        "flags": 0
+                      },
+                      {
+                        "x": 139,
+                        "y": 4,
+                        "flags": 0
+                      }
+                    ],
+                    "omittedPositions": 4
+                  },
+                  {
+                    "pointer": 17540,
+                    "width": 8,
+                    "height": 8,
+                    "drawColors": 834,
+                    "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                    "count": 7,
+                    "positions": [
+                      {
+                        "x": 152,
+                        "y": 0,
+                        "flags": 1
+                      },
+                      {
+                        "x": 144,
+                        "y": 0,
+                        "flags": 1
+                      },
+                      {
+                        "x": 136,
+                        "y": 0,
+                        "flags": 1
+                      },
+                      {
+                        "x": 128,
+                        "y": 0,
+                        "flags": 1
+                      }
+                    ],
+                    "omittedPositions": 3
+                  }
+                ],
+                "omittedSpriteGroups": 0,
+                "tones": [],
+                "memory": [],
+                "motion": {
+                  "position": {
+                    "x": 16,
+                    "y": 0
+                  },
+                  "direction": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "cooldown": 32,
+                  "remaining": 0,
+                  "sourceBodyWidth": 8,
+                  "fieldHints": {
+                    "source": "human-mapped-assistance",
+                    "x": {
+                      "address": 22013,
+                      "type": "f32"
+                    },
+                    "y": {
+                      "address": 22017,
+                      "type": "f32"
+                    },
+                    "cooldown": {
+                      "address": 21799,
+                      "type": "i16"
+                    },
+                    "remaining": {
+                      "address": 21801,
+                      "type": "i16"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "scope": "Identical inputs and elapsed frames in two replay-verified branches. Finite observations; no causal claim is assigned automatically.",
+          "normalizedTrace": [
+            {
+              "elapsedFrame": 1,
+              "control": {
+                "dx": 7.5,
+                "dy": 0,
+                "cooldown": 25,
+                "remaining": 7,
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "experimental": {
+                "dx": 2,
+                "dy": 0,
+                "cooldown": 39,
+                "remaining": 0,
+                "ownsMotion": false,
+                "events": []
+              }
+            },
+            {
+              "elapsedFrame": 2,
+              "control": {
+                "dx": 15,
+                "dy": 0,
+                "cooldown": 25,
+                "remaining": 6,
+                "ownsMotion": true,
+                "events": []
+              },
+              "experimental": {
+                "dx": 4,
+                "dy": 0,
+                "cooldown": 38,
+                "remaining": 0,
+                "ownsMotion": false,
+                "events": []
+              }
+            },
+            {
+              "elapsedFrame": 3,
+              "control": {
+                "dx": 22.5,
+                "dy": 0,
+                "cooldown": 25,
+                "remaining": 5,
+                "ownsMotion": true,
+                "events": []
+              },
+              "experimental": {
+                "dx": 6,
+                "dy": 0,
+                "cooldown": 37,
+                "remaining": 0,
+                "ownsMotion": false,
+                "events": []
+              }
+            },
+            {
+              "elapsedFrame": 4,
+              "control": {
+                "dx": 30,
+                "dy": 0,
+                "cooldown": 25,
+                "remaining": 4,
+                "ownsMotion": true,
+                "events": []
+              },
+              "experimental": {
+                "dx": 8,
+                "dy": 0,
+                "cooldown": 36,
+                "remaining": 0,
+                "ownsMotion": false,
+                "events": []
+              }
+            },
+            {
+              "elapsedFrame": 5,
+              "control": {
+                "dx": 37.5,
+                "dy": 0,
+                "cooldown": 25,
+                "remaining": 3,
+                "ownsMotion": true,
+                "events": []
+              },
+              "experimental": {
+                "dx": 10,
+                "dy": 0,
+                "cooldown": 35,
+                "remaining": 0,
+                "ownsMotion": false,
+                "events": []
+              }
+            },
+            {
+              "elapsedFrame": 6,
+              "control": {
+                "dx": 45,
+                "dy": 0,
+                "cooldown": 25,
+                "remaining": 2,
+                "ownsMotion": true,
+                "events": []
+              },
+              "experimental": {
+                "dx": 12,
+                "dy": 0,
+                "cooldown": 34,
+                "remaining": 0,
+                "ownsMotion": false,
+                "events": []
+              }
+            },
+            {
+              "elapsedFrame": 7,
+              "control": {
+                "dx": 52.5,
+                "dy": 0,
+                "cooldown": 25,
+                "remaining": 1,
+                "ownsMotion": true,
+                "events": []
+              },
+              "experimental": {
+                "dx": 14,
+                "dy": 0,
+                "cooldown": 33,
+                "remaining": 0,
+                "ownsMotion": false,
+                "events": []
+              }
+            },
+            {
+              "elapsedFrame": 8,
+              "control": {
+                "dx": 60,
+                "dy": 0,
+                "cooldown": 25,
+                "remaining": 0,
+                "ownsMotion": true,
+                "events": [
+                  "dash-end"
+                ]
+              },
+              "experimental": {
+                "dx": 16,
+                "dy": 0,
+                "cooldown": 32,
+                "remaining": 0,
+                "ownsMotion": false,
+                "events": []
+              }
+            }
+          ],
+          "firstBehaviorDivergence": {
+            "elapsedFrame": 1,
+            "control": {
+              "dx": 7.5,
+              "dy": 0,
+              "cooldown": 25,
+              "remaining": 7,
+              "ownsMotion": true,
+              "events": [
+                "dash-start"
+              ]
+            },
+            "experimental": {
+              "dx": 2,
+              "dy": 0,
+              "cooldown": 39,
+              "remaining": 0,
+              "ownsMotion": false,
+              "events": []
+            }
+          },
+          "eventConvention": "Human-authored normalization: start when remaining changes from <=0 to >0; end when >0 becomes 0. Motion is measured relative to each branch before the comparison."
+        },
+        "ok": true,
+        "author": "human-script"
+      },
+      {
+        "name": "diff_memory",
+        "args": {
+          "fromObservationId": "obs-0006",
+          "toObservationId": "obs-0007",
+          "range": {
+            "address": 22439,
+            "byteLength": 4,
+            "type": "i16"
+          }
+        },
+        "result": {
+          "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+          "from": {
+            "observationId": "obs-0006",
+            "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+            "branchId": "control",
+            "experimental": true,
+            "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+            "frame": 19,
+            "framebufferHash": "2e3523d64a10bbf23e43e3f416becf48c76ee4ff89e0a8614430fe205670665c",
+            "memoryHash": "7111c95f7d2eff283244c98dd2c5b04e1337ebd0dc5cd8789f91a8d89ea56edb",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "palette": [
+              16777215,
+              5855577,
+              12566463,
+              2434341
+            ],
+            "text": "Wave:\n1\nEnemies:\n1\nScore:\n98",
+            "textTruncated": false,
+            "sprites": [
+              {
+                "pointer": 17640,
+                "width": 8,
+                "height": 8,
+                "drawColors": 48,
+                "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                "count": 10,
+                "positions": [
+                  {
+                    "x": 122,
+                    "y": 6,
+                    "flags": 0
+                  },
+                  {
+                    "x": 18,
+                    "y": 31,
+                    "flags": 0
+                  },
+                  {
+                    "x": 57,
+                    "y": 109,
+                    "flags": 0
+                  },
+                  {
+                    "x": 102,
+                    "y": 58,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 6
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 833,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 6,
+                "positions": [
+                  {
+                    "x": 68,
+                    "y": 76,
+                    "flags": 1
+                  },
+                  {
+                    "x": 46,
+                    "y": 76,
+                    "flags": 1
+                  },
+                  {
+                    "x": 61,
+                    "y": 76,
+                    "flags": 1
+                  },
+                  {
+                    "x": 76,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 2
+              },
+              {
+                "pointer": 17556,
+                "width": 3,
+                "height": 2,
+                "drawColors": 32,
+                "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                "count": 14,
+                "positions": [
+                  {
+                    "x": 50,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 73,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 65,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 79,
+                    "y": 80,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 10
+              },
+              {
+                "pointer": 17050,
+                "width": 8,
+                "height": 8,
+                "drawColors": 8498,
+                "spriteSha256": "658312ebf10a52ac0e7e9ed31715071d575a9ed116bf9e70a2b00daa84595e4f",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 112,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 834,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 7,
+                "positions": [
+                  {
+                    "x": 152,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 144,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 136,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 128,
+                    "y": 0,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 3
+              }
+            ],
+            "omittedSpriteGroups": 0,
+            "tones": [
+              [
+                0,
+                4106,
+                100,
+                2
+              ]
+            ],
+            "memory": [],
+            "motion": {
+              "position": {
+                "x": 60,
+                "y": 0
+              },
+              "direction": {
+                "x": 1,
+                "y": 0
+              },
+              "cooldown": 25,
+              "remaining": 0,
+              "sourceBodyWidth": 8,
+              "fieldHints": {
+                "source": "human-mapped-assistance",
+                "x": {
+                  "address": 35824,
+                  "type": "f32"
+                },
+                "y": {
+                  "address": 35828,
+                  "type": "f32"
+                },
+                "cooldown": {
+                  "address": 38730,
+                  "type": "i16"
+                },
+                "remaining": {
+                  "address": 38732,
+                  "type": "i16"
+                }
+              }
+            }
+          },
+          "to": {
+            "observationId": "obs-0007",
+            "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+            "branchId": "variant",
+            "experimental": true,
+            "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+            "frame": 19,
+            "framebufferHash": "6f5b7e3d31991a6da3fcef1ef55ba35c9f81486ace7239c8bc4f445635b194a0",
+            "memoryHash": "9101dd272d6db335f39bb486a6d0c415c1f7c92beea6286eb5c3fe19bad1b085",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "palette": [
+              16777215,
+              5855577,
+              12566463,
+              2434341
+            ],
+            "text": "Wave:\n1\nEnemies:\n1\nScore:\n98",
+            "textTruncated": false,
+            "sprites": [
+              {
+                "pointer": 17640,
+                "width": 8,
+                "height": 8,
+                "drawColors": 48,
+                "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                "count": 11,
+                "positions": [
+                  {
+                    "x": 6,
+                    "y": 6,
+                    "flags": 0
+                  },
+                  {
+                    "x": 62,
+                    "y": 31,
+                    "flags": 0
+                  },
+                  {
+                    "x": 101,
+                    "y": 109,
+                    "flags": 0
+                  },
+                  {
+                    "x": 146,
+                    "y": 58,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 7
+              },
+              {
+                "pointer": 17050,
+                "width": 8,
+                "height": 8,
+                "drawColors": 8498,
+                "spriteSha256": "658312ebf10a52ac0e7e9ed31715071d575a9ed116bf9e70a2b00daa84595e4f",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 156,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 801,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 76,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17556,
+                "width": 3,
+                "height": 2,
+                "drawColors": 32,
+                "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                "count": 8,
+                "positions": [
+                  {
+                    "x": 80,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 155,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 147,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 139,
+                    "y": 4,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 4
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 834,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 7,
+                "positions": [
+                  {
+                    "x": 152,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 144,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 136,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 128,
+                    "y": 0,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 3
+              }
+            ],
+            "omittedSpriteGroups": 0,
+            "tones": [],
+            "memory": [],
+            "motion": {
+              "position": {
+                "x": 16,
+                "y": 0
+              },
+              "direction": {
+                "x": 0,
+                "y": 0
+              },
+              "cooldown": 32,
+              "remaining": 0,
+              "sourceBodyWidth": 8,
+              "fieldHints": {
+                "source": "human-mapped-assistance",
+                "x": {
+                  "address": 22013,
+                  "type": "f32"
+                },
+                "y": {
+                  "address": 22017,
+                  "type": "f32"
+                },
+                "cooldown": {
+                  "address": 21799,
+                  "type": "i16"
+                },
+                "remaining": {
+                  "address": 21801,
+                  "type": "i16"
+                }
+              }
+            }
+          },
+          "difference": {
+            "address": 22439,
+            "byteLength": 4,
+            "type": "i16",
+            "comparedValues": 2,
+            "changedValues": 1,
+            "changes": [
+              {
+                "address": 22439,
+                "type": "i16",
+                "previousValue": 0,
+                "newValue": 40
+              }
+            ],
+            "omittedChanges": 0,
+            "notice": "Candidate fields only. Correlation does not establish a variable identity or causality."
+          }
+        },
+        "ok": true,
+        "author": "human-script"
+      },
+      {
+        "name": "trace_writers",
+        "args": {
+          "checkpointId": "cp-46ae40a2b28f3685af58",
+          "address": 22439,
+          "byteLength": 4,
+          "steps": [
+            {
+              "buttons": 33,
+              "frames": 8,
+              "checkpoint": "checkpoint address stores"
+            }
+          ]
+        },
+        "result": {
+          "checkpointId": "cp-46ae40a2b28f3685af58",
+          "address": 22439,
+          "byteLength": 4,
+          "steps": [
+            {
+              "buttons": 33,
+              "frames": 8,
+              "checkpoint": "checkpoint address stores"
+            }
+          ],
+          "matchingWrites": 0,
+          "hits": [],
+          "omittedHits": 0,
+          "behavioralComparison": {
+            "passed": true,
+            "framesCompared": 8,
+            "firstDivergence": null
+          },
+          "manifest": {
+            "originalSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+            "analysisSha256": "d27b455af25629251b91aa982f3614ad288a0f47c3c9da0d29fdc898f327ca74",
+            "wabtVersion": "1.0.39",
+            "instrumentedStores": 1135,
+            "unsupportedWrites": [],
+            "scope": "Executed scalar i32/i64/f32/f64 store instructions only. No host-import writes, bulk memory operations, SIMD or atomic operations. Reports WAT function lines, not machine instruction addresses. No pausing watchpoints."
+          },
+          "notice": "Evidence from a separate instrumented copy. Trust writer attribution only when the finite behavioral comparison passes; unsupported write sources remain unobserved.",
+          "evidenceId": "writers:f7aae290e3d237ed7aa2b941"
+        },
+        "ok": true,
+        "author": "human-script"
+      },
+      {
+        "name": "trace_writers",
+        "args": {
+          "checkpointId": "cp-46ae40a2b28f3685af58",
+          "address": 38730,
+          "byteLength": 4,
+          "steps": [
+            {
+              "buttons": 33,
+              "frames": 8,
+              "checkpoint": "observed endpoint address stores"
+            }
+          ]
+        },
+        "result": {
+          "checkpointId": "cp-46ae40a2b28f3685af58",
+          "address": 38730,
+          "byteLength": 4,
+          "steps": [
+            {
+              "buttons": 33,
+              "frames": 8,
+              "checkpoint": "observed endpoint address stores"
+            }
+          ],
+          "matchingWrites": 6,
+          "hits": [
+            {
+              "address": 38724,
+              "width": 8,
+              "functionIndex": 30,
+              "functionLine": 173,
+              "frame": 13,
+              "phase": "update"
+            },
+            {
+              "address": 38732,
+              "width": 4,
+              "functionIndex": 30,
+              "functionLine": 181,
+              "frame": 13,
+              "phase": "update"
+            },
+            {
+              "address": 38728,
+              "width": 4,
+              "functionIndex": 15,
+              "functionLine": 407,
+              "frame": 16,
+              "phase": "update"
+            },
+            {
+              "address": 38732,
+              "width": 4,
+              "functionIndex": 15,
+              "functionLine": 418,
+              "frame": 16,
+              "phase": "update"
+            },
+            {
+              "address": 38728,
+              "width": 4,
+              "functionIndex": 35,
+              "functionLine": 123,
+              "frame": 19,
+              "phase": "update"
+            },
+            {
+              "address": 38732,
+              "width": 4,
+              "functionIndex": 35,
+              "functionLine": 123,
+              "frame": 19,
+              "phase": "update"
+            }
+          ],
+          "omittedHits": 0,
+          "behavioralComparison": {
+            "passed": true,
+            "framesCompared": 8,
+            "firstDivergence": null
+          },
+          "manifest": {
+            "originalSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+            "analysisSha256": "d27b455af25629251b91aa982f3614ad288a0f47c3c9da0d29fdc898f327ca74",
+            "wabtVersion": "1.0.39",
+            "instrumentedStores": 1135,
+            "unsupportedWrites": [],
+            "scope": "Executed scalar i32/i64/f32/f64 store instructions only. No host-import writes, bulk memory operations, SIMD or atomic operations. Reports WAT function lines, not machine instruction addresses. No pausing watchpoints."
+          },
+          "notice": "Evidence from a separate instrumented copy. Trust writer attribution only when the finite behavioral comparison passes; unsupported write sources remain unobserved.",
+          "evidenceId": "writers:b66198fe66fe88c243359c2e"
+        },
+        "ok": true,
+        "author": "human-script"
+      },
+      {
+        "name": "inspect_function",
+        "args": {
+          "functionIndex": 30,
+          "startLine": 1,
+          "lineCount": 30
+        },
+        "result": {
+          "sha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+          "evidenceId": "binary:func30",
+          "index": 30,
+          "name": "$f30",
+          "imported": null,
+          "exports": [],
+          "signature": {
+            "params": [
+              "i32",
+              "i32"
+            ],
+            "results": []
+          },
+          "startLine": 12806,
+          "lineCount": 210,
+          "directCalleeCount": 6,
+          "directCallerCount": 1,
+          "indirectCallCount": 0,
+          "memoryInstructionCount": 27,
+          "directCallees": [
+            {
+              "index": 48,
+              "name": "$f48",
+              "sites": 1
+            },
+            {
+              "index": 138,
+              "name": "$f138",
+              "sites": 1
+            },
+            {
+              "index": 123,
+              "name": "$f123",
+              "sites": 1
+            },
+            {
+              "index": 126,
+              "name": "$f126",
+              "sites": 1
+            },
+            {
+              "index": 24,
+              "name": "$f24",
+              "sites": 1
+            },
+            {
+              "index": 115,
+              "name": "$f115",
+              "sites": 1
+            }
+          ],
+          "omittedDirectCallees": 0,
+          "directCallers": [
+            {
+              "index": 15,
+              "name": "$f15",
+              "sites": 1
+            }
+          ],
+          "omittedDirectCallers": 0,
+          "indirectCallsResolved": false,
+          "windowReferences": {
+            "directCalls": [],
+            "indirectCalls": [],
+            "memoryAccesses": [
+              {
+                "line": 12815,
+                "functionLine": 10,
+                "instruction": "i32.store",
+                "offset": 16
+              },
+              {
+                "line": 12819,
+                "functionLine": 14,
+                "instruction": "i32.load",
+                "offset": 0
+              },
+              {
+                "line": 12825,
+                "functionLine": 20,
+                "instruction": "i32.store",
+                "offset": 20
+              },
+              {
+                "line": 12834,
+                "functionLine": 29,
+                "instruction": "i32.load",
+                "offset": 0
+              }
+            ]
+          },
+          "lines": [
+            {
+              "number": 12806,
+              "functionLine": 1,
+              "text": "  (func $f30 (type $t0) (param $p0 i32) (param $p1 i32)",
+              "truncated": false
+            },
+            {
+              "number": 12807,
+              "functionLine": 2,
+              "text": "    (local $l2 i32) (local $l3 i32) (local $l4 i32) (local $l5 i32) (local $l6 i32) (local $l7 i32) (local $l8 i32) (local $l9 i32) (local $l10 i64)",
+              "truncated": false
+            },
+            {
+              "number": 12808,
+              "functionLine": 3,
+              "text": "    global.get $g0",
+              "truncated": false
+            },
+            {
+              "number": 12809,
+              "functionLine": 4,
+              "text": "    i32.const 96",
+              "truncated": false
+            },
+            {
+              "number": 12810,
+              "functionLine": 5,
+              "text": "    i32.sub",
+              "truncated": false
+            },
+            {
+              "number": 12811,
+              "functionLine": 6,
+              "text": "    local.tee $l2",
+              "truncated": false
+            },
+            {
+              "number": 12812,
+              "functionLine": 7,
+              "text": "    global.set $g0",
+              "truncated": false
+            },
+            {
+              "number": 12813,
+              "functionLine": 8,
+              "text": "    local.get $l2",
+              "truncated": false
+            },
+            {
+              "number": 12814,
+              "functionLine": 9,
+              "text": "    local.get $p1",
+              "truncated": false
+            },
+            {
+              "number": 12815,
+              "functionLine": 10,
+              "text": "    i32.store offset=16",
+              "truncated": false
+            },
+            {
+              "number": 12816,
+              "functionLine": 11,
+              "text": "    local.get $p0",
+              "truncated": false
+            },
+            {
+              "number": 12817,
+              "functionLine": 12,
+              "text": "    i32.const 12",
+              "truncated": false
+            },
+            {
+              "number": 12818,
+              "functionLine": 13,
+              "text": "    i32.add",
+              "truncated": false
+            },
+            {
+              "number": 12819,
+              "functionLine": 14,
+              "text": "    i32.load",
+              "truncated": false
+            },
+            {
+              "number": 12820,
+              "functionLine": 15,
+              "text": "    local.set $l3",
+              "truncated": false
+            },
+            {
+              "number": 12821,
+              "functionLine": 16,
+              "text": "    local.get $l2",
+              "truncated": false
+            },
+            {
+              "number": 12822,
+              "functionLine": 17,
+              "text": "    local.get $l2",
+              "truncated": false
+            },
+            {
+              "number": 12823,
+              "functionLine": 18,
+              "text": "    i32.const 16",
+              "truncated": false
+            },
+            {
+              "number": 12824,
+              "functionLine": 19,
+              "text": "    i32.add",
+              "truncated": false
+            },
+            {
+              "number": 12825,
+              "functionLine": 20,
+              "text": "    i32.store offset=20",
+              "truncated": false
+            },
+            {
+              "number": 12826,
+              "functionLine": 21,
+              "text": "    block $B0",
+              "truncated": false
+            },
+            {
+              "number": 12827,
+              "functionLine": 22,
+              "text": "      local.get $l3",
+              "truncated": false
+            },
+            {
+              "number": 12828,
+              "functionLine": 23,
+              "text": "      i32.const 1",
+              "truncated": false
+            },
+            {
+              "number": 12829,
+              "functionLine": 24,
+              "text": "      i32.add",
+              "truncated": false
+            },
+            {
+              "number": 12830,
+              "functionLine": 25,
+              "text": "      local.tee $p1",
+              "truncated": false
+            },
+            {
+              "number": 12831,
+              "functionLine": 26,
+              "text": "      if $I1",
+              "truncated": false
+            },
+            {
+              "number": 12832,
+              "functionLine": 27,
+              "text": "        local.get $p1",
+              "truncated": false
+            },
+            {
+              "number": 12833,
+              "functionLine": 28,
+              "text": "        local.get $p0",
+              "truncated": false
+            },
+            {
+              "number": 12834,
+              "functionLine": 29,
+              "text": "        i32.load",
+              "truncated": false
+            },
+            {
+              "number": 12835,
+              "functionLine": 30,
+              "text": "        local.tee $l4",
+              "truncated": false
+            }
+          ],
+          "nextLine": 31
+        },
+        "ok": true,
+        "author": "human-script"
+      },
+      {
+        "name": "decompile_function",
+        "args": {
+          "functionIndex": 30,
+          "startLine": 1,
+          "lineCount": 30
+        },
+        "result": {
+          "sha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+          "functionIndex": 30,
+          "evidenceId": "binary:func30",
+          "nameSource": "wabt-generated",
+          "notice": "WABT 1.0.39 approximate C-like interpretation, not original source. WAT is authoritative; static memory offsets are not runtime addresses.",
+          "totalLines": 56,
+          "lines": [
+            {
+              "functionLine": 1,
+              "text": "function f_ea(a:int, b:long_ptr@4) { // func30",
+              "truncated": false
+            },
+            {
+              "functionLine": 2,
+              "text": "  var e:int;",
+              "truncated": false
+            },
+            {
+              "functionLine": 3,
+              "text": "  var h:int;",
+              "truncated": false
+            },
+            {
+              "functionLine": 4,
+              "text": "  var k:long;",
+              "truncated": false
+            },
+            {
+              "functionLine": 5,
+              "text": "  var c:int = g_a - 96;",
+              "truncated": false
+            },
+            {
+              "functionLine": 6,
+              "text": "  g_a = c;",
+              "truncated": false
+            },
+            {
+              "functionLine": 7,
+              "text": "  c[4]:int = b;",
+              "truncated": false
+            },
+            {
+              "functionLine": 8,
+              "text": "  var d:long_ptr@4 = (a + 12)[0]:int;",
+              "truncated": false
+            },
+            {
+              "functionLine": 9,
+              "text": "  c[5]:int = c + 16;",
+              "truncated": false
+            },
+            {
+              "functionLine": 10,
+              "text": "  b = d + 1;",
+              "truncated": false
+            },
+            {
+              "functionLine": 11,
+              "text": "  if (b) {",
+              "truncated": false
+            },
+            {
+              "functionLine": 12,
+              "text": "    if (b > (e = select_if(e = a[0]:int, ((h = e + 1) >> 3) * 7, e < 8)) >> 1) {",
+              "truncated": false
+            },
+            {
+              "functionLine": 13,
+              "text": "      f_wa(c + 48, d, 12, select_if(b, d = e + 1, b > d));",
+              "truncated": false
+            },
+            {
+              "functionLine": 14,
+              "text": "      if (c[12]:int) goto B_a;",
+              "truncated": false
+            },
+            {
+              "functionLine": 15,
+              "text": "      (c + 40)[0]:long = (c + 68)[0]:long@4;",
+              "truncated": false
+            },
+            {
+              "functionLine": 16,
+              "text": "      c[4]:long = (k = (c + 60)[0]:long@4);",
+              "truncated": false
+            },
+            {
+              "functionLine": 17,
+              "text": "      c[3]:long = c[13]:long@4;",
+              "truncated": false
+            },
+            {
+              "functionLine": 18,
+              "text": "      d = c + 32;",
+              "truncated": false
+            },
+            {
+              "functionLine": 19,
+              "text": "      var i:int = i32_wrap_i64(k);",
+              "truncated": false
+            },
+            {
+              "functionLine": 20,
+              "text": "      var g:int = (c + 36)[0]:int;",
+              "truncated": false
+            },
+            {
+              "functionLine": 21,
+              "text": "      e = -12;",
+              "truncated": false
+            },
+            {
+              "functionLine": 22,
+              "text": "      b = 0;",
+              "truncated": false
+            },
+            {
+              "functionLine": 23,
+              "text": "      loop L_d {",
+              "truncated": false
+            },
+            {
+              "functionLine": 24,
+              "text": "        if (b == h) {",
+              "truncated": false
+            },
+            {
+              "functionLine": 25,
+              "text": "          k = d[0];",
+              "truncated": false
+            },
+            {
+              "functionLine": 26,
+              "text": "          d[0] = a[0]:long@4;",
+              "truncated": false
+            },
+            {
+              "functionLine": 27,
+              "text": "          a[0]:long@4 = k;",
+              "truncated": false
+            },
+            {
+              "functionLine": 28,
+              "text": "          b = d + 8;",
+              "truncated": false
+            },
+            {
+              "functionLine": 29,
+              "text": "          k = b[0];",
+              "truncated": false
+            },
+            {
+              "functionLine": 30,
+              "text": "          b[0] = (a = a + 8)[0]:long@4;",
+              "truncated": false
+            }
+          ],
+          "nextLine": 31
+        },
+        "ok": true,
+        "author": "human-script"
+      },
+      {
+        "name": "capture_frame",
+        "args": {
+          "branchId": "control",
+          "reason": "Actual framebuffer after the human-scripted controlled experiment."
+        },
+        "result": {
+          "evidenceId": "image-001",
+          "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+          "branchId": "control",
+          "observationId": "obs-0008",
+          "frame": 19,
+          "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+          "framebufferHash": "2e3523d64a10bbf23e43e3f416becf48c76ee4ff89e0a8614430fe205670665c",
+          "palette": [
+            16777215,
+            5855577,
+            12566463,
+            2434341
+          ],
+          "width": 160,
+          "height": 160,
+          "pngSha256": "8e5b6410a6c4fd360f82ced843fea7da52e46f5ee175d62896a35e9de7ca799d",
+          "reason": "Actual framebuffer after the human-scripted controlled experiment."
+        },
+        "ok": true,
+        "author": "human-script"
+      },
+      {
+        "name": "capture_frame",
+        "args": {
+          "branchId": "variant",
+          "reason": "Actual framebuffer after the human-scripted controlled experiment."
+        },
+        "result": {
+          "evidenceId": "image-002",
+          "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+          "branchId": "variant",
+          "observationId": "obs-0009",
+          "frame": 19,
+          "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+          "framebufferHash": "6f5b7e3d31991a6da3fcef1ef55ba35c9f81486ace7239c8bc4f445635b194a0",
+          "palette": [
+            16777215,
+            5855577,
+            12566463,
+            2434341
+          ],
+          "width": 160,
+          "height": 160,
+          "pngSha256": "15e3c68e7c8d8f33b1e4b5a94e7307eaa19bd55ccfb7e2aadd89e940a37f1be5",
+          "reason": "Actual framebuffer after the human-scripted controlled experiment."
+        },
+        "ok": true,
+        "author": "human-script"
+      }
+    ],
+    "session": {
+      "schemaVersion": 1,
+      "id": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+      "identity": {
+        "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+        "runtime": {
+          "name": "wasm4",
+          "version": "2.7.1",
+          "sources": {
+            "constants.ts": "bc357dc697bf62bd0ad1fba2295ce2dc82fc9da711952902e5556ce7471d2221",
+            "framebuffer.ts": "e00548a5d55a394f6d4980853517293a648c3c6499bb9701d82feff55a7662a2"
+          }
+        },
+        "hostSha256": "20dbfeb1d051198e811d7a9ba864df7651153ef4e51378998dcb805f8b3e4384"
+      },
+      "branches": [
+        {
+          "id": "main",
+          "actions": [
+            {
+              "kind": "advance",
+              "buttons": 1,
+              "frames": 1,
+              "hypothesis": "Human-scripted setup reaches a ready donor state.",
+              "after": {
+                "frame": 1,
+                "memoryHash": "f1484fc0ee594ecab0ab7c4a57458bfa17019bc1dfeb7249daefae3b63365945",
+                "framebufferHash": "e0d606614f64711c6ef9cedf843b1929af1313b5e5e0c932419dfeae46d79291",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            },
+            {
+              "kind": "advance",
+              "buttons": 0,
+              "frames": 10,
+              "hypothesis": "Human-scripted setup reaches a ready donor state.",
+              "after": {
+                "frame": 11,
+                "memoryHash": "ead5656c66877c4562ae7a3ac21f7765fcc3c067b02e0d22b53475d1c260d943",
+                "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            }
+          ],
+          "experimental": false,
+          "verification": {
+            "frame": 11,
+            "memoryHash": "ead5656c66877c4562ae7a3ac21f7765fcc3c067b02e0d22b53475d1c260d943",
+            "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          }
+        },
+        {
+          "id": "control",
+          "experimental": true,
+          "parentCheckpointId": "cp-46ae40a2b28f3685af58",
+          "actions": [
+            {
+              "kind": "advance",
+              "buttons": 1,
+              "frames": 1,
+              "hypothesis": "Human-scripted setup reaches a ready donor state.",
+              "after": {
+                "frame": 1,
+                "memoryHash": "f1484fc0ee594ecab0ab7c4a57458bfa17019bc1dfeb7249daefae3b63365945",
+                "framebufferHash": "e0d606614f64711c6ef9cedf843b1929af1313b5e5e0c932419dfeae46d79291",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            },
+            {
+              "kind": "advance",
+              "buttons": 0,
+              "frames": 10,
+              "hypothesis": "Human-scripted setup reaches a ready donor state.",
+              "after": {
+                "frame": 11,
+                "memoryHash": "ead5656c66877c4562ae7a3ac21f7765fcc3c067b02e0d22b53475d1c260d943",
+                "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            },
+            {
+              "kind": "advance",
+              "buttons": 33,
+              "frames": 8,
+              "hypothesis": "Human-scripted comparison: apply identical right-dash inputs to both branches.",
+              "after": {
+                "frame": 19,
+                "memoryHash": "7111c95f7d2eff283244c98dd2c5b04e1337ebd0dc5cd8789f91a8d89ea56edb",
+                "framebufferHash": "2e3523d64a10bbf23e43e3f416becf48c76ee4ff89e0a8614430fe205670665c",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            }
+          ],
+          "verification": {
+            "frame": 19,
+            "memoryHash": "7111c95f7d2eff283244c98dd2c5b04e1337ebd0dc5cd8789f91a8d89ea56edb",
+            "framebufferHash": "2e3523d64a10bbf23e43e3f416becf48c76ee4ff89e0a8614430fe205670665c",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          }
+        },
+        {
+          "id": "variant",
+          "experimental": true,
+          "parentCheckpointId": "cp-46ae40a2b28f3685af58",
+          "actions": [
+            {
+              "kind": "advance",
+              "buttons": 1,
+              "frames": 1,
+              "hypothesis": "Human-scripted setup reaches a ready donor state.",
+              "after": {
+                "frame": 1,
+                "memoryHash": "f1484fc0ee594ecab0ab7c4a57458bfa17019bc1dfeb7249daefae3b63365945",
+                "framebufferHash": "e0d606614f64711c6ef9cedf843b1929af1313b5e5e0c932419dfeae46d79291",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            },
+            {
+              "kind": "advance",
+              "buttons": 0,
+              "frames": 10,
+              "hypothesis": "Human-scripted setup reaches a ready donor state.",
+              "after": {
+                "frame": 11,
+                "memoryHash": "ead5656c66877c4562ae7a3ac21f7765fcc3c067b02e0d22b53475d1c260d943",
+                "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            },
+            {
+              "kind": "write",
+              "address": 22439,
+              "type": "i16",
+              "value": 40,
+              "hypothesis": "Human-selected intervention: increasing this human-mapped timer may delay activation.",
+              "frame": 11,
+              "previousValue": 0,
+              "previousBytesHex": "0000",
+              "newValue": 40,
+              "newBytesHex": "2800",
+              "after": {
+                "frame": 11,
+                "memoryHash": "63aa0369b5bfcb6feed773f246bc14718793c93f7f7938d3baa2fdc9501e6a61",
+                "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            },
+            {
+              "kind": "advance",
+              "buttons": 33,
+              "frames": 8,
+              "hypothesis": "Human-scripted comparison: apply identical right-dash inputs to both branches.",
+              "after": {
+                "frame": 19,
+                "memoryHash": "9101dd272d6db335f39bb486a6d0c415c1f7c92beea6286eb5c3fe19bad1b085",
+                "framebufferHash": "6f5b7e3d31991a6da3fcef1ef55ba35c9f81486ace7239c8bc4f445635b194a0",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            }
+          ],
+          "verification": {
+            "frame": 19,
+            "memoryHash": "9101dd272d6db335f39bb486a6d0c415c1f7c92beea6286eb5c3fe19bad1b085",
+            "framebufferHash": "6f5b7e3d31991a6da3fcef1ef55ba35c9f81486ace7239c8bc4f445635b194a0",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          }
+        }
+      ],
+      "checkpoints": [
+        {
+          "label": "local control before intervention",
+          "sourceBranchId": "main",
+          "identity": {
+            "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+            "runtime": {
+              "name": "wasm4",
+              "version": "2.7.1",
+              "sources": {
+                "constants.ts": "bc357dc697bf62bd0ad1fba2295ce2dc82fc9da711952902e5556ce7471d2221",
+                "framebuffer.ts": "e00548a5d55a394f6d4980853517293a648c3c6499bb9701d82feff55a7662a2"
+              }
+            },
+            "hostSha256": "20dbfeb1d051198e811d7a9ba864df7651153ef4e51378998dcb805f8b3e4384"
+          },
+          "actions": [
+            {
+              "kind": "advance",
+              "buttons": 1,
+              "frames": 1,
+              "hypothesis": "Human-scripted setup reaches a ready donor state.",
+              "after": {
+                "frame": 1,
+                "memoryHash": "f1484fc0ee594ecab0ab7c4a57458bfa17019bc1dfeb7249daefae3b63365945",
+                "framebufferHash": "e0d606614f64711c6ef9cedf843b1929af1313b5e5e0c932419dfeae46d79291",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            },
+            {
+              "kind": "advance",
+              "buttons": 0,
+              "frames": 10,
+              "hypothesis": "Human-scripted setup reaches a ready donor state.",
+              "after": {
+                "frame": 11,
+                "memoryHash": "ead5656c66877c4562ae7a3ac21f7765fcc3c067b02e0d22b53475d1c260d943",
+                "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            }
+          ],
+          "verification": {
+            "frame": 11,
+            "memoryHash": "ead5656c66877c4562ae7a3ac21f7765fcc3c067b02e0d22b53475d1c260d943",
+            "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          },
+          "id": "cp-46ae40a2b28f3685af58"
+        }
+      ],
+      "observations": [
+        {
+          "id": "obs-0001",
+          "branchId": "main",
+          "actionCount": 1,
+          "verification": {
+            "frame": 1,
+            "memoryHash": "f1484fc0ee594ecab0ab7c4a57458bfa17019bc1dfeb7249daefae3b63365945",
+            "framebufferHash": "e0d606614f64711c6ef9cedf843b1929af1313b5e5e0c932419dfeae46d79291",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          },
+          "result": {
+            "observationId": "obs-0001",
+            "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+            "branchId": "main",
+            "experimental": false,
+            "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+            "frame": 1,
+            "framebufferHash": "e0d606614f64711c6ef9cedf843b1929af1313b5e5e0c932419dfeae46d79291",
+            "memoryHash": "f1484fc0ee594ecab0ab7c4a57458bfa17019bc1dfeb7249daefae3b63365945",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "palette": [
+              16777215,
+              5855577,
+              12566463,
+              2434341
+            ],
+            "text": "Welcome to\nDashy Dango!\nHelp the Dango\nsurvive by fighting\nwaves of enemies.\nDash into enemies\nto eliminate them.\nControls:\n-X to dash\n-Z to switch\n colour palette\nPress x to start!",
+            "textTruncated": false,
+            "sprites": [],
+            "omittedSpriteGroups": 0,
+            "tones": [],
+            "memory": [],
+            "motion": {
+              "position": {
+                "x": 0,
+                "y": 0
+              },
+              "direction": {
+                "x": 0,
+                "y": 0
+              },
+              "cooldown": 10,
+              "remaining": 0,
+              "sourceBodyWidth": 8,
+              "fieldHints": {
+                "source": "human-mapped-assistance",
+                "x": {
+                  "address": 22397,
+                  "type": "f32"
+                },
+                "y": {
+                  "address": 22401,
+                  "type": "f32"
+                },
+                "cooldown": {
+                  "address": 22055,
+                  "type": "i16"
+                },
+                "remaining": {
+                  "address": 22057,
+                  "type": "i16"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "obs-0002",
+          "branchId": "main",
+          "actionCount": 2,
+          "verification": {
+            "frame": 11,
+            "memoryHash": "ead5656c66877c4562ae7a3ac21f7765fcc3c067b02e0d22b53475d1c260d943",
+            "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          },
+          "result": {
+            "observationId": "obs-0002",
+            "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+            "branchId": "main",
+            "experimental": false,
+            "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+            "frame": 11,
+            "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+            "memoryHash": "ead5656c66877c4562ae7a3ac21f7765fcc3c067b02e0d22b53475d1c260d943",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "palette": [
+              16777215,
+              5855577,
+              12566463,
+              2434341
+            ],
+            "text": "Wave:\n1\nEnemies:\n0\nScore:\n99",
+            "textTruncated": false,
+            "sprites": [
+              {
+                "pointer": 17640,
+                "width": 8,
+                "height": 8,
+                "drawColors": 48,
+                "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                "count": 10,
+                "positions": [
+                  {
+                    "x": 22,
+                    "y": 6,
+                    "flags": 0
+                  },
+                  {
+                    "x": 78,
+                    "y": 31,
+                    "flags": 0
+                  },
+                  {
+                    "x": 117,
+                    "y": 109,
+                    "flags": 0
+                  },
+                  {
+                    "x": 2,
+                    "y": 58,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 6
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 801,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 76,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17556,
+                "width": 3,
+                "height": 2,
+                "drawColors": 32,
+                "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                "count": 8,
+                "positions": [
+                  {
+                    "x": 79,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 155,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 147,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 139,
+                    "y": 4,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 4
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 834,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 7,
+                "positions": [
+                  {
+                    "x": 152,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 144,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 136,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 128,
+                    "y": 0,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 3
+              }
+            ],
+            "omittedSpriteGroups": 0,
+            "tones": [],
+            "memory": [],
+            "motion": {
+              "position": {
+                "x": 0,
+                "y": 0
+              },
+              "direction": {
+                "x": 0,
+                "y": 0
+              },
+              "cooldown": 0,
+              "remaining": 0,
+              "sourceBodyWidth": 8,
+              "fieldHints": {
+                "source": "human-mapped-assistance",
+                "x": {
+                  "address": 18941,
+                  "type": "f32"
+                },
+                "y": {
+                  "address": 18945,
+                  "type": "f32"
+                },
+                "cooldown": {
+                  "address": 22439,
+                  "type": "i16"
+                },
+                "remaining": {
+                  "address": 22441,
+                  "type": "i16"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "obs-0003",
+          "branchId": "control",
+          "actionCount": 2,
+          "verification": {
+            "frame": 11,
+            "memoryHash": "ead5656c66877c4562ae7a3ac21f7765fcc3c067b02e0d22b53475d1c260d943",
+            "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          },
+          "result": {
+            "observationId": "obs-0003",
+            "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+            "branchId": "control",
+            "experimental": true,
+            "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+            "frame": 11,
+            "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+            "memoryHash": "ead5656c66877c4562ae7a3ac21f7765fcc3c067b02e0d22b53475d1c260d943",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "palette": [
+              16777215,
+              5855577,
+              12566463,
+              2434341
+            ],
+            "text": "Wave:\n1\nEnemies:\n0\nScore:\n99",
+            "textTruncated": false,
+            "sprites": [
+              {
+                "pointer": 17640,
+                "width": 8,
+                "height": 8,
+                "drawColors": 48,
+                "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                "count": 10,
+                "positions": [
+                  {
+                    "x": 22,
+                    "y": 6,
+                    "flags": 0
+                  },
+                  {
+                    "x": 78,
+                    "y": 31,
+                    "flags": 0
+                  },
+                  {
+                    "x": 117,
+                    "y": 109,
+                    "flags": 0
+                  },
+                  {
+                    "x": 2,
+                    "y": 58,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 6
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 801,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 76,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17556,
+                "width": 3,
+                "height": 2,
+                "drawColors": 32,
+                "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                "count": 8,
+                "positions": [
+                  {
+                    "x": 79,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 155,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 147,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 139,
+                    "y": 4,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 4
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 834,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 7,
+                "positions": [
+                  {
+                    "x": 152,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 144,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 136,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 128,
+                    "y": 0,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 3
+              }
+            ],
+            "omittedSpriteGroups": 0,
+            "tones": [],
+            "memory": [],
+            "motion": {
+              "position": {
+                "x": 0,
+                "y": 0
+              },
+              "direction": {
+                "x": 0,
+                "y": 0
+              },
+              "cooldown": 0,
+              "remaining": 0,
+              "sourceBodyWidth": 8,
+              "fieldHints": {
+                "source": "human-mapped-assistance",
+                "x": {
+                  "address": 18941,
+                  "type": "f32"
+                },
+                "y": {
+                  "address": 18945,
+                  "type": "f32"
+                },
+                "cooldown": {
+                  "address": 22439,
+                  "type": "i16"
+                },
+                "remaining": {
+                  "address": 22441,
+                  "type": "i16"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "obs-0004",
+          "branchId": "variant",
+          "actionCount": 2,
+          "verification": {
+            "frame": 11,
+            "memoryHash": "ead5656c66877c4562ae7a3ac21f7765fcc3c067b02e0d22b53475d1c260d943",
+            "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          },
+          "result": {
+            "observationId": "obs-0004",
+            "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+            "branchId": "variant",
+            "experimental": true,
+            "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+            "frame": 11,
+            "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+            "memoryHash": "ead5656c66877c4562ae7a3ac21f7765fcc3c067b02e0d22b53475d1c260d943",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "palette": [
+              16777215,
+              5855577,
+              12566463,
+              2434341
+            ],
+            "text": "Wave:\n1\nEnemies:\n0\nScore:\n99",
+            "textTruncated": false,
+            "sprites": [
+              {
+                "pointer": 17640,
+                "width": 8,
+                "height": 8,
+                "drawColors": 48,
+                "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                "count": 10,
+                "positions": [
+                  {
+                    "x": 22,
+                    "y": 6,
+                    "flags": 0
+                  },
+                  {
+                    "x": 78,
+                    "y": 31,
+                    "flags": 0
+                  },
+                  {
+                    "x": 117,
+                    "y": 109,
+                    "flags": 0
+                  },
+                  {
+                    "x": 2,
+                    "y": 58,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 6
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 801,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 76,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17556,
+                "width": 3,
+                "height": 2,
+                "drawColors": 32,
+                "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                "count": 8,
+                "positions": [
+                  {
+                    "x": 79,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 155,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 147,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 139,
+                    "y": 4,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 4
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 834,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 7,
+                "positions": [
+                  {
+                    "x": 152,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 144,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 136,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 128,
+                    "y": 0,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 3
+              }
+            ],
+            "omittedSpriteGroups": 0,
+            "tones": [],
+            "memory": [],
+            "motion": {
+              "position": {
+                "x": 0,
+                "y": 0
+              },
+              "direction": {
+                "x": 0,
+                "y": 0
+              },
+              "cooldown": 0,
+              "remaining": 0,
+              "sourceBodyWidth": 8,
+              "fieldHints": {
+                "source": "human-mapped-assistance",
+                "x": {
+                  "address": 18941,
+                  "type": "f32"
+                },
+                "y": {
+                  "address": 18945,
+                  "type": "f32"
+                },
+                "cooldown": {
+                  "address": 22439,
+                  "type": "i16"
+                },
+                "remaining": {
+                  "address": 22441,
+                  "type": "i16"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "obs-0005",
+          "branchId": "variant",
+          "actionCount": 3,
+          "verification": {
+            "frame": 11,
+            "memoryHash": "63aa0369b5bfcb6feed773f246bc14718793c93f7f7938d3baa2fdc9501e6a61",
+            "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          },
+          "result": {
+            "observationId": "obs-0005",
+            "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+            "branchId": "variant",
+            "experimental": true,
+            "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+            "frame": 11,
+            "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+            "memoryHash": "63aa0369b5bfcb6feed773f246bc14718793c93f7f7938d3baa2fdc9501e6a61",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "palette": [
+              16777215,
+              5855577,
+              12566463,
+              2434341
+            ],
+            "text": "Wave:\n1\nEnemies:\n0\nScore:\n99",
+            "textTruncated": false,
+            "sprites": [
+              {
+                "pointer": 17640,
+                "width": 8,
+                "height": 8,
+                "drawColors": 48,
+                "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                "count": 10,
+                "positions": [
+                  {
+                    "x": 22,
+                    "y": 6,
+                    "flags": 0
+                  },
+                  {
+                    "x": 78,
+                    "y": 31,
+                    "flags": 0
+                  },
+                  {
+                    "x": 117,
+                    "y": 109,
+                    "flags": 0
+                  },
+                  {
+                    "x": 2,
+                    "y": 58,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 6
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 801,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 76,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17556,
+                "width": 3,
+                "height": 2,
+                "drawColors": 32,
+                "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                "count": 8,
+                "positions": [
+                  {
+                    "x": 79,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 155,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 147,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 139,
+                    "y": 4,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 4
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 834,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 7,
+                "positions": [
+                  {
+                    "x": 152,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 144,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 136,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 128,
+                    "y": 0,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 3
+              }
+            ],
+            "omittedSpriteGroups": 0,
+            "tones": [],
+            "memory": [],
+            "motion": {
+              "position": {
+                "x": 0,
+                "y": 0
+              },
+              "direction": {
+                "x": 0,
+                "y": 0
+              },
+              "cooldown": 40,
+              "remaining": 0,
+              "sourceBodyWidth": 8,
+              "fieldHints": {
+                "source": "human-mapped-assistance",
+                "x": {
+                  "address": 18941,
+                  "type": "f32"
+                },
+                "y": {
+                  "address": 18945,
+                  "type": "f32"
+                },
+                "cooldown": {
+                  "address": 22439,
+                  "type": "i16"
+                },
+                "remaining": {
+                  "address": 22441,
+                  "type": "i16"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "obs-0006",
+          "branchId": "control",
+          "actionCount": 3,
+          "verification": {
+            "frame": 19,
+            "memoryHash": "7111c95f7d2eff283244c98dd2c5b04e1337ebd0dc5cd8789f91a8d89ea56edb",
+            "framebufferHash": "2e3523d64a10bbf23e43e3f416becf48c76ee4ff89e0a8614430fe205670665c",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          },
+          "result": {
+            "observationId": "obs-0006",
+            "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+            "branchId": "control",
+            "experimental": true,
+            "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+            "frame": 19,
+            "framebufferHash": "2e3523d64a10bbf23e43e3f416becf48c76ee4ff89e0a8614430fe205670665c",
+            "memoryHash": "7111c95f7d2eff283244c98dd2c5b04e1337ebd0dc5cd8789f91a8d89ea56edb",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "palette": [
+              16777215,
+              5855577,
+              12566463,
+              2434341
+            ],
+            "text": "Wave:\n1\nEnemies:\n1\nScore:\n98",
+            "textTruncated": false,
+            "sprites": [
+              {
+                "pointer": 17640,
+                "width": 8,
+                "height": 8,
+                "drawColors": 48,
+                "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                "count": 10,
+                "positions": [
+                  {
+                    "x": 122,
+                    "y": 6,
+                    "flags": 0
+                  },
+                  {
+                    "x": 18,
+                    "y": 31,
+                    "flags": 0
+                  },
+                  {
+                    "x": 57,
+                    "y": 109,
+                    "flags": 0
+                  },
+                  {
+                    "x": 102,
+                    "y": 58,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 6
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 833,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 6,
+                "positions": [
+                  {
+                    "x": 68,
+                    "y": 76,
+                    "flags": 1
+                  },
+                  {
+                    "x": 46,
+                    "y": 76,
+                    "flags": 1
+                  },
+                  {
+                    "x": 61,
+                    "y": 76,
+                    "flags": 1
+                  },
+                  {
+                    "x": 76,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 2
+              },
+              {
+                "pointer": 17556,
+                "width": 3,
+                "height": 2,
+                "drawColors": 32,
+                "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                "count": 14,
+                "positions": [
+                  {
+                    "x": 50,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 73,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 65,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 79,
+                    "y": 80,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 10
+              },
+              {
+                "pointer": 17050,
+                "width": 8,
+                "height": 8,
+                "drawColors": 8498,
+                "spriteSha256": "658312ebf10a52ac0e7e9ed31715071d575a9ed116bf9e70a2b00daa84595e4f",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 112,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 834,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 7,
+                "positions": [
+                  {
+                    "x": 152,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 144,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 136,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 128,
+                    "y": 0,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 3
+              }
+            ],
+            "omittedSpriteGroups": 0,
+            "tones": [
+              [
+                0,
+                4106,
+                100,
+                2
+              ]
+            ],
+            "memory": [],
+            "motion": {
+              "position": {
+                "x": 60,
+                "y": 0
+              },
+              "direction": {
+                "x": 1,
+                "y": 0
+              },
+              "cooldown": 25,
+              "remaining": 0,
+              "sourceBodyWidth": 8,
+              "fieldHints": {
+                "source": "human-mapped-assistance",
+                "x": {
+                  "address": 35824,
+                  "type": "f32"
+                },
+                "y": {
+                  "address": 35828,
+                  "type": "f32"
+                },
+                "cooldown": {
+                  "address": 38730,
+                  "type": "i16"
+                },
+                "remaining": {
+                  "address": 38732,
+                  "type": "i16"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "obs-0007",
+          "branchId": "variant",
+          "actionCount": 4,
+          "verification": {
+            "frame": 19,
+            "memoryHash": "9101dd272d6db335f39bb486a6d0c415c1f7c92beea6286eb5c3fe19bad1b085",
+            "framebufferHash": "6f5b7e3d31991a6da3fcef1ef55ba35c9f81486ace7239c8bc4f445635b194a0",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          },
+          "result": {
+            "observationId": "obs-0007",
+            "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+            "branchId": "variant",
+            "experimental": true,
+            "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+            "frame": 19,
+            "framebufferHash": "6f5b7e3d31991a6da3fcef1ef55ba35c9f81486ace7239c8bc4f445635b194a0",
+            "memoryHash": "9101dd272d6db335f39bb486a6d0c415c1f7c92beea6286eb5c3fe19bad1b085",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "palette": [
+              16777215,
+              5855577,
+              12566463,
+              2434341
+            ],
+            "text": "Wave:\n1\nEnemies:\n1\nScore:\n98",
+            "textTruncated": false,
+            "sprites": [
+              {
+                "pointer": 17640,
+                "width": 8,
+                "height": 8,
+                "drawColors": 48,
+                "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                "count": 11,
+                "positions": [
+                  {
+                    "x": 6,
+                    "y": 6,
+                    "flags": 0
+                  },
+                  {
+                    "x": 62,
+                    "y": 31,
+                    "flags": 0
+                  },
+                  {
+                    "x": 101,
+                    "y": 109,
+                    "flags": 0
+                  },
+                  {
+                    "x": 146,
+                    "y": 58,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 7
+              },
+              {
+                "pointer": 17050,
+                "width": 8,
+                "height": 8,
+                "drawColors": 8498,
+                "spriteSha256": "658312ebf10a52ac0e7e9ed31715071d575a9ed116bf9e70a2b00daa84595e4f",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 156,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 801,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 76,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17556,
+                "width": 3,
+                "height": 2,
+                "drawColors": 32,
+                "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                "count": 8,
+                "positions": [
+                  {
+                    "x": 80,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 155,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 147,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 139,
+                    "y": 4,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 4
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 834,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 7,
+                "positions": [
+                  {
+                    "x": 152,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 144,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 136,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 128,
+                    "y": 0,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 3
+              }
+            ],
+            "omittedSpriteGroups": 0,
+            "tones": [],
+            "memory": [],
+            "motion": {
+              "position": {
+                "x": 16,
+                "y": 0
+              },
+              "direction": {
+                "x": 0,
+                "y": 0
+              },
+              "cooldown": 32,
+              "remaining": 0,
+              "sourceBodyWidth": 8,
+              "fieldHints": {
+                "source": "human-mapped-assistance",
+                "x": {
+                  "address": 22013,
+                  "type": "f32"
+                },
+                "y": {
+                  "address": 22017,
+                  "type": "f32"
+                },
+                "cooldown": {
+                  "address": 21799,
+                  "type": "i16"
+                },
+                "remaining": {
+                  "address": 21801,
+                  "type": "i16"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "obs-0008",
+          "branchId": "control",
+          "actionCount": 3,
+          "verification": {
+            "frame": 19,
+            "memoryHash": "7111c95f7d2eff283244c98dd2c5b04e1337ebd0dc5cd8789f91a8d89ea56edb",
+            "framebufferHash": "2e3523d64a10bbf23e43e3f416becf48c76ee4ff89e0a8614430fe205670665c",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          },
+          "result": {
+            "observationId": "obs-0008",
+            "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+            "branchId": "control",
+            "experimental": true,
+            "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+            "frame": 19,
+            "framebufferHash": "2e3523d64a10bbf23e43e3f416becf48c76ee4ff89e0a8614430fe205670665c",
+            "memoryHash": "7111c95f7d2eff283244c98dd2c5b04e1337ebd0dc5cd8789f91a8d89ea56edb",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "palette": [
+              16777215,
+              5855577,
+              12566463,
+              2434341
+            ],
+            "text": "Wave:\n1\nEnemies:\n1\nScore:\n98",
+            "textTruncated": false,
+            "sprites": [
+              {
+                "pointer": 17640,
+                "width": 8,
+                "height": 8,
+                "drawColors": 48,
+                "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                "count": 10,
+                "positions": [
+                  {
+                    "x": 122,
+                    "y": 6,
+                    "flags": 0
+                  },
+                  {
+                    "x": 18,
+                    "y": 31,
+                    "flags": 0
+                  },
+                  {
+                    "x": 57,
+                    "y": 109,
+                    "flags": 0
+                  },
+                  {
+                    "x": 102,
+                    "y": 58,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 6
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 833,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 6,
+                "positions": [
+                  {
+                    "x": 68,
+                    "y": 76,
+                    "flags": 1
+                  },
+                  {
+                    "x": 46,
+                    "y": 76,
+                    "flags": 1
+                  },
+                  {
+                    "x": 61,
+                    "y": 76,
+                    "flags": 1
+                  },
+                  {
+                    "x": 76,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 2
+              },
+              {
+                "pointer": 17556,
+                "width": 3,
+                "height": 2,
+                "drawColors": 32,
+                "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                "count": 14,
+                "positions": [
+                  {
+                    "x": 50,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 73,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 65,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 79,
+                    "y": 80,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 10
+              },
+              {
+                "pointer": 17050,
+                "width": 8,
+                "height": 8,
+                "drawColors": 8498,
+                "spriteSha256": "658312ebf10a52ac0e7e9ed31715071d575a9ed116bf9e70a2b00daa84595e4f",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 112,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 834,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 7,
+                "positions": [
+                  {
+                    "x": 152,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 144,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 136,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 128,
+                    "y": 0,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 3
+              }
+            ],
+            "omittedSpriteGroups": 0,
+            "tones": [
+              [
+                0,
+                4106,
+                100,
+                2
+              ]
+            ],
+            "memory": [],
+            "motion": {
+              "position": {
+                "x": 60,
+                "y": 0
+              },
+              "direction": {
+                "x": 1,
+                "y": 0
+              },
+              "cooldown": 25,
+              "remaining": 0,
+              "sourceBodyWidth": 8,
+              "fieldHints": {
+                "source": "human-mapped-assistance",
+                "x": {
+                  "address": 35824,
+                  "type": "f32"
+                },
+                "y": {
+                  "address": 35828,
+                  "type": "f32"
+                },
+                "cooldown": {
+                  "address": 38730,
+                  "type": "i16"
+                },
+                "remaining": {
+                  "address": 38732,
+                  "type": "i16"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "obs-0009",
+          "branchId": "variant",
+          "actionCount": 4,
+          "verification": {
+            "frame": 19,
+            "memoryHash": "9101dd272d6db335f39bb486a6d0c415c1f7c92beea6286eb5c3fe19bad1b085",
+            "framebufferHash": "6f5b7e3d31991a6da3fcef1ef55ba35c9f81486ace7239c8bc4f445635b194a0",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "faulted": false
+          },
+          "result": {
+            "observationId": "obs-0009",
+            "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+            "branchId": "variant",
+            "experimental": true,
+            "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+            "frame": 19,
+            "framebufferHash": "6f5b7e3d31991a6da3fcef1ef55ba35c9f81486ace7239c8bc4f445635b194a0",
+            "memoryHash": "9101dd272d6db335f39bb486a6d0c415c1f7c92beea6286eb5c3fe19bad1b085",
+            "storage": {
+              "bytes": 0,
+              "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "palette": [
+              16777215,
+              5855577,
+              12566463,
+              2434341
+            ],
+            "text": "Wave:\n1\nEnemies:\n1\nScore:\n98",
+            "textTruncated": false,
+            "sprites": [
+              {
+                "pointer": 17640,
+                "width": 8,
+                "height": 8,
+                "drawColors": 48,
+                "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                "count": 11,
+                "positions": [
+                  {
+                    "x": 6,
+                    "y": 6,
+                    "flags": 0
+                  },
+                  {
+                    "x": 62,
+                    "y": 31,
+                    "flags": 0
+                  },
+                  {
+                    "x": 101,
+                    "y": 109,
+                    "flags": 0
+                  },
+                  {
+                    "x": 146,
+                    "y": 58,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 7
+              },
+              {
+                "pointer": 17050,
+                "width": 8,
+                "height": 8,
+                "drawColors": 8498,
+                "spriteSha256": "658312ebf10a52ac0e7e9ed31715071d575a9ed116bf9e70a2b00daa84595e4f",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 156,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 801,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 1,
+                "positions": [
+                  {
+                    "x": 76,
+                    "y": 76,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 0
+              },
+              {
+                "pointer": 17556,
+                "width": 3,
+                "height": 2,
+                "drawColors": 32,
+                "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                "count": 8,
+                "positions": [
+                  {
+                    "x": 80,
+                    "y": 80,
+                    "flags": 0
+                  },
+                  {
+                    "x": 155,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 147,
+                    "y": 4,
+                    "flags": 0
+                  },
+                  {
+                    "x": 139,
+                    "y": 4,
+                    "flags": 0
+                  }
+                ],
+                "omittedPositions": 4
+              },
+              {
+                "pointer": 17540,
+                "width": 8,
+                "height": 8,
+                "drawColors": 834,
+                "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                "count": 7,
+                "positions": [
+                  {
+                    "x": 152,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 144,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 136,
+                    "y": 0,
+                    "flags": 1
+                  },
+                  {
+                    "x": 128,
+                    "y": 0,
+                    "flags": 1
+                  }
+                ],
+                "omittedPositions": 3
+              }
+            ],
+            "omittedSpriteGroups": 0,
+            "tones": [],
+            "memory": [],
+            "motion": {
+              "position": {
+                "x": 16,
+                "y": 0
+              },
+              "direction": {
+                "x": 0,
+                "y": 0
+              },
+              "cooldown": 32,
+              "remaining": 0,
+              "sourceBodyWidth": 8,
+              "fieldHints": {
+                "source": "human-mapped-assistance",
+                "x": {
+                  "address": 22013,
+                  "type": "f32"
+                },
+                "y": {
+                  "address": 22017,
+                  "type": "f32"
+                },
+                "cooldown": {
+                  "address": 21799,
+                  "type": "i16"
+                },
+                "remaining": {
+                  "address": 21801,
+                  "type": "i16"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "comparisonId": "cmp-001",
+          "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+          "hypothesis": "Human-scripted comparison: apply identical right-dash inputs to both branches.",
+          "checkpointId": "cp-46ae40a2b28f3685af58",
+          "controlBranchId": "control",
+          "experimentalBranchId": "variant",
+          "identicalInputs": [
+            {
+              "buttons": 33,
+              "frames": 8,
+              "checkpoint": "same-eight-inputs"
+            }
+          ],
+          "edits": [
+            {
+              "kind": "write",
+              "address": 22439,
+              "type": "i16",
+              "value": 40,
+              "hypothesis": "Human-selected intervention: increasing this human-mapped timer may delay activation.",
+              "frame": 11,
+              "previousValue": 0,
+              "previousBytesHex": "0000",
+              "newValue": 40,
+              "newBytesHex": "2800",
+              "after": {
+                "frame": 11,
+                "memoryHash": "63aa0369b5bfcb6feed773f246bc14718793c93f7f7938d3baa2fdc9501e6a61",
+                "framebufferHash": "838e3099af416ab51629dd584c1043ea736323c62d06c651200afaf2b2e50b00",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "faulted": false
+              }
+            }
+          ],
+          "firstDivergence": {
+            "elapsedFrame": 1,
+            "frame": 12,
+            "control": {
+              "frame": 12,
+              "framebufferHash": "b684e026e27064a598cc28432cc9140218045fb16e8f6501de79ef960fc5241d",
+              "memoryHash": "6e950ed459d63fe1e824f0d4eac781a53a0a75350a63c09dfd9333ae7e46cec2",
+              "storage": {
+                "bytes": 0,
+                "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "palette": [
+                16777215,
+                5855577,
+                12566463,
+                2434341
+              ],
+              "text": "Wave:\n1\nEnemies:\n1\nScore:\n99",
+              "textTruncated": false,
+              "sprites": [
+                {
+                  "pointer": 17640,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 48,
+                  "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                  "count": 11,
+                  "positions": [
+                    {
+                      "x": 14,
+                      "y": 6,
+                      "flags": 0
+                    },
+                    {
+                      "x": 70,
+                      "y": 31,
+                      "flags": 0
+                    },
+                    {
+                      "x": 109,
+                      "y": 109,
+                      "flags": 0
+                    },
+                    {
+                      "x": -5,
+                      "y": 58,
+                      "flags": 0
+                    }
+                  ],
+                  "omittedPositions": 7
+                },
+                {
+                  "pointer": 17648,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 17472,
+                  "spriteSha256": "1f604d81ff72d4256e1c59a5dbaffc7014b667aa8200f9b786aaaf676b9239ff",
+                  "count": 1,
+                  "positions": [
+                    {
+                      "x": 152,
+                      "y": 76,
+                      "flags": 2
+                    }
+                  ],
+                  "omittedPositions": 0
+                },
+                {
+                  "pointer": 17540,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 833,
+                  "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                  "count": 1,
+                  "positions": [
+                    {
+                      "x": 76,
+                      "y": 76,
+                      "flags": 1
+                    }
+                  ],
+                  "omittedPositions": 0
+                },
+                {
+                  "pointer": 17556,
+                  "width": 3,
+                  "height": 2,
+                  "drawColors": 32,
+                  "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                  "count": 8,
+                  "positions": [
+                    {
+                      "x": 79,
+                      "y": 80,
+                      "flags": 0
+                    },
+                    {
+                      "x": 155,
+                      "y": 4,
+                      "flags": 0
+                    },
+                    {
+                      "x": 147,
+                      "y": 4,
+                      "flags": 0
+                    },
+                    {
+                      "x": 139,
+                      "y": 4,
+                      "flags": 0
+                    }
+                  ],
+                  "omittedPositions": 4
+                },
+                {
+                  "pointer": 17540,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 834,
+                  "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                  "count": 7,
+                  "positions": [
+                    {
+                      "x": 152,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 144,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 136,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 128,
+                      "y": 0,
+                      "flags": 1
+                    }
+                  ],
+                  "omittedPositions": 3
+                }
+              ],
+              "omittedSpriteGroups": 0,
+              "tones": [
+                [
+                  0,
+                  4096,
+                  100,
+                  2
+                ]
+              ],
+              "memory": [],
+              "motion": {
+                "position": {
+                  "x": 7.5,
+                  "y": 0
+                },
+                "direction": {
+                  "x": 1,
+                  "y": 0
+                },
+                "cooldown": 25,
+                "remaining": 7,
+                "sourceBodyWidth": 8,
+                "fieldHints": {
+                  "source": "human-mapped-assistance",
+                  "x": {
+                    "address": 38560,
+                    "type": "f32"
+                  },
+                  "y": {
+                    "address": 38564,
+                    "type": "f32"
+                  },
+                  "cooldown": {
+                    "address": 18983,
+                    "type": "i16"
+                  },
+                  "remaining": {
+                    "address": 18985,
+                    "type": "i16"
+                  }
+                }
+              }
+            },
+            "experimental": {
+              "frame": 12,
+              "framebufferHash": "b1d975877e70523157c95d4c0f1de405404673cb4f8dcc7618aa902d967778e0",
+              "memoryHash": "45235c39b46a8a6b3724aff9ad6ec27a142590d1a25ded7a215d82415e750bc5",
+              "storage": {
+                "bytes": 0,
+                "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "palette": [
+                16777215,
+                5855577,
+                12566463,
+                2434341
+              ],
+              "text": "Wave:\n1\nEnemies:\n1\nScore:\n99",
+              "textTruncated": false,
+              "sprites": [
+                {
+                  "pointer": 17640,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 48,
+                  "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                  "count": 11,
+                  "positions": [
+                    {
+                      "x": 20,
+                      "y": 6,
+                      "flags": 0
+                    },
+                    {
+                      "x": 76,
+                      "y": 31,
+                      "flags": 0
+                    },
+                    {
+                      "x": 115,
+                      "y": 109,
+                      "flags": 0
+                    },
+                    {
+                      "x": 0,
+                      "y": 58,
+                      "flags": 0
+                    }
+                  ],
+                  "omittedPositions": 7
+                },
+                {
+                  "pointer": 17648,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 17472,
+                  "spriteSha256": "1f604d81ff72d4256e1c59a5dbaffc7014b667aa8200f9b786aaaf676b9239ff",
+                  "count": 1,
+                  "positions": [
+                    {
+                      "x": 152,
+                      "y": 76,
+                      "flags": 2
+                    }
+                  ],
+                  "omittedPositions": 0
+                },
+                {
+                  "pointer": 17540,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 801,
+                  "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                  "count": 1,
+                  "positions": [
+                    {
+                      "x": 76,
+                      "y": 76,
+                      "flags": 1
+                    }
+                  ],
+                  "omittedPositions": 0
+                },
+                {
+                  "pointer": 17556,
+                  "width": 3,
+                  "height": 2,
+                  "drawColors": 32,
+                  "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                  "count": 8,
+                  "positions": [
+                    {
+                      "x": 79,
+                      "y": 80,
+                      "flags": 0
+                    },
+                    {
+                      "x": 155,
+                      "y": 4,
+                      "flags": 0
+                    },
+                    {
+                      "x": 147,
+                      "y": 4,
+                      "flags": 0
+                    },
+                    {
+                      "x": 139,
+                      "y": 4,
+                      "flags": 0
+                    }
+                  ],
+                  "omittedPositions": 4
+                },
+                {
+                  "pointer": 17540,
+                  "width": 8,
+                  "height": 8,
+                  "drawColors": 834,
+                  "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                  "count": 7,
+                  "positions": [
+                    {
+                      "x": 152,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 144,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 136,
+                      "y": 0,
+                      "flags": 1
+                    },
+                    {
+                      "x": 128,
+                      "y": 0,
+                      "flags": 1
+                    }
+                  ],
+                  "omittedPositions": 3
+                }
+              ],
+              "omittedSpriteGroups": 0,
+              "tones": [],
+              "memory": [],
+              "motion": {
+                "position": {
+                  "x": 2,
+                  "y": 0
+                },
+                "direction": {
+                  "x": 0,
+                  "y": 0
+                },
+                "cooldown": 39,
+                "remaining": 0,
+                "sourceBodyWidth": 8,
+                "fieldHints": {
+                  "source": "human-mapped-assistance",
+                  "x": {
+                    "address": 18877,
+                    "type": "f32"
+                  },
+                  "y": {
+                    "address": 18881,
+                    "type": "f32"
+                  },
+                  "cooldown": {
+                    "address": 18983,
+                    "type": "i16"
+                  },
+                  "remaining": {
+                    "address": 18985,
+                    "type": "i16"
+                  }
+                }
+              }
+            }
+          },
+          "checkpoints": [
+            {
+              "label": "same-eight-inputs",
+              "frames": 8,
+              "control": {
+                "observationId": "obs-0006",
+                "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+                "branchId": "control",
+                "experimental": true,
+                "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+                "frame": 19,
+                "framebufferHash": "2e3523d64a10bbf23e43e3f416becf48c76ee4ff89e0a8614430fe205670665c",
+                "memoryHash": "7111c95f7d2eff283244c98dd2c5b04e1337ebd0dc5cd8789f91a8d89ea56edb",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "palette": [
+                  16777215,
+                  5855577,
+                  12566463,
+                  2434341
+                ],
+                "text": "Wave:\n1\nEnemies:\n1\nScore:\n98",
+                "textTruncated": false,
+                "sprites": [
+                  {
+                    "pointer": 17640,
+                    "width": 8,
+                    "height": 8,
+                    "drawColors": 48,
+                    "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                    "count": 10,
+                    "positions": [
+                      {
+                        "x": 122,
+                        "y": 6,
+                        "flags": 0
+                      },
+                      {
+                        "x": 18,
+                        "y": 31,
+                        "flags": 0
+                      },
+                      {
+                        "x": 57,
+                        "y": 109,
+                        "flags": 0
+                      },
+                      {
+                        "x": 102,
+                        "y": 58,
+                        "flags": 0
+                      }
+                    ],
+                    "omittedPositions": 6
+                  },
+                  {
+                    "pointer": 17540,
+                    "width": 8,
+                    "height": 8,
+                    "drawColors": 833,
+                    "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                    "count": 6,
+                    "positions": [
+                      {
+                        "x": 68,
+                        "y": 76,
+                        "flags": 1
+                      },
+                      {
+                        "x": 46,
+                        "y": 76,
+                        "flags": 1
+                      },
+                      {
+                        "x": 61,
+                        "y": 76,
+                        "flags": 1
+                      },
+                      {
+                        "x": 76,
+                        "y": 76,
+                        "flags": 1
+                      }
+                    ],
+                    "omittedPositions": 2
+                  },
+                  {
+                    "pointer": 17556,
+                    "width": 3,
+                    "height": 2,
+                    "drawColors": 32,
+                    "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                    "count": 14,
+                    "positions": [
+                      {
+                        "x": 50,
+                        "y": 80,
+                        "flags": 0
+                      },
+                      {
+                        "x": 73,
+                        "y": 80,
+                        "flags": 0
+                      },
+                      {
+                        "x": 65,
+                        "y": 80,
+                        "flags": 0
+                      },
+                      {
+                        "x": 79,
+                        "y": 80,
+                        "flags": 0
+                      }
+                    ],
+                    "omittedPositions": 10
+                  },
+                  {
+                    "pointer": 17050,
+                    "width": 8,
+                    "height": 8,
+                    "drawColors": 8498,
+                    "spriteSha256": "658312ebf10a52ac0e7e9ed31715071d575a9ed116bf9e70a2b00daa84595e4f",
+                    "count": 1,
+                    "positions": [
+                      {
+                        "x": 112,
+                        "y": 76,
+                        "flags": 1
+                      }
+                    ],
+                    "omittedPositions": 0
+                  },
+                  {
+                    "pointer": 17540,
+                    "width": 8,
+                    "height": 8,
+                    "drawColors": 834,
+                    "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                    "count": 7,
+                    "positions": [
+                      {
+                        "x": 152,
+                        "y": 0,
+                        "flags": 1
+                      },
+                      {
+                        "x": 144,
+                        "y": 0,
+                        "flags": 1
+                      },
+                      {
+                        "x": 136,
+                        "y": 0,
+                        "flags": 1
+                      },
+                      {
+                        "x": 128,
+                        "y": 0,
+                        "flags": 1
+                      }
+                    ],
+                    "omittedPositions": 3
+                  }
+                ],
+                "omittedSpriteGroups": 0,
+                "tones": [
+                  [
+                    0,
+                    4106,
+                    100,
+                    2
+                  ]
+                ],
+                "memory": [],
+                "motion": {
+                  "position": {
+                    "x": 60,
+                    "y": 0
+                  },
+                  "direction": {
+                    "x": 1,
+                    "y": 0
+                  },
+                  "cooldown": 25,
+                  "remaining": 0,
+                  "sourceBodyWidth": 8,
+                  "fieldHints": {
+                    "source": "human-mapped-assistance",
+                    "x": {
+                      "address": 35824,
+                      "type": "f32"
+                    },
+                    "y": {
+                      "address": 35828,
+                      "type": "f32"
+                    },
+                    "cooldown": {
+                      "address": 38730,
+                      "type": "i16"
+                    },
+                    "remaining": {
+                      "address": 38732,
+                      "type": "i16"
+                    }
+                  }
+                }
+              },
+              "experimental": {
+                "observationId": "obs-0007",
+                "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+                "branchId": "variant",
+                "experimental": true,
+                "motionNotice": "Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.",
+                "frame": 19,
+                "framebufferHash": "6f5b7e3d31991a6da3fcef1ef55ba35c9f81486ace7239c8bc4f445635b194a0",
+                "memoryHash": "9101dd272d6db335f39bb486a6d0c415c1f7c92beea6286eb5c3fe19bad1b085",
+                "storage": {
+                  "bytes": 0,
+                  "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                },
+                "palette": [
+                  16777215,
+                  5855577,
+                  12566463,
+                  2434341
+                ],
+                "text": "Wave:\n1\nEnemies:\n1\nScore:\n98",
+                "textTruncated": false,
+                "sprites": [
+                  {
+                    "pointer": 17640,
+                    "width": 8,
+                    "height": 8,
+                    "drawColors": 48,
+                    "spriteSha256": "d3e7f5e863e35e96a65b1d63352627acaec77ca36ee8e46383dafa3bf8ac5aee",
+                    "count": 11,
+                    "positions": [
+                      {
+                        "x": 6,
+                        "y": 6,
+                        "flags": 0
+                      },
+                      {
+                        "x": 62,
+                        "y": 31,
+                        "flags": 0
+                      },
+                      {
+                        "x": 101,
+                        "y": 109,
+                        "flags": 0
+                      },
+                      {
+                        "x": 146,
+                        "y": 58,
+                        "flags": 0
+                      }
+                    ],
+                    "omittedPositions": 7
+                  },
+                  {
+                    "pointer": 17050,
+                    "width": 8,
+                    "height": 8,
+                    "drawColors": 8498,
+                    "spriteSha256": "658312ebf10a52ac0e7e9ed31715071d575a9ed116bf9e70a2b00daa84595e4f",
+                    "count": 1,
+                    "positions": [
+                      {
+                        "x": 156,
+                        "y": 76,
+                        "flags": 1
+                      }
+                    ],
+                    "omittedPositions": 0
+                  },
+                  {
+                    "pointer": 17540,
+                    "width": 8,
+                    "height": 8,
+                    "drawColors": 801,
+                    "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                    "count": 1,
+                    "positions": [
+                      {
+                        "x": 76,
+                        "y": 76,
+                        "flags": 1
+                      }
+                    ],
+                    "omittedPositions": 0
+                  },
+                  {
+                    "pointer": 17556,
+                    "width": 3,
+                    "height": 2,
+                    "drawColors": 32,
+                    "spriteSha256": "27952171c7fcdf0ddc765ab4f4e1c537cb29e5e533d57b3456257ee785c81711",
+                    "count": 8,
+                    "positions": [
+                      {
+                        "x": 80,
+                        "y": 80,
+                        "flags": 0
+                      },
+                      {
+                        "x": 155,
+                        "y": 4,
+                        "flags": 0
+                      },
+                      {
+                        "x": 147,
+                        "y": 4,
+                        "flags": 0
+                      },
+                      {
+                        "x": 139,
+                        "y": 4,
+                        "flags": 0
+                      }
+                    ],
+                    "omittedPositions": 4
+                  },
+                  {
+                    "pointer": 17540,
+                    "width": 8,
+                    "height": 8,
+                    "drawColors": 834,
+                    "spriteSha256": "1828d03443b5ba822ec629d4ea89f44f26b95af73671b46741ed3c96d6a809d1",
+                    "count": 7,
+                    "positions": [
+                      {
+                        "x": 152,
+                        "y": 0,
+                        "flags": 1
+                      },
+                      {
+                        "x": 144,
+                        "y": 0,
+                        "flags": 1
+                      },
+                      {
+                        "x": 136,
+                        "y": 0,
+                        "flags": 1
+                      },
+                      {
+                        "x": 128,
+                        "y": 0,
+                        "flags": 1
+                      }
+                    ],
+                    "omittedPositions": 3
+                  }
+                ],
+                "omittedSpriteGroups": 0,
+                "tones": [],
+                "memory": [],
+                "motion": {
+                  "position": {
+                    "x": 16,
+                    "y": 0
+                  },
+                  "direction": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "cooldown": 32,
+                  "remaining": 0,
+                  "sourceBodyWidth": 8,
+                  "fieldHints": {
+                    "source": "human-mapped-assistance",
+                    "x": {
+                      "address": 22013,
+                      "type": "f32"
+                    },
+                    "y": {
+                      "address": 22017,
+                      "type": "f32"
+                    },
+                    "cooldown": {
+                      "address": 21799,
+                      "type": "i16"
+                    },
+                    "remaining": {
+                      "address": 21801,
+                      "type": "i16"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "scope": "Identical inputs and elapsed frames in two replay-verified branches. Finite observations; no causal claim is assigned automatically.",
+          "normalizedTrace": [
+            {
+              "elapsedFrame": 1,
+              "control": {
+                "dx": 7.5,
+                "dy": 0,
+                "cooldown": 25,
+                "remaining": 7,
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "experimental": {
+                "dx": 2,
+                "dy": 0,
+                "cooldown": 39,
+                "remaining": 0,
+                "ownsMotion": false,
+                "events": []
+              }
+            },
+            {
+              "elapsedFrame": 2,
+              "control": {
+                "dx": 15,
+                "dy": 0,
+                "cooldown": 25,
+                "remaining": 6,
+                "ownsMotion": true,
+                "events": []
+              },
+              "experimental": {
+                "dx": 4,
+                "dy": 0,
+                "cooldown": 38,
+                "remaining": 0,
+                "ownsMotion": false,
+                "events": []
+              }
+            },
+            {
+              "elapsedFrame": 3,
+              "control": {
+                "dx": 22.5,
+                "dy": 0,
+                "cooldown": 25,
+                "remaining": 5,
+                "ownsMotion": true,
+                "events": []
+              },
+              "experimental": {
+                "dx": 6,
+                "dy": 0,
+                "cooldown": 37,
+                "remaining": 0,
+                "ownsMotion": false,
+                "events": []
+              }
+            },
+            {
+              "elapsedFrame": 4,
+              "control": {
+                "dx": 30,
+                "dy": 0,
+                "cooldown": 25,
+                "remaining": 4,
+                "ownsMotion": true,
+                "events": []
+              },
+              "experimental": {
+                "dx": 8,
+                "dy": 0,
+                "cooldown": 36,
+                "remaining": 0,
+                "ownsMotion": false,
+                "events": []
+              }
+            },
+            {
+              "elapsedFrame": 5,
+              "control": {
+                "dx": 37.5,
+                "dy": 0,
+                "cooldown": 25,
+                "remaining": 3,
+                "ownsMotion": true,
+                "events": []
+              },
+              "experimental": {
+                "dx": 10,
+                "dy": 0,
+                "cooldown": 35,
+                "remaining": 0,
+                "ownsMotion": false,
+                "events": []
+              }
+            },
+            {
+              "elapsedFrame": 6,
+              "control": {
+                "dx": 45,
+                "dy": 0,
+                "cooldown": 25,
+                "remaining": 2,
+                "ownsMotion": true,
+                "events": []
+              },
+              "experimental": {
+                "dx": 12,
+                "dy": 0,
+                "cooldown": 34,
+                "remaining": 0,
+                "ownsMotion": false,
+                "events": []
+              }
+            },
+            {
+              "elapsedFrame": 7,
+              "control": {
+                "dx": 52.5,
+                "dy": 0,
+                "cooldown": 25,
+                "remaining": 1,
+                "ownsMotion": true,
+                "events": []
+              },
+              "experimental": {
+                "dx": 14,
+                "dy": 0,
+                "cooldown": 33,
+                "remaining": 0,
+                "ownsMotion": false,
+                "events": []
+              }
+            },
+            {
+              "elapsedFrame": 8,
+              "control": {
+                "dx": 60,
+                "dy": 0,
+                "cooldown": 25,
+                "remaining": 0,
+                "ownsMotion": true,
+                "events": [
+                  "dash-end"
+                ]
+              },
+              "experimental": {
+                "dx": 16,
+                "dy": 0,
+                "cooldown": 32,
+                "remaining": 0,
+                "ownsMotion": false,
+                "events": []
+              }
+            }
+          ],
+          "firstBehaviorDivergence": {
+            "elapsedFrame": 1,
+            "control": {
+              "dx": 7.5,
+              "dy": 0,
+              "cooldown": 25,
+              "remaining": 7,
+              "ownsMotion": true,
+              "events": [
+                "dash-start"
+              ]
+            },
+            "experimental": {
+              "dx": 2,
+              "dy": 0,
+              "cooldown": 39,
+              "remaining": 0,
+              "ownsMotion": false,
+              "events": []
+            }
+          },
+          "eventConvention": "Human-authored normalization: start when remaining changes from <=0 to >0; end when >0 becomes 0. Motion is measured relative to each branch before the comparison."
+        }
+      ],
+      "staticEvidence": [
+        {
+          "id": "writers:f7aae290e3d237ed7aa2b941",
+          "kind": "writer-trace",
+          "passed": true
+        },
+        {
+          "id": "writers:b66198fe66fe88c243359c2e",
+          "kind": "writer-trace",
+          "passed": true
+        },
+        {
+          "id": "binary:func30",
+          "functionIndex": 30,
+          "kind": "wat"
+        }
+      ],
+      "annotations": [],
+      "captures": [
+        {
+          "evidenceId": "image-001",
+          "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+          "branchId": "control",
+          "observationId": "obs-0008",
+          "frame": 19,
+          "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+          "framebufferHash": "2e3523d64a10bbf23e43e3f416becf48c76ee4ff89e0a8614430fe205670665c",
+          "palette": [
+            16777215,
+            5855577,
+            12566463,
+            2434341
+          ],
+          "width": 160,
+          "height": 160,
+          "pngSha256": "8e5b6410a6c4fd360f82ced843fea7da52e46f5ee175d62896a35e9de7ca799d",
+          "reason": "Actual framebuffer after the human-scripted controlled experiment.",
+          "dataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgCAIAAAAErfB6AAAEBElEQVR4nO3cW3KcMBRFUSbDoBgtQ0uqQoUQvRCgK10d7/2RcmQMQssN6U7by7Zt+6XNQfv/JceHTnCmlut69V+7+IhJ1OR4z3nmWi/5HF8KqHtUcjzY/rpBefsXwNd9Jufcs3Vdr+d1rqmr8SUHEC99cjwJWbl9rj0qHq9WsCpYzXNNvY0vwbzP5cutYzAeAyS3D8rtrXA4b8zngp5zCxbayXh4iTYCzi1T/Wdvr+2d8waZBa78V2sMWf9wzG2fK7fx0/2Y5u1SXHuJpvrWKIfjyy/q277vyY+NAnhAh+upa8oM8Jj66AI8rOBBbBfAYwJYvw66AOsHsHgAiweweACLB7B4AIsHsHgAi1cCDl5q6fPKC7WtFhjdSbu5RPf8n0uy6P4ejO7U1QKjO2kAi1f1NAndeeN5sHgAi/cemJdBpqgNMLpu+3SJ5mUQ/329B6PrvDbAX3S5l5vmCxjd5jV4mvRdhXu5XV6eB6NrlC9gdJsHsHhegNE1yhEwWQSweACLB7B4AIsHsHgAiweweACLB7B4AIsHsHgAiweweACLB7B4AL9porf6Avymid7qC/DLZnmrL8Dv868L8KemeCcowO8DWD/nugDrB7B4AIsHsHgAiweweIbAE70iL1wnYHRHZXuJnuUVeeHM78Hojq0T8M/R3TKNmo874PVSebDJxs3btm2PUgZ+qntdl0MiOdhkY4uOx+uBev3A6HC3OXoeHBicEsnBJhsbnUgMbHSgmsYDH+e/bduV4VyawCY5/npjuzMKpmF0oJoANjkjgBOJXaIBTrRG5QabbGyUn+dI7oCpeQCLB7B4AIsHsHgAiweweACLB7B4AIsHsHgAiweweACLB7B4AIsHsHgAiweweACLB7B4AIsHsHgAiweweACLNxkwv7nnaRMDo1vTZMD85p6nzQc8ka6HG8rEwM51ndxQALZt+A1lSuBZdI/G3lBmBZ6osdcbgM0DWL+BNxSAxQNYPIDFA1g8gMUDWDyAxQNYPIDFA1g8gMUDWDyAxQNYPIDFA1g8gMUDWDyAxQNYPIDFA1i8YcAefjDrJ+QCGF27Rl6ih/9g1k9o8D0YXetcAKNrF8DijX+ahK5p44HJNIDFewzMCxRztex/2v4W/LVDnY+4p7I7kMWeH+2/E3But6ZL/GgmPvu+bv+Azz/PL8t9m8fblLcvL6sT4MLDOjlevgyUB2v2X57t40dw4Rjx7pIfJyd9e3gPl+jkNG7PK/jsrU3l/p+eyO1mJeCatQgmmvtGKcxmCPDt+O15vQOuWeea2b4BDi4sZaHcLHOHmR04uf2XR3Dl9JoBJ78s9x2XO0Bh48IUH33J9+KD3n5DJydZAM6dV81g83Vb3i4UzdFvECoH6dZXlaEAAAAASUVORK5CYII="
+        },
+        {
+          "evidenceId": "image-002",
+          "sessionId": "c7927cb2-0f77-42c1-9e31-bc12ee4dfda7",
+          "branchId": "variant",
+          "observationId": "obs-0009",
+          "frame": 19,
+          "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+          "framebufferHash": "6f5b7e3d31991a6da3fcef1ef55ba35c9f81486ace7239c8bc4f445635b194a0",
+          "palette": [
+            16777215,
+            5855577,
+            12566463,
+            2434341
+          ],
+          "width": 160,
+          "height": 160,
+          "pngSha256": "15e3c68e7c8d8f33b1e4b5a94e7307eaa19bd55ccfb7e2aadd89e940a37f1be5",
+          "reason": "Actual framebuffer after the human-scripted controlled experiment.",
+          "dataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgCAIAAAAErfB6AAADwklEQVR4nO3ca3KbMBRAYTbjRbFaLS2dTqeEgF7gR3SPzvnRSVUCQp9NEtdhWdc17VoHKP0sO/6rE4zUsl+vz6/d+YhZ1Oz4J+dZ6rFrzPGlgppOZccP2+83qG9/A3i/z+ycP9nj8dif17amQ40vJYDz0mfHs5Cd25dKp87j3Qrv6rCa25qONr4c5r0tX2kdD+NngOz2h0p7qxxuNOZtQbe5HRZ6kPHjJfpNwKVl6v/X5rX9w40GWQTu/K71DNn/dCxtX6q08dX9vLXRLsW9l2jr73FqwPHlK1dKKfuxhSsPvLluujIHrQisLqM2sLqhExheDVhdQA1gi57A8ASGJzA8geEJDE9geALDExje6MCHl9J8Ze1qkYDVvdHowP7P9JMFAFb3mSIBq3sjgeHFAFb3dmGA7V4Cw4sN7MsgzTjA6maLDezLIM3CA6tbjwP8jC74a7nAX+yv5QTgl6hQv5ZDgF8ST1fgHyFf8Rb4O4H5wXQF5icwPIHhCQxPYHgCwxMYnsDwBIYnMDyB4QkMT2B4AsMTGJ7A8ASOWudbfQWOWudbfQUOXM9bfQWOXfOtvgLHrvlOUIFjJzC/+lt9BYYnMDyB4QkMT2B4AsODA4NvvtHZRMAT6vKBwTff6IwPPLPuLMCzte6aCHh/2r89l/e2rmv63yzA+3NOKbGN/z2I/53mFMAH3UmMJwXeznwG4Fku0QLDm/YSPQvw4Vto/NN3f76zAE+bwPAEhicwPIHhCQxPYHgCwxMYnsDwBIYnMDyB4QkMT2B4AsMTGJ7A8ASGJzA8geEJDE9geALDExiewPAEvlysO/cIfLlYd+4R+E6B7tyzxLrgjFMI3SPw4HMdquat1gdpiXXBGadIwOreK8Ra/QAOMWO7lMDwvn9MUheZPwfDExiewPAEhicwPIHhCQxPYHgCwxMYnsDwBIYnMDyB4QkMT2B4AsMTGJ7A8ASGJzA8geFNDTzDL94JnPmY1NTAM/zi3ezAbF2Bv/C/lyWwwBNE1RWYn8DwQgLP8ALFq/p7l52U0vq/w18/0IePmHK970Dv2POl/X8IuLTbty7xpZmM2fPr9g28/bl9Wulhft6mvn19WQcBrjyts+P1y0B9sGf/9dlefgZXjnHeXfbj7KSbhx/hEp2dRvO8Dv/atOnc/9UTaW5WA+5Zi8NESw+Uymx+Bbg53jyve8A969wz2zvAhwtLXag0y9JhogNnt3/mGdw5vZcBZz+t9IgrHaCycWWKlz7l+c4HbT6gs5OsAJfOq2fw5eu23F0oi9EfHVpe6FQWIW8AAAAASUVORK5CYII="
+        }
+      ],
+      "findings": [],
+      "recovery": {
+        "selections": [],
+        "attempts": []
+      }
+    },
+    "estimatedCostUsd": 0,
+    "reservedCostUsd": 0,
+    "conclusionVerified": false,
+    "humanAssistance": [
+      "All inputs, field selection, intervention and interpretation are human-scripted. No model was called.",
+      "The field addresses use the existing human-mapped motion registry."
+    ],
+    "conclusion": "Human-scripted local verification, cmp-001: after eight identical inputs the control moved 60 source pixels and the timer-edited variant moved 16. The first motion/timer/event difference occurred at update 1. The human-mapped timer address relocated from 22439 to 38730; the first range had 0 matching stores while the endpoint range had 6. Both writer-copy comparisons matched the original. This finite intervention does not establish all timer rules, stable addresses or independent recovery."
+  }
+}

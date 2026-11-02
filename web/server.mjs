@@ -39,6 +39,7 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
     ['/remix.js', 'remix.js', 'text/javascript'],
     ['/evidence.js', 'evidence.js', 'text/javascript'],
     ['/lab.js', 'lab.js', 'text/javascript'],
+    ['/investigation-view.js', 'investigation-view.js', 'text/javascript'],
     ['/roadster.js', 'roadster.js', 'text/javascript'],
     ['/guided.js', 'guided.js', 'text/javascript'],
   ]) assets.set(path, [type, await readFile(new URL(file, import.meta.url), 'utf8')]);

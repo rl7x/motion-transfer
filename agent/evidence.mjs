@@ -39,7 +39,8 @@ export function evidenceHistory(report) {
     { role: 'user', content: [{
       type: 'input_text',
       text: 'The following ledger contains actual completed tool observations from this investigation. Prior model reasoning has been discarded. Hypotheses are not established facts. Fingerprints are 12-character prefixes; full hashes and raw observations remain in the local report. Sprite positions are [x,y,flags]. Use this evidence to continue, and cite experiment IDs.\n'
-        + JSON.stringify({ spriteCatalog: [...catalog.values()], observations }),
+        + JSON.stringify({ spriteCatalog: [...catalog.values()], observations,...(report.session?{currentSession:{id:report.session.id,identity:report.session.identity,branches:report.session.branches.map(({id,experimental,parentCheckpointId,verification})=>({id,experimental,parentCheckpointId,verification})),checkpoints:report.session.checkpoints.map(({id,label,verification})=>({id,label,verification})),annotations:report.session.annotations,findings:report.session.findings,latestDevelopmentCandidate:report.session.recovery?.attempts.at(-1),frozenCandidateId:report.session.recovery?.frozenCandidateId}}:{}) }),
     }] },
+    ...(report.session?.captures?.length?[{role:'user',content:[{type:'input_text',text:'Most recent actual framebuffer capture; its identity is preserved in the tool ledger.'},{type:'input_image',image_url:report.session.captures.at(-1).dataUrl}]}]:[]),
   ];
 }
