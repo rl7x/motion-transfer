@@ -29,3 +29,45 @@ test('lab reports redact credentials and reject unsupported requests',async t=>{
   await assert.rejects(service.submit('investigation',{...request,extra:1}),/Invalid lab request/);
   const job=await service.submit('investigation',request);assert.doesNotMatch(JSON.stringify(await done(service,job.id)),/test-private-credential/);
 });
+
+test('question routing retains the configured model, discovery requirements and per-run ceilings', async t => {
+  const actual = [];
+  const { service } = await fixture(t, { investigateRun: async options => {
+    const { model, limits, requirements, toolDiscovery, reasoningEffort } = options;
+    actual.push({ model, limits, requirements, toolDiscovery, reasoningEffort });
+    return { status: 'completed', estimatedCostUsd: 0, reservedCostUsd: 0 };
+  } });
+  for (const questionId of ['held', 'neutral', 'memory', 'extraction']) {
+    const job = await service.submit('investigation', { questionId, idempotencyKey: 'routing-test-' + questionId });
+    assert.equal((await done(service, job.id)).status, 'ready');
+  }
+  const basic = { model: 'muse-spark-1.3', limits: { maxCostUsd: 0.5 }, requirements: {}, toolDiscovery: 'none', reasoningEffort: 'high' };
+  const extended = extraction => ({
+    model: 'muse-spark-1.3',
+    limits: { maxCostUsd: 0.5, maxModelCalls: extraction ? 16 : 12, maxToolCalls: 24, maxOutputTokens: extraction ? 4000 : 2000 },
+    requirements: { branchComparison: true, codeInspection: true, componentAcceptance: extraction, followupDecision: !extraction },
+    toolDiscovery: 'client', reasoningEffort: 'low',
+  });
+  assert.deepEqual(actual, [basic, basic, extended(false), extended(true)]);
+  assert.equal(service.status().budget.spentUsd, 0);
+});
+
+test('simultaneous submissions cannot both pass admission while the first job is being persisted', async t => {
+  let release;
+  const gate = new Promise(resolve => { release = resolve; });
+  const { service } = await fixture(t, { investigateRun: async () => {
+    await gate;
+    return { status: 'completed', estimatedCostUsd: 0, reservedCostUsd: 0 };
+  } });
+  try {
+    const submissions = await Promise.allSettled([
+      service.submit('investigation', { ...request, idempotencyKey: 'admission-first' }),
+      service.submit('investigation', { ...request, idempotencyKey: 'admission-second' }),
+    ]);
+    assert.equal(submissions[0].status, 'fulfilled');
+    assert.equal(submissions[1].status, 'rejected');
+    assert.match(submissions[1].reason.message, /already running/);
+    release();
+    assert.equal((await done(service, submissions[0].value.id)).status, 'ready');
+  } finally { release(); }
+});
