@@ -28,6 +28,6 @@ test('selective captures retain hashes and session identity and persist as PNG e
     await saveInvestigationEvidence(directory,tools.sessionState);
     assert.deepEqual(await readFile(join(directory,'sessions',tools.sessionState.id,capture.result.pngSha256+'.png')),bytes);
     for(let i=0;i<3;i++)await tools.run('capture_frame',{branchId:'main',reason:'Bounded capture fixture.'});
-    await assert.rejects(tools.run('capture_frame',{branchId:'main',reason:'Exceeds image cap.'}),/four selective/);
+    await assert.rejects(tools.run('capture_frame',{branchId:'main',reason:'Exceeds image cap.'}),/image budget/);
   }finally{await tools.close();await rm(directory,{recursive:true,force:true});}
 });

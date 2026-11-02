@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>JUJUMP · recovered dash integration</title><link rel="stylesheet" href="style.css"></head>
+<body><main>
+  <header><span>MOTION / TRANSFER</span><span>STANDALONE DEVELOPER EXAMPLE</span></header>
+  <p class="eyebrow">COMPILED BEHAVIOR → EDITABLE COMPONENT → NEW GAME</p>
+  <h1>Keep the dash.<br>Build a different game.</h1>
+  <p class="lede">JUJUMP keeps its jumping, gravity and platforms. A standalone component recovered from Dashy Dango supplies the dash.</p>
+  <p class="note">Saved Meta recovery + human-authored integration. This project runs locally with no model, donor cartridge, or investigation backend.</p>
+  <div class="actions"><button id="compare">Run matched 8-tick comparison</button><button id="resume">Reset both / play freely</button><a id="measurements" hidden download="jujump-local-comparison.json">Save this comparison ↗</a></div>
+  <p id="comparison-status" role="status">Play freely, or run an actual matched open-air fixture to measure what changes.</p>
+  <section class="players" aria-label="Before and after integration">
+    <article><h2>JUJUMP <small>BEFORE</small></h2><iframe id="before" src="original.html?mode=original" title="JUJUMP before transfer" allow="autoplay"></iframe><div class="controls"><button data-frame="before" data-key="Space" disabled>Start / jump · Space</button></div><p>Tap or hold Space to jump. Successive air jumps weaken; landing restores them.</p></article>
+    <article><h2>JUJUMP + dash <small>AFTER</small></h2><iframe id="after" src="transferred.html?mode=transfer" title="JUJUMP after transfer" allow="autoplay"></iframe><div class="controls"><button data-frame="after" data-key="Space" disabled>Start / jump · Space</button><button data-frame="after" data-key="KeyD" class="accent" disabled>Hold to dash · D</button></div><p>Same native physics. Hold D for a horizontal dash with the recovered duration and recharge.</p></article>
+  </section>
+  <div id="measurements-summary" aria-live="polite"></div>
+  <section class="handoff"><h2>Use it in your project</h2><p>Run <code>npm test</code> for file integrity and saved adapter replay. Edit <code>adapter/adapter.js</code> to change the integration. The original verification applies to the frozen export; changes need new checks.</p>
+    <div class="links"><a href="README.md">Integration guide</a><a href="component/component.js">Recovered component</a><a href="adapter/adapter.js">JUJUMP adapter</a><a href="evidence/recipient-verification.json">Saved verification + traces</a><a href="case-study.json">Measurements + scope</a><a href="NOTICES.txt">Attribution</a></div>
+    <details><summary>What was recovered, and what did a human supply?</summary><p>Meta generated and repaired the movement controller. A human selected the component boundary, mapped runtime fields, supplied code slices and development evidence, and authored the evaluator, recipient adapter and hooks. Dashy Dango's source was withheld from recovery; it was not lost. Visual trails, combat and scoring are outside the component.</p><p>The current package uses the previously accepted component. Later exploratory investigations are separate and do not establish a new independent recovery. These finite checks do not prove full-game equivalence or compatibility with arbitrary binaries.</p></details>
+  </section>
+</main><script type="module" src="player.js"></script></body></html>

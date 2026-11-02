@@ -1,0 +1,1153 @@
+{
+  "schemaVersion": 1,
+  "origin": "Injected-client contract captured from implementation 1dbbab6 before the backend refactor; no paid inference.",
+  "scenarios": {
+    "native": {
+      "requests": [
+        "e7f98e17c5ac7e145f88a5f1130270409252e911a3ad1277304fe88300f4cc07",
+        "9c5b169233dc469bbd9a0fe3b7a9a2da89978e4fb47e9ceb2e567d1b93637950",
+        "4a494b36575e689705258191f97ded95c30a00df25f1556994f5bc7225fcddfd",
+        "1ec9fc426958dbb481a9552abf5db03c43c9c41129156df5bb888f1e12d3c8de",
+        "f28a8b15644842a4e282001d6908ba4c953ce5c30e2cf3b424d6c341467a1e4f"
+      ],
+      "events": [
+        {
+          "kind": "preflight",
+          "requestSha256": "e7f98e17c5ac7e145f88a5f1130270409252e911a3ad1277304fe88300f4cc07"
+        },
+        {
+          "kind": "progress",
+          "message": "Meta request 1/5 (reserved up to $0.014)"
+        },
+        {
+          "kind": "generation",
+          "turn": 1
+        },
+        {
+          "kind": "preflight",
+          "requestSha256": "9c5b169233dc469bbd9a0fe3b7a9a2da89978e4fb47e9ceb2e567d1b93637950"
+        },
+        {
+          "kind": "progress",
+          "message": "Meta request 2/5 (reserved up to $0.014)"
+        },
+        {
+          "kind": "generation",
+          "turn": 2
+        },
+        {
+          "kind": "progress",
+          "message": "Running run_original"
+        },
+        {
+          "kind": "preflight",
+          "requestSha256": "bd5bf5a3e56d025c96437610da2ae5c5ccc36c4525d69d13dc3242620bac431e"
+        },
+        {
+          "kind": "preflight",
+          "requestSha256": "4a494b36575e689705258191f97ded95c30a00df25f1556994f5bc7225fcddfd"
+        },
+        {
+          "kind": "progress",
+          "message": "Meta request 3/5 (reserved up to $0.014)"
+        },
+        {
+          "kind": "generation",
+          "turn": 3
+        },
+        {
+          "kind": "progress",
+          "message": "Running run_original"
+        },
+        {
+          "kind": "preflight",
+          "requestSha256": "1ec9fc426958dbb481a9552abf5db03c43c9c41129156df5bb888f1e12d3c8de"
+        },
+        {
+          "kind": "progress",
+          "message": "Meta request 4/5 (reserved up to $0.014)"
+        },
+        {
+          "kind": "generation",
+          "turn": 4
+        },
+        {
+          "kind": "progress",
+          "message": "Running inspect_wasm"
+        },
+        {
+          "kind": "preflight",
+          "requestSha256": "f28a8b15644842a4e282001d6908ba4c953ce5c30e2cf3b424d6c341467a1e4f"
+        },
+        {
+          "kind": "progress",
+          "message": "Meta request 5/5 (reserved up to $0.014)"
+        },
+        {
+          "kind": "generation",
+          "turn": 5
+        }
+      ],
+      "dispatches": [
+        {
+          "name": "run_original",
+          "args": {
+            "hypothesis": "Injected contract fixture, not a model discovery.",
+            "watches": [],
+            "steps": [
+              {
+                "buttons": 32,
+                "frames": 4,
+                "checkpoint": "move"
+              }
+            ]
+          }
+        },
+        {
+          "name": "run_original",
+          "args": {
+            "hypothesis": "Injected contract fixture, not a model discovery.",
+            "watches": [],
+            "steps": [
+              {
+                "buttons": 16,
+                "frames": 4,
+                "checkpoint": "move"
+              }
+            ]
+          }
+        },
+        {
+          "name": "inspect_wasm",
+          "args": {
+            "view": "overview",
+            "startLine": 1,
+            "lineCount": 5
+          }
+        }
+      ],
+      "updateHashes": [
+        "2cdd5ceae7814c9c6e00527bec80a0c18178814f0cdc85cdcfe86215b9f6c471",
+        "5d09dd9e75224e99939af4f2c433bc13c1f0d9c708f14c0cbe5436944b21bafd",
+        "45ac538461aa24424614721d467850bec59c990a7f650dcc3bb9cd8dcd1c865a",
+        "08f25ab8e4443ec3b580c4508df8afe33162c3498882c94f6be9d4d5033bd63f",
+        "5e4c3ed3e4e3071260424d832a6ddf7a16e45bce82673538bb7b3b0a8913b1ca",
+        "e3a46088b2936a8f8acba9c35ab49576e8fa11af1974317533452a1906958773",
+        "45aa19b10ba3841d696286da2ddb0fd34f5886158320279b916b78ae975cdf27",
+        "fd79a4446671c8bd2d62561492db0f3a70b0a2dc52e79b9303e1078c44392339",
+        "01b14e888847eb7faf5d555d36a15c583f3743ddb1d3add28a3a516698c4c520",
+        "03899d5300b0d9187828f62630411c122fd48ebf540b0daaf9c3e15ff2913863",
+        "396d5430a6d99cdf9b7eceb9e6e5d7d56c5e0cc76ab841dd7618edac6619d02d",
+        "44edb1781dada5c1d4bee7260319e5109d4af610b745944e76665479e5794c9e",
+        "0ec8079c369df9e003bb97a934963ed466566d33af9bf25093a036d230aec3e3",
+        "66789033fc4731df0f40b3ec1e1e95fbfd0c802f5e35d55b58029e4fa8433956",
+        "d43fd70daecf0672bdefe307617bbbaa96c4fdda33a5ace01d5521d6d9d3484e",
+        "b71a9d307ea94b0a5ff20b29849b87f9b168b0c62e9a5b22cb481bf7d063369f",
+        "6cb3fe571bdc3d77de5faae5e6fb220655bab625bb1b3624b013c6bb964906df",
+        "c15d42b3ea6c7577f4ecbc7af158bf1ed51115bfea6a2668db31861f29477bed",
+        "c3ebbd0fcc1e2a8c72b0bdf88f366c1a53ee4d1a07bc5740e47200d024a6ccfb"
+      ],
+      "report": {
+        "schemaVersion": 1,
+        "status": "completed",
+        "model": "muse-spark-1.3",
+        "question": "Offline contract comparison before and after a refactor.",
+        "limits": {
+          "maxModelCalls": 5,
+          "maxToolCalls": 12,
+          "maxOutputTokens": 3000,
+          "maxInputTokens": 20000,
+          "maxCostUsd": 0.5,
+          "timeoutMs": 180000
+        },
+        "target": {
+          "id": "target-001",
+          "sha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+          "bytes": 47101
+        },
+        "pricingPerMillionTokens": {
+          "input": 1.25,
+          "cached": 0.15,
+          "output": 4.25
+        },
+        "usage": {
+          "inputTokens": 5000,
+          "outputTokens": 500,
+          "cachedInputTokens": 500,
+          "reasoningTokens": 100
+        },
+        "estimatedCostUsd": 0.007825,
+        "reservedCostUsd": 0,
+        "requests": [
+          {
+            "attempt": 1,
+            "inputTokenCount": 1000,
+            "reservedCostUsd": 0.014,
+            "status": "completed",
+            "usage": {
+              "inputTokens": 1000,
+              "outputTokens": 100,
+              "cachedInputTokens": 100,
+              "reasoningTokens": 20
+            },
+            "responseId": "fixture-response-1",
+            "estimatedCostUsd": 0.001565
+          },
+          {
+            "attempt": 2,
+            "inputTokenCount": 1000,
+            "reservedCostUsd": 0.014,
+            "status": "completed",
+            "usage": {
+              "inputTokens": 1000,
+              "outputTokens": 100,
+              "cachedInputTokens": 100,
+              "reasoningTokens": 20
+            },
+            "responseId": "fixture-response-2",
+            "estimatedCostUsd": 0.001565
+          },
+          {
+            "attempt": 3,
+            "inputTokenCount": 1000,
+            "reservedCostUsd": 0.014,
+            "status": "completed",
+            "usage": {
+              "inputTokens": 1000,
+              "outputTokens": 100,
+              "cachedInputTokens": 100,
+              "reasoningTokens": 20
+            },
+            "responseId": "fixture-response-3",
+            "estimatedCostUsd": 0.001565
+          },
+          {
+            "attempt": 4,
+            "inputTokenCount": 1000,
+            "reservedCostUsd": 0.014,
+            "status": "completed",
+            "usage": {
+              "inputTokens": 1000,
+              "outputTokens": 100,
+              "cachedInputTokens": 100,
+              "reasoningTokens": 20
+            },
+            "responseId": "fixture-response-4",
+            "estimatedCostUsd": 0.001565
+          },
+          {
+            "attempt": 5,
+            "inputTokenCount": 1000,
+            "reservedCostUsd": 0.014,
+            "status": "completed",
+            "usage": {
+              "inputTokens": 1000,
+              "outputTokens": 100,
+              "cachedInputTokens": 100,
+              "reasoningTokens": 20
+            },
+            "responseId": "fixture-response-5",
+            "estimatedCostUsd": 0.001565
+          }
+        ],
+        "turns": [
+          {
+            "responseId": "fixture-response-1",
+            "model": "muse-spark-1.3",
+            "status": "completed",
+            "messages": []
+          },
+          {
+            "responseId": "fixture-response-2",
+            "model": "muse-spark-1.3",
+            "status": "completed",
+            "messages": []
+          },
+          {
+            "responseId": "fixture-response-3",
+            "model": "muse-spark-1.3",
+            "status": "completed",
+            "messages": []
+          },
+          {
+            "responseId": "fixture-response-4",
+            "model": "muse-spark-1.3",
+            "status": "completed",
+            "messages": []
+          },
+          {
+            "responseId": "fixture-response-5",
+            "model": "muse-spark-1.3",
+            "status": "completed",
+            "messages": [
+              {
+                "phase": "final",
+                "text": "exp-001 and exp-002 differ under the chosen inputs; this finite fixture does not establish every movement rule.",
+                "refused": false
+              }
+            ]
+          }
+        ],
+        "toolCalls": [
+          {
+            "callId": "fixture-search-call",
+            "name": "tool_search",
+            "namespace": null,
+            "requestAttempt": 1,
+            "ok": true,
+            "args": {
+              "namespace": "execution"
+            },
+            "result": {
+              "namespace": "execution",
+              "loadedFunctions": [
+                "read_checkpoint",
+                "read_experiment",
+                "capture_experiment",
+                "session_observe",
+                "session_advance",
+                "checkpoint_state",
+                "session_reset",
+                "run_original"
+              ],
+              "execution": "client",
+              "catalogSource": "Registered local definitions; no extra model/provider was called"
+            }
+          },
+          {
+            "callId": "fixture-move-2",
+            "name": "run_original",
+            "namespace": "execution",
+            "requestAttempt": 2,
+            "ok": true,
+            "args": {
+              "hypothesis": "Injected contract fixture, not a model discovery.",
+              "watches": [],
+              "steps": [
+                {
+                  "buttons": 32,
+                  "frames": 4,
+                  "checkpoint": "move"
+                }
+              ]
+            },
+            "result": {
+              "experimentId": "exp-001",
+              "checkpoints": [
+                {
+                  "checkpoint": "move",
+                  "frame": 4,
+                  "framebufferHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                  "text": "",
+                  "sprites": [],
+                  "tones": [],
+                  "palette": [],
+                  "memory": [],
+                  "motion": {
+                    "position": {
+                      "x": 8,
+                      "y": 0
+                    }
+                  }
+                }
+              ]
+            },
+            "experimentId": "exp-001"
+          },
+          {
+            "callId": "fixture-move-3",
+            "name": "run_original",
+            "namespace": "execution",
+            "requestAttempt": 3,
+            "ok": true,
+            "args": {
+              "hypothesis": "Injected contract fixture, not a model discovery.",
+              "watches": [],
+              "steps": [
+                {
+                  "buttons": 16,
+                  "frames": 4,
+                  "checkpoint": "move"
+                }
+              ]
+            },
+            "result": {
+              "experimentId": "exp-002",
+              "checkpoints": [
+                {
+                  "checkpoint": "move",
+                  "frame": 4,
+                  "framebufferHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "text": "",
+                  "sprites": [],
+                  "tones": [],
+                  "palette": [],
+                  "memory": [],
+                  "motion": {
+                    "position": {
+                      "x": -8,
+                      "y": 0
+                    }
+                  }
+                }
+              ]
+            },
+            "experimentId": "exp-002"
+          },
+          {
+            "callId": "fixture-overview",
+            "name": "inspect_wasm",
+            "namespace": null,
+            "requestAttempt": 4,
+            "ok": true,
+            "args": {
+              "view": "overview",
+              "startLine": 1,
+              "lineCount": 5
+            },
+            "result": {
+              "imports": [],
+              "exports": [
+                {
+                  "name": "update",
+                  "kind": "function"
+                }
+              ]
+            }
+          }
+        ],
+        "conclusion": "exp-001 and exp-002 differ under the chosen inputs; this finite fixture does not establish every movement rule.",
+        "conclusionVerified": false,
+        "humanAssistance": [
+          "Registered and hash-guarded the compiled donor",
+          "Mapped read-only motion registry fields; this mapping is not a model discovery",
+          "Authored the experiment tools and completion checks"
+        ],
+        "contextCompactions": [
+          {
+            "reason": "input-token-limit"
+          },
+          {
+            "reason": "final-conclusion"
+          }
+        ],
+        "requirements": {},
+        "toolDiscovery": {
+          "mode": "client",
+          "loadedNamespaces": [
+            "execution"
+          ],
+          "exchanges": [
+            {
+              "call": {
+                "type": "tool_search_call",
+                "id": "fixture-search",
+                "call_id": "fixture-search-call",
+                "status": "completed",
+                "execution": "client",
+                "arguments": {
+                  "namespace": "execution"
+                }
+              },
+              "output": {
+                "type": "tool_search_output",
+                "execution": "client",
+                "call_id": "fixture-search-call",
+                "status": "completed",
+                "tools": [
+                  {
+                    "type": "namespace",
+                    "name": "execution",
+                    "description": "Observe or reconstruct checkpoint state, read compact experiment evidence and selectively capture actual images.",
+                    "tools": [
+                      {
+                        "type": "function",
+                        "name": "read_checkpoint",
+                        "strict": true,
+                        "description": "Observe an existing checkpoint without advancing or changing main. Return typed target handles for human-mapped hints and requested raw memory watches. Handles bind address, type, previous bytes and checkpoint identity; raw watch names are hypotheses.",
+                        "parameters": {
+                          "type": "object",
+                          "properties": {
+                            "checkpointId": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 40,
+                              "pattern": "^cp-[a-f0-9]{20}$"
+                            },
+                            "watches": {
+                              "type": "array",
+                              "maxItems": 8,
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 40
+                                  },
+                                  "address": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 65535
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "u8",
+                                      "i8",
+                                      "u16",
+                                      "i16",
+                                      "u32",
+                                      "i32",
+                                      "f32",
+                                      "f64"
+                                    ]
+                                  },
+                                  "count": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 16
+                                  }
+                                },
+                                "required": [
+                                  "name",
+                                  "address",
+                                  "type",
+                                  "count"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "checkpointId",
+                            "watches"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "defer_loading": true
+                      },
+                      {
+                        "type": "function",
+                        "name": "read_experiment",
+                        "strict": true,
+                        "description": "Read a bounded window from an immutable completed experiment artifact. Large complete traces stay in the evidence store; this returns at most four requested frames and endpoint observations.",
+                        "parameters": {
+                          "type": "object",
+                          "properties": {
+                            "artifactId": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 64,
+                              "pattern": "^[a-f0-9]{64}$"
+                            },
+                            "startFrame": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 120
+                            },
+                            "frameCount": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 4
+                            }
+                          },
+                          "required": [
+                            "artifactId",
+                            "startFrame",
+                            "frameCount"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "defer_loading": true
+                      },
+                      {
+                        "type": "function",
+                        "name": "capture_experiment",
+                        "strict": true,
+                        "description": "Reconstruct and verify one completed experiment endpoint, then selectively capture its actual PNG. Image identity retains session, branch, frame and source artifact. Counts against the same four-image investigation budget; requestId is idempotent.",
+                        "parameters": {
+                          "type": "object",
+                          "properties": {
+                            "requestId": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 80,
+                              "pattern": "^[a-zA-Z0-9_-]{8,80}$"
+                            },
+                            "artifactId": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 64,
+                              "pattern": "^[a-f0-9]{64}$"
+                            },
+                            "branch": {
+                              "type": "string",
+                              "enum": [
+                                "control",
+                                "intervention"
+                              ]
+                            },
+                            "reason": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 300
+                            }
+                          },
+                          "required": [
+                            "requestId",
+                            "artifactId",
+                            "branch",
+                            "reason"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "defer_loading": true
+                      },
+                      {
+                        "type": "function",
+                        "name": "session_observe",
+                        "strict": true,
+                        "description": "Observe the current persistent branch without advancing; include bounded typed memory watches. Motion fields are HUMAN-MAPPED assistance.",
+                        "parameters": {
+                          "type": "object",
+                          "properties": {
+                            "branchId": {
+                              "type": "string",
+                              "pattern": "^[a-z][a-z0-9-]{0,39}$",
+                              "description": "Identity of an existing branch for observation or execution. main is the initial branch."
+                            },
+                            "watches": {
+                              "type": "array",
+                              "maxItems": 8,
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 40
+                                  },
+                                  "address": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 65535
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "u8",
+                                      "i8",
+                                      "u16",
+                                      "i16",
+                                      "u32",
+                                      "i32",
+                                      "f32",
+                                      "f64"
+                                    ]
+                                  },
+                                  "count": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 16
+                                  }
+                                },
+                                "required": [
+                                  "name",
+                                  "address",
+                                  "type",
+                                  "count"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "branchId",
+                            "watches"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "defer_loading": true
+                      },
+                      {
+                        "type": "function",
+                        "name": "session_advance",
+                        "strict": true,
+                        "description": "Continue this persistent branch with held inputs at 60 Hz, preserving prior state. Checkpoints here are observation labels; use checkpoint_state for a reusable branch point. The initial branch is main. X=1 starts/dashes; left=16, right=32, up=64, down=128. Frames and output are bounded.",
+                        "parameters": {
+                          "type": "object",
+                          "properties": {
+                            "branchId": {
+                              "type": "string",
+                              "pattern": "^[a-z][a-z0-9-]{0,39}$",
+                              "description": "Identity of an existing branch for observation or execution. main is the initial branch."
+                            },
+                            "hypothesis": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 500
+                            },
+                            "watches": {
+                              "type": "array",
+                              "maxItems": 8,
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 40
+                                  },
+                                  "address": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 65535
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "u8",
+                                      "i8",
+                                      "u16",
+                                      "i16",
+                                      "u32",
+                                      "i32",
+                                      "f32",
+                                      "f64"
+                                    ]
+                                  },
+                                  "count": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 16
+                                  }
+                                },
+                                "required": [
+                                  "name",
+                                  "address",
+                                  "type",
+                                  "count"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "steps": {
+                              "type": "array",
+                              "minItems": 1,
+                              "maxItems": 12,
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "buttons": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 255
+                                  },
+                                  "frames": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 600
+                                  },
+                                  "checkpoint": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 40
+                                  }
+                                },
+                                "required": [
+                                  "buttons",
+                                  "frames",
+                                  "checkpoint"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "branchId",
+                            "hypothesis",
+                            "watches",
+                            "steps"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "defer_loading": true
+                      },
+                      {
+                        "type": "function",
+                        "name": "checkpoint_state",
+                        "strict": true,
+                        "description": "Record a reusable checkpoint bound to cartridge and runtime identity. Restoration replays inputs and edits into a clean instance and verifies frame, memory, framebuffer and host-storage hashes. Private globals are reconstructed, not copied.",
+                        "parameters": {
+                          "type": "object",
+                          "properties": {
+                            "branchId": {
+                              "type": "string",
+                              "pattern": "^[a-z][a-z0-9-]{0,39}$",
+                              "description": "Identity of an existing branch for observation or execution. main is the initial branch."
+                            },
+                            "label": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 80
+                            }
+                          },
+                          "required": [
+                            "branchId",
+                            "label"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "defer_loading": true
+                      },
+                      {
+                        "type": "function",
+                        "name": "session_reset",
+                        "strict": true,
+                        "description": "Reset only this branch to a clean cartridge instance, including private globals and host storage.",
+                        "parameters": {
+                          "type": "object",
+                          "properties": {
+                            "branchId": {
+                              "type": "string",
+                              "pattern": "^[a-z][a-z0-9-]{0,39}$",
+                              "description": "Identity of an existing branch for observation or execution. main is the initial branch."
+                            },
+                            "watches": {
+                              "type": "array",
+                              "maxItems": 8,
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 40
+                                  },
+                                  "address": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 65535
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "u8",
+                                      "i8",
+                                      "u16",
+                                      "i16",
+                                      "u32",
+                                      "i32",
+                                      "f32",
+                                      "f64"
+                                    ]
+                                  },
+                                  "count": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 16
+                                  }
+                                },
+                                "required": [
+                                  "name",
+                                  "address",
+                                  "type",
+                                  "count"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "branchId",
+                            "watches"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "defer_loading": true
+                      },
+                      {
+                        "type": "function",
+                        "name": "run_original",
+                        "description": "Run a controlled experiment from fresh cartridge, memory, and empty storage. Each step holds a gamepad mask for fixed 60 Hz updates. Returns checkpoint hashes, visible text, grouped sprite coordinates, requested read-only memory watches, and motion fields from the host's HUMAN-MAPPED, hash-guarded donor registry: world position, direction, remaining active ticks, cooldown, sourceBodyWidth. Null motion means unavailable outside gameplay. The agent does not discover this registry mapping. Use world position to distinguish player movement from camera motion. Watches read little-endian numeric values at absolute byte addresses; use [] when unused. X=1 starts/dashes; Z=2; left=16; right=32; up=64; down=128. OR bits to combine; 0 releases. Maximum 12 checkpoints, 1,800 total frames, and 64 watched values. No source or filesystem access.",
+                        "strict": true,
+                        "parameters": {
+                          "type": "object",
+                          "properties": {
+                            "hypothesis": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 500
+                            },
+                            "watches": {
+                              "type": "array",
+                              "maxItems": 8,
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 40
+                                  },
+                                  "address": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 65535
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "u8",
+                                      "i8",
+                                      "u16",
+                                      "i16",
+                                      "u32",
+                                      "i32",
+                                      "f32",
+                                      "f64"
+                                    ]
+                                  },
+                                  "count": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 16
+                                  }
+                                },
+                                "required": [
+                                  "name",
+                                  "address",
+                                  "type",
+                                  "count"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "steps": {
+                              "type": "array",
+                              "minItems": 1,
+                              "maxItems": 12,
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "buttons": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 255
+                                  },
+                                  "frames": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 600
+                                  },
+                                  "checkpoint": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 40
+                                  }
+                                },
+                                "required": [
+                                  "buttons",
+                                  "frames",
+                                  "checkpoint"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "hypothesis",
+                            "watches",
+                            "steps"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "defer_loading": true
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "limitations": [
+            "Hosted search is disabled: cumulative server-side iterations cannot be bounded by the existing one-request token reservation."
+          ]
+        }
+      }
+    },
+    "transport": {
+      "requests": [
+        "e7f98e17c5ac7e145f88a5f1130270409252e911a3ad1277304fe88300f4cc07"
+      ],
+      "events": [
+        {
+          "kind": "preflight",
+          "requestSha256": "e7f98e17c5ac7e145f88a5f1130270409252e911a3ad1277304fe88300f4cc07"
+        },
+        {
+          "kind": "progress",
+          "message": "Meta request 1/5 (reserved up to $0.014)"
+        },
+        {
+          "kind": "generation",
+          "turn": 1
+        }
+      ],
+      "dispatches": [],
+      "updateHashes": [
+        "2cdd5ceae7814c9c6e00527bec80a0c18178814f0cdc85cdcfe86215b9f6c471",
+        "5d09dd9e75224e99939af4f2c433bc13c1f0d9c708f14c0cbe5436944b21bafd",
+        "33361fc0b7274b307ffa8b1a807d9509990f598827cc71440aad6369972bca1a"
+      ],
+      "report": {
+        "schemaVersion": 1,
+        "status": "failed",
+        "model": "muse-spark-1.3",
+        "question": "Offline contract comparison before and after a refactor.",
+        "limits": {
+          "maxModelCalls": 5,
+          "maxToolCalls": 12,
+          "maxOutputTokens": 3000,
+          "maxInputTokens": 20000,
+          "maxCostUsd": 0.5,
+          "timeoutMs": 180000
+        },
+        "target": {
+          "id": "target-001",
+          "sha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+          "bytes": 47101
+        },
+        "pricingPerMillionTokens": {
+          "input": 1.25,
+          "cached": 0.15,
+          "output": 4.25
+        },
+        "usage": {
+          "inputTokens": 0,
+          "outputTokens": 0,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 0
+        },
+        "estimatedCostUsd": 0,
+        "reservedCostUsd": 0.014,
+        "requests": [
+          {
+            "attempt": 1,
+            "inputTokenCount": 1000,
+            "reservedCostUsd": 0.014,
+            "status": "unsettled"
+          }
+        ],
+        "turns": [],
+        "toolCalls": [],
+        "conclusion": null,
+        "conclusionVerified": false,
+        "humanAssistance": [
+          "Registered and hash-guarded the compiled donor",
+          "Mapped read-only motion registry fields; this mapping is not a model discovery",
+          "Authored the experiment tools and completion checks"
+        ],
+        "contextCompactions": [],
+        "requirements": {},
+        "toolDiscovery": {
+          "mode": "client",
+          "loadedNamespaces": [],
+          "exchanges": [],
+          "limitations": [
+            "Hosted search is disabled: cumulative server-side iterations cannot be bounded by the existing one-request token reservation."
+          ]
+        },
+        "error": "Injected uncertain transport"
+      },
+      "error": "Injected uncertain transport"
+    },
+    "missing-usage": {
+      "requests": [
+        "e7f98e17c5ac7e145f88a5f1130270409252e911a3ad1277304fe88300f4cc07"
+      ],
+      "events": [
+        {
+          "kind": "preflight",
+          "requestSha256": "e7f98e17c5ac7e145f88a5f1130270409252e911a3ad1277304fe88300f4cc07"
+        },
+        {
+          "kind": "progress",
+          "message": "Meta request 1/5 (reserved up to $0.014)"
+        },
+        {
+          "kind": "generation",
+          "turn": 1
+        }
+      ],
+      "dispatches": [],
+      "updateHashes": [
+        "2cdd5ceae7814c9c6e00527bec80a0c18178814f0cdc85cdcfe86215b9f6c471",
+        "5d09dd9e75224e99939af4f2c433bc13c1f0d9c708f14c0cbe5436944b21bafd",
+        "7ad7d083674217ee4dd3e42d222281c3c3874c61b3a57af79ae4a15f3ee546ca"
+      ],
+      "report": {
+        "schemaVersion": 1,
+        "status": "failed",
+        "model": "muse-spark-1.3",
+        "question": "Offline contract comparison before and after a refactor.",
+        "limits": {
+          "maxModelCalls": 5,
+          "maxToolCalls": 12,
+          "maxOutputTokens": 3000,
+          "maxInputTokens": 20000,
+          "maxCostUsd": 0.5,
+          "timeoutMs": 180000
+        },
+        "target": {
+          "id": "target-001",
+          "sha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+          "bytes": 47101
+        },
+        "pricingPerMillionTokens": {
+          "input": 1.25,
+          "cached": 0.15,
+          "output": 4.25
+        },
+        "usage": {
+          "inputTokens": 0,
+          "outputTokens": 0,
+          "cachedInputTokens": 0,
+          "reasoningTokens": 0
+        },
+        "estimatedCostUsd": 0,
+        "reservedCostUsd": 0.014,
+        "requests": [
+          {
+            "attempt": 1,
+            "inputTokenCount": 1000,
+            "reservedCostUsd": 0.014,
+            "status": "unsettled"
+          }
+        ],
+        "turns": [],
+        "toolCalls": [],
+        "conclusion": null,
+        "conclusionVerified": false,
+        "humanAssistance": [
+          "Registered and hash-guarded the compiled donor",
+          "Mapped read-only motion registry fields; this mapping is not a model discovery",
+          "Authored the experiment tools and completion checks"
+        ],
+        "contextCompactions": [],
+        "requirements": {},
+        "toolDiscovery": {
+          "mode": "client",
+          "loadedNamespaces": [],
+          "exchanges": [],
+          "limitations": [
+            "Hosted search is disabled: cumulative server-side iterations cannot be bounded by the existing one-request token reservation."
+          ]
+        },
+        "error": "Meta response has no valid usage accounting; stopping with the request reservation retained"
+      },
+      "error": "Meta response has no valid usage accounting; stopping with the request reservation retained"
+    }
+  }
+}

@@ -36,6 +36,20 @@ export async function saveInvestigationEvidence(directory,session,report={}){
     const path=join(root,capture.pngSha256+'.png');
     try{await writeFile(path,bytes,{flag:'wx'});}catch(error){if(error.code!=='EEXIST'||digest(await readFile(path))!==capture.pngSha256)throw error;}
   }
+  if(session.experimentWorkbench){
+    const experiments=join(root,'experiments');await mkdir(experiments,{recursive:true});
+    for(const artifact of session.experimentWorkbench.artifacts){
+      const bytes=JSON.stringify(artifact.payload);
+      if(!/^[a-f0-9]{64}$/.test(artifact.id)||digest(bytes)!==artifact.id)throw Error('Experiment evidence integrity mismatch');
+      const path=join(experiments,artifact.id+'.json');
+      try{await writeFile(path,bytes,{flag:'wx'});}catch(error){if(error.code!=='EEXIST'||digest(await readFile(path))!==artifact.id)throw error;}
+      for(const capture of artifact.payload.captures??[]){
+        const png=Buffer.from(capture.dataUrl.split(',')[1],'base64');if(!/^[a-f0-9]{64}$/.test(capture.pngSha256)||digest(png)!==capture.pngSha256)throw Error('Experiment image integrity mismatch');
+        const imagePath=join(root,capture.pngSha256+'.png');
+        try{await writeFile(imagePath,png,{flag:'wx'});}catch(error){if(error.code!=='EEXIST'||digest(await readFile(imagePath))!==capture.pngSha256)throw error;}
+      }
+    }
+  }
   const recovery=session.recovery;
   if(recovery?.acceptedAttempt){
     const entry=recovery.attempts.find(item=>item.attempt===recovery.acceptedAttempt),selection=recovery.selections.find(item=>item.id===entry?.selectionId);

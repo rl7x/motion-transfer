@@ -6,6 +6,13 @@
 - Prefer simple implementations; avoid unrelated refactors.
 - Run relevant checks and report what passed, failed, or was not run.
 
+## Frontend
+
+- Build the application UI with TypeScript and React in `web/app/`.
+- Use React state, props and hooks for UI behavior; clean up listeners, timers and requests.
+- Run the frontend type, lint and formatting checks along with relevant browser tests.
+- Keep pinned game engines and verified artifact inputs separate from application source.
+
 ## Commits
 
 When I ask you to commit, write a professional conventional commit message.

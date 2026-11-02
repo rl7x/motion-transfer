@@ -1,7 +1,10 @@
-export function evidenceHistory(report) {
+export function evidenceHistory(report,{includeDiscovery=true}={}) {
   const catalog = new Map();
+  const captures=[...(report.session?.captures??[]),...(report.session?.experimentWorkbench?.artifacts??[]).flatMap(item=>item.payload.captures??[])];
+  const selectedId=report.toolCalls.flatMap(call=>call.images??[]).at(-1)?.evidenceId;
+  const latestCapture=captures.find(item=>item.evidenceId===selectedId)??captures.at(-1);
   const observations = report.toolCalls.filter(call => call.ok).map(call => {
-    if (call.name !== 'run_original') return { tool: call.name, result: call.result };
+    if (call.name !== 'run_original') return { tool: call.name, result: call.result,...(call.images?.length?{images:call.images}:{}) };
     return {
       experimentId: call.experimentId,
       hypothesis: call.args.hypothesis,
@@ -39,8 +42,10 @@ export function evidenceHistory(report) {
     { role: 'user', content: [{
       type: 'input_text',
       text: 'The following ledger contains actual completed tool observations from this investigation. Prior model reasoning has been discarded. Hypotheses are not established facts. Fingerprints are 12-character prefixes; full hashes and raw observations remain in the local report. Sprite positions are [x,y,flags]. Use this evidence to continue, and cite experiment IDs.\n'
-        + JSON.stringify({ spriteCatalog: [...catalog.values()], observations,...(report.session?{currentSession:{id:report.session.id,identity:report.session.identity,branches:report.session.branches.map(({id,experimental,parentCheckpointId,verification})=>({id,experimental,parentCheckpointId,verification})),checkpoints:report.session.checkpoints.map(({id,label,verification})=>({id,label,verification})),annotations:report.session.annotations,findings:report.session.findings,latestDevelopmentCandidate:report.session.recovery?.attempts.at(-1),frozenCandidateId:report.session.recovery?.frozenCandidateId}}:{}) }),
+        + JSON.stringify({ spriteCatalog: [...catalog.values()], observations,...(report.session?{currentSession:{id:report.session.id,identity:report.session.identity,branches:report.session.branches.map(({id,experimental,parentCheckpointId,verification})=>({id,experimental,parentCheckpointId,verification})),checkpoints:report.session.checkpoints.map(({id,label,verification})=>({id,label,verification})),annotations:report.session.annotations,findings:report.session.findings,latestDevelopmentCandidate:report.session.recovery?.attempts.at(-1),frozenCandidateId:report.session.recovery?.frozenCandidateId,...(report.session.experimentWorkbench?{managedExperiments:report.session.experimentWorkbench.requests.filter(request=>request.kind==='experiment'&&request.status==='completed').map(request=>request.output.result),experimentPrograms:report.session.experimentWorkbench.programs.map(({id,source,sourceSha256,status,error,operations})=>({id,source,sourceSha256,status,error,operations:operations.map(({name,status,error,result})=>({name,status,error,artifactRef:result?.artifactRef,experimentId:result?.experimentId}))})),programStackRestored:false}:{})}}:{}) }),
     }] },
-    ...(report.session?.captures?.length?[{role:'user',content:[{type:'input_text',text:'Most recent actual framebuffer capture; its identity is preserved in the tool ledger.'},{type:'input_image',image_url:report.session.captures.at(-1).dataUrl}]}]:[]),
+    ...(latestCapture?[{role:'user',content:[{type:'input_text',text:`Selected actual framebuffer ${latestCapture.evidenceId}, session ${latestCapture.sessionId}, branch ${latestCapture.branchId}, frame ${latestCapture.frame}, PNG SHA256 ${latestCapture.pngSha256}.`},{type:'input_image',image_url:latestCapture.dataUrl}]}]:[]),
+    ...(includeDiscovery?discoveryReplay(report):[]),
   ];
 }
+import {discoveryReplay} from './tool-discovery.mjs';

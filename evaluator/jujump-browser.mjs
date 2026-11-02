@@ -6,14 +6,17 @@ import { jujumpEnvironment } from '../transfer/jujump.mjs';
 export const JUJUMP_CHECKS=['ordinary-play-matches-original','native-jumps-gravity-and-landing','airborne-dash-retains-gravity',
   'swept-platform-contact','held-timing-and-frozen-direction','death-restart-resets-controller','dash-controls-replay'];
 
-export async function verifyJujumpBrowser(compiled,{onProgress=()=>{}}={}) {
-  const environment=await jujumpEnvironment(),harness=await createPakuBrowser({adapter:compiled,allowUnverified:true});
+export async function verifyJujumpBrowser(compiled,{onProgress=()=>{},
+  createHarness=()=>createPakuBrowser({adapter:compiled,allowUnverified:true}),
+  playerPath=mode=>`/jujump/play?mode=${mode}&test=1`,
+}={}) {
+  const environment=await jujumpEnvironment(),harness=await createHarness();
   const results=[],traces={};
   const advance=(page,n=1)=>page.evaluate(n=>gameClock.advance(n),n);
   const snapshot=page=>page.evaluate(()=>jujumpSnapshot());
   async function open(mode='transfer'){
     const session=await harness.page();
-    await session.page.goto(harness.origin+`/jujump/play?mode=${mode}&test=1`);
+    await session.page.goto(harness.origin+playerPath(mode));
     await session.page.waitForFunction(()=>window.jujumpReady===true);
     await session.page.keyboard.down('Space');await advance(session.page);
     await session.page.keyboard.up('Space');await advance(session.page);

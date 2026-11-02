@@ -16,7 +16,22 @@ npm run dev:transfer
 
 Open `http://127.0.0.1:4173`. Play the compiled **Dashy Dango** donor and give its saved recovered dash to **RDSTR Stunts**, **PAKU PAKU**, or **JUJUMP**. The default Roadster experience adds a horizontal air dash to an existing 3D stunt game, using the exact same frozen controller as both pixel games. The page shows donor, recipient before, and recipient after side by side. **Watch the ability move** runs a short comparison using actual recorded native inputs without a model request. All players expand and support touch controls.
 
+The frontend is React with strict TypeScript. See [the frontend guide](web/README.md) for component ownership, request reconnection and `typecheck`, `lint`, formatting, build and browser-test commands. The existing Node backend and verified game runtimes remain separate from the application UI.
+
+**Use it in your project** opens the developer task: recover a mechanic from a compiled reference and integrate it into a platformer while keeping native physics. **Download working integration** exports a self-contained JUJUMP project with the exact frozen component, editable adapter, before/after players, source, notices, recovery failures and verification reports. Extract it, run `npm test`, then `npm start` with Node.js 22+. No dependency installation, key, donor cartridge or investigation backend is required. The standalone example can execute a matched open-air comparison and export the actual before/after traces. See [the developer handoff and its measurement limits](docs/developer-handoff.md).
+
+```sh
+npm run export:jujump
+npm run verify:integration
+```
+
+The first command writes `reports/exports/jujump-dash.zip`. The second extracts the ZIP into a fresh temporary folder, runs its Node checks and all seven existing JUJUMP browser scenarios on an independent static server. It records package identity, actual machine timings and traces in `reports/jujump-integration-verification.json`; `-- --save` refreshes the checked-in recording after a successful run. Saved verification is displayed only when its package and ZIP hashes match. Human effort and time savings have not been measured. This handoff reuses the saved recovery and makes no model request.
+
 Use **Investigate with Meta** to let Muse Spark inspect code, continue a running cartridge, branch a replay checkpoint and compare a typed memory intervention against an unchanged control. The page shows hypotheses, branch identities, edits, actual movement/timer consequences, evidence-linked findings and selected framebuffer PNGs. The extraction workflow lets the model choose inspected functions, submit a new component, receive development divergence feedback, freeze it and run separate acceptance. See [the investigation toolset and its limits](docs/investigation-tools.md). Motion values and address hints use a disclosed human-mapped registry; this is not a claim that the model discovered its layout. New candidates do not replace the saved ability.
+
+The [programmatic workbench](docs/programmatic-experiments.md) lets Meta submit one complete controlled experiment or a short isolated JS/TS program for sweeps and conditional follow-ups. The host restores checkpoints and creates both branches. **View local experiment program · no model** shows actual human-scripted measurements without inference. `npm run tools:experiment-smoke` reproduces it and compares the existing six-call workflow with two complete-workflow calls and one program call. Model round-trip and cost improvements are not inferred from that local comparison.
+
+**View Meta experiment program · incomplete** preserves the single live programmatic trial: Meta chose a real position intervention and later read its evidence, but omitted function-body inspection. Completion was rejected. Its failed program's completed experiment survived the return-size limit. The run cost $0.14972375 with no unsettled reservation and was not retried; it does not claim a new recovery.
 
 The Roadster form lets Meta generate a new adapter for distance, direction and held/fresh-press activation. Eight mapping cases and eight real-browser checks gate each playable child. Source, reports, parent lineage and local links are retained. The [Roadster integration policy](transfers/roadster/README.md) explains the 60/240 Hz bridge, meters conversion, collision behavior, attribution and finite scope.
 

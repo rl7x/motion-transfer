@@ -4,6 +4,10 @@
   "private": true,
   "description": "Local WASM-4 player for game targets",
   "scripts": {
+    "typecheck": "tsc -p web/tsconfig.json --noEmit",
+    "lint": "eslint web/app",
+    "format": "prettier --write web/app web/style.css web/index.html web/tsconfig.json eslint.config.mjs .prettierrc.json",
+    "format:check": "prettier --check web/app web/style.css web/index.html web/tsconfig.json eslint.config.mjs .prettierrc.json",
     "dev": "w4 run targets/dashy-dango/cart.wasm --no-qr",
     "dev:transfer": "node scripts/preview.mjs",
     "replay": "node scripts/replay.mjs",
@@ -13,19 +17,37 @@
     "transfer:paku": "node scripts/transfer-paku.mjs",
     "verify:transfer": "node scripts/verify-paku-transfer.mjs",
     "verify:jujump": "node scripts/verify-jujump.mjs",
+    "export:jujump": "node scripts/export-jujump.mjs",
+    "verify:integration": "node scripts/verify-integration.mjs",
     "verify:roadster": "node scripts/verify-roadster.mjs",
     "compare:transfers": "node scripts/compare-transfers.mjs",
     "tools:smoke": "node scripts/tools-smoke.mjs",
     "tools:session-smoke": "node scripts/investigation-smoke.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "tools:experiment-smoke": "node scripts/experiment-smoke.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "build:frontend": "npm run typecheck && node scripts/build-frontend.mjs",
+    "test:frontend": "node --test tests/react-frontend.test.mjs tests/experience.test.mjs tests/developer-task.test.mjs tests/experiment-web.test.mjs tests/investigation-web.test.mjs tests/lab-web.test.mjs tests/roadster-experience.test.mjs tests/transfer-preview.test.mjs tests/integration-export.test.mjs"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "crisp-game-lib": "1.1.1",
     "esbuild": "0.28.2",
+    "eslint": "10.14.0",
+    "eslint-plugin-react-hooks": "7.1.1",
     "playwright": "1.64.1",
+    "prettier": "3.9.10",
+    "quickjs-emscripten": "0.32.0",
     "sounds-some-sounds": "3.0.0",
     "three": "0.186.1",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.1",
     "wabt": "1.0.39",
     "wasm4": "2.7.1"
+  },
+  "dependencies": {
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   }
 }

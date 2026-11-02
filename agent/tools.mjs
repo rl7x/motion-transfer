@@ -4,7 +4,7 @@ import { MAX_TOOL_OUTPUT_BYTES, validateToolInput } from './tool-schema.mjs';
 
 const worker = fileURLToPath(new URL('tool-worker.mjs', import.meta.url));
 
-export function createCartridgeTools({signal,timeoutMs=10_000}={}){
+export function createCartridgeTools({signal,timeoutMs=10_000,onCheckpoint=async()=>{}}={}){
   const child=spawn(process.execPath,['--max-old-space-size=128',worker],{
     env: { PATH: process.env.PATH ?? '', ...(process.env.TMPDIR ? { TMPDIR: process.env.TMPDIR } : {}) },
     stdio:['pipe','pipe','pipe'],
@@ -27,6 +27,11 @@ export function createCartridgeTools({signal,timeoutMs=10_000}={}){
         const response=JSON.parse(line);
         if(!pending||response.id!==pending.id)throw Error('Invalid cartridge worker response');
         if(response.sessionState)lastState=response.sessionState;
+        if(response.kind==='checkpoint'){
+          const acknowledge=ok=>{if(!closed)child.stdin.write(JSON.stringify({kind:'checkpoint_ack',id:response.id,sequence:response.sequence,ok})+'\n');};
+          Promise.resolve().then(()=>onCheckpoint(response.sessionState)).then(()=>acknowledge(true),()=>acknowledge(false));
+          continue;
+        }
         const current=pending;pending=null;
         if(!response.ok){const error=Error(response.error);error.sessionState=lastState;current.reject(error);}
         else if(Buffer.byteLength(JSON.stringify(response.result))>MAX_TOOL_OUTPUT_BYTES)current.reject(Error('Tool output exceeds 32 KB; use fewer checkpoints or a smaller WAT range'));

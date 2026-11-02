@@ -7,6 +7,7 @@ import { buildDonorFrame } from './donor-frame.mjs';
 import { loadSavedRoadster } from '../roadster/saved.mjs';
 import { buildRoadsterFrame } from '../roadster/build.mjs';
 import { savedInvestigations } from '../lab/saved.mjs';
+import { integrationAssets } from '../integration/assets.mjs';
 
 export async function experienceAssets({allowUnverified=false,adapter,roadster}={}) {
   if(roadster===undefined)roadster=await loadSavedRoadster({optional:true});
@@ -14,6 +15,7 @@ export async function experienceAssets({allowUnverified=false,adapter,roadster}=
   const assets=new Map();
   const json=(path,data)=>assets.set(path,['application/json',JSON.stringify(data)]);
   for(const record of await savedInvestigations())json('/api/investigations/saved/'+record.id,record.job);
+  assets.set('/evidence/experiment-benchmark.json',['application/json',await readFile(new URL('../lab/recordings/experiment-benchmark.json',import.meta.url),'utf8')]);
   assets.set('/donor/play',['text/html',await buildDonorFrame()]);
   assets.set('/assets/jujump-game.js',['text/javascript',recipient.source+'\n'+jujumpObservationSource()]);
   assets.set('/assets/jujump-game-transfer.js',['text/javascript',hookedJujumpSource(recipient.source)+'\n'+jujumpObservationSource()]);
@@ -26,6 +28,7 @@ export async function experienceAssets({allowUnverified=false,adapter,roadster}=
     assets.set('/jujump/adapter.ts',['text/plain',jujump.source]);
     if(jujump.verified)json('/jujump/report.json',jujump.report);
   }
+  if(jujump?.verified)for(const [path,asset]of await integrationAssets())assets.set(path,asset);
   assets.set('/jujump/licenses',['text/plain',recipient.licenses.join('\n\n----------------\n\n')]);
   const destinations=[];
   if(roadster){
