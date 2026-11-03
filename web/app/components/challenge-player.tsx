@@ -115,25 +115,25 @@ export function ChallengePlayer() {
   const running = state?.phase === 'running';
   const result =
     state?.phase === 'landed'
-      ? 'Landed in the zone!'
+      ? 'Reached the safe zone!'
       : state?.phase === 'missed'
         ? state.landing?.type === 'crash'
-          ? 'A rough landing. Try again.'
-          : 'Outside the zone. Try a different dash timing.'
+          ? 'Clipped by the barrage. Try again.'
+          : 'Pinned outside the safe zone. Try a different dash timing.'
         : running
           ? state.borrowed
-            ? 'Press X while airborne. Aim for the green zone.'
-            : 'The original stunt is running. Watch where it lands.'
+            ? 'Press X during the barrage. Phase-dash into the green safe zone.'
+            : 'The original wave is running. Watch where the barrage pins the ship.'
           : state?.borrowed
-            ? 'Dash borrowed. Launch, then choose when to dash.'
-            : 'Try the original. Then borrow a move from Dashy Dango.';
+            ? 'Dash borrowed. Launch, then choose when to phase-dash.'
+            : 'Launch the original wave. Then borrow a move from Dashy Dango.';
   return (
-    <section className="challenge-section games" aria-label="Roadster landing challenge">
+    <section className="challenge-section games" aria-label="PARALLAXIA barrage challenge">
       <article ref={card} className="game-card challenge-card transferred">
         <div className="card-heading">
           <div>
-            <p className="eyebrow">01 / BORROW A MOVE. LAND SOMETHING NEW.</p>
-            <h2 id="hybrid-title">Land in the green zone.</h2>
+            <p className="eyebrow">01 / BORROW A MOVE. SURVIVE THE BARRAGE.</p>
+            <h2 id="hybrid-title">Phase-dash into the green safe zone.</h2>
           </div>
           <div className="card-heading-actions">
             <span className="pill" id="transfer-status" role="status">
@@ -154,7 +154,7 @@ export function ChallengePlayer() {
               ref={frame}
               id="transfer-game"
               src={linkHref(data.play + '?quality=low#channel=' + channel)}
-              title="Roadster landing challenge"
+              title="PARALLAXIA barrage challenge"
               sandbox="allow-scripts"
               allow="autoplay"
             />
@@ -165,7 +165,7 @@ export function ChallengePlayer() {
         </div>
         <div className="toolbar challenge-controls">
           <button data-challenge="start" disabled={!state} onClick={() => command('start')}>
-            {running ? 'Restart run' : 'Launch car'}
+            {running ? 'Restart run' : 'Launch ship'}
           </button>
           <button
             className="borrow-button"
@@ -237,17 +237,17 @@ export function ChallengePlayer() {
         {readGenerationMode() !== 'playback-only' && (
           <p id="audience-notice" className="saved-note">
             The download is a playable game for adults 18 and older. It makes no model request.
-            Opened on its own, a Roadster file shows that notice.
+            Opened on its own, a PARALLAXIA file shows that notice.
           </p>
         )}
         <p className="saved-note" id="guided-progress">
           {readRecovery() === 'accepted' ? 'Accepted ability.' : 'Saved ability.'} Borrowing and
-          replaying make no model request. The car&apos;s native physics, landing, and collisions
-          stay active.
+          replaying make no model request. The ship&apos;s native 60 Hz simulation, lock-on lasers,
+          and bullet collisions stay active.
         </p>
         <p className="controls" id="transfer-controls">
-          An assisted launch drives the car. You choose the dash timing with X or the ability
-          button. Each attempt takes about 13 seconds of game time.
+          An assisted pilot flies the Sector 1 barrage. You choose the phase-dash timing with X or
+          the ability button. Each attempt takes about 13 seconds of game time.
         </p>
         <p className="card-note">
           <span className="status-dot" />
@@ -262,11 +262,14 @@ export function ChallengePlayer() {
       </article>
       <aside className="challenge-context">
         <p className="eyebrow">THE MOVE COMES FROM ANOTHER GAME</p>
-        <h3>Dashy Dango → Roadster</h3>
-        <p>A dash recovered from compiled software becomes an air dash in a 3D car.</p>
+        <h3>Dashy Dango → PARALLAXIA</h3>
         <p>
-          The green landing zone is our challenge. RDSTR Stunts&apos; car, renderer, track and stunt
-          physics are upstream work by sebayaki.
+          A dash recovered from compiled WASM-4 bytecode becomes a 60-pixel horizontal phase-dash in
+          Kenta Cho&apos;s bullet-hell shooter.
+        </p>
+        <p>
+          The green safe zone is our challenge. PARALLAXIA&apos;s ship, raster renderer, enemy
+          formations, barrages and NES chiptune synth are upstream work by Kenta Cho (ABA Games).
         </p>
         <p>
           <a href={linkHref('/donor/play')} target="_blank" rel="noreferrer">

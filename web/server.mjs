@@ -9,7 +9,8 @@ import { experienceAssets } from './experience-assets.mjs';
 import { loadSavedRoadster } from '../roadster/saved.mjs';
 import { buildFrontend } from './build.mjs';
 import { developerBenchmarkAssets } from '../benchmark/assets.mjs';
-import { buildRoadsterChallenge } from '../roadster/challenge.mjs';
+import { buildParallaxiaChallenge } from '../parallaxia/challenge.mjs';
+import { buildParallaxiaFrame } from '../parallaxia/build.mjs';
 
 export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapter, remixes, lab, allowUnverified = false, benchmarks = developerBenchmarkAssets() } = {}) {
   if (adapter === undefined) adapter = await loadPakuTransfer({ optional: true });
@@ -23,7 +24,7 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
       challenges.set(id,(async()=>{
         const parent=id===roadster?.id?roadster:await lab?.artifact(id);
         if(!parent)throw Error('Roadster artifact not found');
-        return buildRoadsterChallenge({parent});
+        return buildParallaxiaChallenge({parent});
       })().catch(error=>{challenges.delete(id);throw error;}));
     }
     return challenges.get(id);
@@ -135,7 +136,10 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
     if(carArtifact){
       const id=carArtifact[2],file=carArtifact[3],artifact=id===roadster?.id?roadster:await lab?.artifact(id);
       if(!artifact){json(404,{error:'Roadster artifact not found'});return;}
-      if(file==='play.html'){response.setHeader('Content-Security-Policy','sandbox allow-scripts');send(200,'text/html',artifact.files['frame.html']);return;}
+      if(file==='play.html'){
+        const frame=await buildParallaxiaFrame({source:artifact.files['adapter.ts'],intent:artifact.intent,componentRef:artifact.component});
+        response.setHeader('Content-Security-Policy','sandbox allow-scripts');send(200,'text/html',frame.html);return;
+      }
       if(file==='adapter.ts'){send(200,'text/plain',artifact.files['adapter.ts']);return;}
       if(file==='report.json'){send(200,'application/json',artifact.files['verification.json']);return;}
       if(file==='source'){response.setHeader('Content-Disposition',`attachment; filename="roadster-transfer-${id.slice(0,12)}.json"`);json(200,artifact);return;}

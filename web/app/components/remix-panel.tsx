@@ -46,16 +46,20 @@ function RoadsterRemix({ status }: { status: ServiceStatus | null }) {
   return (
     <section id="roadster-panel" className="remix-panel">
       <p className="eyebrow">FRESH META ADAPTATION / FROZEN ABILITY</p>
-      <h3>Describe how the car should use it.</h3>
+      <h3>Describe how the ship should use it.</h3>
       <p>
         Meta writes the adapter. The recovered controller stays unchanged; the host checks both its
         mapping and the playable simulation before saving a version.
       </p>
       <dl id="inherited-intent" className="inherited-intent">
         <dt>Distance</dt>
-        <dd>{intent ? `${60 * intent.unitScale} meters` : 'Loading the saved mapping…'}</dd>
+        <dd>
+          {intent
+            ? `${60 * intent.unitScale} field units (${600 * intent.unitScale} px)`
+            : 'Loading the saved mapping…'}
+        </dd>
         <dt>Direction</dt>
-        <dd>{intent?.direction === 'opposite' ? 'Backward' : 'Forward along the stunt'}</dd>
+        <dd>{intent?.direction === 'opposite' ? 'Backward' : 'Forward across the field'}</dd>
         <dt>Activation</dt>
         <dd>{intent?.activation === 'press' ? 'Fresh press' : 'Hold to repeat'}</dd>
         <dt>Inherited</dt>
@@ -69,7 +73,7 @@ function RoadsterRemix({ status }: { status: ServiceStatus | null }) {
       </dl>
       <p id="roadster-mapping">
         {intent &&
-          `Current: ${60 * intent.unitScale} meters · ${intent.direction === 'opposite' ? 'backward' : 'forward along the stunt'} · ${intent.activation === 'press' ? 'fresh press' : 'hold to repeat'} · airborne activation only`}
+          `Current: ${60 * intent.unitScale} field units · ${intent.direction === 'opposite' ? 'backward' : 'forward across the field'} · ${intent.activation === 'press' ? 'fresh press' : 'hold to repeat'} · active flight only`}
       </p>
       {artifact?.summary && <p id="checked-mapping">{artifact.summary}</p>}
       <p id="roadster-lineage">
@@ -79,7 +83,7 @@ function RoadsterRemix({ status }: { status: ServiceStatus | null }) {
             this checked transfer
           </>
         ) : readRecovery() === 'accepted' ? (
-          'Accepted Roadster transfer. The native simulation is upstream work.'
+          'Accepted PARALLAXIA transfer. The native simulation is upstream work.'
         ) : (
           'Saved initial Meta transfer. The native simulation is upstream work.'
         )}
@@ -338,7 +342,7 @@ export function RemixPanel({ status }: { status: ServiceStatus | null }) {
       )}
       <p id="jujump-remix-note" hidden={destination?.id !== 'jujump'}>
         JUJUMP plays the saved dash transfer. Live edits are currently supported in PAKU PAKU and
-        Roadster.
+        PARALLAXIA.
       </p>
       <div hidden={!car}>
         <RoadsterRemix status={status} />

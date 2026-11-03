@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "id": "parallaxia",
+  "name": "PARALLAXIA",
+  "author": "Kenta Cho / ABA Games",
+  "repository": "https://github.com/abagames/agentic-gamedev-games",
+  "revision": "f30b52a1707282b1559f7bae1fc301925612f5a6",
+  "license": "MIT",
+  "files": [
+    {
+      "path": "LICENSE",
+      "local": "upstream/LICENSE",
+      "bytes": 1066,
+      "sha256": "3e1b9891bce5b0a5a3bb8a321db6258e2c9474d4b607839036b9a5b38e3182d0"
+    },
+    {
+      "path": "docs/parallaxia/README.md",
+      "local": "upstream/README.md",
+      "bytes": 25215,
+      "sha256": "1c37b4ad8a5f043f465f3c33d9740e62471cb986d9b18b7a92be9384b10b1b15"
+    },
+    {
+      "path": "docs/parallaxia/index.html",
+      "local": "upstream/index.html",
+      "bytes": 813,
+      "sha256": "58fd80ff6c8343b42106192b6b978fba54f4ff279fe35958c12d7ebfcdb16548"
+    },
+    {
+      "path": "docs/parallaxia/src/main.js",
+      "local": "upstream/src/main.js",
+      "bytes": 22421,
+      "sha256": "8f947e8d6a493063043965a9068b69bd4c9ce7393f58c510bad2ed8de920b247"
+    },
+    {
+      "path": "docs/parallaxia/src/audio/bus.js",
+      "local": "upstream/src/audio/bus.js",
+      "bytes": 5315,
+      "sha256": "c12762ea3b76d75e9e90c3b30dd7f761d76a35b30d5de21408cd63c557107679"
+    },
+    {
+      "path": "docs/parallaxia/src/audio/kit.js",
+      "local": "upstream/src/audio/kit.js",
+      "bytes": 15354,
+      "sha256": "174d2ed24b3193e9ddd73a79f4d7558e43f6d8884905524ebbf4ee8822b7a3da"
+    },
+    {
+      "path": "docs/parallaxia/src/audio/music.js",
+      "local": "upstream/src/audio/music.js",
+      "bytes": 23079,
+      "sha256": "d0b05283ce2007234a14c8398181442502aa18e6f64f368c2abdf0a8cf8969d8"
+    },
+    {
+      "path": "docs/parallaxia/src/audio/musicplayer.js",
+      "local": "upstream/src/audio/musicplayer.js",
+      "bytes": 11018,
+      "sha256": "e5557b1de3dd86daab9587c9f68d9a12ce858d90bfe99d3b88d40a95912d8547"
+    },
+    {
+      "path": "docs/parallaxia/src/audio/webaudio.js",
+      "local": "upstream/src/audio/webaudio.js",
+      "bytes": 3953,
+      "sha256": "b3d73afdaac1efe304e0a5fc24b417c43c629eed09a31ddfeaf8bd8c33c9266c"
+    },
+    {
+      "path": "docs/parallaxia/src/render/canvas.js",
+      "local": "upstream/src/render/canvas.js",
+      "bytes": 64589,
+      "sha256": "dce74d3a7034fc239cbd9c68a4ab3fa94dafbe9df2c7ac4dee3a85f3002fac60"
+    },
+    {
+      "path": "docs/parallaxia/src/render/fx.js",
+      "local": "upstream/src/render/fx.js",
+      "bytes": 20792,
+      "sha256": "7b5e27d349f1f89f8a7dcc0912017307ac383cfc9bbaac336335e23fe8db7d30"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/barrage.js",
+      "local": "upstream/src/sim/barrage.js",
+      "bytes": 23715,
+      "sha256": "7dbae696499e7b10647b56a60b33f0dfca3d28412a129cc21b7b5ce6f5f6e3fc"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/boss.js",
+      "local": "upstream/src/sim/boss.js",
+      "bytes": 6925,
+      "sha256": "cb111a8eea283f2069bc0b7e16cbd041a6723fc39ad0893b36c00a7655f75644"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/bullets.js",
+      "local": "upstream/src/sim/bullets.js",
+      "bytes": 3486,
+      "sha256": "ed9d2d3e81aa5556602dfdd91e67d84d3720b1ab2e31d78239a83fab766fd433"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/camera.js",
+      "local": "upstream/src/sim/camera.js",
+      "bytes": 784,
+      "sha256": "1b447f2f268348ba91870afba52d9d77e1a4301beeb75e5dd2911cb10da9a4f8"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/constants.js",
+      "local": "upstream/src/sim/constants.js",
+      "bytes": 23028,
+      "sha256": "af2a5258754138ed932c20cfb3fce20ed84b11dea3a562ec988f8a62adf7deb0"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/enemies.js",
+      "local": "upstream/src/sim/enemies.js",
+      "bytes": 16975,
+      "sha256": "70ed2288d5493314c8feb1d72bbed3772b0905dc84c4d454c55c9eb92e562227"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/flight.js",
+      "local": "upstream/src/sim/flight.js",
+      "bytes": 29617,
+      "sha256": "e90d65c43f309fefa7364aeec23d9b69baef2a218c41d2ac73e3a0e1f6549998"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/formation.js",
+      "local": "upstream/src/sim/formation.js",
+      "bytes": 2911,
+      "sha256": "94d198eb7da5abf5bc0724f0abe927be5da39af23e7cbe1fbc650ccf51c3c524"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/ground.js",
+      "local": "upstream/src/sim/ground.js",
+      "bytes": 16862,
+      "sha256": "174265a2135efdcc996bc48f4c2423ab103c9a2017b5726d43d7a0848eb6b244"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/input.js",
+      "local": "upstream/src/sim/input.js",
+      "bytes": 348,
+      "sha256": "9b020a86fcc378b941b4fc6c33ecb5a994918c386fccf2981e054b9a3d5f8ada"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/lock.js",
+      "local": "upstream/src/sim/lock.js",
+      "bytes": 4699,
+      "sha256": "68f8e73764d7011dce7781c51253d1d5a097ff15e6daf02547e5bb634f6edf0a"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/math.js",
+      "local": "upstream/src/sim/math.js",
+      "bytes": 1720,
+      "sha256": "1f7caacb57c2f598ec08f4a0b18928d42f6a80f1ef034e319480238258d829eb"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/player.js",
+      "local": "upstream/src/sim/player.js",
+      "bytes": 3240,
+      "sha256": "c34be2147cd20448922ce88171a3a620d259ad0ba01db17590aeb822df091635"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/replay.js",
+      "local": "upstream/src/sim/replay.js",
+      "bytes": 2216,
+      "sha256": "35231b8a97f951046a5ecdd30b62b54e4563afcddd4ec837e0417b940a8817ad"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/rng.js",
+      "local": "upstream/src/sim/rng.js",
+      "bytes": 1299,
+      "sha256": "e6cbf71afd2f3bffde28c8f01e800af73ebc4d75ee01a80263b0e0f667d27add"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/score.js",
+      "local": "upstream/src/sim/score.js",
+      "bytes": 3119,
+      "sha256": "23303cb35e560ba7c09505c526e812e5fc3848eca6fcd172f306e523b4b6427e"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/sim.js",
+      "local": "upstream/src/sim/sim.js",
+      "bytes": 6571,
+      "sha256": "de55229d26352c46108aea8f5f38c22dfdca118adf67526b8ec03454ff89f2bf"
+    },
+    {
+      "path": "docs/parallaxia/src/sim/trace.js",
+      "local": "upstream/src/sim/trace.js",
+      "bytes": 2544,
+      "sha256": "09ae4fe3a5ba97bb0d9f753bd8349e4dadd259983ed2896f92a680a75072297d"
+    }
+  ]
+}
