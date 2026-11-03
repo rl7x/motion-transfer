@@ -1,0 +1,47 @@
+# Local packaging only. Do not treat `docker compose up` as a public deployment.
+# The coordinator has no Docker socket. The verifier image is built for the host broker
+# (`node hosting/broker-main.mjs`) and is not a published service.
+
+name: motion-transfer
+
+services:
+  coordinator:
+    build:
+      context: .
+      dockerfile: Dockerfile.coordinator
+    image: motion-transfer-coordinator:local
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    user: "10001:10001"
+    init: true
+    pids_limit: 64
+    mem_limit: 256m
+    cpus: 0.5
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      HOSTING_PUBLIC_HOSTS: play.example
+      HOSTING_PUBLIC_ORIGINS: https://play.example
+      HOSTING_TRUSTED_PROXIES: ""
+      HOSTING_INVITE_CODES: ""
+      HOSTING_DATA_DIR: /data
+      PORT: "8080"
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=32m
+    volumes:
+      - coordinator-data:/data
+
+  verifier:
+    profiles: ["image-only"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: motion-transfer-verifier:local
+    # Present so the image can be built. Compose must not start it: each job is a
+    # separate locked-down container launched by the host broker.
+
+volumes:
+  coordinator-data:
