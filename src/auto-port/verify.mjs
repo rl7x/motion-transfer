@@ -75,7 +75,7 @@ function componentGap(MotionDash) {
 function settle(driver, session) {
   let ready = 0;
   for (let tick = 0; tick < 1200 && ready < VERIFY.settleTicks; tick += 1) {
-    session.step(session.heading);
+    session.step(session.idle);
     ready = driver.ready(session.state) ? ready + 1 : 0;
   }
   if (ready < VERIFY.settleTicks) throw Error('The avatar never stayed controllable long enough to measure a dash');

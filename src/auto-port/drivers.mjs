@@ -15,7 +15,7 @@ const skyhaul = {
   load: dir => ({ game: cjs(dir, 'core.js'), bots: cjs(dir, 'bots.js') }),
   session({ game, bots }, seed) {
     const state = game.createGame(seed), policy = bots.fixedHaul(3);
-    return { state, act: () => policy(state), step: input => game.step(state, input), heading: { dx: 1, dy: 0 } };
+    return { state, act: () => policy(state), step: input => game.step(state, input), idle: { dx: 0, dy: 0 }, heading: { dx: 1, dy: 0 } };
   },
   ready: state => state.phase === 'play' && Boolean(state.lander?.alive),
   position: state => ({ x: state.lander.x, y: state.lander.y }),
@@ -27,7 +27,7 @@ const undertow = {
   load: dir => ({ game: cjs(dir, 'core.js'), bots: cjs(dir, 'bots.js') }),
   session({ game, bots }, seed) {
     const state = game.newGame(seed), bot = bots.oracleBot({ seed, gather: 2, race: true, ferry: false, name: 'o2' });
-    return { state, act: () => bot.act(state), step: input => game.step(state, input), heading: { x: 1, y: 0 } };
+    return { state, act: () => bot.act(state), step: input => game.step(state, input), idle: { x: 0, y: 0 }, heading: { x: 1, y: 0 } };
   },
   ready: state => state.mode === 'play' && Boolean(state.player),
   position: state => ({ x: state.player.x, y: state.player.y }),
@@ -39,7 +39,7 @@ const wreckfall = {
   load: dir => ({ game: cjs(dir, 'core.js'), bots: cjs(dir, 'bots.js') }),
   session({ game, bots }, seed) {
     const state = game.createGame(seed), bot = bots.nearestBot();
-    return { state, act: () => bot.update(state) || {}, step: input => game.step(state, input), heading: { right: true } };
+    return { state, act: () => bot.update(state) || {}, step: input => game.step(state, input), idle: {}, heading: { right: true } };
   },
   ready: state => state.mode === 'play' && state.player.alive === true,
   position: state => ({ x: state.player.x, y: 0 }),
@@ -51,7 +51,7 @@ const headRush = {
   load: dir => ({ game: cjs(dir, 'core.js'), bots: cjs(dir, 'bots.js') }),
   session({ game, bots }, seed) {
     const state = game.create(seed), policy = bots.simple.mash(seed);
-    return { state, act: () => policy(state) || {}, step: input => game.step(state, input), heading: {} };
+    return { state, act: () => policy(state) || {}, step: input => game.step(state, input), idle: {}, heading: {} };
   },
   ready: state => state.phase === 'play' && Boolean(state.player),
   position: state => ({ x: state.player.s, y: state.player.r }),
@@ -63,7 +63,7 @@ const pileup = {
   load: dir => ({ game: cjs(dir, 'core.js'), adapter: cjs(dir, 'tests/adapter.cjs') }),
   session({ game, adapter }, seed) {
     const state = game.create(seed), policy = adapter.policies.human.make(seed);
-    return { state, act: () => policy(state), step: input => game.step(state, input), heading: {} };
+    return { state, act: () => policy(state), step: input => game.step(state, input), idle: {}, heading: {} };
   },
   ready: state => state.phase === 'play' && Boolean(state.p),
   position: state => ({ x: state.p.x, y: state.p.y }),
@@ -75,7 +75,7 @@ const zigSaber = {
   load: dir => ({ game: cjs(dir, 'core.js'), bots: cjs(dir, 'bots.js') }),
   session({ game, bots }, seed) {
     const state = game.newGame({}), policy = bots.simple.mash(seed + 5);
-    return { state, act: () => state.phase === 'play' && Boolean(policy(state)), step: input => game.step(state, input), heading: false };
+    return { state, act: () => state.phase === 'play' && Boolean(policy(state)), step: input => game.step(state, input), idle: false, heading: false };
   },
   ready: state => state.phase === 'play',
   position: state => ({ x: 0, y: state.ship.y }),
@@ -88,7 +88,7 @@ const blinkScope = {
   session({ game, bots }, seed) {
     const state = game.createGame(seed), policy = bots.makePilot(game.makeRng(seed * 7919 + 13));
     let events = [];
-    return { state, act: () => policy(state, events), step: press => { events = [...game.step(state, 1 / 60, press)]; }, heading: false };
+    return { state, act: () => policy(state, events), step: press => { events = [...game.step(state, 1 / 60, press)]; }, idle: false, heading: false };
   },
   ready: state => state.phase === 'play',
   position: state => ({ x: state.px, y: state.py }),
@@ -101,7 +101,7 @@ const draftLine = {
   load: async dir => ({ sim: await esm(dir, 'src/sim.js'), course: await esm(dir, 'src/course.js'), driver: await esm(dir, 'src/driver.js') }),
   session({ sim, course, driver }, seed) {
     const road = new course.Course(seed), state = new sim.Sim(road, seed), drive = driver.makeDriver({ useTow: true, release: 'expert' });
-    return { state, act: () => drive(state, road), step: input => state.step(1 / 60, input), heading: { throttle: 1, steer: 0, boost: false } };
+    return { state, act: () => drive(state, road), step: input => state.step(1 / 60, input), idle: { throttle: 1, steer: 0, boost: false }, heading: { throttle: 1, steer: 0, boost: false } };
   },
   ready: state => !state.gameOver && !state.finished && !(state.spin > 0),
   position: state => ({ x: state.x, y: 0 }),

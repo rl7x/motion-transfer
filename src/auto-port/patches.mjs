@@ -9,7 +9,7 @@ export function gatePatches(patches) {
     if (!patch || typeof patch.anchor !== 'string' || typeof patch.replacement !== 'string') throw Error('Each patch needs an anchor and a replacement');
     if (!patch.anchor || patch.anchor.length > PATCH_LIMITS.anchor || patch.replacement.length > PATCH_LIMITS.replacement) throw Error('A patch exceeds the size limit');
     total += patch.replacement.length;
-    const added = patch.replacement.split(patch.anchor).join('');
+    const added = patch.replacement.replace(patch.anchor, () => '');
     const banned = added.match(FORBIDDEN);
     if (banned) throw Error(`A patch adds the forbidden capability "${banned[0]}"`);
   }
