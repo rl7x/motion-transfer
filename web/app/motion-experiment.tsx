@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { linkHref } from './links';
+import { TrajectoryPlot } from './arcade/trajectory-plot';
 
 export interface Checkpoint {
   tick: number;
@@ -11,7 +12,7 @@ interface Branch {
   lostLife: boolean;
   reachedTick: number | null;
   endDigest: string;
-  frames: { tick: number; x: number; y: number }[];
+  frames: { tick: number; x: number; y: number; lives?: number; dash?: boolean }[];
 }
 export interface ExperimentReceipt {
   checkpoint: Checkpoint;
@@ -40,15 +41,22 @@ export function CheckpointGoals({
   const [goal, setGoal] = useState('right');
   const [frozen, setFrozen] = useState(false);
   return (
-    <section className="destination-section" aria-label="Checkpoint experiment">
+    <section className="lab" id="lab" aria-label="Checkpoint experiment">
+      <p className="eyebrow">OPTIONAL · SOLVE A MOMENT</p>
       <h2>Pause and compare alternatives</h2>
       <p>
         Use your current native flight, or a curated seed-7 checkpoint at tick 40. Experiments
         replay at 60 Hz for two seconds with the same native controls: hold Shoot, no directional
         input. The original makes no dash; Meta may propose one dash tick and a supported mapping.
       </p>
+      <ol className="lab__steps" aria-label="Experiment steps">
+        <li className={checkpoint ? 'is-done' : 'is-active'}>Freeze a moment</li>
+        <li className={frozen ? 'is-done' : checkpoint ? 'is-active' : ''}>Pick a fixed target</li>
+        <li className={frozen ? 'is-active' : ''}>Ask Muse Spark</li>
+      </ol>
       <div className="toolbar">
         <button
+          className="btn btn--light btn--small"
           id="motion-capture"
           onClick={() => {
             setFrozen(false);
@@ -59,6 +67,7 @@ export function CheckpointGoals({
           Pause and experiment
         </button>
         <button
+          className="btn btn--light btn--small"
           id="motion-curated"
           onClick={() => {
             setFrozen(false);
@@ -68,7 +77,9 @@ export function CheckpointGoals({
         >
           Use curated checkpoint · tick 40
         </button>
-        <button onClick={resume}>Resume original</button>
+        <button className="btn btn--ghost btn--small" onClick={resume}>
+          Resume original
+        </button>
       </div>
       {checkpoint && (
         <>
@@ -96,6 +107,7 @@ export function CheckpointGoals({
             movement and enemy rules; add no invulnerability. A failed goal keeps the original.
           </p>
           <button
+            className={'btn btn--small ' + (frozen ? 'btn--ghost' : 'btn--primary')}
             id="motion-freeze"
             onClick={() => {
               if (frozen) {
@@ -131,7 +143,7 @@ export function CheckpointGoals({
           </button>
           {frozen && (
             <p role="status">
-              Goal frozen. Use the request panel below to generate an alternative for this
+              Goal frozen. The request panel now asks Muse Spark for an alternative for this
               experiment.
             </p>
           )}
@@ -171,7 +183,7 @@ function ReplayFrame({
     return () => window.removeEventListener('message', receive);
   }, [channel]);
   return (
-    <article>
+    <article className={'replay replay--' + branch}>
       <h4>{branch === 'original' ? 'Original · no dash' : 'Candidate · changed dash input'}</h4>
       <iframe
         ref={frame}
@@ -204,7 +216,10 @@ export function ExperimentResults({
 }) {
   const [replay, setReplay] = useState(0);
   return (
-    <section className="experiment-result" aria-label="Verified experiment comparison">
+    <section
+      className={'experiment-result' + (receipt.satisfied ? ' is-satisfied' : ' is-unsatisfied')}
+      aria-label="Verified experiment comparison"
+    >
       <h3>
         {receipt.satisfied
           ? 'Candidate reached the fixed goal'
@@ -235,7 +250,11 @@ export function ExperimentResults({
           ))}
         </tbody>
       </table>
-      <button id="motion-compare" onClick={() => setReplay((value) => value + 1)}>
+      <button
+        className="btn btn--primary btn--small"
+        id="motion-compare"
+        onClick={() => setReplay((value) => value + 1)}
+      >
         Replay both branches at normal speed
       </button>
       <p>
@@ -249,6 +268,7 @@ export function ExperimentResults({
           <ReplayFrame play={candidatePlay} branch="candidate" receipt={receipt} />
         </div>
       )}
+      <TrajectoryPlot receipt={receipt} />
     </section>
   );
 }

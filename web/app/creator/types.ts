@@ -53,6 +53,9 @@ export interface RemixJob {
   urls: RemixUrls | null;
   intent: RemixIntent | null;
   summary: string | null;
+  events?: { status: string; at: string }[];
+  createdAt?: string;
+  finishedAt?: string | null;
 }
 
 export interface PendingRemix {

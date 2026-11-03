@@ -11,6 +11,9 @@ Open http://127.0.0.1:4173. The existing esbuild dependency compiles `app/main.t
 
 ## Structure
 
+- `motion-workbench.tsx` is the default PARALLAXIA page. It composes the shared parts in `app/arcade/`: the hero, the how-it-works ribbon, the game cabinet with its live dash meter, the destination picker, the remix console's pipeline track and result card, the library, the “What Meta wrote” panel and the experiment trajectory plot. `useCatalog` and `useArtifactEvidence` read saved versions, `generation.json` and `receipt.json`; neither makes a model request.
+- The Afterimage Arcade styles live in one block of `style.css`, delimited by `/* arcade:start */` and `/* arcade:end */` and scoped under `.arcade`, so the older pages keep their look. CSS cannot be imported from TSX here; `scripts/build-creator.mjs` inlines the same block into the hosted creator page. Decorative layers ignore pointer events, and every animation stops under `prefers-reduced-motion`.
+
 - `transfer-context.tsx` owns catalog loading, recipient selection, playable routes and browser history. Components use context; the existing window diagnostics remain available for browser automation.
 - `components/` contains the players, evidence comparisons, investigations, developer handoff, remixes and static copy. JSX replaces the previous page-wide DOM mutation scripts.
 - `hooks/use-job.ts` preserves request identities across interrupted submits and refreshes. Reconnecting a failed status read issues a GET; it does not resubmit the paid job. Polls and event listeners are cleaned up on unmount. Shared status reads keep displayed budgets current.

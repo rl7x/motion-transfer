@@ -6,6 +6,7 @@ COPY scripts/build-creator.mjs ./scripts/build-creator.mjs
 COPY web/tsconfig.json ./web/tsconfig.json
 COPY web/app ./web/app
 COPY web/build.mjs ./web/build.mjs
+COPY web/style.css ./web/style.css
 RUN npm ci \
     && node scripts/build-creator.mjs /out/creator \
     && test -s /out/creator/index.html

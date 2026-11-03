@@ -37,9 +37,45 @@ const seconds = (milliseconds: number | null) =>
 export function LiveMechanicsEvidence() {
   const evidence = injectedResource('/api/live-mechanics/results') as TaskEvidence | undefined;
   if (!evidence) return null;
+  const jobTimes = evidence.tasks
+    .map((task) => task.jobWallMs)
+    .filter((value): value is number => typeof value === 'number' && value > 0);
+  const responses = evidence.tasks.reduce((sum, task) => sum + task.responses, 0);
   return (
-    <section className="destination-section" aria-label="Measured task results">
+    <section className="scoreboard" aria-label="Measured task results">
+      <p className="eyebrow">PROOF · ONE FROZEN CAMPAIGN</p>
       <h2>Measured tasks</h2>
+      <dl className="scoreboard__tiles">
+        <div>
+          <dt>positive tasks passed</dt>
+          <dd>
+            {evidence.positive.passed}/{evidence.positive.total}
+          </dd>
+        </div>
+        <div>
+          <dt>impossible task refused</dt>
+          <dd>
+            {evidence.negative.correct}/{evidence.negative.total}
+          </dd>
+        </div>
+        <div>
+          <dt>Muse Spark responses</dt>
+          <dd>{responses}</dd>
+        </div>
+        <div>
+          <dt>total inference</dt>
+          <dd>${evidence.estimatedCostUsd.toFixed(3)}</dd>
+        </div>
+        {jobTimes.length > 0 ? (
+          <div>
+            <dt>admission → verified</dt>
+            <dd>
+              {(Math.min(...jobTimes) / 1000).toFixed(1)}–
+              {(Math.max(...jobTimes) / 1000).toFixed(1)} s
+            </dd>
+          </div>
+        ) : null}
+      </dl>
       <p>
         {evidence.positive.passed}/{evidence.positive.total} positive tasks passed ·{' '}
         {evidence.negative.correct}/{evidence.negative.total} negative cases handled correctly ·
