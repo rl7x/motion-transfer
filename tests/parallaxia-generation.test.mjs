@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createCoordinator } from '../hosting/coordinator.mjs';
 import { createPhaseBudget } from '../campaign/phase-budget.mjs';
+import { createHostedTestBudget } from './helpers/hosting-budget.mjs';
 import { parseJob } from '../hosting/protocol.mjs';
 import { loadPinnedComponent } from '../hosting/component-load.mjs';
 import { ACCEPTED_COMPONENT_ID } from '../hosting/component-pin.mjs';
@@ -25,7 +26,7 @@ test('one PARALLAXIA reservation covers a failed candidate and one repair; resta
   const directory = await mkdtemp(join(tmpdir(), 'motion-parallaxia-generation-'));
   const ledgerDirectory = await mkdtemp(join(tmpdir(), 'motion-parallaxia-ledger-'));
   t.after(() => rm(directory, { recursive: true, force: true })); t.after(() => rm(ledgerDirectory, { recursive: true, force: true }));
-  const budget = await createPhaseBudget(ledgerDirectory);
+  const budget = await createHostedTestBudget(ledgerDirectory);
   const component = await loadPinnedComponent(ACCEPTED_COMPONENT_ID);
   const parentIntent = { unitScale: 0.1, activation: 'held', direction: 'facing' };
   const intent = { ...parentIntent, direction: 'opposite', activation: 'press' };
@@ -51,6 +52,8 @@ test('one PARALLAXIA reservation covers a failed candidate and one repair; resta
   assert.equal(ready.status, 'ready', ready.error);
   assert.equal(client.calls.filter(call => call.method === 'respond').length, 2);
   assert.equal((await budget.status()).reservations, 1);
+  assert.equal((await budget.journal()).reservations[0].maxCostUsd,7);
+  assert.equal((await budget.journal()).reservations[0].category,'reserve');
   const saved = JSON.parse(await readFile(join(directory, 'jobs', ready.id + '.json'), 'utf8'));
   assert.equal(saved.attempts.length, 2); assert.equal(saved.attempts[0].passed, false); assert.equal(saved.attempts[1].passed, true);
   assert.match(client.calls.at(-1).request.input[0].content[0].text, /component-delegation/);

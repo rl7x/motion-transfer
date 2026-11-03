@@ -7,7 +7,7 @@ import {
   assertRoadsterInputTokens, ROADSTER_MAX_OUTPUT_TOKENS,
 } from '../agent/roadster-request.mjs';
 import { recipientRequest, recipientSubmission } from '../agent/recipient-request.mjs';
-import { createPhaseBudget } from '../campaign/phase-budget.mjs';
+import { createPhaseBudget, PHASE_ALLOCATIONS } from '../campaign/phase-budget.mjs';
 import {
   FRAME_LIMIT, HOSTING_GENERATION_CONFIRMATION, PROVIDER_DEADLINE_MS, PUBLIC_MODEL, PUBLIC_RESERVE_USD,
   REMIX_MAX_COST_USD, SHARED_LEDGER_CONFIRMATION, SHARED_PHASE_DIRECTORY, SOURCE_LIMIT, WORKER_UID,
@@ -99,10 +99,15 @@ function requireWorker(payload, operation, source, componentId) {
 export async function createCoordinator({
   directory, broker, client = null, releasePublished = false, ledgerDirectory = null, localVerification = false,
   providerDeadlineMs = PROVIDER_DEADLINE_MS, publishedOrigin = null, operatorConfirmation = null, confirmSharedLedger = null, onAdmit = null,
+  maxJobCostUsd = REMIX_MAX_COST_USD,
 } = {}) {
   if (releasePublished === true) throw Error('This release build cannot publish or spend the public reserve');
   if (!broker?.submit || !broker.available) throw Error('Hosted mode requires an isolated worker broker');
   if (!Number.isFinite(providerDeadlineMs) || providerDeadlineMs <= 0) throw Error('Invalid provider deadline');
+  if (!Number.isFinite(maxJobCostUsd) || maxJobCostUsd <= 0 || maxJobCostUsd > REMIX_MAX_COST_USD) throw Error('Invalid whole-job cost cap');
+  // A $7 envelope fits the existing $10 reserve allocation. Keep the $50 ledger,
+  // its fixed allocations and every historical reservation unchanged.
+  const budgetCategory = maxJobCostUsd > PHASE_ALLOCATIONS.remix ? 'reserve' : 'remix';
   const queue = await createJobQueue(directory);
   const parents = join(directory, 'parents');
   await mkdir(parents, { recursive: true });
@@ -282,7 +287,7 @@ export async function createCoordinator({
         observation = checked.observation;
       }
       budget = await openExistingPhaseLedger(ledgerDirectory, { confirmSharedLedger });
-      await budget.reserve({ id: reservationId, category: 'remix', maxCostUsd: REMIX_MAX_COST_USD,
+      await budget.reserve({ id: reservationId, category: job.budgetCategory, maxCostUsd: job.maxCostUsd,
         metadata: { localVerification: localVerification === true, model: PUBLIC_MODEL, jobId: job.id, recipientId: context.recipient.id ?? 'roadster' } });
       reserved = true;
       job.attempts = [];
@@ -298,20 +303,20 @@ export async function createCoordinator({
         const signal = AbortSignal.timeout(providerDeadlineMs);
         const inputTokens = assertRoadsterInputTokens(await withDeadline(signal, client.countInputTokens(request, signal)));
         const estimate = (inputTokens * PRICES[PUBLIC_MODEL].input + ROADSTER_MAX_OUTPUT_TOKENS * PRICES[PUBLIC_MODEL].output) / 1e6;
-        if (cost + estimate > REMIX_MAX_COST_USD) throw statusError('Whole-job budget cannot cover another response; no generation started', 402);
+        if (cost + estimate > job.maxCostUsd) throw statusError('Whole-job budget cannot cover another response; no generation started', 402);
         cancelled();
         job.provider = { status: 'pending', reservationId, attempt }; await queue.save(job);
         const startedAt = new Date().toISOString();
         uncertain = true;
         const response = await withDeadline(signal, client.respond(request, signal));
         cost += tokenCost(readUsage(response.usage), PRICES[PUBLIC_MODEL]);
-        uncertain = response.status !== 'completed' || cost > REMIX_MAX_COST_USD;
+        uncertain = response.status !== 'completed' || cost > job.maxCostUsd;
         const record = { attempt, startedAt, finishedAt: new Date().toISOString(), inputTokens, request, response, estimatedCostUsd: cost };
         await mkdir(join(directory, 'provider'), { recursive: true });
         await writeFile(join(directory, 'provider', `${job.id}-${attempt}.json`), JSON.stringify(record, null, 2) + '\n', { mode: 0o600 });
         job.attempts.push(record);
         job.inference = { model: PUBLIC_MODEL, estimatedCostUsd: cost, publicReserveUsd: PUBLIC_RESERVE_USD, publicReservedUsd: 0,
-          ledgerReservedUsd: REMIX_MAX_COST_USD, ledgerSettledUsd: 0, reason: 'local development; existing remix allocation' };
+          ledgerReservedUsd: job.maxCostUsd, ledgerSettledUsd: 0, budgetCategory: job.budgetCategory, reason: `local development; existing ${job.budgetCategory} allocation` };
         job.provider = { status: 'responded', reservationId, attempt }; await stage('responded');
         await journal({ kind: 'provider-responded', jobId: job.id, reservationId, attempt, estimatedCostUsd: cost, publicReservedUsd: 0 });
         if (uncertain) throw statusError('Recipient response incomplete or whole-job budget exceeded', 402);
@@ -364,7 +369,7 @@ export async function createCoordinator({
         'recipient.json': JSON.stringify(context.recipient) + '\n',
         'notices.txt': context.recipient.notices ?? '',
         'generation.json': JSON.stringify({ kind: 'new-meta-generation', jobId: job.id, prompt: job.prompt,
-          model: PUBLIC_MODEL, attempts: job.attempts, estimatedCostUsd: cost, createdAt: job.createdAt }, null, 2) + '\n',
+          model: PUBLIC_MODEL, attempts: job.attempts, estimatedCostUsd: cost, maxJobCostUsd: job.maxCostUsd, budgetCategory: job.budgetCategory, createdAt: job.createdAt }, null, 2) + '\n',
         'receipt.json': JSON.stringify({ passed: !job.experimentReport || job.experimentReport.satisfied, adapterVerified: true, kind: job.experimentReport ? 'checkpoint-experiment' : 'recipient-adaptation', model: PUBLIC_MODEL, parentArtifactId: job.parentArtifactId, parentChain: ancestors,
           summary: submission.summary, intent: submission.intent, recipient: context.recipient, rule:job.ruleIdentity??null, ...(job.experimentReport ? {experiment:job.experimentReport} : {}),
           componentId: verified.native.componentId, sourceSha256: verified.native.sourceSha256,
@@ -462,7 +467,7 @@ export async function createCoordinator({
       }
       return {
         playback: true, generationConfigured, releasePublished: false, publicReservedUsd: 0,
-        publicReserveUsd: PUBLIC_RESERVE_USD, model: PUBLIC_MODEL,
+        publicReserveUsd: PUBLIC_RESERVE_USD, model: PUBLIC_MODEL, maxJobCostUsd,
         routes: {
           catalog: '/api/catalog', remix: '/api/remixes', job: '/api/remixes/:id', privacy: '/privacy',
           parent: '/parents/:id', play: '/artifacts/:id/play.html', creator: '/',
@@ -508,9 +513,13 @@ export async function createCoordinator({
           if (!ledgerDirectory) throw statusError('An explicit phase ledger path is required', 503);
           const phase = await (await openExistingPhaseLedger(ledgerDirectory, { confirmSharedLedger })).status();
           if (phase.uncertain || phase.overrun) throw statusError('Phase billing is uncertain or exceeded a reservation; no further inference admitted', 402);
+          if (phase.remainingUsd < maxJobCostUsd || phase.categories[budgetCategory].remainingUsd < maxJobCostUsd) {
+            throw statusError('Phase budget cannot cover the whole-job reservation; no inference admitted', 402);
+          }
           const job = {
             schemaVersion: 1, id: randomUUID(), sessionId: request.sessionId, idempotencyKey: request.idempotencyKey,
             parentArtifactId: request.parentArtifactId, experiment: request.experiment ?? null, composition: request.composition ?? null, ancestors, prompt: request.prompt, model: PUBLIC_MODEL, status: 'queued',
+            maxCostUsd: maxJobCostUsd, budgetCategory,
             error: null, artifactId: null, urls: null, inference: null,
             events: [{ status: 'queued', at: new Date().toISOString() }],
             createdAt: new Date().toISOString(), finishedAt: null,
@@ -547,7 +556,7 @@ export async function createCoordinator({
     status() {
       return {
         ok: true, model: PUBLIC_MODEL, publicReserveUsd: PUBLIC_RESERVE_USD, publicReservedUsd: 0,
-        releasePublished: false, recoveryEnabled: false, generationConfigured,
+        releasePublished: false, recoveryEnabled: false, generationConfigured, maxJobCostUsd,
       };
     },
     async close() {

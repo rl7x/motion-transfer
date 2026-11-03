@@ -10,6 +10,34 @@ import { buildFrontend } from '../web/build.mjs';
 import { buildDonorFrame } from '../web/donor-frame.mjs';
 import { normalizePublicOrigin } from './share.mjs';
 
+function taskMeasurements(report, componentId) {
+  assert.equal(report.kind, 'frozen-live-mechanics-task-run');
+  assert.equal(report.fixture, false, 'Release task evidence must be a measured run');
+  assert.equal(report.taskManifest.componentId, componentId);
+  assert.match(report.codeCommit, /^[a-f0-9]{40}$/);
+  assert.match(report.taskManifestSha256, /^[a-f0-9]{64}$/);
+  assert.equal(report.tasks.length, report.taskManifest.tasks.length);
+  const tasks = report.tasks.map(task => {
+    const definition = report.taskManifest.tasks.find(item => item.id === task.id);
+    assert.ok(definition && definition.kind === task.kind);
+    const created = task.job ? Date.parse(task.job.createdAt) : null;
+    return {
+      id: task.id, kind: task.kind, passed: task.passed === true,
+      responses: task.attempts?.length ?? 0,
+      firstResponseMs: task.attempts?.length ? Date.parse(task.attempts[0].finishedAt) - created : null,
+      jobWallMs: task.job ? Date.parse(task.job.finishedAt) - created : null,
+      wallMs: task.wallMs, estimatedCostUsd: task.job?.estimatedCostUsd ?? 0,
+    };
+  });
+  return {
+    codeCommit: report.codeCommit, taskManifestSha256: report.taskManifestSha256,
+    positive: {passed:tasks.filter(task=>task.kind==='positive'&&task.passed).length,total:tasks.filter(task=>task.kind==='positive').length},
+    negative: {correct:tasks.filter(task=>task.kind==='negative'&&task.passed).length,total:tasks.filter(task=>task.kind==='negative').length},
+    estimatedCostUsd: tasks.reduce((sum,task)=>sum+task.estimatedCostUsd,0),
+    observedRepairBenefits: report.observedRepairBenefits, tasks,
+  };
+}
+
 /** Read exact worker-published bytes. This release builder never recompiles a generated adapter. */
 export async function readHostedPublication(directory, id) {
   assert.match(id, /^[a-f0-9]{64}$/);
@@ -70,7 +98,11 @@ export async function collectParallaxiaRelease({ liveDirectory, featuredId, base
     '/api/destinations':{destinations:[{id:'parallaxia',componentId:baseline.componentId},{id:'jujump',componentId:baseline.componentId}]},
     '/api/transfer':{status:'playback-only'},'/api/lab/status':{enabled:false},'/api/remixes/status':{enabled:false,generationConfigured:false}};
   for(const item of publications){resources[`/artifacts/${item.id}/receipt.json`]=item.receipt;resources[`/artifacts/${item.id}`]=item.receipt;}
-  if(taskEvidence)extras['evidence/live-mechanics-tasks.json']=await readFile(taskEvidence);
+  if(taskEvidence) {
+    const evidence = await readFile(taskEvidence);
+    extras['evidence/live-mechanics-tasks.json'] = evidence;
+    resources['/api/live-mechanics/results'] = taskMeasurements(JSON.parse(evidence), baseline.componentId);
+  }
   return {recipient:{id:'parallaxia',revision:baseline.recipient.revision},publicOrigin:normalizePublicOrigin(publicOrigin),recovery:'accepted',componentId:baseline.componentId,
     component,featuredId,remixChain:featured?[...featured.receipt.parentChain,featuredId]:[baseline.id],warnings:['Static playback copy; creation is unavailable. Saved Meta results are reuse. Practice uses a shield and makes no survival claim.'],
     versions,baseline,base,resources,jujumpComparison:'/jujump/index.html',extras,shell:{appJs:await buildFrontend(),css:await readFile(new URL('../web/style.css',import.meta.url),'utf8')},liveDirectory};

@@ -6,10 +6,10 @@ import { createCoordinator } from './coordinator.mjs';
 import { SHARED_PHASE_DIRECTORY, SHARED_LEDGER_CONFIRMATION } from './constants.mjs';
 
 /** Local operator flow. Generated source still runs only in the restricted Docker worker. */
-export async function createLocalParallaxia({ directory = resolve('reports/parallaxia/live'), client = null, broker: suppliedBroker } = {}) {
+export async function createLocalParallaxia({ directory = resolve('reports/parallaxia/live'), client = null, broker: suppliedBroker, maxJobCostUsd } = {}) {
   const broker = suppliedBroker ?? await createWorkerBroker();
   const coordinator = await createCoordinator({ directory, broker, client, localVerification: true,
-    ledgerDirectory: SHARED_PHASE_DIRECTORY, confirmSharedLedger: SHARED_LEDGER_CONFIRMATION });
+    ledgerDirectory: SHARED_PHASE_DIRECTORY, confirmSharedLedger: SHARED_LEDGER_CONFIRMATION, maxJobCostUsd });
   const baseline = await loadParallaxiaBaseline();
   const component = baseline.component;
   const existing = await coordinator.parentBytes(baseline.id).catch(error => { if (error.status === 404) return null; throw error; });

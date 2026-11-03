@@ -54,7 +54,7 @@ const policy = createProductionPolicy({ hosts, origins, trustedProxies: proxies,
 const coordinator = await createCoordinator({ directory, broker, client: generation ? createMetaClient(process.env.MODEL_API_KEY) : null, releasePublished: false, ledgerDirectory: generation?.ledgerDirectory, confirmSharedLedger: generation?.confirmSharedLedger, operatorConfirmation: process.env.HOSTING_GENERATION_CONFIRMATION, publishedOrigin: generation?.origin });
 const server = await createHostingServer({ policy, coordinator, creatorRoot, port: Number(process.env.PORT ?? 8080), host: '0.0.0.0' });
 console.log(`Hosting coordinator listening on ${server.origin}`);
-console.log(generation ? 'Standard Meta generation configured; each whole job is capped at $0.15 using the existing remix allowance' : 'Generation is not configured; playback stays available');
+console.log(generation ? 'Standard Meta generation configured; each whole job is capped at $7 using the existing reserve allocation within the $50 phase allowance' : 'Generation is not configured; playback stays available');
 for (const signal of ['SIGINT', 'SIGTERM']) {
   process.once(signal, async () => { await server.close(); await coordinator.close(); process.exit(0); });
 }

@@ -52,7 +52,7 @@ The development validation harness initially failed on a mutable snapshot refere
 
 Focused native/browser checkpoint and composition checks, including actual restricted Docker publication gates, passed. Frontend typecheck, lint and formatting passed. No graze-token rule or other composition was added.
 
-## Remaining
+## M4: actual release and frozen evidence
 
 M4 packaging is implemented: explicit PARALLAXIA collection preserves exact worker-published frames, component/rule/source/evidence, parent versions and diagnostic failures. The static React copy labels saved reuse and disables creation. ZIPs include the exact parent and candidate, and experiment exports include a React replay page. The collector also supports explicitly labeled baseline-only reuse; it never silently substitutes that for a requested generated child.
 
@@ -60,4 +60,18 @@ The ten-task manifest is frozen in `benchmark/live-mechanics-tasks.json` (SHA-25
 
 The baseline static release passed a fresh browser, nested-base-path checks, a system-extracted exact ZIP, no external requests/POSTs and same-component JUJUMP playback. Packaging/creator/hosting checks passed 28/28, and cancellation now prevents the browser/publication stages after a native-stage cancellation. The ordinary free-play controller no longer injects an undeclared held Shoot input; curated experiments still declare their shared native Shoot controls explicitly.
 
-Remaining: execute the frozen measured tasks, package the actual successful generated result, run exact paired-export checks and the full suite, then record measured results and limitations.
+The frozen run at `bf7cd14` completed with **8/9 positive tasks and 1/1 correct negative**, estimated $0.090081 across ten responses/eight jobs. The left-goal candidate reached the fixed region but lost a life; its one repair also failed. Both failures remain in the campaign. The successful right-goal child and all campaign publications are packaged in `reports/release-parallaxia/`; the original build passed exact ZIP system extraction, normal-speed paired replay, accepted JUJUMP and nested-base-path checks. See [the measured results](live-mechanics-results.md) for every task, cost, time and artifact.
+
+`npm test` then passed **355 tests, 0 failed, 1 skipped** at `bf7cd14`; the skip is the missing pinned Muse CLI binary. Hosting isolation/publication passed again without gate changes. The full-suite ledger hash was unchanged. Details are in [local validation](local-validation.md).
+
+### Final user-directed changes
+
+Richard requested removal of the persistent age/privacy/model banner and a $7 whole-job cap. The banner is removed. Age confirmation now appears only on a first creation; cancel sends no request and confirm resumes PARALLAXIA creation once. Backend age/admission checks remain. New $7 jobs reserve from the existing $10 reserve allocation, since the unchanged remix allocation is $5. The $50 total, single historical migration, all 31 prior records and three bounded-unknown reservations remain unchanged. No new paid request was made for this change. The frozen v1 runner retains its explicit historical $0.15 cap.
+
+Final release polish displays the actual frozen measurements, preserves nested links, makes baseline selection persist across reload, clears stale comparisons and keeps unsuccessful diagnostics from replacing the original. The verification CLI chooses recipient-specific checks. The first final-release navigation check exposed nested iframe history interfering with Back. Version switches now mount a fresh frame at their reset boundary; the subsequent actual-release build passed all gates, including baseline reload/back, diagnostic reopening, the measured table and exact paired ZIP replay. Both build logs remain retained. Focused hosting/cap checks passed 25/25. Final release/UI checks passed except for one stale audience-notice test assertion, which passed when corrected and rerun. Typecheck, lint, formatting and both frontend builds passed. The full suite predates these final changes and was not repeated after Richard asked to wrap up.
+
+The shared ledger now reports $2.16501937 estimated usage, $1.045174398 retained reservations, and $46.789806232 remaining. Its SHA-256 is `1934f39c37ede0c05a4cadf1348e280926151fd5a0372d2a23c23caa21b51d3d`. These are local estimates, not provider-balance verification.
+
+### Remaining limits
+
+The left checkpoint goal remains unsuccessful. Native enemy body contact keeps its upstream 60 Hz position-sampled behavior; swept bullet collisions remain active. Arbitrary goals, mid-dash migration, a second live recipient and additional composition rules are outside this implementation. The missing pinned Muse CLI is the only full-suite skip. Public deployment, visibility changes, outside-network tests, video and submission were not performed. No new PR was merged. Work remains on `feat/parallaxia-live-mechanics`; main remains `a0aed8e`.

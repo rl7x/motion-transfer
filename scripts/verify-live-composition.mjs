@@ -28,13 +28,13 @@ try {
   const page = await browser.newPage({ viewport: { width: 1200, height: 1000 } });
   page.on('pageerror', error => evidence.errors.push(error.message));
   await page.goto(server.origin); await page.locator('#parallaxia-game').waitFor();
-  await page.locator('#confirm-age').check();
+
   for (const [index, prompt] of ['Add the dash-end to native-shot rule. Keep the dash mapping unchanged.', 'Remove the dash-end shot rule. Keep the dash mapping unchanged.'].entries()) {
     const started = Date.now();
     let job=evidence.jobs[index], pending;const reused=Boolean(job);
     if (!job) {
       await page.locator('#motion-task').selectOption(index===0?'dash-end-shot':'none');
-      await page.locator('#motion-prompt').fill(prompt); await page.locator('#motion-submit').click();
+      await page.locator('#motion-prompt').fill(prompt); await page.locator('#motion-submit').click();if(await page.getByRole('dialog',{name:'Confirm before creating'}).isVisible())await page.locator('#confirm-age').click();
       await page.waitForFunction(previous=>{const value=JSON.parse(sessionStorage.getItem('motion-creator-session'))?.pending;return Boolean(value?.jobId&&value.jobId!==previous);},evidence.jobs.at(-1)?.id??null);
       pending = await page.evaluate(() => JSON.parse(sessionStorage.getItem('motion-creator-session')).pending);
       console.log('Submitted',index + 1,pending.jobId);

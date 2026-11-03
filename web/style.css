@@ -1710,6 +1710,17 @@ body.player-expanded::before {
 .experiment-result {
   margin-top: 24px;
 }
+.creation-confirmation {
+  width: min(420px, calc(100% - 32px));
+  padding: 24px;
+  border: 1px solid #6b8552;
+  border-radius: 12px;
+  background: #172016;
+  color: #e7f0df;
+}
+.creation-confirmation::backdrop {
+  background: #000a;
+}
 @media (max-width: 600px) {
   .experiment-comparison {
     grid-template-columns: 1fr;

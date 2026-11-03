@@ -1,108 +1,77 @@
 # Motion Transfer
 
-Borrow a dash from a compiled game, play it on a 3D backflip, and keep the accepted result.
+Borrow Dashy Dango's recovered dash, make it playable in PARALLAXIA, and compare alternatives from a paused moment.
 
-A July 2023 study for the Video Game History Foundation and the Software Preservation Network found that 87% of classic games released in the United States from 1960 through 2009 were not in release (n = 1,500, ±2.5% at 95% confidence; [87% Missing](https://gamehistory.org/87percent/)). Ars Technica, on May 6, 2020, reported that the volunteer whole-program decompilation of Super Mario 64 took about two years ([Beyond emulation](https://arstechnica.com/gaming/2020/05/beyond-emulation-the-massive-effort-to-reverse-engineer-n64-source-code/)). Motion Transfer recovers one dash from [Dashy Dango](targets/dashy-dango/README.md) and checks that controller on finite traces. That is not a whole-program decompilation. Sources are in [docs/problem-statement.md](docs/problem-statement.md). The project is aimed at **Push the Frontier**.
+The React workbench supports real Standard Meta generation, inherited mapping edits, deterministic checkpoint experiments, and one composition: dash-end → a native shot attempt on the next tick. Saved play is labeled reuse. JUJUMP demonstrates the same accepted component in a second game. Roadster remains accessible with its original artifact bytes.
 
-The repository stays private for now. Publication, deployment, outreach, a public video, and independent-use counts are pending. There is no public play URL.
+The accepted component is `544657417fe9752f91b0b72a451cd9cb8d2650839824be35881e52f81f223858`. It supplies eight active updates and 25 inactive recharge ticks. Human-written hooks connect its outputs to each licensed upstream game. PARALLAXIA itself was not reverse engineered here. Meta generates adapters and the bounded host rule; the native shooter supplies its own enemies, shots, movement and collision rules.
 
-## Play the accepted release
+## Play without inference
 
-Node.js 22 or newer. These commands build and serve the accepted Roadster pin locally. They do not call Meta.
+Node.js 22 or newer. This builds an explicitly labeled baseline reuse copy; it makes no provider request.
 
 ```sh
-npm install
-npm run build:release -- --accepted-roadster transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c
-npm run serve:release -- --root reports/release-accepted --port 4174 --base-path /motion-transfer/
+npm ci
+npm run build:release -- --recipient parallaxia --reuse-baseline --output reports/release-parallaxia-reuse
+npm run serve:release -- --root reports/release-parallaxia-reuse --port 4174 --base-path /motion-transfer/
 ```
 
-Open `http://127.0.0.1:4174/motion-transfer/`. The server binds `127.0.0.1` only. `serve:release` rejects `--host`. This address is local review, not a public site.
+Open `http://127.0.0.1:4174/motion-transfer/`. The server binds loopback only. Arrows/WASD move, Space/Z shoots, and X dashes. Native play adds no invulnerability. The separately labeled practice challenge has a shield and measures position; it makes no survival claim. Default scaling maps the donor's 60 source pixels to six world units, rendered at ten pixels per world unit.
 
-The page is one 3D backflip. The label is **ACCEPTED RECOVERY**. **Borrow dash** uses controller `544657417fe9752f91b0b72a451cd9cb8d2650839824be35881e52f81f223858`, the same component as the pinned JUJUMP publication. The Roadster pin passed 8 mapping checks and 8 browser checks. That component passed 13 development checks and 20 acceptance checks. The ordinary landing misses the green zone. The same controls plus the dash reach it. Borrowing and replaying make no model request.
+The measured generated release is already built in this workspace at `reports/release-parallaxia/`. It features the successful right-goal experiment and includes its exact parent, all campaign children, both unsuccessful diagnostics, same-component JUJUMP, source, rules, notices and ZIPs. Experiment ZIPs contain a self-contained React `replay.html`. See [measured results and the rebuild command](docs/live-mechanics-results.md). Gitignored reports are not automatically present in a fresh clone; the generated release tree can be distributed on its own.
 
-Source, report, notices, and the download are files in the bundle. With WebGL2 removed, the page still offers the JUJUMP comparison, and that check passed. A human mapped the motion boundary, timer fields, and checks.
+## Create a real PARALLAXIA child locally
 
-`npm run dev:transfer` is a different page. It opens `http://127.0.0.1:4173` on the older saved library and labels it **SAVED RECOVERY**, controller `1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2`. PAKU PAKU and JUJUMP on that server are the before/after views of that saved controller. They are not the accepted release.
+Use the existing reconciled `reports/motion-transfer-phase/phase-budget.json`, Docker, and `MODEL_API_KEY` in the ignored `.env`. Do not create a new ledger to replace the restored history.
 
-## What was measured
+```sh
+npm run hosting:image
+npm run dev:transfer
+```
 
-These figures are outcomes of single runs. They are not a reliability rate. There is no ten-trial campaign and no Muse Code j/3 count. No independent user count is recorded.
+Open `http://127.0.0.1:4173/`. Opening, playing, comparing and downloading saved versions makes no model request. Generate submits a real Standard Muse Spark request. The parent stays available while restricted workers verify the new source and exact Canvas frame. One reservation caps the entire job at $7, including at most one repair. Refresh reconnects with the same request key; restart preserves completed children and does not repeat interrupted inference. Existing admission and two-jobs-per-session quotas remain. The persistent age/privacy/model banner has been removed; age confirmation appears only when creating.
 
-| Result | Outcome |
+Supported mapping edits are distance scale, facing/opposite direction, and held/fresh-press activation. Follow-ups inherit unspecified properties. Pause your flight or select the labeled curated checkpoint, freeze a supplied target and constraints, then generate an alternative. Both branches reconstruct the same starting state and use the same declared future native Shoot controls; the candidate's changed dash tick is shown. A failed goal keeps the original. Checkpoints are bounded to 3,600 historical updates, and experiments to 120 future updates.
+
+The only composition is a human-authored scheduler driven by a Meta-generated declarative rule. It attempts one native shot after dash-end, respecting native cooldown and projectile cap; suppressed attempts are consumed. It cannot mutate the recovered controller or enemy/life state. Removing the rule preserves the inherited mapping.
+
+## Measured results
+
+The ten-task manifest was frozen before the real campaign at `bf7cd14`. **8/9 positive tasks passed; 1/1 deliberately infeasible task was correctly unsuccessful.** Eight jobs used ten provider responses, estimated **$0.090081**. This selected tool-driven set is not a general reliability estimate, an adoption study, or a measurement of human time saved.
+
+| Task | Actual outcome |
 | --- | --- |
-| Accepted Roadster adapter | Muse Spark 1.3, `$0.008666`. 8 mapping and 8 browser checks on component `54465741…`. |
-| Wonder donor trial | Muse Wonder 1.0, `$1.689036`. One donor acceptance. The campaign journal still has zero accepted deliveries. The pins above are the later publication of that component. |
-| Contact-sheet comparison | One attempt. Contact sheet plus the supplied public-contract defaults: 0/40. Saved controller: 40/40. This is not a from-video score. Generation cost `$0.02293425`. Study `f8ced9b80f59333d528caa226ae8576643d465293e8b64a33dd9c5fdc783f1c5`. |
-| Fixed remix set | 6 supported prompts matched and 2 negatives behaved as specified. No retries. Cost `$0.06688125`. Those children use the older saved controller, not `54465741…`. |
-| Contributor development | Trial 004 timed out. Its `$0.50` cap is retained in full as a second bounded-unknown reservation. No Contributor trial has an accepted development delivery. |
-| Muse Code echo | Commit `982994a` pins build `1.3.0-R3057.1`. Thirteen unpaid echo checks passed. Paid Muse stays closed. |
+| New transfer and two inherited edits | All passed; 11.413–12.052 seconds from admission through verified publication. |
+| Two checkpoint goals | Right passed in 18.604 seconds; left reached its target but lost a life and remained unsuccessful after repair. |
+| Infeasible target | Correctly unsuccessful in 25.146 seconds, with target and collision constraints unchanged. |
+| Add and remove composition | Both passed; 7.889 and 9.664 seconds. Mapping stayed fresh-press/opposite/half-distance. |
+| JUJUMP export and restart/replay | Passed from exact saved bytes, without another provider request. |
 
-A rough ledger snapshot from November 2, 2026: about `$1.99700237` known, about `$0.905351648` still reserved, ceiling `$50`. The public category, `$15`, is unused. Do not reset the ledger or invent a new allowance. Row-level history is in [docs/recovery-evidence-status.md](docs/recovery-evidence-status.md).
+Neither repair in the frozen run produced a passing goal. A separate development rule-removal job did repair a rejected nonliteral module into an accepted removal; that original failure remains recorded. The full task table, individual costs, failed development attempts, exact identities, and scope are in [the measured results](docs/live-mechanics-results.md) and [implementation record](docs/live-mechanics-progress.md).
 
-Experiments were authorized inside that ceiling. No further paid call is planned. Commands that spend still require the existing `reports/motion-transfer-phase/phase-budget.json` and do not create a replacement.
+The shared $50 ledger now contains $2.16501937 in estimated usage, $1.045174398 in retained reservations, and $46.789806232 remaining, including three bounded-unknown charges. All 31 reservations and the original allowance migration remain. New $7 jobs reserve from the existing $10 reserve allocation, since the unchanged remix allocation is $5. Historical $0.15 reservations remain unchanged; the frozen campaign predates this cap increase. These are local ledger figures, not a verified provider balance or an accounting of every historical CLI charge.
 
-## Commands
+## Validation and historical evidence
 
-Free commands make no Meta call.
+Run `npm run typecheck`, `npm run lint`, `npm run format:check`, and `npm test`. The full suite includes browser and restricted Docker checks. `npm run verify:release -- --root reports/release-parallaxia` checks the actual PARALLAXIA release. It system-extracts the exact ZIP, blocks external requests, checks normal-speed paired replay and tests a nested base path. Actual results and limitations are recorded in [local validation](docs/local-validation.md).
 
-```sh
-npm test
-npm run typecheck
-npm run lint
-npm run format:check
-npm run build:frontend
-npm run test:frontend
-npm run verify:motion
-npm run verify:challenge
-npm run build:creator
-npm run score:video-comparison -- --campaign reports/motion-transfer-phase/video-001
-```
+The historical worker publication rejection did not reproduce on this Mac. Direct worker gates and the full hosting-isolation check passed without weakening publication requirements. Rejected worker payloads are now retained for diagnosis. The final coordinator image has no Docker socket, generated-code execution, compiler or evaluator; Standard generation runs only after explicit operator configuration. Public hosting has not been deployed. See [hosting](docs/hosting.md).
 
-`npm test` is `node --test --test-concurrency=1 tests/*.test.mjs`. `build:creator` writes `web/dist/creator/index.html`. `score:video-comparison` only scores an existing frozen study. It does not call Meta.
+Historical evidence stays separate:
 
-| Script | Use | Paid |
-| --- | --- | --- |
-| `build:release` | Static tree. Pass `--accepted-roadster <pin>` for the accepted bundle. Without that flag the tree is the saved library. | No |
-| `serve:release` | `--root <directory> [--port 4173] [--base-path /]`. Loopback only. | No |
-| `verify:release`, `smoke:hosted` | Audit or read-only smoke of an existing tree. | No |
-| `dev:transfer` | Saved-library preview at `http://127.0.0.1:4173`. | No |
-| `export:jujump`, `verify:integration` | Saved-controller JUJUMP package. Not the accepted pin. | No |
-| `probe:integration` | One adapter against the saved controller. | No |
-| `record:demo` | Existing local draft recorder. The submission video is being made separately. | No |
-| `recover:muse-code` | Unpaid echo preflight. `--paid` stays refused. | No |
-| `hosting:serve` | `node hosting/serve.mjs`. Needs `HOSTING_PUBLIC_HOSTS` and `HOSTING_PUBLIC_ORIGINS`. Creation stays off unless a later operator switch is set, and this build exits if that switch is present. | No |
-| `hosting:broker`, `hosting:image`, `hosting:coordinator-image` | Local broker and image builds. Worker diagnosis is still open. | No |
-| `transfer:accepted-roadster` | One new adapter for an accepted component. `--campaign`, `--out`, and `--phase-ledger` are required. | Yes, existing ledger |
-| `video:candidate`, `remix:campaign`, `recover:campaign` | Campaign commands. Each requires the existing ledger. | Yes, existing ledger |
-| `benchmark:developer`, `investigate`, `recover:motion` | Older paid entry points. `recover:motion --prepare-only` is local. | Yes, except prepare-only |
+- [Wonder recovery and accepted Roadster/JUJUMP delivery](docs/fresh-recovery.md): 13 development checks and 20 separate acceptance checks on the accepted component.
+- [Contact-sheet study](docs/fidelity-media.md): one supplied-defaults candidate scored 0/40 versus the older saved controller's 40/40. This is not a from-video recovery result.
+- [Fixed Roadster remix set](docs/remix-results.md): six supported matches and two expected negatives on saved component `1bc4250c…`; this is a different campaign and component.
+- [Muse Code](docs/muse-code.md): unpaid echo checks only; no new recovery campaign was run.
 
-`hosting:serve` does not turn on public generation by itself. Hosted creation is not claimed verified. The provider budget and the worker check are still being finished. See [docs/hosting.md](docs/hosting.md).
+The accepted Roadster release remains available with `npm run build:release -- --accepted-roadster transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c`. Historical preview views use `/?destination=roadster`, `/?destination=jujump` and `/?destination=paku-paku`. The new default workbench and `/accepted/jujump/` use the accepted component.
 
-Current validation: **339 of 340 tests passed**, with no skips. The remaining failure is the Docker worker publication check. TypeScript, lint, formatting, and both frontend builds passed. See [the validation checkpoint](docs/local-validation.md).
+## Remaining scope
 
-## Where things stand
+The left checkpoint goal failed within its bounded generation attempts. There is no arbitrary goal language, general level solver, arbitrary mid-dash state migration, second live recipient, or graze-token composition. Native enemy body contact retains its upstream position-sampled behavior; the dash does not add invulnerability, and native swept bullet checks stay active.
 
-| | State | Detail |
-| --- | --- | --- |
-| Accepted local playback | Working on loopback | This page |
-| Saved library preview | Separate, labeled saved | `npm run dev:transfer` |
-| Wonder JUJUMP pin | Same component as the car pin | [docs/fresh-recovery.md](docs/fresh-recovery.md) |
-| Contact-sheet score | 0/40 versus saved 40/40, one attempt | [docs/fidelity-media.md](docs/fidelity-media.md) |
-| Fixed remix set | 8 outcomes, older component | [docs/remix-results.md](docs/remix-results.md) |
-| Muse Code echo | 13 unpaid checks. Paid path closed | [docs/muse-code.md](docs/muse-code.md) |
-| Hosted creation | Not verified | [docs/hosting.md](docs/hosting.md) |
-| Public repo, deploy, outreach, public video, independent use | Pending | [docs/submission-readiness.md](docs/submission-readiness.md) |
-
-## Limitations
-
-- One dash, finite traces, human-mapped boundary. Host hooks are human-written.
-- The accepted car and the saved library are different controllers. Do not describe the saved preview as the accepted release.
-- The contact-sheet candidate is one attempt with the supplied defaults. It is not evidence that a model recovered the dash from video.
-- The echo preflight does not recover a mechanic. A new cartridge still needs the human-mapped boundary.
-- No outside developer session and no public player count.
+Public deployment, repository visibility changes, outside-network verification, outreach, adoption studies, video and submission remain separate. No public play URL or outside-user benefit is claimed. Richard handles video. The supplied active plan remains in the extracted Downloads handoff; [the implementation record](docs/live-mechanics-progress.md) resolves its historical paths against this checkout.
 
 ## Credits
 
-Dashy Dango is upstream work by samX500 and willGuimont. PAKU PAKU and JUJUMP are upstream work by Kenta Cho / ABA Games. The RDSTR Stunts car, renderer, track, stunt physics, and audio are upstream work by sebayaki. The recovery harness, controllers, adapters, green zone, remix flow, and checks are the hackathon work. The donor name came from a matcha parfait in Kyoto.
-
-Longer notes: [developer handoff](docs/developer-handoff.md) · [implementation checklist](docs/motion-transfer-implementation.md) · [submission readiness](docs/submission-readiness.md) · [recovery evidence](docs/recovery-evidence-status.md).
+Dashy Dango is upstream work by samX500 and willGuimont. PARALLAXIA, JUJUMP and PAKU PAKU are upstream work by Kenta Cho / ABA Games. The RDSTR Stunts car, renderer, track, stunt physics and audio are upstream work by sebayaki. Recovery tooling, recovered controllers, adapters, host hooks, deterministic experiments, composition and verification are the added project work. Each export retains its upstream notices.

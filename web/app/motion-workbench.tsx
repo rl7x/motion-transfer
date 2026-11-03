@@ -9,6 +9,7 @@ import {
   type Checkpoint,
 } from './motion-experiment';
 import { MotionGeneration, type MotionJob } from './motion-generation';
+import { LiveMechanicsEvidence } from './live-mechanics-evidence';
 import { HoldButton } from './components/hold-button';
 import { Header } from './components/static-content';
 import { AgeAcknowledgment, AgeProvider } from './components/age-acknowledgment';
@@ -67,40 +68,48 @@ export function MotionWorkbench() {
     void fetchJson<Baseline>('/api/parallaxia/base', { signal: controller.signal })
       .then(async (value) => {
         setBase(value);
+        setError('');
+        setCheckpoint(null);
+        setExperiment(null);
+        setSavedExperiment(null);
+        setActive(null);
         const id =
           new URL(location.href).searchParams.get('artifact') ??
           window.__MOTION_TRANSFER__?.featuredArtifactId;
-        if (!id) {
-          setActive(null);
-          setSavedExperiment(null);
-        }
-        if (id && /^[a-f0-9]{64}$/.test(id)) {
-          const receipt = await fetchJson<{
-            componentId: string;
-            recipient: { id: string };
-            rule?: { kind: string } | null;
-            experiment?: ExperimentReceipt;
-            parentArtifactId: string;
-            intent?: { unitScale: number; activation: string; direction: string } | null;
-          }>('/artifacts/' + id + '/receipt.json', { signal: controller.signal });
-          if (receipt.componentId !== value.componentId || receipt.recipient.id !== 'parallaxia')
-            throw Error('Wrong recipient or component');
-          setActive({
-            id,
-            play: '/artifacts/' + id + '/play.html',
-            download: '/artifacts/' + id + '/download.zip',
-            report: '/artifacts/' + id + '/receipt.json',
-            rule: receipt.rule,
-            intent: receipt.intent,
+        if (!id || id === value.id) return;
+        if (!/^[a-f0-9]{64}$/.test(id)) throw Error('Invalid saved artifact identity');
+        const receipt = await fetchJson<{
+          passed: boolean;
+          componentId: string;
+          recipient: { id: string };
+          rule?: { kind: string } | null;
+          experiment?: ExperimentReceipt;
+          parentArtifactId: string;
+          intent?: { unitScale: number; activation: string; direction: string } | null;
+        }>('/artifacts/' + id + '/receipt.json', { signal: controller.signal });
+        if (receipt.componentId !== value.componentId || receipt.recipient.id !== 'parallaxia')
+          throw Error('Wrong recipient or component');
+        if (receipt.experiment)
+          setSavedExperiment({
+            receipt: receipt.experiment,
+            parent: '/parents/' + receipt.parentArtifactId,
+            candidate: '/artifacts/' + id + '/play.html',
+            download: '/artifacts/' + id + '/experiment.json',
           });
-          if (receipt.experiment)
-            setSavedExperiment({
-              receipt: receipt.experiment,
-              parent: '/parents/' + receipt.parentArtifactId,
-              candidate: '/artifacts/' + id + '/play.html',
-              download: '/artifacts/' + id + '/experiment.json',
-            });
+        if (receipt.passed === false || receipt.experiment?.satisfied === false) {
+          setError(
+            'Saved diagnostic: goal unsatisfied. The original integration remains selected.',
+          );
+          return;
         }
+        setActive({
+          id,
+          play: '/artifacts/' + id + '/play.html',
+          download: '/artifacts/' + id + '/download.zip',
+          report: '/artifacts/' + id + '/receipt.json',
+          rule: receipt.rule,
+          intent: receipt.intent,
+        });
       })
       .catch((failure: unknown) => {
         if (!controller.signal.aborted) setError(errorMessage(failure));
@@ -168,6 +177,7 @@ export function MotionWorkbench() {
             </h2>
             {base ? (
               <iframe
+                key={practice ? 'practice:' + base.id : (active?.id ?? base.id)}
                 ref={frame}
                 id="parallaxia-game"
                 title="PARALLAXIA with accepted recovered dash"
@@ -297,7 +307,7 @@ export function MotionWorkbench() {
                 rule: job.rule,
                 intent: job.intent,
               });
-              history.pushState({}, '', '/?artifact=' + job.artifactId);
+              history.pushState({}, '', linkHref('/?artifact=' + job.artifactId));
             }}
           />
         )}
@@ -306,13 +316,17 @@ export function MotionWorkbench() {
             onClick={() => {
               setActive(null);
               setPractice(false);
-              history.pushState({}, '', '/');
+              setSavedExperiment(null);
+              setCheckpoint(null);
+              setExperiment(null);
+              if (base) history.pushState({}, '', linkHref('/?artifact=' + base.id));
             }}
           >
             Keep original integration
           </button>
         )}
 
+        <LiveMechanicsEvidence />
         <p>
           <a href={linkHref(readJujumpComparison() ?? '/accepted/jujump/index.html')}>
             Same accepted component in JUJUMP
@@ -321,7 +335,7 @@ export function MotionWorkbench() {
           <a href={linkHref(base?.historicalRoadster ?? '/?destination=roadster')}>
             Historical Roadster
           </a>{' '}
-          · <a href="/donor/play">Compiled donor</a>
+          · <a href={linkHref('/donor/play')}>Compiled donor</a>
         </p>
         <footer>
           Dashy Dango by willGuimont · PARALLAXIA and JUJUMP by Kenta Cho / ABA Games.{' '}

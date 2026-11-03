@@ -9,5 +9,5 @@ let server;
 try { server = await createPreviewServer({ port: Number(process.env.PORT ?? 4173), coordinator: local.coordinator }); }
 catch (error) { await local.close(); throw error; }
 console.log(`Motion Transfer: ${server.origin}`);
-console.log('PARALLAXIA playback reuses the accepted component. New requests require Docker isolation and Standard Meta; $0.15 maximum per whole job, including one repair, charged to the reconciled phase ledger.');
+console.log('PARALLAXIA playback reuses the accepted component. New requests require Docker isolation and Standard Meta; $7 maximum per whole job, including one repair, charged to the existing reserve allocation in the reconciled $50 phase ledger.');
 for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, async () => { await server.close(); await local.close(); process.exit(0); });

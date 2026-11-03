@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { createPhaseBudget } from '../campaign/phase-budget.mjs';
+import { createHostedTestBudget } from './helpers/hosting-budget.mjs';
 import { createCoordinator } from '../hosting/coordinator.mjs';
 import { loadPinnedComponent } from '../hosting/component-load.mjs';
 import {
@@ -122,7 +123,7 @@ test('an accepted parent binds follow-ups and rejects a saved-component worker r
   const directory = await temp(t);
   const seeded = await seedVerifiedParent({ dataDirectory: directory, artifactDirectory: acceptedDir });
   const ledgerDirectory = await temp(t);
-  await createPhaseBudget(ledgerDirectory);
+  await createHostedTestBudget(ledgerDirectory);
   const parentIntent = JSON.parse(await readFile(join(directory, 'parents', `${seeded.id}.intent.json`), 'utf8'));
   const client = createFakeMetaClient({
     source: 'export function step(){return {}}\n',
@@ -162,7 +163,7 @@ test('an accepted parent binds follow-ups and rejects a saved-component worker r
   const mismatchDir = await temp(t);
   await seedVerifiedParent({ dataDirectory: mismatchDir, artifactDirectory: acceptedDir });
   const mismatchLedger = await temp(t);
-  await createPhaseBudget(mismatchLedger);
+  await createHostedTestBudget(mismatchLedger);
   const liar = brokerReturning(SAVED_COMPONENT_ID);
   const mismatch = await createCoordinator({
     directory: mismatchDir, broker: liar, client, ledgerDirectory: mismatchLedger, localVerification: true,
@@ -179,7 +180,7 @@ test('an accepted parent binds follow-ups and rejects a saved-component worker r
 
   const unknownDir = await temp(t);
   const unknownLedger = await temp(t);
-  await createPhaseBudget(unknownLedger);
+  await createHostedTestBudget(unknownLedger);
   const quiet = brokerReturning(SAVED_COMPONENT_ID);
   const unknown = await createCoordinator({
     directory: unknownDir, broker: quiet, client, ledgerDirectory: unknownLedger, localVerification: true,

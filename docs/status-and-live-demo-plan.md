@@ -1,5 +1,24 @@
 # Implementation status and PARALLAXIA demo plan
 
+Updated November 3, 2026 after implementing M0–M4 on `feat/parallaxia-live-mechanics`, based on merged main `a0aed8e`. The active plan remains in the extracted Downloads handoff. Its old Mac paths, branch names and references to uncommitted work are historical. Main has not been changed by this implementation.
+
+| Area | Current result |
+| --- | --- |
+| Recipient and component identity | Independent PARALLAXIA artifacts, reports and notices use accepted component `54465741…`; historical Roadster URLs retain original bytes. Same accepted component runs in JUJUMP. |
+| Live generation | Real Standard Meta requests produce restricted-worker-verified, playable children; follow-ups preserve inherited intent. Refresh/restart reconnect without another provider request. |
+| Pause and compare | Browser and worker reconstruct the same checkpoint, freeze target and native/no-life-loss constraints, and reproduce both end digests at normal speed. |
+| Composition | Dash-end schedules one next-tick native-shot attempt. Native cooldown/cap apply; removing it preserves the mapping. |
+| Frozen tasks | 8/9 positive tasks passed; 1/1 infeasible task correctly unsuccessful. Left goal reached its region but lost a life after both candidates. Estimated campaign inference $0.090081, ten responses. |
+| Release | Actual generated PARALLAXIA release in `reports/release-parallaxia/`, with exact ZIPs, parent, paired replay, component, rule, notices and all diagnostics. Clean-start and nested-base-path browser checks passed. |
+| Isolation and tests | The historical publication rejection did not reproduce here; direct gates and hosting-isolation passed without relaxed requirements. See [current local validation](local-validation.md) for the full-suite checkpoint. |
+| Public availability | No deployment, visibility change, outside-network verification or submission was performed. Richard owns video. |
+
+Use [the measured results](live-mechanics-results.md) for individual times, costs, immutable versions, reproduction commands and limits, and [the implementation record](live-mechanics-progress.md) for reconciliation and retained development failures. Saved playback remains labeled reuse; practice is shielded and makes no survival claim. A finite unshielded success is not general beatability. The older contact-sheet and recovery results remain separate.
+
+## Historical assessment before live mechanics
+
+The assessment and presentation guidance below are retained to explain the original findings. Their branch, component, route, hosting and test descriptions predate M0–M4 and are superseded by the current results above. They are not another implementation or video task list.
+
 Assessment on November 3, 2026. Code checkpoint: `c90eaa9`, plus the local, uncommitted PARALLAXIA showcase changes inspected below. The feature branch is `codex/playable-motion-remixes`; [PR #7](https://github.com/rl7x/meta-ai-developer-hackathon/pull/7) contains the committed checkpoint. The PARALLAXIA changes were not committed or modified during this assessment.
 
 PARALLAXIA is the featured challenge. Roadster remains historical and accepted-delivery evidence. The current local PARALLAXIA preview works, but the public release and its recipient-specific evidence have not caught up with that change.

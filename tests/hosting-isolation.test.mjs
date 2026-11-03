@@ -8,6 +8,7 @@ import test from 'node:test';
 import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { createPhaseBudget } from '../campaign/phase-budget.mjs';
+import { createHostedTestBudget } from './helpers/hosting-budget.mjs';
 import { COORDINATOR_TAG, VERIFIER_IMAGE } from '../hosting/constants.mjs';
 import { createCoordinator } from '../hosting/coordinator.mjs';
 import { createFakeMetaClient } from '../hosting/fake-client.mjs';
@@ -112,7 +113,7 @@ test('restricted worker containers enforce isolation and verify in-process only 
   const ledgerDirectory = await mkdtemp(join(tmpdir(), 'motion-hosting-ledger-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
   t.after(() => rm(ledgerDirectory, { recursive: true, force: true }));
-  await createPhaseBudget(ledgerDirectory);
+  await createHostedTestBudget(ledgerDirectory);
   const client = createFakeMetaClient({ source, intent: manifest.intent, summary: 'Saved held dash, verified in the worker.' });
   const coordinator = await createCoordinator({ directory, broker, client, ledgerDirectory, localVerification: true });
   t.after(() => coordinator.close());

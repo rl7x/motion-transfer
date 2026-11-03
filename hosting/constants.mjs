@@ -10,7 +10,7 @@ export const COORDINATOR_TAG = 'motion-transfer-coordinator:local';
 /** Public creation uses Standard Muse Spark. Contributor mode is not a public-traffic model. */
 export const PUBLIC_MODEL = 'muse-spark-1.3';
 export const PUBLIC_RESERVE_USD = 15;
-export const REMIX_MAX_COST_USD = 0.15;
+export const REMIX_MAX_COST_USD = 7;
 
 export const SESSION_JOB_LIMIT = 2;
 export const GLOBAL_ACTIVE_LIMIT = 1;

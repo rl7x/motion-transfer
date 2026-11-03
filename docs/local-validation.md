@@ -1,5 +1,31 @@
 # Local validation
 
+## Live mechanics checkpoint on this Mac
+
+On November 3, 2026, `npm test` at `bf7cd147fa59de535bbca44312b0b9f31fafdecc` on `feat/parallaxia-live-mechanics` completed with **355 passed, 0 failed, 1 skipped** (356 tests, one suite). Node `v22.23.1`. Started 15:51:41Z, finished 16:09:48Z, elapsed 1,087.02 seconds; exit 0.
+
+The skip is the unpaid Muse echo preflight: pinned `~/.local/bin/muse-bin-1.3.0-R3057.1` is not executable on this Mac. No Muse agent session or paid Muse recovery was started. The restricted Docker isolation/publication test passed in 200.61 seconds, including the coordinator image. The historical other-Mac rejection did not reproduce; no publication or isolation gate was weakened. Failed worker payloads are now retained for diagnosis.
+
+Logs: `reports/live-mechanics/full-suite.log` and `full-suite-metadata.json`. The shared ledger SHA-256 before and after was `1934f39c37ede0c05a4cadf1348e280926151fd5a0372d2a23c23caa21b51d3d`; the suite made no paid provider request.
+
+After that full run, Richard requested removing the persistent age/privacy/model banner and raising the default whole-job cap to $7. Release polish also added the actual frozen-task table, recipient-aware verification CLI, correct nested links, baseline selection across reload/back, and diagnostic reopening without selecting an unsuccessful child. These later changes were checked with focused tests; **the full suite was not repeated after them** when Richard requested wrapping up.
+
+| Later command/check | Actual result |
+| --- | --- |
+| `node --test --test-concurrency=1 tests/hosting.test.mjs tests/hosting-component.test.mjs tests/parallaxia-generation.test.mjs` | 25/25 passed. Covers $7 reservation before provider access, unchanged historical reservations/$50 definition, settlement, full uncertain bound, insufficient reserve refusal, one repair and reconnect. Temporary fixtures only. |
+| `node --test --test-concurrency=1 tests/parallaxia-identity.test.mjs tests/parallaxia-release.test.mjs tests/product-release.test.mjs` | 8/9 passed initially. Only failure was a stale assertion expecting the removed playback audience notice; all recipient/UI, cap/dialog, release CLI/ZIP and other product tests passed. |
+| `node --test --test-concurrency=1 --test-name-pattern='injected playback catalog' tests/product-release.test.mjs` | The corrected stale assertion passed 1/1. No model request. |
+| `npm run typecheck`, `npm run lint`, `npm run format:check` | Passed after UI/cap changes. |
+| `npm run build:frontend`, `npm run build:creator` | Passed after UI/cap changes. |
+| Actual generated release rebuild after final changes | Passed (`reports/live-mechanics/final-measured-release-build-v2.log`): nested links, baseline across reload/back, unsuccessful diagnostic retention, all ten task rows, exact system-extracted ZIP, paired exported/site replay and same-component JUJUMP. The preceding final-build attempt exposed iframe history interfering with back navigation; version changes now mount a fresh frame at their reset boundary. The failed build log remains retained. |
+| Changed JavaScript syntax and `git diff --check` | Passed. |
+
+The actual generated release in `reports/release-parallaxia/` features right-goal artifact `07c2211ed729b557330f669c93808cf62384274fdf0c7cdc6078e2fe0d02755b`. Its exact ZIP was system-extracted in a fresh browser with nonlocal requests and POSTs blocked; both normal-speed branch end digests matched. Same-component JUJUMP and the nested base path passed. The frozen campaign is **8/9 positive, 1/1 correct negative**, not an all-green campaign. See [individual measurements and limitations](live-mechanics-results.md).
+
+## Historical validation from the handoff
+
+The checkpoints below are retained verbatim as historical records. Their paths and branch names refer to the other Mac; they are superseded by the measurements above.
+
 ## Full suite checkpoint at a32f0e9
 
 Recorded 2026-11-03 on branch `codex/playable-motion-remixes` at `a32f0e98c9e762667d31de32d9e8cb624320ffb2` (`a32f0e9`, `fix: bound browser replay rendering in isolated workers`). Node `v26.7.0`. The commit has an SSH `gpgsig` header. Git config was not changed. No paid call, demo capture, deploy, or commit.

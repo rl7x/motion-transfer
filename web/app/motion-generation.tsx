@@ -41,14 +41,22 @@ export function MotionGeneration({
   const [prompt, setPrompt] = useState('Make the dash backward, only on a fresh press.');
   const [composition, setComposition] = useState<'dash-end-shot' | 'none' | ''>('');
   const [enabled, setEnabled] = useState(false);
+  const [maxJobCostUsd, setMaxJobCostUsd] = useState(7);
   const [error, setError] = useState('');
   const [now, setNow] = useState(Date.now);
   useEffect(() => {
     const controller = new AbortController();
-    void fetchJson<{ generationConfigured: boolean }>('/api/remixes/status', {
-      signal: controller.signal,
-    })
-      .then((status) => setEnabled(status.generationConfigured === true))
+    void fetchJson<{ generationConfigured: boolean; maxJobCostUsd?: number }>(
+      '/api/remixes/status',
+      {
+        signal: controller.signal,
+      },
+    )
+      .then((status) => {
+        setEnabled(status.generationConfigured === true);
+        if (Number.isFinite(status.maxJobCostUsd) && Number(status.maxJobCostUsd) > 0)
+          setMaxJobCostUsd(Number(status.maxJobCostUsd));
+      })
       .catch(() => {
         if (!controller.signal.aborted) setEnabled(false);
       });
@@ -126,19 +134,22 @@ export function MotionGeneration({
       <form
         onSubmit={(event) => {
           event.preventDefault();
-          if (busy || !enabled || !age.allow(false)) return;
-          const next = {
-            experiment,
-            composition: experiment ? null : composition || null,
-            idempotencyKey: crypto.randomUUID(),
-            parentArtifactId: parentId,
-            prompt: prompt.trim(),
-            jobId: null,
+          if (busy || !enabled) return;
+          const submit = () => {
+            const next = {
+              experiment,
+              composition: experiment ? null : composition || null,
+              idempotencyKey: crypto.randomUUID(),
+              parentArtifactId: parentId,
+              prompt: prompt.trim(),
+              jobId: null,
+            };
+            writeSession({ ...session, pending: next });
+            setJob(null);
+            setPending(next);
+            setError('');
           };
-          writeSession({ ...session, pending: next });
-          setJob(null);
-          setPending(next);
-          setError('');
+          if (age.allow(false, submit)) submit();
         }}
       >
         {!experiment && (
@@ -241,8 +252,8 @@ export function MotionGeneration({
         </p>
       )}
       <p>
-        Maximum $0.15 for the whole job, including at most one repair. Refresh reconnects to this
-        job. Uncertain charges remain reserved.
+        Maximum ${maxJobCostUsd} for the whole job, including at most one repair. Refresh reconnects
+        to this job. Uncertain charges remain reserved.
       </p>
     </section>
   );
