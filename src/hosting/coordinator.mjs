@@ -106,9 +106,9 @@ export async function createCoordinator({
   if (!Number.isFinite(providerDeadlineMs) || providerDeadlineMs <= 0) throw Error('Invalid provider deadline');
   if (!Number.isFinite(maxJobCostUsd) || maxJobCostUsd <= 0 || maxJobCostUsd > REMIX_MAX_COST_USD) throw Error('Invalid whole-job cost cap');
   if (sessionJobLimit === null && localVerification !== true) throw Error('Unlimited sessions are only supported in the local operator preview');
-  // A $7 envelope fits the existing $10 reserve allocation. Keep the $50 ledger,
-  // its fixed allocations and every historical reservation unchanged.
-  const budgetCategory = maxJobCostUsd > PHASE_ALLOCATIONS.remix ? 'reserve' : 'remix';
+  // Whole-allocation envelopes use the existing reserve so historical remix
+  // charges do not block a $5 job. Keep allocations and prior reservations intact.
+  const budgetCategory = maxJobCostUsd >= PHASE_ALLOCATIONS.remix ? 'reserve' : 'remix';
   const queue = await createJobQueue(directory, { sessionJobLimit });
   const parents = join(directory, 'parents');
   await mkdir(parents, { recursive: true });

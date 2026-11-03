@@ -6,6 +6,12 @@ The React workbench supports real Standard Meta generation, inherited mapping ed
 
 The accepted component is `544657417fe9752f91b0b72a451cd9cb8d2650839824be35881e52f81f223858`. It supplies eight active updates and 25 inactive recharge ticks. Human-written hooks connect its outputs to each licensed upstream game. PARALLAXIA itself was not reverse engineered here. Meta generates adapters and the bounded host rule; the native shooter supplies its own enemies, shots, movement and collision rules.
 
+## Play and create online
+
+Open [Motion Transfer on Vercel](https://motion-transfer-rl7x.vercel.app). Judges can play the saved versions and create new PARALLAXIA remixes. New adapters pass the same 13 native and 3 browser checks in credential-free Vercel Sandbox microVMs before publication. The public whole-job cap is **$5, including at most one repair**, with two requests per browser session and the existing overall ledger limits.
+
+Hosting uses Vercel Hobby's included quotas; generation uses Meta API credits. Free-tier exhaustion can pause the service. Saved versions and the authoritative spending ledger survive backend restarts. When this workspace's `.vercel/remote-generation.json` marker is present, the local preview stays playback-only to avoid duplicating the cloud allowance. See [Vercel hosting](docs/vercel-hosting.md) for the architecture and validation.
+
 ## Repository guide
 
 | Folder | Contents |
@@ -66,13 +72,13 @@ The ten-task manifest was frozen before the real campaign at `bf7cd14`. **8/9 po
 
 Neither repair in the frozen run produced a passing goal. A separate development rule-removal job did repair a rejected nonliteral module into an accepted removal; that original failure remains recorded. The full task table, individual costs, failed development attempts, exact identities, and scope are in [the measured results](docs/live-mechanics-results.md) and [implementation record](docs/live-mechanics-progress.md).
 
-The shared $50 ledger now contains $2.16501937 in estimated usage, $1.045174398 in retained reservations, and $46.789806232 remaining, including three bounded-unknown charges. All 31 reservations and the original allowance migration remain. New $7 jobs reserve from the existing $10 reserve allocation, since the unchanged remix allocation is $5. Historical $0.15 reservations remain unchanged; the frozen campaign predates this cap increase. These are local ledger figures, not a verified provider balance or an accounting of every historical CLI charge.
+The frozen campaign's $50 ledger snapshot recorded $2.16501937 in estimated usage, $1.045174398 in retained reservations, and $46.789806232 remaining, including three bounded-unknown charges. Its 31 reservations and the original allowance migration remain preserved. Current generation is accounted for in the authoritative cloud journal. Whole-job reservations of $5 or more use the existing reserve allocation, since prior remix charges remain in the unchanged $5 remix category. Historical $0.15 reservations retain their original bounds. These are ledger estimates, not a verified provider balance or an accounting of every historical CLI charge.
 
 ## Validation and historical evidence
 
 Run `npm run typecheck`, `npm run lint`, `npm run format:check`, and `npm test`. The full suite includes browser and restricted Docker checks. `npm run verify:release -- --root reports/release-parallaxia` checks the actual PARALLAXIA release. It system-extracts the exact ZIP, blocks external requests, checks normal-speed paired replay and tests a nested base path. Actual results and limitations are recorded in [local validation](docs/local-validation.md).
 
-The historical worker publication rejection did not reproduce on this Mac. Direct worker gates and the full hosting-isolation check passed without weakening publication requirements. Rejected worker payloads are now retained for diagnosis. The final coordinator image has no Docker socket, generated-code execution, compiler or evaluator; Standard generation runs only after explicit operator configuration. Public hosting has not been deployed. See [hosting](docs/hosting.md).
+The historical worker publication rejection did not reproduce on this Mac. Direct worker gates and the full hosting-isolation check passed without weakening publication requirements. Rejected worker payloads are retained for diagnosis. The local coordinator image has no Docker socket, generated-code execution, compiler or evaluator; Standard generation runs only after explicit operator configuration. The public Vercel deployment uses separate microVM workers. See [hosting](docs/hosting.md) and [Vercel hosting](docs/vercel-hosting.md).
 
 Historical evidence stays separate:
 
@@ -87,7 +93,7 @@ The accepted Roadster release remains available with `npm run build:release -- -
 
 The left checkpoint goal failed within its bounded generation attempts. There is no arbitrary goal language, general level solver, arbitrary mid-dash state migration, second live recipient, or graze-token composition. Native enemy body contact retains its upstream position-sampled behavior; the dash does not add invulnerability, and native swept bullet checks stay active.
 
-Public deployment, repository visibility changes, outside-network verification, outreach, adoption studies, video and submission remain separate. No public play URL or outside-user benefit is claimed. Richard handles video. The supplied active plan remains in the extracted Downloads handoff; [the implementation record](docs/live-mechanics-progress.md) resolves its historical paths against this checkout.
+The public Vercel URL has passed live creation, playback, download and restart checks. Repository visibility changes, outreach, adoption studies, video and submission remain separate; no outside-user benefit is claimed. Richard handles video. The supplied active plan remains in the extracted Downloads handoff; [the implementation record](docs/live-mechanics-progress.md) resolves its historical paths against this checkout.
 
 ## Credits
 

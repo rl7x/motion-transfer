@@ -35,6 +35,7 @@
     "tools:experiment-smoke": "node scripts/experiment-smoke.mjs",
     "test": "node --test --test-concurrency=1 tests/*.test.mjs",
     "build:frontend": "npm run typecheck && node scripts/build-frontend.mjs",
+    "build:vercel": "node scripts/build-vercel.mjs",
     "build:release": "node scripts/build-release.mjs",
     "verify:release": "node scripts/verify-release.mjs",
     "smoke:hosted": "node scripts/smoke-hosted.mjs",
