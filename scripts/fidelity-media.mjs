@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
-import { renderFidelityMedia } from '../campaign/video-media.mjs';
+import { renderFidelityMedia } from '../src/campaign/video-media.mjs';
 
 export async function main(args = process.argv.slice(2)) {
   const { values } = parseArgs({ args, options: { out: { type: 'string' }, help: { type: 'boolean' } } });

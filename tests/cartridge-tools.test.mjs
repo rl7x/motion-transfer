@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { runCartridgeTool } from '../agent/tools.mjs';
+import { runCartridgeTool } from '../src/agent/tools.mjs';
 
-const trace = JSON.parse(await readFile(new URL('../experiments/dashy-dango/start-move-dash.json', import.meta.url), 'utf8'));
+const trace = JSON.parse(await readFile(new URL('../assets/experiments/dashy-dango/start-move-dash.json', import.meta.url), 'utf8'));
 
 test('inspection returns pinned metadata and bounded generated WAT', async () => {
   const { result: overview } = await runCartridgeTool('inspect_wasm', { view: 'overview', startLine: 1, lineCount: 10 });

@@ -9,7 +9,7 @@ The participant guide weighs Impact 30%, Meta AI tooling 25%, technical depth an
 Local accepted playback, as written in the root README:
 
 ```sh
-npm run build:release -- --accepted-roadster transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c
+npm run build:release -- --accepted-roadster assets/transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c
 npm run serve:release -- --root reports/release-accepted --port 4174 --base-path /motion-transfer/
 ```
 

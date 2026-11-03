@@ -2,7 +2,7 @@
 
 `reports/release` is a generated static site. It plays the saved Roadster challenge, the saved transfer it was built from, and one intact saved remix chain from `reports/lab/artifacts`. Creation is not included. The directory is gitignored and replaced only after its manifest, files, and browser check agree.
 
-The React shell reads `window.__MOTION_TRANSFER__` from `web/app/data-source.ts`. `generation` is `playback-only` and `recovery` is `saved`. `resources` is a GET catalog keyed by logical pathname. `fetchJson` uses that catalog before the network, then prefixes a real request with `basePath`. `release/boot.js` only injects that data, including `basePath` taken from the page URL. It does not patch `history`, `fetch`, or DOM prototypes. `appPath`, `logicalPathname`, and `linkHref` prefix root-absolute routes when a nested prefix is set. With no prefix, or a prefix of `/`, those helpers return the original path.
+The React shell reads `window.__MOTION_TRANSFER__` from `web/app/data-source.ts`. `generation` is `playback-only` and `recovery` is `saved`. `resources` is a GET catalog keyed by logical pathname. `fetchJson` uses that catalog before the network, then prefixes a real request with `basePath`. `src/release/boot.js` only injects that data, including `basePath` taken from the page URL. It does not patch `history`, `fetch`, or DOM prototypes. `appPath`, `logicalPathname`, and `linkHref` prefix root-absolute routes when a nested prefix is set. With no prefix, or a prefix of `/`, those helpers return the original path.
 
 Version pages keep static metadata. A challenge page mounts `web/app/release-player.tsx` from `assets/release-player.js`. That entry uses React state and removes its window listeners on cleanup. Its frame and script URLs are relative, so `versions/<id>/index.html` works on a project subpath. Non-challenge version pages keep a static frame.
 
@@ -37,7 +37,7 @@ node scripts/build-release.mjs --extra-artifacts /path/to/artifacts --challenge 
 An accepted Roadster delivery is a separate build. It does not replace `reports/release`. The tracked pin is enough on its own:
 
 ```bash
-node scripts/build-release.mjs --accepted-roadster transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c
+node scripts/build-release.mjs --accepted-roadster assets/transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c
 ```
 
 That directory must contain `delivery.json`, `journal.json`, `published/artifacts/<id>/`, and `challenge/`. The loader checks the receipt hash, requires `status: delivered` with `liveMeta: true`, `fixture: false`, and `injected: false`, reads the artifact with `readRoadsterArtifact`, and resolves `artifact.component` with `resolveComponentRef`. That package includes its publication, file, and acceptance hashes. Receipt, journal, generation, and challenge ids must match, and the challenge source must equal the resolved source. A report in a directory beside the delivery is an additional cross-check when it is present. A missing report does not stop the build. The saved component is not a fallback. A fixture, an injected run, or a malformed component package stops the build. The page says `ACCEPTED RECOVERY`. Destinations whose component id differs are left out. `--challenge` and `--extra-artifacts` cannot be combined with this flag.

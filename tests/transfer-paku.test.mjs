@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { transferPaku, prepareTransferEvidence } from '../agent/transfer-paku.mjs';
-import { digest } from '../component/build.mjs';
+import { transferPaku, prepareTransferEvidence } from '../src/agent/transfer-paku.mjs';
+import { digest } from '../src/component/build.mjs';
 
 const evidence = { component: {id:'component-fixture'}, recipient:{revision:'recipient-fixture'}, note:'Mock orchestration evidence only' };
 const candidate = { source:'export const init=()=>({}); export const step=()=>({});', mapping:'Unit test fixture', limitations:['Not a transfer implementation'] };

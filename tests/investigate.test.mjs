@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { investigate, DEFAULT_LIMITS } from '../agent/investigate.mjs';
-import { createMetaClient } from '../agent/meta-client.mjs';
+import { investigate, DEFAULT_LIMITS } from '../src/agent/investigate.mjs';
+import { createMetaClient } from '../src/agent/meta-client.mjs';
 
-const trace = JSON.parse(await readFile(new URL('../experiments/dashy-dango/start-move-dash.json', import.meta.url), 'utf8'));
+const trace = JSON.parse(await readFile(new URL('../assets/experiments/dashy-dango/start-move-dash.json', import.meta.url), 'utf8'));
 const usage = { input_tokens: 900, output_tokens: 100, input_tokens_details: { cached_tokens: 100 }, output_tokens_details: { reasoning_tokens: 80 } };
 const call = (id, name, args) => ({ type: 'function_call', call_id: id, status: 'completed', name, arguments: JSON.stringify(args) });
 const response = (id, output) => ({ id, status: 'completed', model: 'muse-wonder-1.0', output, usage });

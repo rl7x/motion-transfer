@@ -3,8 +3,8 @@ import test from 'node:test';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { createLabService } from '../lab/service.mjs';
-import { createPakuBrowser } from '../evaluator/browser-harness.mjs';
+import { createLabService } from '../src/lab/service.mjs';
+import { createPakuBrowser } from '../src/evaluator/browser-harness.mjs';
 import { acceptedRecoveryFixture } from './helpers/recovery-fixture.mjs';
 import { reveal } from './helpers/app-navigation.mjs';
 

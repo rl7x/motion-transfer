@@ -1,5 +1,24 @@
 # Implementation status and PARALLAXIA demo plan
 
+Updated November 3, 2026 after implementing M0–M4 on `feat/parallaxia-live-mechanics`, based on merged main `a0aed8e`. The active plan remains in the extracted Downloads handoff. Its old Mac paths, branch names and references to uncommitted work are historical. Main has not been changed by this implementation.
+
+| Area | Current result |
+| --- | --- |
+| Recipient and component identity | Independent PARALLAXIA artifacts, reports and notices use accepted component `54465741…`; historical Roadster URLs retain original bytes. Same accepted component runs in JUJUMP. |
+| Live generation | Real Standard Meta requests produce restricted-worker-verified, playable children; follow-ups preserve inherited intent. Refresh/restart reconnect without another provider request. |
+| Pause and compare | Browser and worker reconstruct the same checkpoint, freeze target and native/no-life-loss constraints, and reproduce both end digests at normal speed. |
+| Composition | Dash-end schedules one next-tick native-shot attempt. Native cooldown/cap apply; removing it preserves the mapping. |
+| Frozen tasks | 8/9 positive tasks passed; 1/1 infeasible task correctly unsuccessful. Left goal reached its region but lost a life after both candidates. Estimated campaign inference $0.090081, ten responses. |
+| Release | Actual generated PARALLAXIA release in `reports/release-parallaxia/`, with exact ZIPs, parent, paired replay, component, rule, notices and all diagnostics. Clean-start and nested-base-path browser checks passed. |
+| Isolation and tests | The historical publication rejection did not reproduce here; direct gates and hosting-isolation passed without relaxed requirements. See [current local validation](local-validation.md) for the full-suite checkpoint. |
+| Public availability | No deployment, visibility change, outside-network verification or submission was performed. Richard owns video. |
+
+Use [the measured results](live-mechanics-results.md) for individual times, costs, immutable versions, reproduction commands and limits, and [the implementation record](live-mechanics-progress.md) for reconciliation and retained development failures. Saved playback remains labeled reuse; practice is shielded and makes no survival claim. A finite unshielded success is not general beatability. The older contact-sheet and recovery results remain separate.
+
+## Historical assessment before live mechanics
+
+The assessment and presentation guidance below are retained to explain the original findings. Their branch, component, route, hosting and test descriptions predate M0–M4 and are superseded by the current results above. They are not another implementation or video task list.
+
 Assessment on November 3, 2026. Code checkpoint: `c90eaa9`, plus the local, uncommitted PARALLAXIA showcase changes inspected below. The feature branch is `codex/playable-motion-remixes`; [PR #7](https://github.com/rl7x/meta-ai-developer-hackathon/pull/7) contains the committed checkpoint. The PARALLAXIA changes were not committed or modified during this assessment.
 
 PARALLAXIA is the featured challenge. Roadster remains historical and accepted-delivery evidence. The current local PARALLAXIA preview works, but the public release and its recipient-specific evidence have not caught up with that change.
@@ -36,10 +55,10 @@ The highest-return work is to finish PARALLAXIA's evidence/release binding, publ
 
 ## PARALLAXIA findings that affect the claims
 
-1. **The verified challenge outcome is position.** `web/parallaxia-challenge-entry.js` enables `parallaxiaChallengeShield`; `parallaxia/sim.mjs` then records hits without applying the ordinary loss-of-life behavior. Both comparison runs are shielded. The pass/fail condition checks final horizontal position. Describe this as an assisted movement challenge; a claim that the dash is necessary to survive needs a separate unshielded check.
+1. **The verified challenge outcome is position.** `web/parallaxia-challenge-entry.js` enables `parallaxiaChallengeShield`; `src/parallaxia/sim.mjs` then records hits without applying the ordinary loss-of-life behavior. Both comparison runs are shielded. The pass/fail condition checks final horizontal position. Describe this as an assisted movement challenge; a claim that the dash is necessary to survive needs a separate unshielded check.
 2. **Phasing is a host policy.** The integration also suppresses `missShip` while dashing. The recovered component supplies movement timing and displacement. Bullet immunity is not recovered donor combat behavior.
 3. **Some displayed evidence still belongs to Roadster.** `web/experience-assets.mjs` serves new PARALLAXIA frames while exposing the saved Roadster artifact ID, report, presentation evidence, and notices on several existing routes. `web/server.mjs` likewise rebuilds a PARALLAXIA frame behind a Roadster artifact URL. Preserve the old pins and give the new delivery its own identity, matching verification and notices.
-4. **Static release selection remains Roadster-specific.** `release/collect.mjs`, `release/accepted.mjs`, and `release/materialize.mjs` still collect and describe Roadster. The existing accepted build at port 4174 is a Roadster build. Rebuilding the shared frontend alone would not complete a PARALLAXIA release.
+4. **Static release selection remains Roadster-specific.** `src/release/collect.mjs`, `src/release/accepted.mjs`, and `src/release/materialize.mjs` still collect and describe Roadster. The existing accepted build at port 4174 is a Roadster build. Rebuilding the shared frontend alone would not complete a PARALLAXIA release.
 
 None of these findings requires rewriting the historical artifacts or ledger. The current PARALLAXIA tests verify upstream file hashes, movement comparison, component execution, and a standalone browser frame; they do not establish unshielded survival or a complete recipient-specific public release.
 
@@ -78,7 +97,7 @@ Each assisted run lasts approximately 12.8 seconds. The script allocates full ru
 ### Presenter setup
 
 - Use the current local preview at `http://127.0.0.1:4173/` after starting `npm run dev:transfer`. Opening and playing do not start a model request; the adaptation submission controls can. This assessment used a temporary preview without a model client.
-- Open separate tabs for the PARALLAXIA challenge, `/donor/play`, and `/?destination=jujump`. Keep the recorded investigation and [saved component history](../components/dashy-dango-dash/README.md) ready before the timer starts.
+- Open separate tabs for the PARALLAXIA challenge, `/donor/play`, and `/?destination=jujump`. Keep the recorded investigation and [saved component history](../assets/components/dashy-dango-dash/README.md) ready before the timer starts.
 - The local preview currently says **SAVED RECOVERY**, component `1bc4250c…`. Keep that label. The accepted Roadster/JUJUMP release on port 4174 uses a different component, `54465741…`.
 - Rehearse one manual dash around the recorded demonstration's trigger, tick 636, approximately 10.6 seconds into the assisted run. A held button can retrigger after recharge; a single short press makes the intended example clearer.
 - Keep the green target and result line visible. The current evidence supports reaching that target; it does not establish that the unmodified ship would die.

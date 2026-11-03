@@ -3,8 +3,8 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { createLabService } from '../lab/service.mjs';
-import { createPakuBrowser } from '../evaluator/browser-harness.mjs';
+import { createLabService } from '../src/lab/service.mjs';
+import { createPakuBrowser } from '../src/evaluator/browser-harness.mjs';
 import { prepareVisitor, reveal } from './helpers/app-navigation.mjs';
 
 test('an offscreen Roadster receives visibility after delayed player initialization', async () => {
@@ -24,7 +24,7 @@ test('an offscreen Roadster receives visibility after delayed player initializat
       const body = (await response.text()).replace('<script>', '<script>setTimeout(() => {').replace('</script>', '}, 400);</script>');
       await route.fulfill({ response, body });
     });
-    await page.goto(harness.origin);
+    await page.goto(harness.origin+'/?destination=roadster');
     await page.waitForFunction(() => document.querySelector('#transfer-status').textContent === 'VERIFIED TRANSFER');
     await prepareVisitor(page);
     const frame = await (await page.$('#transfer-game')).contentFrame();

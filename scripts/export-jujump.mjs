@@ -1,5 +1,5 @@
 import { mkdir, writeFile } from 'node:fs/promises';
-import { buildJujumpIntegration } from '../integration/jujump.mjs';
+import { buildJujumpIntegration } from '../src/integration/jujump.mjs';
 
 const project = await buildJujumpIntegration();
 const output = new URL('../reports/exports/', import.meta.url);

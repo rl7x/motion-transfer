@@ -3,8 +3,8 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
-import { scoreFidelityStudy } from '../benchmark/fidelity.mjs';
-import { digest } from '../component/build.mjs';
+import { scoreFidelityStudy } from '../src/benchmark/fidelity.mjs';
+import { digest } from '../src/component/build.mjs';
 
 export const SUPPLIED_DEFAULTS = Object.freeze({
   walkingSpeed: 2, dashDistance: 60, cooldownTicks: 25, initialCooldownTicks: 10,

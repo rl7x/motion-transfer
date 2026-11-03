@@ -3,10 +3,10 @@ import { access, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promi
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { generateRoadsterTransfer } from '../agent/transfer-roadster.mjs';
-import { createPhaseBudget } from '../campaign/phase-budget.mjs';
-import { REMIX_PROMPTS, canonicalIntent, roadsterGenerator, runRemixCampaign } from '../campaign/remix-campaign.mjs';
-import { readRoadsterArtifact } from '../roadster/artifact.mjs';
+import { generateRoadsterTransfer } from '../src/agent/transfer-roadster.mjs';
+import { createPhaseBudget } from '../src/campaign/phase-budget.mjs';
+import { REMIX_PROMPTS, canonicalIntent, roadsterGenerator, runRemixCampaign } from '../src/campaign/remix-campaign.mjs';
+import { readRoadsterArtifact } from '../src/roadster/artifact.mjs';
 import { main } from '../scripts/remix-campaign.mjs';
 
 function savedParent() {
@@ -105,7 +105,7 @@ test('the frozen set checks full intents and follow-up lineage, not only a compl
   assert.equal(60 * REMIX_PROMPTS.find(item => item.id === 'half-distance').expectedIntent.unitScale, 3);
   assert.equal(60 * REMIX_PROMPTS.find(item => item.id === 'nine-meter').expectedIntent.unitScale, 9);
   assert.equal(roadsterGenerator, generateRoadsterTransfer);
-  const implementation = await readFile(new URL('../campaign/remix-campaign.mjs', import.meta.url), 'utf8');
+  const implementation = await readFile(new URL('../src/campaign/remix-campaign.mjs', import.meta.url), 'utf8');
   assert.match(implementation, /generateTransfer = generateRoadsterTransfer/);
   assert.equal(implementation.includes('verifyBrowser'), false);
 });

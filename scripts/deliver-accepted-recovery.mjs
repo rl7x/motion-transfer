@@ -1,13 +1,14 @@
+import { repositoryPath } from '../src/paths.mjs';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { pathToFileURL } from 'node:url';
-import { digest } from '../component/build.mjs';
-import { readRecoveryCampaign } from '../campaign/recovery-runner.mjs';
-import { finishRecoveryIntegration } from '../integration/recovery.mjs';
-import { createIntegrationPublication } from '../integration/publication.mjs';
+import { digest } from '../src/component/build.mjs';
+import { readRecoveryCampaign } from '../src/campaign/recovery-runner.mjs';
+import { finishRecoveryIntegration } from '../src/integration/recovery.mjs';
+import { createIntegrationPublication } from '../src/integration/publication.mjs';
 
 const RECEIPT_NAME = 'delivery-receipt.json';
 const SOURCE_PATHS = [
@@ -46,7 +47,7 @@ export async function deliverySource() {
   const commit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
   if (!/^[a-f0-9]{40}$/.test(commit)) throw Error('Invalid delivery source commit');
   const files = {};
-  for (const path of SOURCE_PATHS) files[path] = digest(await readFile(join(root, path)));
+  for (const path of SOURCE_PATHS) files[path] = digest(await readFile(join(root, repositoryPath(path))));
   return { commit, hash: digest(JSON.stringify(files)) };
 }
 

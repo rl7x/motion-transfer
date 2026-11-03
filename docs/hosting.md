@@ -8,11 +8,11 @@ Playback and creation are separate. The coordinator admits requests, talks to th
 
 | Process | Where it runs | What it can do |
 | --- | --- | --- |
-| Coordinator (`hosting/serve.mjs`) | Public HTTP process. The Compose service has no Docker socket. | Host, origin, and proxy checks; invite and session quotas; Standard Muse Spark requests; artifact publication. |
-| Broker (`hosting/broker-main.mjs`) | Host only. | Accepts one typed job over a Unix socket and starts one locked-down container. |
-| Worker (`hosting/worker.mjs`) | Verifier container. | Runs the existing Roadster native and browser verifiers, or a fixed isolation probe. |
+| Coordinator (`src/hosting/serve.mjs`) | Public HTTP process. The Compose service has no Docker socket. | Host, origin, and proxy checks; invite and session quotas; Standard Muse Spark requests; artifact publication. |
+| Broker (`src/hosting/broker-main.mjs`) | Host only. | Accepts one typed job over a Unix socket and starts one locked-down container. |
+| Worker (`src/hosting/worker.mjs`) | Verifier container. | Runs the allowlisted Roadster or PARALLAXIA native and browser verifiers, or a fixed isolation probe. |
 
-The worker image is `motion-transfer-verifier:local`, built from `Dockerfile` on `node:22-bookworm` with Playwright `1.64.1` from `package-lock.json`. The coordinator image is `motion-transfer-coordinator:local` from `Dockerfile.coordinator`. A build stage runs `node scripts/build-creator.mjs` and the final image copies only that HTML. The final image does not install npm dependencies and does not contain the broker, worker, evaluator, or compiler.
+The worker image is `motion-transfer-verifier:local`, built from `Dockerfile` on `node:22-bookworm` with Playwright `1.64.1` from `package-lock.json`. The coordinator image is `motion-transfer-coordinator:local` from `Dockerfile.coordinator`. A build stage runs `node scripts/build-creator.mjs` and the final image copies the trusted HTML and compiled replay UI. The final image does not install npm dependencies and does not contain the broker, worker, evaluator, or compiler.
 
 `compose.yaml` publishes the coordinator on `127.0.0.1:8080` only. The verifier service is behind the `image-only` profile so `docker compose up` does not start it. Do not point Compose at a production host from this tree.
 
@@ -37,13 +37,13 @@ Stdout is capped at 64 KB. A verified frame written to `/output` is capped at 8 
 
 ## Public API
 
-`node hosting/serve.mjs` is the shipped production process. It binds the coordinator, the exact host/origin policy, and a Unix-socket broker client when `HOSTING_BROKER_SOCKET` is set. This release passes `client: null` and `releasePublished: false`, so remix admission fails closed and the public reserve is not charged. Playback does not need a provider client or a running broker. The dev preview server remains a separate localhost tool.
+`node src/hosting/serve.mjs` is the shipped production process. It binds the coordinator, the exact host/origin policy, and a Unix-socket broker client when `HOSTING_BROKER_SOCKET` is set. Without explicit operator configuration, this process passes no model client and admission fails closed. With valid operator configuration and `MODEL_API_KEY`, it constructs the real Standard Meta client. `releasePublished` remains false: this implementation does not deploy, and generation uses the existing reserve allocation within the $50 phase allowance rather than the public category. Playback does not need a provider client or a running broker. The dev preview server remains a separate localhost tool.
 
-The local generator and the coordinator share `agent/roadster-request.mjs` for the Roadster tool schema, instructions, and evidence request. The coordinator does not import the evaluator or compile generated code. A supplied generation client also requires an existing phase ledger. The coordinator reserves the whole $0.15 remix cap on that ledger before counting tokens or calling the provider, then settles known usage. An unknown, timed-out, or aborted call stays reserved and blocks later calls. A restarted process does not retry the job. Tests that exercise this path pass `localVerification: true`, an explicit temporary ledger, and the in-process fake client. That flag is not a free provider. `serve.mjs` never sets it and never constructs a client.
+The coordinator uses `src/agent/recipient-request.mjs` to select the actual recipient contract. Roadster keeps its original request builder. PARALLAXIA uses world units, native 60 Hz simulation, actual facing and unshielded collision policies. The coordinator does not import the evaluator or compile generated code. A supplied generation client also requires an existing phase ledger. The coordinator reserves the whole $7 job cap on that ledger before counting tokens or calling the provider, then settles known usage. The $7 envelope uses the existing $10 reserve allocation; the unchanged remix allocation is only $5. Every prior reservation and the single $50 allowance migration remain intact. The cap does not increase the phase total. An unknown, timed-out, or aborted call stays reserved and blocks later calls. A restarted process does not retry the job. Tests that exercise this path pass `localVerification: true`, an explicit temporary ledger, and the in-process fake client. That flag is not a free provider. `serve.mjs` never sets the local-verification flag; production enablement requires its separate operator confirmations.
 
-A later operator enablement requires `HOSTING_GENERATION_CONFIRMATION=enable-hosted-standard-generation`, `HOSTING_STANDARD_CLIENT=operator`, a confirmed public origin, `HOSTING_PHASE_LEDGER` set to the existing shared ledger `reports/motion-transfer-phase`, and `HOSTING_SHARED_LEDGER_CONFIRMATION=charge-shared-public-reserve`. The model is Standard `muse-spark-1.3`. This build exits before constructing a client or opening that ledger. A missing ledger is not created. Local tests use a temporary ledger and `localVerification: true`; that path cannot authorize the shared file.
+A later operator enablement requires `HOSTING_GENERATION_CONFIRMATION=enable-hosted-standard-generation`, `HOSTING_STANDARD_CLIENT=operator`, a confirmed public origin, `HOSTING_PHASE_LEDGER` set to the existing shared ledger `reports/motion-transfer-phase`, and `HOSTING_SHARED_LEDGER_CONFIRMATION=charge-shared-public-reserve`. The model is Standard `muse-spark-1.3`. Only after all operator checks pass is the real Standard client constructed. A missing ledger is not created. The shared ledger additionally requires the explicit confirmation token. The local PARALLAXIA operator flow supplies that confirmation for the reconciled ledger; ordinary unit tests use temporary ledgers.
 
-`HOSTING_PARENT_ARTIFACT` optionally seeds one verified parent. The directory name must be an allowlisted artifact id, and the directory must be a real Roadster artifact: `manifest.json` plus `adapter.js`, `adapter.ts`, `frame.html`, `generation.json`, `notices.txt`, and `verification.json`. Seeding checks the manifest id and those file hashes, then checks the adapter source, frame, component, and recipient revision against that pin. The saved pin is `transfers/roadster/versions/6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38`. The accepted pin is `transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c/published/artifacts/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c`. A mismatch is not stored. Public POST bodies cannot include source. `HOSTING_CREATOR_ROOT`, or `web/dist/creator` when that directory exists, serves its `index.html` at `GET /` and under `/creator/`. The coordinator does not execute that page. `GET /api/catalog` is the catalog JSON. When no page is configured, `GET /` stays the catalog JSON.
+`HOSTING_PARENT_ARTIFACT` optionally seeds one verified parent. The directory name must be an allowlisted artifact id, and the directory must be a real Roadster artifact: `manifest.json` plus `adapter.js`, `adapter.ts`, `frame.html`, `generation.json`, `notices.txt`, and `verification.json`. Seeding checks the manifest id and those file hashes, then checks the adapter source, frame, component, and recipient revision against that pin. The saved pin is `assets/transfers/roadster/versions/6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38`. The accepted pin is `assets/transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c/published/artifacts/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c`. A mismatch is not stored. Public POST bodies cannot include source. `HOSTING_CREATOR_ROOT`, or `web/dist/creator` when that directory exists, serves its `index.html` at `GET /` and under `/creator/`. The coordinator does not execute that page. `GET /api/catalog` is the catalog JSON. When no page is configured, `GET /` stays the catalog JSON.
 
 `checkPublicEdge` is the host and proxy check without the route allowlist, exported for a caller that already has its own playback routes.
 
@@ -65,10 +65,10 @@ A follow-up uses the published artifact id as its parent. The receipt stores the
 - Localhost is rejected as a public host, origin, or artifact redirect. Artifact responses never send `Location`.
 - `POST /api/investigations`, `POST /api/roadster/transfers`, and `/recovery-projects/` are rejected. Broad recovery stays off.
 - Remix creation requires an invite (`x-invite-code`), `adultConfirmed: true`, a session id, and an idempotency key. A session gets two jobs. One job runs at a time.
-- The model is Standard `muse-spark-1.3`. Contributor mode is not a public-traffic model. Any generation client reserves the whole $0.15 remix cap on an explicit existing ledger before the provider call. The public category stays unused.
+- The model is Standard `muse-spark-1.3`. Contributor mode is not a public-traffic model. Any generation client reserves the whole $7 job cap on an explicit existing ledger before the provider call. The public category stays unused.
 - `GET /privacy` is the short retention note. Playback does not call a model.
 
-The shared phase ledger is `reports/motion-transfer-phase`. `reservePublicGeneration` requires that explicit directory. It throws while `releasePublished` is false, and charging the shared directory also requires the confirmation string `charge-shared-public-reserve`. A missing shared ledger is not created. This release never passes either gate. The $15 public category stays unused. Tests that exercise the helper use a temporary ledger.
+The shared phase ledger is `reports/motion-transfer-phase`. `reservePublicGeneration` requires that explicit directory. It throws while `releasePublished` is false, and charging the shared directory also requires the confirmation string `charge-shared-public-reserve`. A missing shared ledger is not created. The separate public-reserve helper is not used by the PARALLAXIA flow. The $15 public category stays unused. Tests that exercise the helper use a temporary ledger.
 
 ## Local commands
 
@@ -77,7 +77,7 @@ The root package provides the corresponding hosting script aliases.
 ```sh
 node --test --test-concurrency=1 tests/hosting.test.mjs
 node --test --test-concurrency=1 tests/hosting-isolation.test.mjs
-node hosting/broker-main.mjs
+node src/hosting/broker-main.mjs
 docker build -f Dockerfile -t motion-transfer-verifier:local .
 docker build -f Dockerfile.coordinator -t motion-transfer-coordinator:local .
 ```
@@ -85,3 +85,27 @@ docker build -f Dockerfile.coordinator -t motion-transfer-coordinator:local .
 Available aliases: `verify:hosting`, `verify:hosting:isolation`, `hosting:broker`, `hosting:image`, and `hosting:coordinator-image`. No new npm dependency is required. Docker and the pinned Node 22 image are external.
 
 `HOSTING_BROKER_SOCKET` must be set for the coordinator to reach the host broker. `HOSTING_INVITE_CODES` is required before any remix is admitted. Neither value belongs in the repository.
+
+## PARALLAXIA local workflow
+
+After reconciling `reports/motion-transfer-phase/phase-budget.json`, build the verifier with `npm run hosting:image` and run `npm run dev:transfer`. Configure `MODEL_API_KEY` in the ignored `.env`. Playback and accepted JUJUMP reuse are free of model requests. Clicking Generate sends a real Standard request with the exact parent mapping/source. Native and Canvas checks run inside Docker before a child can publish.
+
+One $7 reservation covers the first candidate and at most one feedback-driven repair. Raw requests, responses, failed checks and returned usage are retained under the local live store; uncertain calls retain their bound and are never silently retried. A browser refresh uses the same durable job/key, and a server restart preserves terminal results and fails incomplete jobs without issuing another request. Parents remain available.
+
+PARALLAXIA roots may be seeded from their independently verified artifact directory. The seed checks artifact/file hashes, the accepted component pin, source/frame evidence and the pinned recipient revision. Public request bodies cannot supply a root, source, component or recipient. Generated child downloads additionally include source, notices, generation history and receipts as `download.zip`; the existing HTML download remains compatible.
+
+Validation on this Mac: the formerly failing `npm run verify:hosting:isolation` passed with no skips (218.24 seconds). The direct Roadster worker response also passed all eight browser gates; the historical other-Mac failure could not be reproduced. Rejected payloads are now retained with failed attempts rather than discarded behind the generic publication error. No isolation check was weakened.
+
+The persistent age/privacy/model banner was removed at Richard’s request. Playing has no age dialog. A first new creation uses a focused age-confirmation dialog; cancel and Escape send no request, and confirmation resumes the pending creation once. Backend age, invite, host/origin and quota checks remain. The current whole-job cap is returned in status and displayed by the React request panel. Historical frozen-task v1 retains its explicit $0.15 cap and measurements.
+
+## Local request limits
+
+The local operator preview no longer applies the public two-request session quota. Its coordinator uses an explicit local-only unlimited session setting; public coordinators keep the two-request default and reject an unlimited setting. Frozen-task v1 still explicitly uses two jobs per session. The $7 whole-job reservation, existing $50 ledger, reserve allocation, one active job at a time, worker isolation and uncertainty checks remain enforced. Failed, unsupported and cancelled jobs stay in history.
+
+A definitive HTTP admission rejection (including quota, budget or invalid-request errors) stops automatic retries and restores the editable prompt. A transport or server error continues reconnecting with the same idempotency key. The UI only says “reconnecting” while it is actually retrying. Rejections are not provider charges; admitted unsupported or cancelled jobs may already have returned usage and that usage remains recorded.
+
+## Saved generation history
+
+`GET /api/catalog` includes a `versions` list derived from immutable publications and their durable jobs: request text, creation time, mapping, estimated cost, parent and artifact identities, recipient/component identity, and ready or unsuccessful status. The existing passing `artifacts` catalog still excludes experiments that failed their fixed goal. No new provider request, verification, source rebuild, or publication is needed to enumerate or reopen a saved version.
+
+The PARALLAXIA workbench shows a Saved generations selector above the player. It refreshes after a publication, can be refreshed manually, and reopens exact version URLs with matching download/verification links. Selecting a failed experiment opens its recorded comparison and retains the original playable integration. The same catalog data is injected into PARALLAXIA static releases, including clearly labeled unsuccessful diagnostics.

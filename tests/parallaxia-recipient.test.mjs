@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createServer } from 'node:http';
 import { chromium } from 'playwright';
-import { loadParallaxia } from '../recipients/parallaxia/load.mjs';
-import { loadSavedRoadster } from '../roadster/saved.mjs';
-import { buildParallaxiaChallenge } from '../parallaxia/challenge.mjs';
-import { landingInTarget } from '../parallaxia/challenge-contract.mjs';
-import { digest } from '../component/build.mjs';
+import { loadParallaxia } from '../src/recipients/parallaxia/load.mjs';
+import { loadSavedRoadster } from '../src/roadster/saved.mjs';
+import { buildParallaxiaChallenge } from '../src/parallaxia/challenge.mjs';
+import { landingInTarget } from '../src/parallaxia/challenge-contract.mjs';
+import { digest } from '../src/component/build.mjs';
 
 test('PARALLAXIA recipient lock verifies all 29 upstream files and MIT license', async () => {
   const recipient = await loadParallaxia();

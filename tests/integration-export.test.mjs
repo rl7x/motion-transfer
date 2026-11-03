@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { buildJujumpIntegration } from '../integration/jujump.mjs';
-import { projectZip } from '../integration/archive.mjs';
-import { loadJujumpAdapter } from '../transfer/jujump.mjs';
-import { verifyJujumpBrowser } from '../evaluator/jujump-browser.mjs';
-import { extractIntegration, serveIntegration, integrationBrowser, exec, cleanEnv } from '../evaluator/integration-harness.mjs';
+import { buildJujumpIntegration } from '../src/integration/jujump.mjs';
+import { projectZip } from '../src/integration/archive.mjs';
+import { loadJujumpAdapter } from '../src/transfer/jujump.mjs';
+import { verifyJujumpBrowser } from '../src/evaluator/jujump-browser.mjs';
+import { extractIntegration, serveIntegration, integrationBrowser, exec, cleanEnv } from '../src/evaluator/integration-harness.mjs';
 
 test('the deterministic ZIP preserves exact component identity and detects edits after extraction', async () => {
   const project = await buildJujumpIntegration(), again = await buildJujumpIntegration();

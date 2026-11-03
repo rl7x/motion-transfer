@@ -1,8 +1,8 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { mkdir, writeFile } from 'node:fs/promises';
-import { currentBenchmarkProtocol } from '../benchmark/protocol.mjs';
-import { digest } from '../component/build.mjs';
+import { currentBenchmarkProtocol } from '../src/benchmark/protocol.mjs';
+import { digest } from '../src/component/build.mjs';
 
 const exec = promisify(execFile), protocol = await currentBenchmarkProtocol();
 const checks = [];

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { replayOrdinaryStunt } from '../evaluator/roadster-browser.mjs';
+import { replayOrdinaryStunt } from '../src/evaluator/roadster-browser.mjs';
 
 test('the actual browser replay preserves sampled ticks with bounded render calls', () => {
   let tick = -1;

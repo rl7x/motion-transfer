@@ -4,7 +4,9 @@ WORKDIR /src
 COPY package.json package-lock.json ./
 COPY scripts/build-creator.mjs ./scripts/build-creator.mjs
 COPY web/tsconfig.json ./web/tsconfig.json
-COPY web/app/creator ./web/app/creator
+COPY web/app ./web/app
+COPY web/build.mjs ./web/build.mjs
+COPY web/style.css ./web/style.css
 RUN npm ci \
     && node scripts/build-creator.mjs /out/creator \
     && test -s /out/creator/index.html
@@ -16,14 +18,18 @@ RUN groupadd --gid 10001 verifier \
 
 WORKDIR /app
 
-COPY hosting/constants.mjs hosting/errors.mjs hosting/protocol.mjs hosting/policy.mjs hosting/queue.mjs hosting/publish.mjs hosting/coordinator.mjs hosting/server.mjs hosting/serve.mjs hosting/broker-client.mjs hosting/generation.mjs hosting/seed-parent.mjs hosting/component-pin.mjs ./hosting/
-COPY campaign/phase-budget.mjs ./campaign/phase-budget.mjs
-COPY agent/accounting.mjs agent/roadster-request.mjs ./agent/
-COPY roadster/port.mjs ./roadster/port.mjs
-COPY components/dashy-dango-dash/component.ts components/dashy-dango-dash/component.js components/dashy-dango-dash/contract.json components/dashy-dango-dash/provenance.json ./components/dashy-dango-dash/
-COPY recipients/roadster/recipient.lock.json ./recipients/roadster/recipient.lock.json
+COPY src/paths.mjs ./src/paths.mjs
+COPY src/hosting/constants.mjs src/hosting/errors.mjs src/hosting/protocol.mjs src/hosting/policy.mjs src/hosting/queue.mjs src/hosting/publish.mjs src/hosting/coordinator.mjs src/hosting/server.mjs src/hosting/serve.mjs src/hosting/broker-client.mjs src/hosting/generation.mjs src/hosting/seed-parent.mjs src/hosting/component-pin.mjs src/hosting/export.mjs ./src/hosting/
+COPY src/release/zip.mjs src/release/sha.mjs ./src/release/
+COPY src/campaign/phase-budget.mjs ./src/campaign/phase-budget.mjs
+COPY src/agent/accounting.mjs src/agent/roadster-request.mjs src/agent/recipient-request.mjs src/agent/meta-client.mjs ./src/agent/
+COPY src/parallaxia/replay.mjs ./src/parallaxia/replay.mjs
+COPY src/roadster/port.mjs ./src/roadster/port.mjs
+COPY assets/components/dashy-dango-dash/component.ts assets/components/dashy-dango-dash/component.js assets/components/dashy-dango-dash/contract.json assets/components/dashy-dango-dash/provenance.json ./assets/components/dashy-dango-dash/
+COPY assets/recipients/roadster/recipient.lock.json ./assets/recipients/roadster/recipient.lock.json
+COPY assets/recipients/parallaxia/recipient.lock.json ./assets/recipients/parallaxia/recipient.lock.json
 COPY --from=creator /out/creator ./web/dist/creator
 
 USER 10001:10001
 EXPOSE 8080
-CMD ["node", "hosting/serve.mjs"]
+CMD ["node", "src/hosting/serve.mjs"]

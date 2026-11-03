@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import wabtFactory from 'wabt';
-import { BUTTONS, createReplayRuntime } from '../runtime/replay.mjs';
-import { replayTrace, validateTrace } from '../runtime/trace.mjs';
+import { BUTTONS, createReplayRuntime } from '../src/runtime/replay.mjs';
+import { replayTrace, validateTrace } from '../src/runtime/trace.mjs';
 
-const cartridge = await readFile(new URL('../targets/dashy-dango/cart.wasm', import.meta.url));
-const trace = JSON.parse(await readFile(new URL('../experiments/dashy-dango/start-move-dash.json', import.meta.url), 'utf8'));
+const cartridge = await readFile(new URL('../assets/targets/dashy-dango/cart.wasm', import.meta.url));
+const trace = JSON.parse(await readFile(new URL('../assets/experiments/dashy-dango/start-move-dash.json', import.meta.url), 'utf8'));
 const wabt = await wabtFactory();
 
 function compile(wat) {

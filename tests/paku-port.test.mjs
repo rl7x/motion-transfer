@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { compileAdapter } from '../transfer/adapter.mjs';
+import { compileAdapter } from '../src/transfer/adapter.mjs';
 import { createPakuBrowser, replayPaku, startPaku } from './helpers/paku-browser.mjs';
 
 // Deliberately incomplete adapters test the host port only. They cannot pass

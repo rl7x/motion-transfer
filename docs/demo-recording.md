@@ -42,7 +42,7 @@ Outputs, all under ignored `reports/demo/`:
 - `provenance.json` — shot paths, artifact ids, local URLs, ffmpeg version, commands, and checks
 - `clips/`, `segments/`, `stills/`, `cards/`, and `playback-artifacts/` — intermediate files
 
-Capture identity-checks the committed Roadster child in `benchmark/recordings/eb9ac874-30ad-4a0b-9bcc-78f8c25f539a/evidence/6461b9fba4d0d129297028ae18b0cceade49cfca808c9e8e5482a11ed25eac55.json` and plays that copy. It does not read or write `reports/lab`. If that evidence is missing, the remix shot is the form and is labeled `FORM ONLY`.
+Capture identity-checks the committed Roadster child in `assets/benchmark/recordings/eb9ac874-30ad-4a0b-9bcc-78f8c25f539a/evidence/6461b9fba4d0d129297028ae18b0cceade49cfca808c9e8e5482a11ed25eac55.json` and plays that copy. It does not read or write `reports/lab`. If that evidence is missing, the remix shot is the form and is labeled `FORM ONLY`.
 
 This ffmpeg build has no `drawtext` filter. Render draws captions as Chrome PNGs and overlays them. It does not install another ffmpeg.
 

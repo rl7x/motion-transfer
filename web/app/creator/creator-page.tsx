@@ -11,6 +11,9 @@ import {
 import { intentLines, statusText, terminalStatus } from './format';
 import { readSession, writeSession } from './session';
 import type { Catalog, CatalogVersion, CreatorSession, RemixJob } from './types';
+import { MetaChip } from '../arcade/meta-chip';
+import { MetaOutputPanel } from '../arcade/meta-output';
+import { PipelineTrack } from '../arcade/pipeline-track';
 
 const EXAMPLES = [
   ['Half as long', 'Make the dash half as long.'],
@@ -54,6 +57,7 @@ export function CreatorPage() {
   const [prompt, setPrompt] = useState(() => readSession().pending?.prompt ?? '');
   const [shareFallback, setShareFallback] = useState<string | null>(null);
   const [copyNote, setCopyNote] = useState<string | null>(null);
+  const [inspecting, setInspecting] = useState(false);
   const [channel] = useState(() => crypto.randomUUID());
   const frame = useRef<HTMLIFrameElement>(null);
   const replayed = useRef(false);
@@ -248,11 +252,12 @@ export function CreatorPage() {
     !active;
 
   return (
-    <main id="creator">
-      <header>
+    <main id="creator" className="arcade creator">
+      <header className="creator__bar">
         <p className="wordmark">
-          MOTION <span>TRANSFER</span>
+          motion<span>/</span>transfer
         </p>
+        <MetaChip>Meta Model API</MetaChip>
         <p className="edition">PLAY A SAVED VERSION</p>
       </header>
       <p id="creator-policy">
@@ -346,6 +351,21 @@ export function CreatorPage() {
           {active?.report && <a href={active.report}>Report</a>}
           {active?.notices && <a href={active.notices}>Notices</a>}
         </div>
+        {active && catalog?.artifacts.some((artifact) => artifact.id === active.id) && (
+          <button
+            type="button"
+            className="btn btn--ghost btn--small"
+            aria-expanded={inspecting}
+            onClick={() => setInspecting((value) => !value)}
+          >
+            {inspecting ? 'Hide what Meta wrote' : 'What Meta wrote'}
+          </button>
+        )}
+        {inspecting &&
+          active &&
+          catalog?.artifacts.some((artifact) => artifact.id === active.id) && (
+            <MetaOutputPanel artifactId={active.id} />
+          )}
         {copyNote && <p id="creator-copy-note">{copyNote}</p>}
         {shareFallback && (
           <input
@@ -398,6 +418,13 @@ export function CreatorPage() {
         <p id="creator-status" role="status" data-job-status={job.status}>
           {statusText(job.status)}
         </p>
+      )}
+      {job?.createdAt && (
+        <PipelineTrack
+          job={{ ...job, createdAt: job.createdAt, finishedAt: job.finishedAt ?? null }}
+          experiment={false}
+          now={Date.now()}
+        />
       )}
       {(jobError || job?.error) && (
         <p id="creator-error" role="alert">

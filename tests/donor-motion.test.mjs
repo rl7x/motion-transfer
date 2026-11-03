@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { loadTarget } from '../agent/target.mjs';
-import { createReplayRuntime } from '../runtime/replay.mjs';
-import { observeDonorMotion, recordDonorMotion } from '../evaluator/dashy-dango.mjs';
+import { loadTarget } from '../src/agent/target.mjs';
+import { createReplayRuntime } from '../src/runtime/replay.mjs';
+import { observeDonorMotion, recordDonorMotion } from '../src/evaluator/dashy-dango.mjs';
 
 test('mapped observations follow the live entity across allocations without changing memory', async () => {
   const runtime = await createReplayRuntime((await loadTarget()).bytes);

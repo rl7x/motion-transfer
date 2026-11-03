@@ -5,16 +5,16 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { freezeFidelityStudy, scoreFidelityStudy } from '../benchmark/fidelity.mjs';
-import { digest } from '../component/build.mjs';
+import { freezeFidelityStudy, scoreFidelityStudy } from '../src/benchmark/fidelity.mjs';
+import { digest } from '../src/component/build.mjs';
 import {
   COMPARISON_EXPLANATION, SUPPLIED_DEFAULTS, main, renderComparisonChart, scoreVideoComparison,
 } from '../scripts/score-video-comparison.mjs';
 
-const savedSource = fileURLToPath(new URL('../components/dashy-dango-dash/component.ts', import.meta.url));
-const savedConfig = fileURLToPath(new URL('../components/dashy-dango-dash/contract.json', import.meta.url));
+const savedSource = fileURLToPath(new URL('../assets/components/dashy-dango-dash/component.ts', import.meta.url));
+const savedConfig = fileURLToPath(new URL('../assets/components/dashy-dango-dash/contract.json', import.meta.url));
 const realCampaign = fileURLToPath(new URL('../reports/motion-transfer-phase/video-001/', import.meta.url));
-const pinnedComparison = fileURLToPath(new URL('../benchmark/fidelity-recordings/f8ced9b80f59333d528caa226ae8576643d465293e8b64a33dd9c5fdc783f1c5/', import.meta.url));
+const pinnedComparison = fileURLToPath(new URL('../assets/benchmark/fidelity-recordings/f8ced9b80f59333d528caa226ae8576643d465293e8b64a33dd9c5fdc783f1c5/', import.meta.url));
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const scoring = 'position within 0.25 source pixels; exact ownership and output events; no internal timer scoring';
 const scope = 'Finite comparison against the donor, not recovery acceptance or a productivity estimate. Do not repair candidates after observing this suite.';

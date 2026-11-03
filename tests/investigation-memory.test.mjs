@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import wabtFactory from 'wabt';
-import {createInvestigationSession} from '../runtime/investigation-session.mjs';
-import {writeMemoryValue} from '../runtime/memory.mjs';
-import {loadTarget} from '../agent/target.mjs';
-import {createReplayRuntime} from '../runtime/replay.mjs';
-import {observeDonorMotion} from '../runtime/donor-observation.mjs';
+import {createInvestigationSession} from '../src/runtime/investigation-session.mjs';
+import {writeMemoryValue} from '../src/runtime/memory.mjs';
+import {loadTarget} from '../src/agent/target.mjs';
+import {createReplayRuntime} from '../src/runtime/replay.mjs';
+import {observeDonorMotion} from '../src/runtime/donor-observation.mjs';
 
 async function fixture(){
   const wabt=await wabtFactory();

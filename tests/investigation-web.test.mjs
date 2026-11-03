@@ -3,9 +3,9 @@ import test from 'node:test';
 import {mkdtemp,rm,readFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {createCartridgeTools} from '../agent/tools.mjs';
-import {createLabService} from '../lab/service.mjs';
-import {createPakuBrowser} from '../evaluator/browser-harness.mjs';
+import {createCartridgeTools} from '../src/agent/tools.mjs';
+import {createLabService} from '../src/lab/service.mjs';
+import {createPakuBrowser} from '../src/evaluator/browser-harness.mjs';
 import {reveal} from './helpers/app-navigation.mjs';
 
 test('desktop and mobile investigation views expose actual branches, edits, images, evidence and source exports',async()=>{

@@ -3,8 +3,8 @@ import { stat } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { pathToFileURL } from 'node:url';
-import { createPhaseBudget } from '../campaign/phase-budget.mjs';
-import { runRecoveryCampaign } from '../campaign/recovery-runner.mjs';
+import { createPhaseBudget } from '../src/campaign/phase-budget.mjs';
+import { runRecoveryCampaign } from '../src/campaign/recovery-runner.mjs';
 
 export async function main(args = process.argv.slice(2)) {
   const { values } = parseArgs({ args, options: {

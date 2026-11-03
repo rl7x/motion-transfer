@@ -3,9 +3,9 @@ import test from 'node:test';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { createPhaseBudget } from '../campaign/phase-budget.mjs';
-import { runRecoveryCampaign, readRecoveryCampaign, wilsonInterval } from '../campaign/recovery-runner.mjs';
-import { digest } from '../component/build.mjs';
+import { createPhaseBudget } from '../src/campaign/phase-budget.mjs';
+import { runRecoveryCampaign, readRecoveryCampaign, wilsonInterval } from '../src/campaign/recovery-runner.mjs';
+import { digest } from '../src/component/build.mjs';
 import { main } from '../scripts/recovery-campaign.mjs';
 
 async function setup(t) {

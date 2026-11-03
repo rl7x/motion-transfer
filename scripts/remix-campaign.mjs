@@ -3,9 +3,9 @@ import { stat } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { pathToFileURL } from 'node:url';
-import { createPhaseBudget } from '../campaign/phase-budget.mjs';
-import { SHARED_PHASE_LEDGER, runRemixCampaign } from '../campaign/remix-campaign.mjs';
-import { loadSavedRoadster } from '../roadster/saved.mjs';
+import { createPhaseBudget } from '../src/campaign/phase-budget.mjs';
+import { SHARED_PHASE_LEDGER, runRemixCampaign } from '../src/campaign/remix-campaign.mjs';
+import { loadSavedRoadster } from '../src/roadster/saved.mjs';
 
 export async function main(args = process.argv.slice(2)) {
   const { values } = parseArgs({ args, options: {

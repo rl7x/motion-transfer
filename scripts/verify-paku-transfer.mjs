@@ -1,11 +1,11 @@
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { compileAdapter } from '../transfer/adapter.mjs';
-import { checkPakuGeneration, loadPakuTransfer, savePakuTransfer } from '../transfer/saved-paku.mjs';
-import { pakuEnvironment } from '../transfer/paku-environment.mjs';
-import { evaluatePakuAdapter } from '../evaluator/paku-adapter.mjs';
-import { verifyPakuBrowser } from '../evaluator/paku-browser.mjs';
+import { compileAdapter } from '../src/transfer/adapter.mjs';
+import { checkPakuGeneration, loadPakuTransfer, savePakuTransfer } from '../src/transfer/saved-paku.mjs';
+import { pakuEnvironment } from '../src/transfer/paku-environment.mjs';
+import { evaluatePakuAdapter } from '../src/evaluator/paku-adapter.mjs';
+import { verifyPakuBrowser } from '../src/evaluator/paku-browser.mjs';
 
 async function main() {
   const args = process.argv.slice(2);

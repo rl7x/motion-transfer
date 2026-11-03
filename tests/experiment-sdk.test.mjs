@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {createCartridgeTools} from '../agent/tools.mjs';
-import {digest} from '../component/build.mjs';
-import {evidenceHistory} from '../agent/evidence.mjs';
+import {createCartridgeTools} from '../src/agent/tools.mjs';
+import {digest} from '../src/component/build.mjs';
+import {evidenceHistory} from '../src/agent/evidence.mjs';
 
 const source=`
 const overview=await sdk.static.inspectWasm({view:'overview',startLine:1,lineCount:5});

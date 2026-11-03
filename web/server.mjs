@@ -1,22 +1,29 @@
+import { addReplayToArchive } from '../src/hosting/export.mjs';
+import { parseRemixBody } from '../src/hosting/policy.mjs';
+import { zipStored } from '../src/release/zip.mjs';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { loadPakuPaku } from '../recipients/paku-paku/load.mjs';
-import { clockedPakuRuntime, pakuObservationSource, hookedPakuSource } from '../runtime/paku-browser.mjs';
-import { loadRecoveredMotion } from '../component/load.mjs';
-import { loadPakuTransfer } from '../transfer/saved-paku.mjs';
-import { PAKU_POLICY } from '../transfer/paku-policy.mjs';
+import { loadPakuPaku } from '../src/recipients/paku-paku/load.mjs';
+import { clockedPakuRuntime, pakuObservationSource, hookedPakuSource } from '../src/runtime/paku-browser.mjs';
+import { loadRecoveredMotion } from '../src/component/load.mjs';
+import { loadPakuTransfer } from '../src/transfer/saved-paku.mjs';
+import { PAKU_POLICY } from '../src/transfer/paku-policy.mjs';
 import { experienceAssets } from './experience-assets.mjs';
-import { loadSavedRoadster } from '../roadster/saved.mjs';
-import { buildFrontend } from './build.mjs';
-import { developerBenchmarkAssets } from '../benchmark/assets.mjs';
-import { buildParallaxiaChallenge } from '../parallaxia/challenge.mjs';
-import { buildParallaxiaFrame } from '../parallaxia/build.mjs';
+import { loadSavedRoadster } from '../src/roadster/saved.mjs';
+import { buildFrontend, buildExportedExperiment } from './build.mjs';
+import { developerBenchmarkAssets } from '../src/benchmark/assets.mjs';
+import { buildRoadsterChallenge } from '../src/roadster/challenge.mjs';
+import { buildParallaxiaChallenge } from '../src/parallaxia/challenge.mjs';
+import { loadParallaxiaBaseline } from '../src/parallaxia/artifact.mjs';
+import { acceptedJujumpComparison } from '../src/release/accepted.mjs';
 
-export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapter, remixes, lab, allowUnverified = false, benchmarks = developerBenchmarkAssets() } = {}) {
+export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapter, remixes, lab, coordinator, allowUnverified = false, benchmarks = developerBenchmarkAssets() } = {}) {
   if (adapter === undefined) adapter = await loadPakuTransfer({ optional: true });
   const recipient = await loadPakuPaku();
   const recovered = await loadRecoveredMotion();
   const roadster=await loadSavedRoadster({optional:true});
+  const replayScript=await buildExportedExperiment();
+  const parallaxia=await loadParallaxiaBaseline();
   const challenges=new Map();
   const challengeFor=id=>{
     if(!challenges.has(id)){
@@ -24,11 +31,12 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
       challenges.set(id,(async()=>{
         const parent=id===roadster?.id?roadster:await lab?.artifact(id);
         if(!parent)throw Error('Roadster artifact not found');
-        return buildParallaxiaChallenge({parent});
+        return buildRoadsterChallenge({parent});
       })().catch(error=>{challenges.delete(id);throw error;}));
     }
     return challenges.get(id);
   };
+  const parallaxiaChallenge = await buildParallaxiaChallenge({parent:parallaxia});
   const assets = new Map([
     ['/assets/app.js', ['text/javascript', await buildFrontend()]],
     ['/assets/runtime.js', ['text/javascript', clockedPakuRuntime(recipient.runtime)]],
@@ -36,7 +44,7 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
     ['/assets/game.js', ['text/javascript', recipient.source + '\n' + pakuObservationSource()]],
     ['/assets/game-transfer.js', ['text/javascript', hookedPakuSource(recipient.source) + '\n' + pakuObservationSource()]],
     ['/assets/component.js', ['text/javascript', recovered.javascript]],
-    ['/assets/transfer-output.js', ['text/javascript', await readFile(new URL('../transfer/output.mjs', import.meta.url), 'utf8')]],
+    ['/assets/transfer-output.js', ['text/javascript', await readFile(new URL('../src/transfer/output.mjs', import.meta.url), 'utf8')]],
     ['/api/transfer-config', ['application/json', JSON.stringify({ motion: recovered.contract.defaults, unitScale: PAKU_POLICY.unitScale, componentId: recovered.provenance.id })]],
     ['/api/transfer', ['application/json', JSON.stringify(adapter?.receipt ? {
       status: 'verified', id: adapter.receipt.id, componentId: recovered.provenance.id,
@@ -47,6 +55,11 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
     ['/licenses', ['text/plain', recipient.licenses.join('\n\n----------------\n\n')]],
     ['/api/recipient', ['application/json', JSON.stringify(recipient.manifest)]],
   ]);
+  const acceptedJujump=await acceptedJujumpComparison(parallaxia.componentId);
+  for(const [path,bytes] of Object.entries(acceptedJujump.extras)){
+    const ext=path.split('.').at(-1),type=({html:'text/html',js:'text/javascript',mjs:'text/javascript',css:'text/css',json:'application/json'})[ext]??'text/plain';
+    assets.set('/accepted/'+path,[type,bytes]);
+  }
   for(const [path,asset] of await experienceAssets({allowUnverified,adapter,roadster}))assets.set(path,asset);
   for (const [path, file, type] of [
     ['/', 'index.html', 'text/html'], ['/style.css', 'style.css', 'text/css'],
@@ -72,6 +85,52 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
     if (![`${host}:${port}`, `localhost:${port}`].includes(request.headers.host)) { json(403, {error:'Unrecognized preview host'}); return; }
     const url = new URL(request.url, 'http://localhost');
     const path = url.pathname;
+    const hostedJob=path.match(/^\/api\/remixes\/([a-f0-9-]{36})(\/cancel)?$/);
+    if(coordinator&&(path==='/api/catalog'||path==='/api/remixes/status'||path==='/api/remixes'||hostedJob)){
+      if(request.method==='POST'){
+        if(![`http://${host}:${port}`,`http://localhost:${port}`].includes(request.headers.origin)||request.headers['content-type']?.split(';')[0]!=='application/json'){json(403,{error:'A same-origin JSON request is required'});return;}
+        let body='';for await(const chunk of request){body+=chunk;if(Buffer.byteLength(body)>4096){json(413,{error:'Request exceeds 4 KB'});return;}}
+        if(hostedJob?.[2]){json(200,await coordinator.cancel(hostedJob[1],JSON.parse(body).sessionId));return;}
+        if(path==='/api/remixes'){json(202,await coordinator.submit(parseRemixBody(JSON.parse(body))));return;}
+      }
+      if(!['GET','HEAD'].includes(request.method)){json(405,{error:'Method not allowed'});return;}
+      if(path==='/api/catalog')json(200,await coordinator.catalog());
+      else if(path==='/api/remixes/status')json(200,coordinator.status());
+      else if(hostedJob)json(200,await coordinator.job(hostedJob[1]));
+      else json(404,{error:'Not found'});
+      return;
+    }
+    const hostedFile=path.match(/^\/artifacts\/([a-f0-9]{64})(?:\/(play\.html|adapter\.ts|adapter\.js|receipt\.json|generation\.json|experiment\.json|rule\.mjs|notices\.txt|download|download\.zip))?$/);
+    if(coordinator&&hostedFile){
+      const [,id,part]=hostedFile;
+      let bytes;
+      if(part==='download.zip'){
+        const files={};for(const name of ['play.html','adapter.ts','adapter.js','intent.json','recipient.json','component.json','receipt.json','generation.json','experiment.json','rule.mjs','notices.txt']){const file=await coordinator.artifactFile(id,name);if(file)files[name]=file;}
+        if(!files['receipt.json']){json(404,{error:'Artifact not found'});return;}
+        const receipt=JSON.parse(files['receipt.json']);
+        addReplayToArchive(files,{parentFrame:await coordinator.parentBytes(receipt.parentArtifactId),replayScript});
+        bytes=zipStored(files);response.setHeader('Content-Disposition',`attachment; filename="parallaxia-${id.slice(0,12)}.zip"`);
+      }else bytes=await coordinator.artifactFile(id,part==='download'?'play.html':part??'receipt.json');
+      if(!bytes){json(404,{error:'Artifact not found'});return;}
+      if(part==='play.html'||part==='download')response.setHeader('Content-Security-Policy','sandbox allow-scripts');
+      if(part==='download')response.setHeader('Content-Disposition',`attachment; filename="parallaxia-${id.slice(0,12)}.html"`);
+      send(200,part==='download.zip'?'application/zip':part==='play.html'||part==='download'?'text/html':part?.endsWith('.ts')||part?.endsWith('.txt')||part==='rule.mjs'?'text/plain':part?.endsWith('.js')?'text/javascript':'application/json',bytes);return;
+    }
+    const hostedParent=path.match(/^\/parents\/([a-f0-9]{64})(\/download)?$/);
+    if(coordinator&&hostedParent){const bytes=await coordinator.parentBytes(hostedParent[1]);response.setHeader('Content-Security-Policy','sandbox allow-scripts');if(hostedParent[2])response.setHeader('Content-Disposition','attachment; filename="parent.html"');send(200,'text/html',bytes);return;}
+    if(path==='/api/parallaxia/base'){json(200,{id:parallaxia.id,componentId:parallaxia.componentId,componentRef:parallaxia.componentRef,intent:parallaxia.intent,recipient:parallaxia.recipient,provenance:parallaxia.provenance,play:`/parallaxia/artifacts/${parallaxia.id}/play.html`,report:`/parallaxia/artifacts/${parallaxia.id}/report.json`,download:`/parallaxia/artifacts/${parallaxia.id}/download.html`,practice:`/parallaxia/challenge/${parallaxia.id}/play.html`,practiceId:parallaxiaChallenge.id,practiceDownload:`/parallaxia/challenge/${parallaxia.id}/download.html`,practiceReport:`/parallaxia/challenge/${parallaxia.id}/report.json`,historicalRoadster:`/roadster/artifacts/${roadster.id}/play.html`});return;}
+    if(path==='/api/catalog'){json(200,{parents:[],artifacts:[],versions:[]});return;}
+    const parallaxiaPath=path.match(/^\/parallaxia\/(artifacts|challenge)\/([a-f0-9]{64})\/(play\.html|download\.html|adapter\.ts|report\.json|notices\.txt)$/);
+    if(parallaxiaPath){
+      const [,kind,id,file]=parallaxiaPath;
+      if(id!==parallaxia.id){json(404,{error:'PARALLAXIA artifact not found'});return;}
+      const artifact=kind==='challenge'?parallaxiaChallenge:parallaxia;
+      const name=file==='play.html'||file==='download.html'?(kind==='challenge'?'play.html':'frame.html'):file==='report.json'?(kind==='challenge'?'challenge.json':'verification.json'):file;
+      if(!artifact.files[name]){json(404,{error:'File not found'});return;}
+      if(file.endsWith('.html'))response.setHeader('Content-Security-Policy','sandbox allow-scripts');
+      if(file==='download.html')response.setHeader('Content-Disposition',`attachment; filename="parallaxia-${artifact.id.slice(0,12)}.html"`);
+      send(200,file.endsWith('.html')?'text/html':file.endsWith('.json')?'application/json':'text/plain',artifact.files[name]);return;
+    }
     const labKind=path==='/api/investigations'?'investigation':path==='/api/roadster/transfers'?'roadster':null;
     if(labKind&&request.method==='POST'){
       if(!lab){json(503,{error:'Live investigation is unavailable'});return;}
@@ -137,7 +196,7 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
       const id=carArtifact[2],file=carArtifact[3],artifact=id===roadster?.id?roadster:await lab?.artifact(id);
       if(!artifact){json(404,{error:'Roadster artifact not found'});return;}
       if(file==='play.html'){
-        const frame=await buildParallaxiaFrame({source:artifact.files['adapter.ts'],intent:artifact.intent,componentRef:artifact.component});
+        const frame={html:artifact.files['frame.html']};
         response.setHeader('Content-Security-Policy','sandbox allow-scripts');send(200,'text/html',frame.html);return;
       }
       if(file==='adapter.ts'){send(200,'text/plain',artifact.files['adapter.ts']);return;}

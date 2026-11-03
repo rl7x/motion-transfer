@@ -3,12 +3,12 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { parseArgs } from 'node:util';
-import { digest } from '../component/build.mjs';
-import { benchmarkDefinition } from '../benchmark/definition.mjs';
-import { benchmarkStore } from '../benchmark/store.mjs';
-import { benchmarkTransport } from '../benchmark/transport.mjs';
-import { currentBenchmarkProtocol } from '../benchmark/protocol.mjs';
-import { runDeveloperBenchmark } from '../benchmark/runner.mjs';
+import { digest } from '../src/component/build.mjs';
+import { benchmarkDefinition } from '../src/benchmark/definition.mjs';
+import { benchmarkStore } from '../src/benchmark/store.mjs';
+import { benchmarkTransport } from '../src/benchmark/transport.mjs';
+import { currentBenchmarkProtocol } from '../src/benchmark/protocol.mjs';
+import { runDeveloperBenchmark } from '../src/benchmark/runner.mjs';
 
 const { values } = parseArgs({ options: { campaign: { type: 'string' }, 'fix-note': { type: 'string' }, validation: { type: 'string' }, help: { type: 'boolean' } } });
 if (values.help) {

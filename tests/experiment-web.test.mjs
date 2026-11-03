@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFile} from 'node:fs/promises';
-import {createPakuBrowser} from '../evaluator/browser-harness.mjs';
+import {createPakuBrowser} from '../src/evaluator/browser-harness.mjs';
 import {reveal} from './helpers/app-navigation.mjs';
-import {digest} from '../component/build.mjs';
+import {digest} from '../src/component/build.mjs';
 
 test('the workbench displays programs, managed pairs, actual evidence and downloads on desktop and mobile',async()=>{
   const harness=await createPakuBrowser();
@@ -35,7 +35,7 @@ test('the workbench displays programs, managed pairs, actual evidence and downlo
 });
 
 test('the local benchmark measures matching scenarios and does not invent model or cost results',async()=>{
-  const report=JSON.parse(await readFile(new URL('../lab/recordings/experiment-benchmark.json',import.meta.url),'utf8'));
+  const report=JSON.parse(await readFile(new URL('../assets/lab/recordings/experiment-benchmark.json',import.meta.url),'utf8'));
   assert.equal(report.modelCalled,false);assert.equal(report.scenarios.length,6);
   for(const value of [40,5]){
     const group=report.scenarios.filter(item=>item.value===value);assert.deepEqual(group.map(item=>item.modelFacingToolInvocations),[6,2,1]);

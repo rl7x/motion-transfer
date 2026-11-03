@@ -4,10 +4,10 @@ import {inflateSync} from 'node:zlib';
 import {mkdtemp,readFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {framebufferPng} from '../runtime/png.mjs';
-import {createCartridgeTools} from '../agent/tools.mjs';
-import {saveInvestigationEvidence} from '../lab/investigation-evidence.mjs';
-import {digest} from '../component/build.mjs';
+import {framebufferPng} from '../src/runtime/png.mjs';
+import {createCartridgeTools} from '../src/agent/tools.mjs';
+import {saveInvestigationEvidence} from '../src/lab/investigation-evidence.mjs';
+import {digest} from '../src/component/build.mjs';
 
 test('PNG pixels decode from the real packed framebuffer and palette',()=>{
   const pixels=new Uint8Array(6400);pixels[0]=0b11100100;

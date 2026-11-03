@@ -1,8 +1,8 @@
 import {readFile,writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
-import {createLabStore} from '../lab/store.mjs';
-import {verifyRoadsterSubmission} from '../agent/transfer-roadster.mjs';
-import {saveRoadsterArtifact} from '../roadster/saved.mjs';
+import {createLabStore} from '../src/lab/store.mjs';
+import {verifyRoadsterSubmission} from '../src/agent/transfer-roadster.mjs';
+import {saveRoadsterArtifact} from '../src/roadster/saved.mjs';
 
 try{
   const id=process.argv[2];if(!/^[a-f0-9-]{36}$/.test(id))throw Error('Usage: node scripts/recheck-roadster.mjs <run-id> [--save]');

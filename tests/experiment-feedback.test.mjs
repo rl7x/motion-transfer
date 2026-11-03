@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { experimentFeedback } from '../agent/experiment-feedback.mjs';
-import { validateRecoveryEvidence } from '../agent/recovery-evidence.mjs';
+import { experimentFeedback } from '../src/agent/experiment-feedback.mjs';
+import { validateRecoveryEvidence } from '../src/agent/recovery-evidence.mjs';
 
 test('actual saved traces expose activity before an inactive endpoint without changing the evidence', async () => {
-  const { report } = JSON.parse(await readFile(new URL('../lab/recordings/recovery-handoff.json', import.meta.url)));
+  const { report } = JSON.parse(await readFile(new URL('../assets/lab/recordings/recovery-handoff.json', import.meta.url)));
   const before = JSON.stringify(report.session.experimentWorkbench.artifacts);
   const trial = report.toolCalls.find(call => call.name === 'run_experiment' && call.args.interventions.length);
   const result = experimentFeedback(trial.name, trial.result, report.session);
@@ -23,7 +23,7 @@ test('actual saved traces expose activity before an inactive endpoint without ch
 });
 
 test('uninvoked helper and nonexistent SDK method receive mechanical help without scientific answers', async () => {
-  const { report } = JSON.parse(await readFile(new URL('../lab/recordings/recovery-handoff.json', import.meta.url)));
+  const { report } = JSON.parse(await readFile(new URL('../assets/lab/recordings/recovery-handoff.json', import.meta.url)));
   for (const call of report.toolCalls.filter(call => call.name === 'run_experiment_program' && call.result)) {
     const result = experimentFeedback(call.name, call.result, report.session);
     assert.equal(result.operations, 0); assert.equal(result.executionFeedback.didExecuteCapabilities, false);

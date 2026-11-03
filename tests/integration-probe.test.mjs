@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { probeIntegration } from '../integration/probe.mjs';
+import { probeIntegration } from '../src/integration/probe.mjs';
 import { roadsterAdapterFixture } from './helpers/roadster-adapter.mjs';
 
 test('engine-independent probe accepts the declared mapping and inherited fresh-press direction', async () => {

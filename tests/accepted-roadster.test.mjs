@@ -5,20 +5,20 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { after, before, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { generateRoadsterTransfer } from '../agent/transfer-roadster.mjs';
-import { buildRoadsterChallenge } from '../roadster/challenge.mjs';
+import { generateRoadsterTransfer } from '../src/agent/transfer-roadster.mjs';
+import { buildRoadsterChallenge } from '../src/roadster/challenge.mjs';
 import {
   ACCEPTED_ROADSTER_MAX_USD, ACCEPTED_ROADSTER_PROMPT, acceptedRoadsterExecution, readAcceptedRoadster,
   roadsterGenerator, selectAcceptedRoadsterTrial, transferAcceptedRoadster,
-} from '../campaign/accepted-roadster.mjs';
-import { createPhaseBudget } from '../campaign/phase-budget.mjs';
-import { readRecoveryCampaign, runRecoveryCampaign } from '../campaign/recovery-runner.mjs';
-import { digest } from '../component/build.mjs';
-import { componentIdentity, resolveComponentRef } from '../component/reference.mjs';
-import { loadAcceptedComponent } from '../integration/accepted-component.mjs';
-import { readRoadsterArtifact } from '../roadster/artifact.mjs';
-import { ROADSTER_INTENT } from '../roadster/port.mjs';
-import { loadSavedRoadster } from '../roadster/saved.mjs';
+} from '../src/campaign/accepted-roadster.mjs';
+import { createPhaseBudget } from '../src/campaign/phase-budget.mjs';
+import { readRecoveryCampaign, runRecoveryCampaign } from '../src/campaign/recovery-runner.mjs';
+import { digest } from '../src/component/build.mjs';
+import { componentIdentity, resolveComponentRef } from '../src/component/reference.mjs';
+import { loadAcceptedComponent } from '../src/integration/accepted-component.mjs';
+import { readRoadsterArtifact } from '../src/roadster/artifact.mjs';
+import { ROADSTER_INTENT } from '../src/roadster/port.mjs';
+import { loadSavedRoadster } from '../src/roadster/saved.mjs';
 import { main } from '../scripts/transfer-accepted-roadster.mjs';
 import { acceptedRecoveryFixture } from './helpers/recovery-fixture.mjs';
 import { roadsterAdapterFixture } from './helpers/roadster-adapter.mjs';
@@ -106,7 +106,7 @@ test('the command requires an existing ledger and does not open credentials whil
   assert.equal(source.includes('verifyBrowser'), false);
   assert.equal(source.includes('generateTransfer'), false);
   assert.equal(source.includes('buildChallenge'), false);
-  const implementation = await readFile(new URL('../campaign/accepted-roadster.mjs', import.meta.url), 'utf8');
+  const implementation = await readFile(new URL('../src/campaign/accepted-roadster.mjs', import.meta.url), 'utf8');
   assert.equal(implementation.includes('loadSavedRoadster'), false);
   assert.equal(implementation.includes('loadEnvFile'), false);
   assert.equal(implementation.includes('reconcileBoundedUnknown'), false);
@@ -298,7 +298,7 @@ test('the pinned accepted Roadster delivery agrees on ids, source, frame, and re
   const id = '216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c';
   const challengeId = '6aa98fb93cd2e921fbf15966c4fcc0517f947e436994b0e12dc816977ce7ed64';
   const componentId = '544657417fe9752f91b0b72a451cd9cb8d2650839824be35881e52f81f223858';
-  const pin = join(repo, 'transfers/roadster/accepted', id);
+  const pin = join(repo, 'assets/transfers/roadster/accepted', id);
   const campaign = await readAcceptedRoadster(pin);
   const artifact = await readRoadsterArtifact(join(pin, 'published/artifacts'), id);
   const component = await resolveComponentRef(artifact.component);

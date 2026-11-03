@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { runCartridgeTool } from '../agent/tools.mjs';
+import { runCartridgeTool } from '../src/agent/tools.mjs';
 
 async function main() {
   const root = new URL('../', import.meta.url);
-  const trace = JSON.parse(await readFile(new URL('experiments/dashy-dango/start-move-dash.json', root), 'utf8'));
+  const trace = JSON.parse(await readFile(new URL('assets/experiments/dashy-dango/start-move-dash.json', root), 'utf8'));
   const overview = await runCartridgeTool('inspect_wasm', { view: 'overview', startLine: 1, lineCount: 20 });
   const functions = [];
   let startIndex = 0;

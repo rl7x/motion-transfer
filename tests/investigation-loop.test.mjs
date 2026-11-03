@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {investigate} from '../agent/investigate.mjs';
-import {TOOLS} from '../agent/tool-schema.mjs';
+import {investigate} from '../src/agent/investigate.mjs';
+import {TOOLS} from '../src/agent/tool-schema.mjs';
 
 const usage={input_tokens:1000,output_tokens:100,input_tokens_details:{cached_tokens:0},output_tokens_details:{reasoning_tokens:0}};
 const call=(number,name,args)=>({type:'function_call',call_id:'session-call-'+number,name,arguments:JSON.stringify(args)});

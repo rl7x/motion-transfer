@@ -1,5 +1,47 @@
 # Local validation
 
+## Repository reorganization and pre-merge review
+
+On November 3, 2026, `npm test` for the repository reorganization at `ffb97a1` completed with **364 passed, 0 failed, 1 skipped** (365 tests, 444.87 seconds). The skip remains the unpaid echo preflight because the pinned Muse binary is unavailable. The suite includes both Docker image builds and restricted-worker isolation. `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run build:frontend` and `npm run replay` also passed.
+
+All 430 original pinned assets and integration templates retain their exact raw bytes and Git blob identities. The JUJUMP export retained its package identity and ZIP hash. The PAKU adapter was reverified against the moved host without a model request; its previous versions remain preserved. The baseline PARALLAXIA release build and verification passed, including standalone replay and a nested base path.
+
+The pre-merge review found that URL schemes and encoded parent segments could bypass the new repository path resolver's lexical checks. The resolver now checks that the normalized URL stays under the checkout root. The added cases reproduced the bug before the fix. This command then passed **18/18 tests**, covering the resolver, recovery protocols, saved PAKU, PARALLAXIA identity, version navigation and release packaging:
+
+```sh
+node --test --test-concurrency=1 tests/repository-layout.test.mjs tests/recovery-protocol.test.mjs tests/saved-paku-transfer.test.mjs tests/parallaxia-identity.test.mjs tests/parallaxia-history.test.mjs tests/parallaxia-release.test.mjs
+```
+
+Manual Chrome checks used the restarted `npm run dev:transfer` preview: baseline and saved-remix PARALLAXIA loaded, both JUJUMP and PAKU PAKU comparison frames played, and RDSTR Stunts completed a backflip with a perfect landing. The saved remix ZIP passed `unzip -t`, and the baseline HTML download matched the served player exactly. No new paid generation was submitted. Full-suite logs and release outputs remain in gitignored `reports/repository-reorganization/`.
+
+The full suite was not repeated after the URL containment fix; the 18 focused tests passed with that fix. The checkpoints below remain historical records and are superseded by this section.
+
+## Live mechanics checkpoint on this Mac
+
+On November 3, 2026, `npm test` at `bf7cd147fa59de535bbca44312b0b9f31fafdecc` on `feat/parallaxia-live-mechanics` completed with **355 passed, 0 failed, 1 skipped** (356 tests, one suite). Node `v22.23.1`. Started 15:51:41Z, finished 16:09:48Z, elapsed 1,087.02 seconds; exit 0.
+
+The skip is the unpaid Muse echo preflight: pinned `~/.local/bin/muse-bin-1.3.0-R3057.1` is not executable on this Mac. No Muse agent session or paid Muse recovery was started. The restricted Docker isolation/publication test passed in 200.61 seconds, including the coordinator image. The historical other-Mac rejection did not reproduce; no publication or isolation gate was weakened. Failed worker payloads are now retained for diagnosis.
+
+Logs: `reports/live-mechanics/full-suite.log` and `full-suite-metadata.json`. The shared ledger SHA-256 before and after was `1934f39c37ede0c05a4cadf1348e280926151fd5a0372d2a23c23caa21b51d3d`; the suite made no paid provider request.
+
+After that full run, Richard requested removing the persistent age/privacy/model banner and raising the default whole-job cap to $7. Release polish also added the actual frozen-task table, recipient-aware verification CLI, correct nested links, baseline selection across reload/back, and diagnostic reopening without selecting an unsuccessful child. These later changes were checked with focused tests; **the full suite was not repeated after them** when Richard requested wrapping up.
+
+| Later command/check | Actual result |
+| --- | --- |
+| `node --test --test-concurrency=1 tests/hosting.test.mjs tests/hosting-component.test.mjs tests/parallaxia-generation.test.mjs` | 25/25 passed. Covers $7 reservation before provider access, unchanged historical reservations/$50 definition, settlement, full uncertain bound, insufficient reserve refusal, one repair and reconnect. Temporary fixtures only. |
+| `node --test --test-concurrency=1 tests/parallaxia-identity.test.mjs tests/parallaxia-release.test.mjs tests/product-release.test.mjs` | 8/9 passed initially. Only failure was a stale assertion expecting the removed playback audience notice; all recipient/UI, cap/dialog, release CLI/ZIP and other product tests passed. |
+| `node --test --test-concurrency=1 --test-name-pattern='injected playback catalog' tests/product-release.test.mjs` | The corrected stale assertion passed 1/1. No model request. |
+| `npm run typecheck`, `npm run lint`, `npm run format:check` | Passed after UI/cap changes. |
+| `npm run build:frontend`, `npm run build:creator` | Passed after UI/cap changes. |
+| Actual generated release rebuild after final changes | Passed (`reports/live-mechanics/final-measured-release-build-v2.log`): nested links, baseline across reload/back, unsuccessful diagnostic retention, all ten task rows, exact system-extracted ZIP, paired exported/site replay and same-component JUJUMP. The preceding final-build attempt exposed iframe history interfering with back navigation; version changes now mount a fresh frame at their reset boundary. The failed build log remains retained. |
+| Changed JavaScript syntax and `git diff --check` | Passed. |
+
+The actual generated release in `reports/release-parallaxia/` features right-goal artifact `07c2211ed729b557330f669c93808cf62384274fdf0c7cdc6078e2fe0d02755b`. Its exact ZIP was system-extracted in a fresh browser with nonlocal requests and POSTs blocked; both normal-speed branch end digests matched. Same-component JUJUMP and the nested base path passed. The frozen campaign is **8/9 positive, 1/1 correct negative**, not an all-green campaign. See [individual measurements and limitations](live-mechanics-results.md).
+
+## Historical validation from the handoff
+
+The checkpoints below are retained verbatim as historical records. Their paths and branch names refer to the other Mac; they are superseded by the measurements above.
+
 ## Full suite checkpoint at a32f0e9
 
 Recorded 2026-11-03 on branch `codex/playable-motion-remixes` at `a32f0e98c9e762667d31de32d9e8cb624320ffb2` (`a32f0e9`, `fix: bound browser replay rendering in isolated workers`). Node `v26.7.0`. The commit has an SSH `gpgsig` header. Git config was not changed. No paid call, demo capture, deploy, or commit.
@@ -94,7 +136,7 @@ These were the residual failures of that baseline after the esbuild distinction.
 | Environmental | `tests/demo-recording.test.mjs:126`, `demo/compose.mjs:34` | `ffmpeg failed: No such filter: 'drawtext'`. `/opt/homebrew/bin/ffmpeg` 8.1.2 has no `drawtext` filter and its configure line has no libfreetype. |
 | Demo-owned, observed at suite time | `tests/demo-recording.test.mjs:29` and `:63`, then `demo/facts.mjs:76` | `Error: Phase budget ceiling is not $45`. On-disk `reports/motion-transfer-phase/phase-budget.json` (gitignored, birthtime `2026-11-02T23:59:48Z`) has definition `motion-transfer-additional-inference-v2`, `maxCostUsd` 50, `historicalSpendingIncluded` false, and 4 reservations. `facts.mjs` was edited after this failure and now records an on-disk ceiling separately from a v1 `$45` historical name. Demo tests were not rerun after that edit. |
 | Demo-owned test bug, still present | `tests/demo-recording.test.mjs:155`, `demo/read-only-lab.mjs:13` | `assert.rejects(() => lab.submit(), /disables model creation/)` lets a synchronous `Error: Demo recording disables model creation` escape on Node v26.7.0. The message matches the regex; `assert.rejects` does not catch the throw. |
-| Reproduced product/test failure | `tests/release.test.mjs:149` | `page.waitForURL` timed out at 30000ms after clicking `[data-parent]`. The href assertion had already passed (`../<parentId>/index.html`, generated in `release/materialize.mjs`). Same timeout on the full suite (31057ms) and the rerun (31040ms). |
+| Reproduced product/test failure | `tests/release.test.mjs:149` | `page.waitForURL` timed out at 30000ms after clicking `[data-parent]`. The href assertion had already passed (`../<parentId>/index.html`, generated in `src/release/materialize.mjs`). Same timeout on the full suite (31057ms) and the rerun (31040ms). |
 
 ## Chrome windows
 

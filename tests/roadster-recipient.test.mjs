@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { loadRoadster } from '../recipients/roadster/load.mjs';
+import { loadRoadster } from '../src/recipients/roadster/load.mjs';
 
 test('roadster recipient retains its pinned upstream source and notices',async()=>{
   const recipient=await loadRoadster();

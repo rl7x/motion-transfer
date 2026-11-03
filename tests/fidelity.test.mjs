@@ -4,10 +4,10 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { freezeFidelityStudy, scoreFidelityStudy } from '../benchmark/fidelity.mjs';
+import { freezeFidelityStudy, scoreFidelityStudy } from '../src/benchmark/fidelity.mjs';
 
-const sourcePath = fileURLToPath(new URL('../components/dashy-dango-dash/component.ts', import.meta.url));
-const configPath = fileURLToPath(new URL('../components/dashy-dango-dash/contract.json', import.meta.url));
+const sourcePath = fileURLToPath(new URL('../assets/components/dashy-dango-dash/component.ts', import.meta.url));
+const configPath = fileURLToPath(new URL('../assets/components/dashy-dango-dash/contract.json', import.meta.url));
 test('fidelity freezes all candidates, scores every outcome, and never overwrites results', async () => {
   const temp = await mkdtemp(join(tmpdir(), 'fidelity-'));
   try {

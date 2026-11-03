@@ -4,11 +4,11 @@ import { copyFile, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { compileAdapter } from '../transfer/adapter.mjs';
-import { checkPakuPackage, loadPakuTransfer } from '../transfer/saved-paku.mjs';
-import { evaluatePakuAdapter } from '../evaluator/paku-adapter.mjs';
-import { verifyPakuBrowser } from '../evaluator/paku-browser.mjs';
-import { pakuEnvironment } from '../transfer/paku-environment.mjs';
+import { compileAdapter } from '../src/transfer/adapter.mjs';
+import { checkPakuPackage, loadPakuTransfer, loadCompatiblePakuVersion } from '../src/transfer/saved-paku.mjs';
+import { evaluatePakuAdapter } from '../src/evaluator/paku-adapter.mjs';
+import { verifyPakuBrowser } from '../src/evaluator/paku-browser.mjs';
+import { pakuEnvironment } from '../src/transfer/paku-environment.mjs';
 
 test('the frozen Meta adapter passes conformance and playable browser integration', async () => {
   const saved = await loadPakuTransfer();
@@ -24,11 +24,13 @@ test('the frozen Meta adapter passes conformance and playable browser integratio
 });
 
 test('historical playback preserves its proof while current-host publication rejects a stale environment', async () => {
-  const saved = await loadPakuTransfer();
-  assert.equal(saved.receipt.id.length, 64);
-  await assert.rejects(loadPakuTransfer({ currentEnvironment: true }), /environment is stale/);
-  const current = await pakuEnvironment();
-  assert.throws(() => checkPakuPackage(saved, current), /environment is stale/);
+  const current = await loadPakuTransfer({ currentEnvironment: true });
+  const historical = await loadCompatiblePakuVersion(
+    '9b7e35111209e8dabc71fac0e2a0461675982a0e76f8283f1953ffdd5b9016c8', current,
+  );
+  assert.equal(historical.source, current.source);
+  await assert.rejects(loadPakuTransfer({ directory: historical.directory, currentEnvironment: true }), /environment is stale/);
+  assert.throws(() => checkPakuPackage(historical, current.receipt.environment), /environment is stale/);
 });
 
 test('promotion rejects changed source, stale identity, missing checks, and failed browser evidence', async () => {

@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { loadJujump } from '../recipients/jujump/load.mjs';
-import { loadJujumpTransfer } from '../transfer/jujump.mjs';
-import { loadRecoveredMotion } from '../component/load.mjs';
-import { verifyJujumpBrowser } from '../evaluator/jujump-browser.mjs';
-import { evaluatePakuAdapter } from '../evaluator/paku-adapter.mjs';
+import { loadJujump } from '../src/recipients/jujump/load.mjs';
+import { loadJujumpTransfer } from '../src/transfer/jujump.mjs';
+import { loadRecoveredMotion } from '../src/component/load.mjs';
+import { verifyJujumpBrowser } from '../src/evaluator/jujump-browser.mjs';
+import { evaluatePakuAdapter } from '../src/evaluator/paku-adapter.mjs';
 
 test('the distinct JUJUMP adapter delegates to the exact frozen controller and preserves native physics in Chrome',async()=>{
   const [recipient,transfer,component]=await Promise.all([loadJujump(),loadJujumpTransfer(),loadRecoveredMotion()]);

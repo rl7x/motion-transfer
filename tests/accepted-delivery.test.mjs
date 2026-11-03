@@ -4,9 +4,9 @@ import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { createPhaseBudget } from '../campaign/phase-budget.mjs';
-import { readRecoveryCampaign, runRecoveryCampaign } from '../campaign/recovery-runner.mjs';
-import { digest } from '../component/build.mjs';
+import { createPhaseBudget } from '../src/campaign/phase-budget.mjs';
+import { readRecoveryCampaign, runRecoveryCampaign } from '../src/campaign/recovery-runner.mjs';
+import { digest } from '../src/component/build.mjs';
 import { deliverAcceptedRecovery, deliverySource, main, selectAcceptedTrial, verifyDeliveryReceipt } from '../scripts/deliver-accepted-recovery.mjs';
 
 const SESSION = 'fa8e3d4a-8578-4098-8042-f29e607c9267';

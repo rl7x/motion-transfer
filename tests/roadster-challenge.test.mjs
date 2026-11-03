@@ -3,10 +3,10 @@ import test from 'node:test';
 import { createServer } from 'node:http';
 import { mkdir } from 'node:fs/promises';
 import { chromium } from 'playwright';
-import { loadSavedRoadster } from '../roadster/saved.mjs';
-import { buildRoadsterChallenge } from '../roadster/challenge.mjs';
-import { landingInTarget } from '../roadster/challenge-contract.mjs';
-import { digest } from '../component/build.mjs';
+import { loadSavedRoadster } from '../src/roadster/saved.mjs';
+import { buildRoadsterChallenge } from '../src/roadster/challenge.mjs';
+import { landingInTarget } from '../src/roadster/challenge-contract.mjs';
+import { digest } from '../src/component/build.mjs';
 
 test('the exact native input trace lands short and the same trace plus the borrowed dash reaches the marked zone', async () => {
   const parent = await loadSavedRoadster(), challenge = await buildRoadsterChallenge({ parent });

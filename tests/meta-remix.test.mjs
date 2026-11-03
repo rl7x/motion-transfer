@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { generatePakuRemix } from '../agent/remix-paku.mjs';
-import { BASE_REMIX_INTENT, validateRemixSubmission } from '../remix/contract.mjs';
+import { generatePakuRemix } from '../src/agent/remix-paku.mjs';
+import { BASE_REMIX_INTENT, validateRemixSubmission } from '../src/remix/contract.mjs';
 import { remixFixture } from './helpers/remix-fixture.mjs';
 
 const intent={unitScale:0.75,activation:'press',direction:'opposite'};

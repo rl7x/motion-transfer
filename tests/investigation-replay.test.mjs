@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import wabtFactory from 'wabt';
-import {createInvestigationSession} from '../runtime/investigation-session.mjs';
-import {createCartridgeTools} from '../agent/tools.mjs';
+import {createInvestigationSession} from '../src/runtime/investigation-session.mjs';
+import {createCartridgeTools} from '../src/agent/tools.mjs';
 
 async function fixture(){
   const wabt=await wabtFactory();

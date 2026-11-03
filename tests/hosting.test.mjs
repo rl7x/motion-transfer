@@ -8,23 +8,24 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { ROADSTER_INSTRUCTIONS, ROADSTER_RECIPIENT_POLICY, ROADSTER_TOOL } from '../agent/roadster-request.mjs';
-import { createPhaseBudget } from '../campaign/phase-budget.mjs';
-import { SAVED_ARTIFACT_ID, SAVED_COMPONENT_ID } from '../hosting/component-pin.mjs';
-import { FRAME_LIMIT, HOSTING_GENERATION_CONFIRMATION, SHARED_LEDGER_CONFIRMATION, SHARED_PHASE_DIRECTORY, STDOUT_LIMIT, VERIFIER_IMAGE } from '../hosting/constants.mjs';
-import { createCoordinator, reservePublicGeneration } from '../hosting/coordinator.mjs';
-import { resolveOperatorGeneration } from '../hosting/generation.mjs';
-import { seedVerifiedParent } from '../hosting/seed-parent.mjs';
+import { ROADSTER_INSTRUCTIONS, ROADSTER_RECIPIENT_POLICY, ROADSTER_TOOL } from '../src/agent/roadster-request.mjs';
+import { createPhaseBudget } from '../src/campaign/phase-budget.mjs';
+import { createHostedTestBudget } from './helpers/hosting-budget.mjs';
+import { SAVED_ARTIFACT_ID, SAVED_COMPONENT_ID } from '../src/hosting/component-pin.mjs';
+import { FRAME_LIMIT, HOSTING_GENERATION_CONFIRMATION, SHARED_LEDGER_CONFIRMATION, SHARED_PHASE_DIRECTORY, STDOUT_LIMIT, VERIFIER_IMAGE } from '../src/hosting/constants.mjs';
+import { createCoordinator, reservePublicGeneration } from '../src/hosting/coordinator.mjs';
+import { resolveOperatorGeneration } from '../src/hosting/generation.mjs';
+import { seedVerifiedParent } from '../src/hosting/seed-parent.mjs';
 import { buildCreatorPage } from '../scripts/build-creator.mjs';
-import { createFakeMetaClient } from '../hosting/fake-client.mjs';
-import { workerArguments } from '../hosting/isolation.mjs';
-import { admitProductionRequest, createProductionPolicy, parseRemixBody } from '../hosting/policy.mjs';
-import { parseJob } from '../hosting/protocol.mjs';
-import { publishArtifact } from '../hosting/publish.mjs';
-import { createJobQueue } from '../hosting/queue.mjs';
-import { createWorkerBroker, discardOutput, readOutput } from '../hosting/broker.mjs';
-import { createBrokerClient } from '../hosting/broker-client.mjs';
-import { createHostingServer } from '../hosting/server.mjs';
+import { createFakeMetaClient } from '../src/hosting/fake-client.mjs';
+import { workerArguments } from '../src/hosting/isolation.mjs';
+import { admitProductionRequest, createProductionPolicy, parseRemixBody } from '../src/hosting/policy.mjs';
+import { parseJob } from '../src/hosting/protocol.mjs';
+import { publishArtifact } from '../src/hosting/publish.mjs';
+import { createJobQueue } from '../src/hosting/queue.mjs';
+import { createWorkerBroker, discardOutput, readOutput } from '../src/hosting/broker.mjs';
+import { createBrokerClient } from '../src/hosting/broker-client.mjs';
+import { createHostingServer } from '../src/hosting/server.mjs';
 
 const execute = promisify(execFile);
 const ledgerUrl = new URL('../reports/motion-transfer-phase/phase-budget.json', import.meta.url);
@@ -78,7 +79,7 @@ function fakeBroker(handler) {
 async function setup(t, broker, client, options = {}) {
   const directory = await temp(t);
   const ledgerDirectory = await temp(t);
-  await createPhaseBudget(ledgerDirectory);
+  await createHostedTestBudget(ledgerDirectory);
   const coordinator = await createCoordinator({
     directory, broker, client, ledgerDirectory, localVerification: true, ...options,
   });
@@ -97,6 +98,63 @@ function remix(parentId, sessionId = randomUUID()) {
     sessionId, adultConfirmed: true,
   };
 }
+
+test('the local operator can continue beyond two jobs without resetting spending or history', async t => {
+  const broker=fakeBroker(verified(parentComponent.id,Buffer.from('<!doctype html><title>local</title>')));
+  const client=createFakeMetaClient({source:'export function init(){return {}}\n',intent});
+  const {directory,coordinator,parentId,ledgerDirectory}=await setup(t,broker,client,{sessionJobLimit:null});
+  const session=randomUUID(),requests=[];
+  for(let count=0;count<3;count++){
+    const request=remix(parentId,session);requests.push(request);
+    const job=await coordinator.wait((await coordinator.submit(request)).id);assert.equal(job.status,'ready',job.error);
+  }
+  assert.equal(coordinator.status().sessionJobLimit,null);assert.equal(coordinator.status().maxJobCostUsd,7);
+  const budget=await createPhaseBudget(ledgerDirectory),before=await budget.journal();
+  assert.equal(before.reservations.length,3);assert.equal(before.definition.maxCostUsd,50);
+  assert.ok(before.reservations.every(entry=>entry.maxCostUsd===7&&entry.category==='reserve'&&entry.status==='settled'));
+  const catalog=await coordinator.catalog();assert.equal(catalog.versions.length,3);
+  assert.ok(catalog.versions.every(version=>version.prompt==='Make the dash half as long.'&&version.createdAt&&version.status==='ready'&&version.componentId===parentComponent.id));
+  await coordinator.close();
+  const reopened=await createCoordinator({directory,broker,client,ledgerDirectory,localVerification:true,sessionJobLimit:null});
+  t.after(()=>reopened.close());
+  await reopened.submit(requests[0]);assert.equal(client.calls.filter(call=>call.method==='respond').length,3);
+  const fourth=await reopened.wait((await reopened.submit(remix(parentId,session))).id);assert.equal(fourth.status,'ready',fourth.error);
+  const after=await budget.journal();assert.deepEqual(after.reservations.slice(0,3),before.reservations);
+  assert.equal(after.reservations.length,4);assert.deepEqual(after.definition,before.definition);
+  const restored=await reopened.catalog();assert.equal(restored.versions.length,4);
+  for(const version of catalog.versions)assert.deepEqual(restored.versions.find(item=>item.id===version.id),version);
+});
+
+test('saved version history retains unsuccessful experiment frames without adding them to the passing catalog', async t => {
+  const directory=await temp(t);
+  const broker=fakeBroker(async()=>{throw Error('Saved history must not invoke verification');});
+  let coordinator=await createCoordinator({directory,broker});
+  const parentId='ab'.repeat(32);await coordinator.putParent({id:parentId,bytes:Buffer.from('original'),intent:parentIntent});
+  const fixtures=[];
+  for(const satisfied of [true,false]){
+    const frame=Buffer.from(`<!doctype html><title>Synthetic saved ${satisfied}</title>`);
+    const published=await publishArtifact({directory,parentId,files:{'play.html':frame,'intent.json':JSON.stringify(intent),
+      'receipt.json':JSON.stringify({passed:satisfied,adapterVerified:true,parentArtifactId:parentId,parentChain:[parentId],
+        recipient:{id:'parallaxia'},componentId:parentComponent.id,summary:'Synthetic saved experiment fixture',experiment:{satisfied}})}});
+    fixtures.push({id:published.id,frame,satisfied});
+  }
+  const catalog=await coordinator.catalog();assert.equal(catalog.versions.length,2);assert.equal(catalog.artifacts.length,1);
+  for(const fixture of fixtures){
+    const entry=catalog.versions.find(version=>version.id===fixture.id);
+    assert.equal(entry.status,fixture.satisfied?'ready':'unsuccessful');assert.equal(entry.recipientId,'parallaxia');
+    assert.equal(catalog.artifacts.some(version=>version.id===fixture.id),fixture.satisfied);
+  }
+  await coordinator.close();coordinator=await createCoordinator({directory,broker});t.after(()=>coordinator.close());
+  assert.deepEqual((await coordinator.catalog()).versions,catalog.versions);
+  for(const fixture of fixtures)assert.deepEqual(await coordinator.artifactFile(fixture.id,'play.html'),fixture.frame);
+  assert.equal(broker.calls.length,0);
+});
+
+test('a public coordinator cannot disable its session quota', async t => {
+  const directory=await temp(t),broker=fakeBroker(verified(parentComponent.id,Buffer.from('<!doctype html>')));
+  await assert.rejects(()=>createCoordinator({directory,broker,sessionJobLimit:null}),/only supported in the local operator preview/);
+  for(const sessionJobLimit of [0,-1,NaN,1.5])await assert.rejects(()=>createJobQueue(directory,{sessionJobLimit}),/Invalid session job limit/);
+});
 
 test('worker jobs reject arbitrary commands and unsafe launch flags', async t => {
   assert.throws(() => parseJob({ operation: 'verify-native', command: 'id', source: 'x', intent }), /Arbitrary command/);
@@ -346,7 +404,7 @@ test('queues, publication, and the public reserve survive restarts without charg
   assert.equal((await opened.status()).categories.public.reservedUsd, 0.15);
   assert.equal((await opened.status()).categories.public.limitUsd, 15);
   assert.equal(await ledgerHash(), before);
-  const source = await readFile(new URL('../hosting/coordinator.mjs', import.meta.url), 'utf8');
+  const source = await readFile(new URL('../src/hosting/coordinator.mjs', import.meta.url), 'utf8');
   assert.equal(source.includes('evaluator/'), false);
   assert.equal(source.includes('transfer/adapter'), false);
   assert.equal(source.includes('compileAdapter'), false);
@@ -367,22 +425,19 @@ test('queues, publication, and the public reserve survive restarts without charg
   assert.match(image, /AS creator/);
   assert.match(image, /build-creator\.mjs/);
   assert.equal(image.includes('COPY web/dist/creator'), false);
-  const requestBuilder = await readFile(new URL('../agent/roadster-request.mjs', import.meta.url), 'utf8');
+  const requestBuilder = await readFile(new URL('../src/agent/roadster-request.mjs', import.meta.url), 'utf8');
   assert.equal(requestBuilder.includes('evaluator/'), false);
   assert.equal(requestBuilder.includes('compileAdapter'), false);
   const docs = await readFile(new URL('../docs/hosting.md', import.meta.url), 'utf8');
-  const serve = await readFile(new URL('../hosting/serve.mjs', import.meta.url), 'utf8');
+  const serve = await readFile(new URL('../src/hosting/serve.mjs', import.meta.url), 'utf8');
   assert.equal(docs.includes('hosting-integration.patch'), false);
   assert.equal(docs.includes('/tmp/motion-transfer-cursor'), false);
-  assert.match(serve, /client:\s*null/);
   assert.match(serve, /releasePublished:\s*false/);
   assert.equal(serve.includes('docker.sock'), false);
   assert.equal(serve.includes('charge-shared-public-reserve'), false);
   assert.equal(serve.includes('createPhaseBudget'), false);
-  assert.equal(serve.includes('createMetaClient'), false);
   assert.equal(serve.includes('createFakeMetaClient'), false);
   assert.match(serve, /resolveOperatorGeneration/);
-  assert.match(serve, /No Standard client is constructed/);
 });
 
 test('the production server enforces remix limits and does not redirect', async t => {
@@ -591,7 +646,7 @@ test('playback stays up when generation is not configured', async t => {
   assert.equal(broker.calls.length, 0);
 });
 
-test('generation reserves an explicit temp ledger before any local fake provider call', async t => {
+test('seven-dollar jobs preserve existing reservations and reserve the whole envelope before a provider call', async t => {
   const before = await ledgerHash();
   const frame = Buffer.from('<!doctype html><title>reserved</title>');
   const broker = fakeBroker(verified(parentComponent.id, frame));
@@ -599,10 +654,15 @@ test('generation reserves an explicit temp ledger before any local fake provider
   const count = client.countInputTokens.bind(client);
   let reservedBeforeCount = false;
   const { directory, coordinator, parentId, ledgerDirectory } = await setup(t, broker, client);
+  const budget = await createPhaseBudget(ledgerDirectory);
+  await budget.reserve({id:'legacy-cap',category:'remix',maxCostUsd:0.15,metadata:{historical:true}});
+  const legacy = (await budget.journal()).reservations[0];
+  assert.equal(coordinator.status().maxJobCostUsd,7);
   client.countInputTokens = async (request, signal) => {
     const phase = await createPhaseBudget(ledgerDirectory);
+    assert.deepEqual((await phase.journal()).reservations[0],legacy);
     const status = await phase.status();
-    assert.equal(status.categories.remix.reservedUsd, 0.15);
+    assert.equal(status.categories.reserve.reservedUsd, 7);
     assert.equal(status.categories.public.reservedUsd, 0);
     assert.equal(status.categories.public.settledUsd, 0);
     const jobFile = (await readdir(join(directory, 'jobs'))).find(name => name.endsWith('.json'));
@@ -620,10 +680,18 @@ test('generation reserves an explicit temp ledger before any local fake provider
   assert.equal(settled.uncertain, false);
   assert.equal(settled.categories.public.settledUsd, 0);
   assert.equal(settled.categories.public.reservedUsd, 0);
-  assert.ok(settled.categories.remix.settledUsd > 0);
-  assert.ok(settled.categories.remix.settledUsd < 0.15);
+  assert.ok(settled.categories.reserve.settledUsd > 0);
+  assert.ok(settled.categories.reserve.settledUsd < 7);
   const stored = JSON.parse(await readFile(join(directory, 'jobs', `${ready.id}.json`), 'utf8'));
   assert.equal(stored.provider.status, 'responded');
+  const journal=await budget.journal();
+  assert.equal(journal.definition.maxCostUsd,50);
+  assert.deepEqual(journal.reservations[0],legacy);
+  assert.equal(journal.reservations[1].maxCostUsd,7);
+  assert.equal(journal.reservations[1].category,'reserve');
+  await budget.reserve({id:'other-reserve',category:'reserve',maxCostUsd:4,metadata:{test:true}});
+  await assert.rejects(()=>coordinator.submit(remix(parentId)),/cannot cover the whole-job reservation/);
+  assert.equal(client.calls.filter(call=>call.method==='respond').length,1);
   assert.equal(await ledgerHash(), before);
 });
 
@@ -686,6 +754,7 @@ test('unknown provider usage stays reserved and a restart does not retry', async
   assert.match(failed.error, /uncertain transport/);
   assert.equal(broker.calls.length, 0);
   assert.equal((await (await createPhaseBudget(ledgerDirectory)).status()).uncertain, true);
+  assert.equal((await (await createPhaseBudget(ledgerDirectory)).status()).categories.reserve.reservedUsd,7);
   await assert.rejects(() => coordinator.submit(remix(parentId)), /no further inference admitted/);
   assert.equal(client.calls.filter(call => call.method === 'respond').length, 1);
 
@@ -728,7 +797,7 @@ test('unknown provider usage stays reserved and a restart does not retry', async
   assert.equal(quiet.calls.length, 0);
   const heldLedger = await (await createPhaseBudget(held.ledgerDirectory)).status();
   assert.equal(heldLedger.uncertain, false);
-  assert.ok(heldLedger.categories.remix.settledUsd > 0);
+  assert.ok(heldLedger.categories.reserve.settledUsd > 0);
   assert.equal(heldLedger.categories.public.settledUsd, 0);
 
   const jobId = randomUUID();
@@ -737,7 +806,7 @@ test('unknown provider usage stays reserved and a restart does not retry', async
   const replayClient = createFakeMetaClient({ source: 'export function init(){return {}}\n', intent });
   const pendingDirectory = await temp(t);
   const pendingLedger = await temp(t);
-  await createPhaseBudget(pendingLedger);
+  await createHostedTestBudget(pendingLedger);
   const pendingParent = 'ab'.repeat(32);
   await mkdir(join(pendingDirectory, 'parents'), { recursive: true });
   await writeFile(join(pendingDirectory, 'parents', pendingParent), 'parent-v1');
@@ -790,11 +859,11 @@ test('operator configuration stays off and a seeded parent keeps its verified co
     HOSTING_SHARED_LEDGER_CONFIRMATION: SHARED_LEDGER_CONFIRMATION,
   }, { origins: ['https://play.example'] });
   assert.equal(configured.model, 'muse-spark-1.3');
-  assert.equal(configured.maxCostUsd, 0.15);
+  assert.equal(configured.maxCostUsd, 7);
   assert.equal(configured.ledgerDirectory, resolve(SHARED_PHASE_DIRECTORY));
   assert.equal(configured.confirmSharedLedger, SHARED_LEDGER_CONFIRMATION);
 
-  const artifactDirectory = fileURLToPath(new URL(`../transfers/roadster/versions/${SAVED_ARTIFACT_ID}/`, import.meta.url));
+  const artifactDirectory = fileURLToPath(new URL(`../assets/transfers/roadster/versions/${SAVED_ARTIFACT_ID}/`, import.meta.url));
   await assert.rejects(() => access(join(artifactDirectory, 'recipient.json')), error => error.code === 'ENOENT');
   await assert.rejects(() => access(join(artifactDirectory, 'component.js')), error => error.code === 'ENOENT');
   const dataDirectory = await temp(t);
@@ -809,7 +878,7 @@ test('operator configuration stays off and a seeded parent keeps its verified co
   await assert.rejects(() => access(join(dataDirectory, 'phase-budget.json')), error => error.code === 'ENOENT');
 
   const ledgerDirectory = await temp(t);
-  await createPhaseBudget(ledgerDirectory);
+  await createHostedTestBudget(ledgerDirectory);
   const broker = fakeBroker(verified(parentComponent.id, Buffer.from('<!doctype html><title>seeded</title>')));
   const client = createFakeMetaClient({
     source: 'export function step(){return {}}\n',
@@ -921,4 +990,15 @@ test('a typed socket rejects a command without starting a worker', async t => {
   assert.equal(rejected.ok, false);
   assert.match(rejected.error, /Arbitrary command/);
   assert.equal(ran, false);
+});
+
+test('cancelling during native verification stops the browser and publication stages',async t=>{
+ const frame=Buffer.from('<!doctype html><title>cancel fixture</title>');
+ let began,release;const started=new Promise(resolve=>{began=resolve});const blocked=new Promise(resolve=>{release=resolve});
+ const broker=fakeBroker(async job=>{began();await blocked;return verified(parentComponent.id,frame)(job);});
+ const client=createFakeMetaClient({source:'export function init(){return {}}\n',intent});
+ const {coordinator,parentId}=await setup(t,broker,client);const request=remix(parentId);
+ const submitted=await coordinator.submit(request);await started;await coordinator.cancel(submitted.id,request.sessionId);release();
+ const job=await coordinator.wait(submitted.id);assert.equal(job.status,'cancelled');assert.equal(job.artifactId,null);
+ assert.equal(broker.calls.length,1);assert.equal(broker.calls[0].operation,'verify-native');
 });

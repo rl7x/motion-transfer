@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
-import { loadSavedRoadster } from '../roadster/saved.mjs';
-import { buildRoadsterChallenge } from '../roadster/challenge.mjs';
+import { loadSavedRoadster } from '../src/roadster/saved.mjs';
+import { buildRoadsterChallenge } from '../src/roadster/challenge.mjs';
 
 const challenge = await buildRoadsterChallenge({ parent: await loadSavedRoadster() });
 assert.equal(challenge.verification.ordinaryOutsideTarget, true, 'Recorded native run must land outside the marked zone');

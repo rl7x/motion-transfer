@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { savedInvestigations } from '../lab/saved.mjs';
+import { savedInvestigations } from '../src/lab/saved.mjs';
 
 test('the single live recovery remains incomplete despite its real intervention and later finding', async () => {
   const { job } = (await savedInvestigations()).find(record => record.id === 'recovery-handoff');

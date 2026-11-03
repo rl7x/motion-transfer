@@ -3,10 +3,10 @@ import { mkdir, readFile, writeFile, rename } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { parseArgs } from 'node:util';
-import { recoverMotion } from '../agent/recover-motion.mjs';
-import { repairMotion } from '../agent/repair-motion.mjs';
-import { prepareMotionEvidence } from '../agent/motion-evidence.mjs';
-import { writeMotionPackage } from '../component/package.mjs';
+import { recoverMotion } from '../src/agent/recover-motion.mjs';
+import { repairMotion } from '../src/agent/repair-motion.mjs';
+import { prepareMotionEvidence } from '../src/agent/motion-evidence.mjs';
+import { writeMotionPackage } from '../src/component/package.mjs';
 
 async function main() {
   const { values } = parseArgs({ options: { out: { type: 'string' }, resume: { type: 'string' }, repair: { type: 'string' }, 'reasoning-effort': { type: 'string' }, 'prepare-only': { type: 'boolean' }, help: { type: 'boolean' } } });

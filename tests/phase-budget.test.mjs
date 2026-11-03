@@ -5,7 +5,7 @@ import { promisify } from 'node:util';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { createPhaseBudget } from '../campaign/phase-budget.mjs';
+import { createPhaseBudget } from '../src/campaign/phase-budget.mjs';
 
 const execute = promisify(execFile);
 async function setup(t) {
@@ -69,7 +69,7 @@ test('uncertain billing retains the unused reservation and blocks every family u
 
 test('an interrupted owner becomes uncertain on restart and is never silently released', async t => {
   const { directory, budget } = await setup(t);
-  const moduleUrl = new URL('../campaign/phase-budget.mjs', import.meta.url).href;
+  const moduleUrl = new URL('../src/campaign/phase-budget.mjs', import.meta.url).href;
   await execute(process.execPath, ['--input-type=module', '-e',
     'const {createPhaseBudget}=await import(process.argv[1]);const ledger=await createPhaseBudget(process.argv[2]);await ledger.reserve({id:"interrupted",category:"recovery",maxCostUsd:0.5});',
     moduleUrl, directory], { env: { PATH: process.env.PATH ?? '' } });

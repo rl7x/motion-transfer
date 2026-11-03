@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { investigate } from '../agent/investigate.mjs';
+import { investigate } from '../src/agent/investigate.mjs';
 import { captureInvestigationContract } from './helpers/investigation-contract.mjs';
 
 test('provider requests, continuation, dispatch and accounting retain the pre-refactor contract', async () => {

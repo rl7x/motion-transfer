@@ -3,9 +3,9 @@ import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { createPakuBrowser } from '../evaluator/browser-harness.mjs';
-import { createLabService } from '../lab/service.mjs';
-import { loadSavedRoadster } from '../roadster/saved.mjs';
+import { createPakuBrowser } from '../src/evaluator/browser-harness.mjs';
+import { createLabService } from '../src/lab/service.mjs';
+import { loadSavedRoadster } from '../src/roadster/saved.mjs';
 
 const shot = join('reports', 'product-review');
 
@@ -16,17 +16,16 @@ test('the challenge keeps one 3D player, a local share address, and the saved ab
     const posts = [];
     page.on('request', request => { if (request.method() === 'POST') posts.push(request.url()); });
     await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto(harness.origin);
+    await page.goto(harness.origin+'/?destination=roadster');
     await page.waitForFunction(() => window.currentDestination === 'roadster' && document.querySelector('#transfer-status')?.textContent === 'VERIFIED TRANSFER', undefined, { timeout: 90000 });
     assert.equal(await page.locator('.games iframe').count(), 1);
     assert.equal(await page.locator('#original-game').count(), 0);
     assert.equal(await page.locator('canvas').count(), 0);
-    assert.equal(await page.locator('#confirm-age').isChecked(), false);
-    assert.match(await page.locator('#model-policy').innerText(), /Saved play makes no model request\. Creating a remix uses Standard Muse Spark\./);
-    assert.doesNotMatch(await page.locator('#model-policy').innerText(), /muse-spark-1\.3|Contributor|completed success/i);
+    assert.equal(await page.locator('#confirm-age').count(), 0);
+    assert.equal(await page.locator('#model-policy').count(), 0);
+    assert.equal(await page.locator('#age-acknowledgment').count(), 0);
     assert.match(await page.locator('.compact-ability').innerText(), /SAVED RECOVERY/);
     assert.doesNotMatch(await page.locator('.compact-ability').innerText(), /completed success|fresh campaign/i);
-    assert.ok(await page.locator('#age-acknowledgment').evaluate(element => element.getBoundingClientRect().height) < 96);
     assert.match(await page.locator('#supported-capabilities').innerText(), /fresh press/i);
     assert.match(await page.locator('#supported-capabilities').innerText(), /Not supported: one dash per flight/);
     assert.match(await page.locator('#inherited-intent').innerText(), /Saved transfer/);
@@ -48,15 +47,10 @@ test('the challenge keeps one 3D player, a local share address, and the saved ab
     const address = await page.locator('#share-fallback').inputValue();
     assert.match(address, /^http:\/\/127\.0\.0\.1:\d+\/roadster\/play\/[a-f0-9]{64}$/);
     assert.doesNotMatch(await page.locator('#challenge-share-status').innerText(), /vercel|github\.io|pages\.dev/i);
-    await page.locator('#confirm-age').focus();
-    assert.equal(await page.evaluate(() => document.activeElement?.id), 'confirm-age');
-    await page.keyboard.press('Space');
-    assert.equal(await page.locator('#confirm-age').isChecked(), true);
-    await page.keyboard.press('Space');
-    assert.equal(await page.locator('#confirm-age').isChecked(), false);
+    assert.equal(await page.getByRole('dialog').count(), 0);
     await mkdir(shot, { recursive: true });
     await page.evaluate(() => scrollTo(0, 0));
-    await page.screenshot({ path: join(shot, 'age-banner-desktop.png') });
+    await page.screenshot({ path: join(shot, 'playback-without-banner-desktop.png') });
     await page.locator('.challenge-section').evaluate(element => element.scrollIntoView({ block: 'start' }));
     await page.screenshot({ path: join(shot, 'challenge-desktop.png') });
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -69,7 +63,7 @@ test('the challenge keeps one 3D player, a local share address, and the saved ab
     const mobile = await context.newPage();
     const mobileErrors = [];
     mobile.on('pageerror', error => mobileErrors.push(error.message));
-    await mobile.goto(harness.origin);
+    await mobile.goto(harness.origin+'/?destination=roadster');
     await mobile.waitForFunction(() => document.querySelector('#transfer-status')?.textContent === 'VERIFIED TRANSFER', undefined, { timeout: 90000 });
     assert.equal(await mobile.locator('.games iframe').count(), 1);
     assert.ok(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
@@ -100,7 +94,7 @@ test('an 18+ confirmation blocks a new adaptation and a rejected request leaves 
     const { page, errors } = await harness.page();
     const posts = [];
     page.on('request', request => { if (request.method() === 'POST') posts.push(new URL(request.url()).pathname); });
-    await page.goto(harness.origin);
+    await page.goto(harness.origin+'/?destination=roadster');
     await page.waitForFunction(() => window.currentRoadsterArtifact && document.querySelector('#transfer-game') && !document.querySelector('#roadster-submit').disabled, undefined, { timeout: 90000 });
     await page.locator('#roadster-prompt').fill('Give me one air dash, and restore it when I land.');
     await page.locator('#roadster-submit').click();
@@ -108,7 +102,11 @@ test('an 18+ confirmation blocks a new adaptation and a rejected request leaves 
     assert.equal(calls, 0);
     assert.deepEqual(posts, []);
     assert.equal(await page.locator('.games iframe').count(), 1);
-    await page.locator('#confirm-age').check();
+    await page.keyboard.press('Escape');
+    assert.equal(await page.getByRole('dialog').count(), 0);
+    assert.equal(calls, 0);
+    await page.locator('#roadster-submit').click();
+    await page.locator('#confirm-age').press('Space');
     await page.locator('#roadster-submit').click();
     await page.waitForFunction(() => /No new version was saved/.test(document.querySelector('#roadster-progress')?.textContent ?? ''), undefined, { timeout: 30000 });
     assert.equal(calls, 1);
@@ -142,7 +140,7 @@ test('reconnecting a stored adaptation polls the same job and does not POST', as
       },
       id: '11111111-1111-4111-8111-111111111111',
     });
-    await page.goto(harness.origin);
+    await page.goto(harness.origin+'/?destination=roadster');
     await page.waitForFunction(() => window.currentRoadsterArtifact
       && document.querySelector('#roadster-submit')?.textContent.includes('Reconnect')
       && !document.querySelector('#roadster-submit').disabled, undefined, { timeout: 90000 });
@@ -194,12 +192,13 @@ test('an injected playback catalog renders the challenge without the live catalo
       if (Object.prototype.hasOwnProperty.call(resources, path)) { hits.push(path); return route.abort(); }
       return route.continue();
     });
-    await page.goto(harness.origin);
+    await page.goto(harness.origin+'/?destination=roadster');
     await page.waitForFunction(expected => document.querySelector('#challenge-download')?.getAttribute('href') === expected, '/roadster/challenge/' + id + '/download.html');
     assert.deepEqual(hits, []);
     assert.equal(await page.locator('#confirm-age').count(), 0);
-    assert.equal(await page.getAttribute('#age-acknowledgment', 'data-generation'), 'playback-only');
-    assert.match(await page.locator('#audience-notice').innerText(), /18 and older/);
+    assert.equal(await page.locator('#age-acknowledgment').count(), 0);
+    assert.equal(await page.locator('#model-policy').count(), 0);
+    assert.equal(await page.locator('#audience-notice').count(), 0);
     assert.match(await page.locator('#playback-note').innerText(), /cannot start a model request/i);
     assert.equal(await page.locator('#roadster-submit').isDisabled(), true);
     assert.equal(await page.locator('.games iframe').count(), 1);

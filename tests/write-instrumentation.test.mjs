@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import wabtFactory from 'wabt';
-import {instrumentMemoryWrites,traceMemoryWriters} from '../agent/write-instrumentation.mjs';
-import {createWasmInspection} from '../agent/wasm-inspection.mjs';
-import {createReplayRuntime} from '../runtime/replay.mjs';
-import {createInvestigationSession} from '../runtime/investigation-session.mjs';
-import {loadTarget} from '../agent/target.mjs';
-import {observeDonorMotion} from '../runtime/donor-observation.mjs';
+import {instrumentMemoryWrites,traceMemoryWriters} from '../src/agent/write-instrumentation.mjs';
+import {createWasmInspection} from '../src/agent/wasm-inspection.mjs';
+import {createReplayRuntime} from '../src/runtime/replay.mjs';
+import {createInvestigationSession} from '../src/runtime/investigation-session.mjs';
+import {loadTarget} from '../src/agent/target.mjs';
+import {observeDonorMotion} from '../src/runtime/donor-observation.mjs';
 
 test('analysis-copy callbacks preserve direct/indirect calls, store types and effective addresses',async()=>{
   const wabt=await wabtFactory(),module=wabt.parseWat('stores.wat',`(module

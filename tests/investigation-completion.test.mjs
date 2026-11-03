@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { requireInvestigationConclusion } from '../agent/investigation-completion.mjs';
+import { requireInvestigationConclusion } from '../src/agent/investigation-completion.mjs';
 
 const experimentId = 'experiment-00000000-0000-0000-0000-000000000001';
 const artifactId = 'a'.repeat(64);

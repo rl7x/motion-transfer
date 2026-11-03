@@ -139,6 +139,16 @@ export function parseJob(value: unknown): RemixJob {
     urls: urls(record.urls),
     intent: intent(record.intent),
     summary: typeof record.summary === 'string' ? record.summary : null,
+    events: Array.isArray(record.events)
+      ? record.events.filter(
+          (event): event is { status: string; at: string } =>
+            Boolean(event) &&
+            typeof (event as { status?: unknown }).status === 'string' &&
+            typeof (event as { at?: unknown }).at === 'string',
+        )
+      : undefined,
+    createdAt: typeof record.createdAt === 'string' ? record.createdAt : undefined,
+    finishedAt: typeof record.finishedAt === 'string' ? record.finishedAt : null,
   };
 }
 

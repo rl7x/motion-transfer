@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises';
-import { createInvestigationSession } from '../../runtime/investigation-session.mjs';
-import { loadTarget } from '../../agent/target.mjs';
-import { createComponentWorkbench } from '../../agent/component-workbench.mjs';
-import { saveInvestigationEvidence } from '../../lab/investigation-evidence.mjs';
+import { createInvestigationSession } from '../../src/runtime/investigation-session.mjs';
+import { loadTarget } from '../../src/agent/target.mjs';
+import { createComponentWorkbench } from '../../src/agent/component-workbench.mjs';
+import { saveInvestigationEvidence } from '../../src/lab/investigation-evidence.mjs';
 
 // Explicit human-scripted fixture. Never supplied to a live model or advertised
 // as a new recovery. Real development and separately generated acceptance run.
@@ -15,8 +15,8 @@ export async function acceptedRecoveryFixture(directory, { failedAttempt = false
   const selection = (await workbench.execute('select_component_evidence', { functionIndices: [9], evidenceIds: [observation.observationId],
     scope: 'Local pipeline fixture only; not independent recovery.' })).result;
   const source = '// Human-scripted local integration fixture; not a new Meta recovery.\n'
-    + await readFile(new URL('../../components/dashy-dango-dash/component.ts', import.meta.url), 'utf8');
-  const contract = JSON.parse(await readFile(new URL('../../components/dashy-dango-dash/contract.json', import.meta.url), 'utf8'));
+    + await readFile(new URL('../../assets/components/dashy-dango-dash/component.ts', import.meta.url), 'utf8');
+  const contract = JSON.parse(await readFile(new URL('../../assets/components/dashy-dango-dash/contract.json', import.meta.url), 'utf8'));
   for (const key of ['interfaceVersion', 'tickRate', 'units', 'numericDomain']) delete contract[key];
   contract.rules = [{ description: 'Fixture behavior is supplied by a human for local pipeline verification.', evidence: [observation.observationId] }];
   if (failedAttempt) {

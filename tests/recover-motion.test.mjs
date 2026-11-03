@@ -6,11 +6,11 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
 import test from 'node:test';
-import { recoverMotion, RECOVERY_LIMITS } from '../agent/recover-motion.mjs';
-import { prepareMotionEvidence } from '../agent/motion-evidence.mjs';
-import { compileMotion, digest } from '../component/build.mjs';
-import { validateMotionCandidate } from '../component/contract.mjs';
-import { writeMotionPackage } from '../component/package.mjs';
+import { recoverMotion, RECOVERY_LIMITS } from '../src/agent/recover-motion.mjs';
+import { prepareMotionEvidence } from '../src/agent/motion-evidence.mjs';
+import { compileMotion, digest } from '../src/component/build.mjs';
+import { validateMotionCandidate } from '../src/component/contract.mjs';
+import { writeMotionPackage } from '../src/component/package.mjs';
 
 const evidence = {
   sha256: 'e'.repeat(64), cartridgeSha256: 'd'.repeat(64), humanAssistance: ['Test fixture'],

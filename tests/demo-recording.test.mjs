@@ -3,16 +3,16 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import test from 'node:test';
-import { assertAcceptedProof, loadAcceptedRoadster } from '../demo/accepted-roadster.mjs';
-import { parseArgs } from '../demo/cli.mjs';
-import { SAVED_REMIX_ID, materializeCommittedRemix, remixRecordFromEvidence } from '../demo/committed-remix.mjs';
-import { overlayFilter, probeVideo, runProcess, scrub, segmentArgs, writeCaption, writeSolidPng } from '../demo/compose.mjs';
-import { loadDemoFacts } from '../demo/facts.mjs';
-import { createReadOnlyRoadsterLab } from '../demo/read-only-lab.mjs';
-import { assertCreationDisabled, startRecordingServer } from '../demo/server.mjs';
-import { buildSrt, formatTimestamp } from '../demo/srt.mjs';
-import { VIDEO_FPS, VIDEO_SECONDS, acceptedResultsLines, buildAcceptedTimeline, buildTimeline, resolveFreshAcceptance, resultsCopy } from '../demo/story.mjs';
-import { readRoadsterArtifact } from '../roadster/artifact.mjs';
+import { assertAcceptedProof, loadAcceptedRoadster } from '../src/demo/accepted-roadster.mjs';
+import { parseArgs } from '../src/demo/cli.mjs';
+import { SAVED_REMIX_ID, materializeCommittedRemix, remixRecordFromEvidence } from '../src/demo/committed-remix.mjs';
+import { overlayFilter, probeVideo, runProcess, scrub, segmentArgs, writeCaption, writeSolidPng } from '../src/demo/compose.mjs';
+import { loadDemoFacts } from '../src/demo/facts.mjs';
+import { createReadOnlyRoadsterLab } from '../src/demo/read-only-lab.mjs';
+import { assertCreationDisabled, startRecordingServer } from '../src/demo/server.mjs';
+import { buildSrt, formatTimestamp } from '../src/demo/srt.mjs';
+import { VIDEO_FPS, VIDEO_SECONDS, acceptedResultsLines, buildAcceptedTimeline, buildTimeline, resolveFreshAcceptance, resultsCopy } from '../src/demo/story.mjs';
+import { readRoadsterArtifact } from '../src/roadster/artifact.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const measurements = {
@@ -271,13 +271,13 @@ test('ffmpeg writes a two-second h264 segment with a lower third', { timeout: 60
 
 test('recorder source does not load an API key or the live preview script', async () => {
   for (const path of [
-    'scripts/record-demo.mjs', 'demo/capture.mjs', 'demo/capture-accepted.mjs', 'demo/render.mjs', 'demo/server.mjs', 'demo/facts.mjs',
-    'demo/committed-remix.mjs', 'demo/accepted-roadster.mjs', 'demo/static-server.mjs', 'demo/cli.mjs',
+    'scripts/record-demo.mjs', 'src/demo/capture.mjs', 'src/demo/capture-accepted.mjs', 'src/demo/render.mjs', 'src/demo/server.mjs', 'src/demo/facts.mjs',
+    'src/demo/committed-remix.mjs', 'src/demo/accepted-roadster.mjs', 'src/demo/static-server.mjs', 'src/demo/cli.mjs',
   ]) {
     const source = await readFile(join(root, path), 'utf8');
     assert.doesNotMatch(source, /loadEnvFile|MODEL_API_KEY|scripts\/preview/);
   }
-  const render = await readFile(join(root, 'demo/render.mjs'), 'utf8');
+  const render = await readFile(join(root, 'src/demo/render.mjs'), 'utf8');
   assert.match(render, /draft\.mp4/);
   assert.match(render, /draft\.srt/);
 });

@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import wabtFactory from 'wabt';
-import { createWasmInspection, inspectFunction, listFunctions } from '../agent/wasm-inspection.mjs';
-import { runCartridgeTool } from '../agent/tools.mjs';
+import { createWasmInspection, inspectFunction, listFunctions } from '../src/agent/wasm-inspection.mjs';
+import { runCartridgeTool } from '../src/agent/tools.mjs';
 
 const wabt = await wabtFactory();
 const fixture = wabt.parseWat('inspection.wat', `(module

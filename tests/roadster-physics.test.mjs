@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {loadRoadsterPhysics} from '../roadster/physics.mjs';
-import {createRoadsterPort} from '../roadster/port.mjs';
-import * as component from '../components/dashy-dango-dash/component.js';
-import {loadRecoveredMotion} from '../component/load.mjs';
+import {loadRoadsterPhysics} from '../src/roadster/physics.mjs';
+import {createRoadsterPort} from '../src/roadster/port.mjs';
+import * as component from '../assets/components/dashy-dango-dash/component.js';
+import {loadRecoveredMotion} from '../src/component/load.mjs';
 
 test('dash-disabled host matches upstream stunt simulation exactly',async()=>{
   const original=await loadRoadsterPhysics({hooked:false}),hooked=await loadRoadsterPhysics();

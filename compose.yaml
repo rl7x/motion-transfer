@@ -1,6 +1,6 @@
 # Local packaging only. Do not treat `docker compose up` as a public deployment.
 # The coordinator has no Docker socket. The verifier image is built for the host broker
-# (`node hosting/broker-main.mjs`) and is not a published service.
+# (`node src/hosting/broker-main.mjs`) and is not a published service.
 
 name: motion-transfer
 

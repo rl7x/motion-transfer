@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { compileMotion } from '../component/build.mjs';
-import { executeMotion } from '../component/run.mjs';
-import { evaluateMotion } from '../evaluator/motion.mjs';
-import { acceptanceCases } from '../evaluator/cases.mjs';
+import { compileMotion } from '../src/component/build.mjs';
+import { executeMotion } from '../src/component/run.mjs';
+import { evaluateMotion } from '../src/evaluator/motion.mjs';
+import { acceptanceCases } from '../src/evaluator/cases.mjs';
 
 const walking = `
   export function init(config: {walkingSpeed: number}) { return { ticks: 0 }; }

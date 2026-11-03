@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {generateRoadsterTransfer} from '../agent/transfer-roadster.mjs';
+import {generateRoadsterTransfer} from '../src/agent/transfer-roadster.mjs';
 import {roadsterAdapterFixture} from './helpers/roadster-adapter.mjs';
-import {ROADSTER_INTENT} from '../roadster/port.mjs';
+import {ROADSTER_INTENT} from '../src/roadster/port.mjs';
 const parent={id:'0'.repeat(64),intent:ROADSTER_INTENT,files:{}};
 test('Roadster generation counts tokens, delegates verification and retains actual usage',async()=>{
   let calls=0;

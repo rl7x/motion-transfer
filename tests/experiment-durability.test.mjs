@@ -3,8 +3,8 @@ import test from 'node:test';
 import {mkdtemp,readFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {createCartridgeTools} from '../agent/tools.mjs';
-import {saveInvestigationEvidence} from '../lab/investigation-evidence.mjs';
+import {createCartridgeTools} from '../src/agent/tools.mjs';
+import {saveInvestigationEvidence} from '../src/lab/investigation-evidence.mjs';
 
 const prepare={requestId:'durable-preparation',hypothesis:'Persist each completed host action.',steps:[{buttons:1,frames:1,checkpoint:'gameplay'},{buttons:0,frames:10,checkpoint:'ready'}],watches:[]};
 test('an acknowledged completed experiment survives interruption before the command response',async()=>{

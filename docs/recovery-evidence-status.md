@@ -35,9 +35,9 @@ Session `fa8e3d4a-8578-4098-8042-f29e607c9267` has 20 completed requests. Exact 
 
 The gitignored delivery directory and the campaign journal stay where they are. The campaign trial is still `failed` / `recipient-or-export`, and its journal sha256 is still `3b4c3a246aeb1767036cedeefef03c9d10d6e7b9833b697f0ed41d81c39ba528`. Three public artifact files were copied byte for byte into the default publication fallback:
 
-- `integration/recordings/recoveries/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/receipt.json` — 633 bytes, sha256 `746f21de6509d33cfcee1e30655dca5c122e6e630532422c4e34501de773e7c2`
-- `integration/recordings/recoveries/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/project.json` — 1,963,190 bytes, sha256 `9d43437b85bdb0f23b734215310310a421f73772bd8f5b177989279340e9bf29`
-- `integration/recordings/recoveries/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/validation.json` — 24,452 bytes, sha256 `635a5f6474bf1195f7da3f48b28c83e2ef0e29cbca7327a9ca0ded8127b6a8d9`
+- `assets/integration/recordings/recoveries/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/receipt.json` — 633 bytes, sha256 `746f21de6509d33cfcee1e30655dca5c122e6e630532422c4e34501de773e7c2`
+- `assets/integration/recordings/recoveries/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/project.json` — 1,963,190 bytes, sha256 `9d43437b85bdb0f23b734215310310a421f73772bd8f5b177989279340e9bf29`
+- `assets/integration/recordings/recoveries/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/validation.json` — 24,452 bytes, sha256 `635a5f6474bf1195f7da3f48b28c83e2ef0e29cbca7327a9ca0ded8127b6a8d9`
 
 No `.env`, auth file, or phase ledger was copied. A structural walk of the three JSON files found no credential-shaped strings, no `encrypted_content`, and no stored reasoning items. The embedded investigation has public turn messages (`phase`, `refused`, `text`) and a `reasoningEffort` setting. `NOTICES.txt` is in the package and names Dashy Dango, JUJUMP, and ABA Games. The package also contains the component source, contract, provenance, development and acceptance evaluations, recovery history, and `evidence/investigation.json`.
 

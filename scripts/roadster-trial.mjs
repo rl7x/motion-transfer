@@ -1,12 +1,12 @@
 import {loadEnvFile} from 'node:process';
 import {resolve} from 'node:path';
 import {randomUUID} from 'node:crypto';
-import {createLabService} from '../lab/service.mjs';
-import {generateRoadsterTransfer} from '../agent/transfer-roadster.mjs';
-import {loadSavedRoadster,saveRoadsterArtifact} from '../roadster/saved.mjs';
-import {loadRecoveredMotion} from '../component/load.mjs';
-import {loadRoadster} from '../recipients/roadster/load.mjs';
-import {ROADSTER_INTENT} from '../roadster/port.mjs';
+import {createLabService} from '../src/lab/service.mjs';
+import {generateRoadsterTransfer} from '../src/agent/transfer-roadster.mjs';
+import {loadSavedRoadster,saveRoadsterArtifact} from '../src/roadster/saved.mjs';
+import {loadRecoveredMotion} from '../src/component/load.mjs';
+import {loadRoadster} from '../src/recipients/roadster/load.mjs';
+import {ROADSTER_INTENT} from '../src/roadster/port.mjs';
 
 try{
   try{loadEnvFile(resolve('.env'));}catch(error){if(error.code!=='ENOENT')throw error;}

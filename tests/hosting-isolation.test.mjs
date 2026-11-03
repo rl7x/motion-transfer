@@ -7,11 +7,12 @@ import { join } from 'node:path';
 import test from 'node:test';
 import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
-import { createPhaseBudget } from '../campaign/phase-budget.mjs';
-import { COORDINATOR_TAG, VERIFIER_IMAGE } from '../hosting/constants.mjs';
-import { createCoordinator } from '../hosting/coordinator.mjs';
-import { createFakeMetaClient } from '../hosting/fake-client.mjs';
-import { createWorkerBroker } from '../hosting/broker.mjs';
+import { createPhaseBudget } from '../src/campaign/phase-budget.mjs';
+import { createHostedTestBudget } from './helpers/hosting-budget.mjs';
+import { COORDINATOR_TAG, VERIFIER_IMAGE } from '../src/hosting/constants.mjs';
+import { createCoordinator } from '../src/hosting/coordinator.mjs';
+import { createFakeMetaClient } from '../src/hosting/fake-client.mjs';
+import { createWorkerBroker } from '../src/hosting/broker.mjs';
 
 const execute = promisify(execFile);
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -90,10 +91,10 @@ test('restricted worker containers enforce isolation and verify in-process only 
   assert.equal(await readFile(parentFile, 'utf8'), 'parent-v1');
   assert.deepEqual(await readFile(join(phase, 'phase-budget.json')), ledgerBefore);
 
-  const current = JSON.parse(await readFile(join(root, 'transfers/roadster/current.json'), 'utf8'));
-  const manifest = JSON.parse(await readFile(join(root, 'transfers/roadster/versions', current.id, 'manifest.json'), 'utf8'));
-  const source = await readFile(join(root, 'transfers/roadster/versions', current.id, 'adapter.ts'), 'utf8');
-  const provenance = JSON.parse(await readFile(join(root, 'components/dashy-dango-dash/provenance.json'), 'utf8'));
+  const current = JSON.parse(await readFile(join(root, 'assets/transfers/roadster/current.json'), 'utf8'));
+  const manifest = JSON.parse(await readFile(join(root, 'assets/transfers/roadster/versions', current.id, 'manifest.json'), 'utf8'));
+  const source = await readFile(join(root, 'assets/transfers/roadster/versions', current.id, 'adapter.ts'), 'utf8');
+  const provenance = JSON.parse(await readFile(join(root, 'assets/components/dashy-dango-dash/provenance.json'), 'utf8'));
   const native = await broker.submit({
     operation: 'verify-native', source, intent: manifest.intent, componentId: provenance.id,
   });
@@ -112,14 +113,14 @@ test('restricted worker containers enforce isolation and verify in-process only 
   const ledgerDirectory = await mkdtemp(join(tmpdir(), 'motion-hosting-ledger-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
   t.after(() => rm(ledgerDirectory, { recursive: true, force: true }));
-  await createPhaseBudget(ledgerDirectory);
+  await createHostedTestBudget(ledgerDirectory);
   const client = createFakeMetaClient({ source, intent: manifest.intent, summary: 'Saved held dash, verified in the worker.' });
   const coordinator = await createCoordinator({ directory, broker, client, ledgerDirectory, localVerification: true });
   t.after(() => coordinator.close());
   const parentId = current.id;
   const parentBytes = Buffer.from('saved-parent');
-  const componentJs = await readFile(new URL('../components/dashy-dango-dash/component.js', import.meta.url), 'utf8');
-  const contract = JSON.parse(await readFile(new URL('../components/dashy-dango-dash/contract.json', import.meta.url), 'utf8'));
+  const componentJs = await readFile(new URL('../assets/components/dashy-dango-dash/component.js', import.meta.url), 'utf8');
+  const contract = JSON.parse(await readFile(new URL('../assets/components/dashy-dango-dash/contract.json', import.meta.url), 'utf8'));
   await coordinator.putParent({
     id: parentId, bytes: parentBytes,
     intent: { ...manifest.intent, unitScale: manifest.intent.unitScale === 0.1 ? 0.2 : 0.1 },
@@ -152,8 +153,8 @@ test('restricted worker containers enforce isolation and verify in-process only 
   const script = `
     import { access } from 'node:fs/promises';
     import { pathToFileURL } from 'node:url';
-    const { reservePublicGeneration } = await import(pathToFileURL('/app/hosting/coordinator.mjs').href);
-    for (const path of ['/app/hosting/broker.mjs', '/app/hosting/worker.mjs', '/app/hosting/isolation.mjs', '/app/evaluator/roadster.mjs', '/var/run/docker.sock']) {
+    const { reservePublicGeneration } = await import(pathToFileURL('/app/src/hosting/coordinator.mjs').href);
+    for (const path of ['/app/src/hosting/broker.mjs', '/app/src/hosting/worker.mjs', '/app/src/hosting/isolation.mjs', '/app/src/evaluator/roadster.mjs', '/var/run/docker.sock']) {
       if (await access(path).then(() => true, () => false)) process.exit(2);
     }
     const refused = await reservePublicGeneration({ directory: '/tmp/unused', releasePublished: false, id: 'public:image', maxCostUsd: 0.01 }).then(() => false, () => true);

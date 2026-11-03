@@ -1,11 +1,11 @@
 import {App} from '@/app/app';
 import {createAutopilot} from '@/physics/autopilot';
-import {createRoadsterPort} from '../roadster/port.mjs';
+import {createRoadsterPort} from '../src/roadster/port.mjs';
 import * as component from 'roadster-core';
 import * as candidate from 'roadster-adapter';
 import config from 'roadster-config';
 import {prepareObstacles} from '@/physics/collision';
-import {createDashVisuals} from '../roadster/dash-visuals.js';
+import {createDashVisuals} from '../src/roadster/dash-visuals.js';
 
 let presentation;
 const port=createRoadsterPort({component,adapter:config.transferred?candidate:null,defaults:config.defaults,intent:config.intent,

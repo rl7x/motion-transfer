@@ -3,8 +3,8 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createReplayRuntime } from '../runtime/replay.mjs';
-import { replayTrace } from '../runtime/trace.mjs';
+import { createReplayRuntime } from '../src/runtime/replay.mjs';
+import { replayTrace } from '../src/runtime/trace.mjs';
 
 async function main() {
   const root = new URL('../', import.meta.url);
@@ -13,12 +13,12 @@ async function main() {
   const report = { schemaVersion: 1, runs: [], verified: false };
   await writeFile(output, JSON.stringify(report, null, 2) + '\n');
   try {
-    const tracePath = process.argv[2] ? resolve(process.argv[2]) : new URL('experiments/dashy-dango/start-move-dash.json', root);
+    const tracePath = process.argv[2] ? resolve(process.argv[2]) : new URL('assets/experiments/dashy-dango/start-move-dash.json', root);
     const traceBytes = await readFile(tracePath);
     const trace = JSON.parse(traceBytes);
     if (trace.target !== 'dashy-dango') throw new Error('Only the registered dashy-dango target is supported');
-    const manifest = JSON.parse(await readFile(new URL('targets/dashy-dango/target.lock.json', root), 'utf8'));
-    const cartridge = await readFile(new URL('targets/dashy-dango/cart.wasm', root));
+    const manifest = JSON.parse(await readFile(new URL('assets/targets/dashy-dango/target.lock.json', root), 'utf8'));
+    const cartridge = await readFile(new URL('assets/targets/dashy-dango/cart.wasm', root));
     const hash = createHash('sha256').update(cartridge).digest('hex');
     if (hash !== manifest.integrity.digest || cartridge.length !== manifest.integrity.bytes) {
       throw new Error('Target cartridge does not match target.lock.json');

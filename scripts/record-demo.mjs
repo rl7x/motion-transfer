@@ -1,9 +1,9 @@
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { captureAccepted } from '../demo/capture-accepted.mjs';
-import { captureAll } from '../demo/capture.mjs';
-import { parseArgs } from '../demo/cli.mjs';
-import { renderDemo } from '../demo/render.mjs';
+import { captureAccepted } from '../src/demo/capture-accepted.mjs';
+import { captureAll } from '../src/demo/capture.mjs';
+import { parseArgs } from '../src/demo/cli.mjs';
+import { renderDemo } from '../src/demo/render.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 

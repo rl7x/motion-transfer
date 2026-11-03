@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {createCartridgeTools} from '../agent/tools.mjs';
+import {createCartridgeTools} from '../src/agent/tools.mjs';
 
 test('function decompilation and graph navigation retain evidence-linked inferred names separately',async()=>{
   const tools=createCartridgeTools();

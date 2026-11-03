@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import {mkdir,writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {randomUUID} from 'node:crypto';
-import {createCartridgeTools} from '../agent/tools.mjs';
-import {loadTarget} from '../agent/target.mjs';
-import {saveInvestigationEvidence} from '../lab/investigation-evidence.mjs';
+import {createCartridgeTools} from '../src/agent/tools.mjs';
+import {loadTarget} from '../src/agent/target.mjs';
+import {saveInvestigationEvidence} from '../src/lab/investigation-evidence.mjs';
 
 // Human-scripted measurements. No model client or API credentials are used.
 const steps=[{buttons:1,frames:1,checkpoint:'gameplay'},{buttons:0,frames:10,checkpoint:'ready'}];
