@@ -1,6 +1,6 @@
 # Problem statement
 
-Paste the paragraph below into the root README when that file is next updated. This pass did not edit the README. The paragraph is a snapshot of November 2, 2026, at `9a6fe8c` on `codex/playable-motion-remixes`. Links in the paragraph are relative to the repository root. Recheck it after other release work lands, and replace any sentence whose evidence has changed.
+The paragraph below is the one in the root README. It was placed there in the November 2, 2026 docs pass on `codex/playable-motion-remixes` at `f6cc282`. Links in the paragraph are relative to the repository root. The README states the one-behavior recovery and does not say that a whole-program decompilation was replaced. Recheck the paragraph if a later release changes the saved controller or the playable default.
 
 ## README paragraph
 

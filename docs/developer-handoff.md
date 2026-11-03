@@ -1,6 +1,21 @@
 # Recover a mechanic and keep building
 
-The developer task is to carry a movement mechanic from a compiled game into a new project while retaining the mechanic's supported timing and the recipient's native physics. Dashy Dango → JUJUMP is the working case. Roadster remains the gallery's visual introduction to the same reusable component.
+The developer task is to carry one movement mechanic from a compiled game into a project that already has its own physics. The working local page is the accepted Roadster release, not the older saved library.
+
+## Which page to open
+
+```sh
+npm run build:release -- --accepted-roadster transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c
+npm run serve:release -- --root reports/release-accepted --port 4174 --base-path /motion-transfer/
+```
+
+`http://127.0.0.1:4174/motion-transfer/` is loopback only. It plays component `544657417fe9752f91b0b72a451cd9cb8d2650839824be35881e52f81f223858` and labels it **ACCEPTED RECOVERY**. That is the same component as the pinned JUJUMP publication. The Roadster pin passed 8 mapping checks and 8 browser checks. The component passed 13 development checks and 20 acceptance checks.
+
+`npm run dev:transfer` opens `http://127.0.0.1:4173` on the saved controller `1bc4250c…`, labeled **SAVED RECOVERY**. PAKU PAKU and JUJUMP there are before/after views of that older controller.
+
+`npm run export:jujump` and `npm run verify:integration` package and check the saved controller. `verify:integration -- --save` records that saved package. It is not the accepted pin. The accepted JUJUMP archive is the pinned publication described in [recovery-evidence-status.md](recovery-evidence-status.md).
+
+`record:demo` can still write a local draft. It is not the submission video, and this handoff does not ask anyone to capture one. The ZIP described below is the saved controller.
 
 There is a documented developer problem behind this case: [RigelEngine's author](https://lethalguitar.wordpress.com/2017/04/02/introducing-the-rigel-engine-dev-blog/) describes reverse engineering Duke Nukem II to match its original feel and behavior on modern systems when the original source was apparently lost. That supports the use case, not adoption of this project. Our demonstration is a narrow WASM-4 recovery, with Dashy Dango's source withheld from the process. Its source was not actually lost.
 
