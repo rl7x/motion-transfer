@@ -24,7 +24,7 @@ Commit `d6c2679` (`fix: preserve serialized recovery history during publication`
 
 `node scripts/deliver-accepted-recovery.mjs --campaign reports/motion-transfer-phase/wonder-development-001 --out reports/motion-transfer-phase/wonder-delivery-001` republished that same frozen candidate. It read the original campaign and exact report, ran the host integration, and wrote a new directory. It did not read credentials, call Meta, or modify the source journal. No other campaign was started.
 
-The delivery ran at commit `5533e4d59abef351fcc7788d330401bb2de7a02c`. The receipt source hash `80725ec1bb8309a2ee6636eb798aa5d983bbcb8c686828a7ec907935efc5029f` covers the accepted-component loader, JUJUMP export, publication, recovery integration, and this delivery command.
+The delivery ran at commit `5533e4d59abef351fcc7788d330401bb2de7a02c`. The receipt source hash `80725ec1bb8309a2ee6636eb798aa5d983bbcb8c686828a7ec907935efc5029f` covers the accepted-component loader, JUJUMP export, publication, recovery integration, and this delivery command. That hash matches `deliverySource()` for those five files on the current tree at `f6cc28251a42ad61dda25d28fe47ccf2787baf72`. Commit `5533e4d` does not contain `scripts/deliver-accepted-recovery.mjs`, so the hash is the on-disk file digest recorded with that commit id. It is not a tree snapshot of `5533e4d`. The receipt commit field is unchanged.
 
 ## Published artifact
 
@@ -47,3 +47,15 @@ Receipt: `reports/motion-transfer-phase/wonder-delivery-001/delivery-receipt.jso
 Artifact: `reports/motion-transfer-phase/wonder-delivery-001/integrations/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/`.
 
 A second delivery into that directory stops because the receipt already exists. The receipt is not rewritten.
+
+## Checked-in publication
+
+The campaign directory `reports/motion-transfer-phase/wonder-development-001` and the delivery directory `reports/motion-transfer-phase/wonder-delivery-001` stay separate local evidence. Both are gitignored. The campaign trial is still `failed` / `recipient-or-export`, with zero accepted deliveries. Copying the publication did not change that journal or the delivery receipt.
+
+A clean checkout reads the same host publication from these three files. They are a byte copy of the delivery artifact, not a regenerated package:
+
+- [receipt.json](../integration/recordings/recoveries/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/receipt.json)
+- [project.json](../integration/recordings/recoveries/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/project.json)
+- [validation.json](../integration/recordings/recoveries/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/validation.json)
+
+`createIntegrationPublication` on an empty directory finds no local `integrations/` copy and falls back to `integration/recordings/recoveries/`. That read rebuilds the ZIP from `project.json`.
