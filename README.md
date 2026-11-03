@@ -78,6 +78,8 @@ npm run score:video-comparison -- --campaign reports/motion-transfer-phase/video
 
 `hosting:serve` does not turn on public generation by itself. Hosted creation is not claimed verified. The provider budget and the worker check are still being finished. See [docs/hosting.md](docs/hosting.md).
 
+Current validation: **339 of 340 tests passed**, with no skips. The remaining failure is the Docker worker publication check. TypeScript, lint, formatting, and both frontend builds passed. See [the validation checkpoint](docs/local-validation.md).
+
 ## Where things stand
 
 | | State | Detail |

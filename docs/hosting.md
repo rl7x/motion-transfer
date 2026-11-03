@@ -70,9 +70,9 @@ A follow-up uses the published artifact id as its parent. The receipt stores the
 
 The shared phase ledger is `reports/motion-transfer-phase`. `reservePublicGeneration` requires that explicit directory. It throws while `releasePublished` is false, and charging the shared directory also requires the confirmation string `charge-shared-public-reserve`. A missing shared ledger is not created. This release never passes either gate. The $15 public category stays unused. Tests that exercise the helper use a temporary ledger.
 
-## Scripts the root package should gain
+## Local commands
 
-Do not add these in this change. The root `package.json` is owned elsewhere.
+The root package provides the corresponding hosting script aliases.
 
 ```sh
 node --test --test-concurrency=1 tests/hosting.test.mjs
@@ -82,6 +82,6 @@ docker build -f Dockerfile -t motion-transfer-verifier:local .
 docker build -f Dockerfile.coordinator -t motion-transfer-coordinator:local .
 ```
 
-Suggested names, when a package script is allowed: `verify:hosting`, `verify:hosting:isolation`, `hosting:broker`, `hosting:image`, and `hosting:coordinator-image`. No new npm dependency is required. Docker and the pinned Node 22 image are external.
+Available aliases: `verify:hosting`, `verify:hosting:isolation`, `hosting:broker`, `hosting:image`, and `hosting:coordinator-image`. No new npm dependency is required. Docker and the pinned Node 22 image are external.
 
 `HOSTING_BROKER_SOCKET` must be set for the coordinator to reach the host broker. `HOSTING_INVITE_CODES` is required before any remix is admitted. Neither value belongs in the repository.
