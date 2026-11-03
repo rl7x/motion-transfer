@@ -97,6 +97,14 @@ export async function collectParallaxiaRelease({ liveDirectory, featuredId, base
   const resources={'/api/parallaxia/base':base,'/api/ability':{id:baseline.componentId,name:'Dash',status:'accepted-recovery'},
     '/api/destinations':{destinations:[{id:'parallaxia',componentId:baseline.componentId},{id:'jujump',componentId:baseline.componentId}]},
     '/api/transfer':{status:'playback-only'},'/api/lab/status':{enabled:false},'/api/remixes/status':{enabled:false,generationConfigured:false}};
+  const savedVersions=publications.map(item=>{
+    const generation=JSON.parse(item.files['generation.json']);
+    return {id:item.id,parentArtifactId:item.receipt.parentArtifactId,recipientId:'parallaxia',componentId:baseline.componentId,
+      status:item.receipt.experiment&&!item.receipt.experiment.satisfied?'unsuccessful':'ready',
+      prompt:generation.prompt??null,createdAt:generation.createdAt??null,estimatedCostUsd:generation.estimatedCostUsd??null,
+      summary:item.receipt.summary,intent:item.receipt.intent,play:`/artifacts/${item.id}/play.html`,download:`/artifacts/${item.id}/download.zip`,receipt:`/artifacts/${item.id}/receipt.json`};
+  });
+  resources['/api/catalog']={parents:[],artifacts:savedVersions.filter(version=>version.status==='ready'),versions:savedVersions};
   for(const item of publications){resources[`/artifacts/${item.id}/receipt.json`]=item.receipt;resources[`/artifacts/${item.id}`]=item.receipt;}
   if(taskEvidence) {
     const evidence = await readFile(taskEvidence);

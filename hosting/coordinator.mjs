@@ -447,16 +447,23 @@ export async function createCoordinator({
       catch (error) { if (error.code === 'ENOENT') return null; throw error; }
     },
     async catalog() {
-      const artifacts = [];
+      const artifacts = [], versions = [];
+      const publishedJobs = new Map(queue.list().filter(job=>job.artifactId).map(job=>[job.artifactId,job]));
       for (const id of await names(join(directory, 'artifacts'))) {
         const receipt = await readReceipt(id);
-        if (receipt?.experiment && receipt.experiment.satisfied !== true) continue;
-        artifacts.push({
+        const job = publishedJobs.get(id);
+        const version = {
           id, parentArtifactId: receipt?.parentArtifactId ?? null,
           parentChain: Array.isArray(receipt?.parentChain) ? [...receipt.parentChain, id] : [id],
           play: `/artifacts/${id}/play.html`, download: `/artifacts/${id}/download`, receipt: `/artifacts/${id}`,
           intent: await parentIntent(id), summary: receipt?.summary ?? await parentSummary(id),
-        });
+          recipientId: receipt?.recipient?.id ?? null, componentId: receipt?.componentId ?? null,
+          status: receipt?.experiment && receipt.experiment.satisfied !== true ? 'unsuccessful' : 'ready',
+          prompt: job?.prompt ?? null, createdAt: job?.createdAt ?? null,
+          estimatedCostUsd: job?.inference?.estimatedCostUsd ?? null,
+        };
+        versions.push(version);
+        if (version.status === 'ready') artifacts.push(version);
       }
       const parentIds = await names(parents);
       const parentEntries = [];
@@ -474,7 +481,7 @@ export async function createCoordinator({
           parent: '/parents/:id', play: '/artifacts/:id/play.html', creator: '/',
         },
         parents: parentEntries,
-        artifacts,
+        artifacts, versions,
       };
     },
     async submit(request) {

@@ -103,3 +103,9 @@ The persistent age/privacy/model banner was removed at Richard’s request. Play
 The local operator preview no longer applies the public two-request session quota. Its coordinator uses an explicit local-only unlimited session setting; public coordinators keep the two-request default and reject an unlimited setting. Frozen-task v1 still explicitly uses two jobs per session. The $7 whole-job reservation, existing $50 ledger, reserve allocation, one active job at a time, worker isolation and uncertainty checks remain enforced. Failed, unsupported and cancelled jobs stay in history.
 
 A definitive HTTP admission rejection (including quota, budget or invalid-request errors) stops automatic retries and restores the editable prompt. A transport or server error continues reconnecting with the same idempotency key. The UI only says “reconnecting” while it is actually retrying. Rejections are not provider charges; admitted unsupported or cancelled jobs may already have returned usage and that usage remains recorded.
+
+## Saved generation history
+
+`GET /api/catalog` includes a `versions` list derived from immutable publications and their durable jobs: request text, creation time, mapping, estimated cost, parent and artifact identities, recipient/component identity, and ready or unsuccessful status. The existing passing `artifacts` catalog still excludes experiments that failed their fixed goal. No new provider request, verification, source rebuild, or publication is needed to enumerate or reopen a saved version.
+
+The PARALLAXIA workbench shows a Saved generations selector above the player. It refreshes after a publication, can be refreshed manually, and reopens exact version URLs with matching download/verification links. Selecting a failed experiment opens its recorded comparison and retains the original playable integration. The same catalog data is injected into PARALLAXIA static releases, including clearly labeled unsuccessful diagnostics.

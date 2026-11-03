@@ -28,10 +28,12 @@ export function MotionGeneration({
   parentId,
   onPlay,
   experiment = null,
+  onPublished,
 }: {
   parentId: string;
   experiment?: unknown;
   onPlay(job: MotionJob): void;
+  onPublished?(): void;
 }) {
   const age = useAgeAcknowledgment();
   const playback = readGenerationMode() === 'playback-only';
@@ -49,6 +51,9 @@ export function MotionGeneration({
   const [error, setError] = useState('');
   const [reconnecting, setReconnecting] = useState(false);
   const [now, setNow] = useState(Date.now);
+  useEffect(() => {
+    if (job?.artifactId) onPublished?.();
+  }, [job?.artifactId, onPublished]);
   useEffect(() => {
     const controller = new AbortController();
     void fetchJson<{ generationConfigured: boolean; maxJobCostUsd?: number }>(

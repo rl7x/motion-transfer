@@ -112,6 +112,8 @@ test('the local operator can continue beyond two jobs without resetting spending
   const budget=await createPhaseBudget(ledgerDirectory),before=await budget.journal();
   assert.equal(before.reservations.length,3);assert.equal(before.definition.maxCostUsd,50);
   assert.ok(before.reservations.every(entry=>entry.maxCostUsd===7&&entry.category==='reserve'&&entry.status==='settled'));
+  const catalog=await coordinator.catalog();assert.equal(catalog.versions.length,3);
+  assert.ok(catalog.versions.every(version=>version.prompt==='Make the dash half as long.'&&version.createdAt&&version.status==='ready'&&version.componentId===parentComponent.id));
   await coordinator.close();
   const reopened=await createCoordinator({directory,broker,client,ledgerDirectory,localVerification:true,sessionJobLimit:null});
   t.after(()=>reopened.close());
@@ -119,6 +121,33 @@ test('the local operator can continue beyond two jobs without resetting spending
   const fourth=await reopened.wait((await reopened.submit(remix(parentId,session))).id);assert.equal(fourth.status,'ready',fourth.error);
   const after=await budget.journal();assert.deepEqual(after.reservations.slice(0,3),before.reservations);
   assert.equal(after.reservations.length,4);assert.deepEqual(after.definition,before.definition);
+  const restored=await reopened.catalog();assert.equal(restored.versions.length,4);
+  for(const version of catalog.versions)assert.deepEqual(restored.versions.find(item=>item.id===version.id),version);
+});
+
+test('saved version history retains unsuccessful experiment frames without adding them to the passing catalog', async t => {
+  const directory=await temp(t);
+  const broker=fakeBroker(async()=>{throw Error('Saved history must not invoke verification');});
+  let coordinator=await createCoordinator({directory,broker});
+  const parentId='ab'.repeat(32);await coordinator.putParent({id:parentId,bytes:Buffer.from('original'),intent:parentIntent});
+  const fixtures=[];
+  for(const satisfied of [true,false]){
+    const frame=Buffer.from(`<!doctype html><title>Synthetic saved ${satisfied}</title>`);
+    const published=await publishArtifact({directory,parentId,files:{'play.html':frame,'intent.json':JSON.stringify(intent),
+      'receipt.json':JSON.stringify({passed:satisfied,adapterVerified:true,parentArtifactId:parentId,parentChain:[parentId],
+        recipient:{id:'parallaxia'},componentId:parentComponent.id,summary:'Synthetic saved experiment fixture',experiment:{satisfied}})}});
+    fixtures.push({id:published.id,frame,satisfied});
+  }
+  const catalog=await coordinator.catalog();assert.equal(catalog.versions.length,2);assert.equal(catalog.artifacts.length,1);
+  for(const fixture of fixtures){
+    const entry=catalog.versions.find(version=>version.id===fixture.id);
+    assert.equal(entry.status,fixture.satisfied?'ready':'unsuccessful');assert.equal(entry.recipientId,'parallaxia');
+    assert.equal(catalog.artifacts.some(version=>version.id===fixture.id),fixture.satisfied);
+  }
+  await coordinator.close();coordinator=await createCoordinator({directory,broker});t.after(()=>coordinator.close());
+  assert.deepEqual((await coordinator.catalog()).versions,catalog.versions);
+  for(const fixture of fixtures)assert.deepEqual(await coordinator.artifactFile(fixture.id,'play.html'),fixture.frame);
+  assert.equal(broker.calls.length,0);
 });
 
 test('a public coordinator cannot disable its session quota', async t => {

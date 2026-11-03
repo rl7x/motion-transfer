@@ -119,6 +119,7 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
     const hostedParent=path.match(/^\/parents\/([a-f0-9]{64})(\/download)?$/);
     if(coordinator&&hostedParent){const bytes=await coordinator.parentBytes(hostedParent[1]);response.setHeader('Content-Security-Policy','sandbox allow-scripts');if(hostedParent[2])response.setHeader('Content-Disposition','attachment; filename="parent.html"');send(200,'text/html',bytes);return;}
     if(path==='/api/parallaxia/base'){json(200,{id:parallaxia.id,componentId:parallaxia.componentId,componentRef:parallaxia.componentRef,intent:parallaxia.intent,recipient:parallaxia.recipient,provenance:parallaxia.provenance,play:`/parallaxia/artifacts/${parallaxia.id}/play.html`,report:`/parallaxia/artifacts/${parallaxia.id}/report.json`,download:`/parallaxia/artifacts/${parallaxia.id}/download.html`,practice:`/parallaxia/challenge/${parallaxia.id}/play.html`,practiceId:parallaxiaChallenge.id,practiceDownload:`/parallaxia/challenge/${parallaxia.id}/download.html`,practiceReport:`/parallaxia/challenge/${parallaxia.id}/report.json`,historicalRoadster:`/roadster/artifacts/${roadster.id}/play.html`});return;}
+    if(path==='/api/catalog'){json(200,{parents:[],artifacts:[],versions:[]});return;}
     const parallaxiaPath=path.match(/^\/parallaxia\/(artifacts|challenge)\/([a-f0-9]{64})\/(play\.html|download\.html|adapter\.ts|report\.json|notices\.txt)$/);
     if(parallaxiaPath){
       const [,kind,id,file]=parallaxiaPath;

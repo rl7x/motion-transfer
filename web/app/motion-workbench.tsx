@@ -10,6 +10,7 @@ import {
 } from './motion-experiment';
 import { MotionGeneration, type MotionJob } from './motion-generation';
 import { LiveMechanicsEvidence } from './live-mechanics-evidence';
+import { GenerationHistory } from './generation-history';
 import { HoldButton } from './components/hold-button';
 import { Header } from './components/static-content';
 import { AgeAcknowledgment, AgeProvider } from './components/age-acknowledgment';
@@ -35,6 +36,14 @@ export function MotionWorkbench() {
     download: string;
   } | null>(null);
   const [routeVersion, setRouteVersion] = useState(0);
+  const [catalogRevision, setCatalogRevision] = useState(0);
+  const [viewedId, setViewedId] = useState<string | null>(null);
+  const refreshHistory = useCallback(() => setCatalogRevision((value) => value + 1), []);
+  const selectVersion = useCallback((id: string) => {
+    setPractice(false);
+    history.pushState({}, '', linkHref('/?artifact=' + id));
+    setRouteVersion((value) => value + 1);
+  }, []);
   useEffect(() => {
     const route = () => setRouteVersion((value) => value + 1);
     window.addEventListener('popstate', route);
@@ -67,6 +76,7 @@ export function MotionWorkbench() {
     const controller = new AbortController();
     void fetchJson<Baseline>('/api/parallaxia/base', { signal: controller.signal })
       .then(async (value) => {
+        if (controller.signal.aborted) return;
         setBase(value);
         setError('');
         setCheckpoint(null);
@@ -76,6 +86,7 @@ export function MotionWorkbench() {
         const id =
           new URL(location.href).searchParams.get('artifact') ??
           window.__MOTION_TRANSFER__?.featuredArtifactId;
+        setViewedId(id ?? value.id);
         if (!id || id === value.id) return;
         if (!/^[a-f0-9]{64}$/.test(id)) throw Error('Invalid saved artifact identity');
         const receipt = await fetchJson<{
@@ -87,6 +98,7 @@ export function MotionWorkbench() {
           parentArtifactId: string;
           intent?: { unitScale: number; activation: string; direction: string } | null;
         }>('/artifacts/' + id + '/receipt.json', { signal: controller.signal });
+        if (controller.signal.aborted) return;
         if (receipt.componentId !== value.componentId || receipt.recipient.id !== 'parallaxia')
           throw Error('Wrong recipient or component');
         if (receipt.experiment)
@@ -170,6 +182,14 @@ export function MotionWorkbench() {
             </p>
           )}
         </section>
+        {base && (
+          <GenerationHistory
+            baseline={base}
+            activeId={viewedId ?? active?.id ?? base.id}
+            revision={catalogRevision}
+            onSelect={selectVersion}
+          />
+        )}
         <section className="games" aria-label="PARALLAXIA movement workbench">
           <article className="game-card transferred">
             <h2>
@@ -290,6 +310,7 @@ export function MotionWorkbench() {
         {error && <p role="alert">{error}</p>}
         {base && (
           <MotionGeneration
+            onPublished={refreshHistory}
             experiment={experiment}
             parentId={active?.id ?? base.id}
             onPlay={(job: MotionJob) => {
@@ -298,6 +319,7 @@ export function MotionWorkbench() {
               setCheckpoint(null);
               setExperiment(null);
               setSavedExperiment(null);
+              setViewedId(job.artifactId);
               setActive({
                 id: job.artifactId,
                 play: job.urls.play,
@@ -314,12 +336,7 @@ export function MotionWorkbench() {
         {active && (
           <button
             onClick={() => {
-              setActive(null);
-              setPractice(false);
-              setSavedExperiment(null);
-              setCheckpoint(null);
-              setExperiment(null);
-              if (base) history.pushState({}, '', linkHref('/?artifact=' + base.id));
+              if (base) selectVersion(base.id);
             }}
           >
             Keep original integration

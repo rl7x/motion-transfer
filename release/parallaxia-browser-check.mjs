@@ -26,6 +26,8 @@ export async function browserCheckParallaxia(directory, manifest){
   const featured=manifest.versions.find(version=>version.id===manifest.featuredId);
   assert.equal(await page.getByRole('link',{name:'Compiled donor',exact:true}).getAttribute('href'),new URL('donor/play',server.origin).pathname);
   const data=JSON.parse(await readFile(join(directory,'motion-data.json'),'utf8'));
+  const saved=data.resources['/api/catalog'].versions;
+  assert.equal(await page.locator('#generation-version option').count(),saved.length+1);
   const measured=data.resources['/api/live-mechanics/results'];
   if(measured){
     const results=page.getByRole('region',{name:'Measured task results'});
@@ -44,9 +46,10 @@ export async function browserCheckParallaxia(directory, manifest){
   }
   const diagnostic=manifest.versions.find(version=>version.kind==='parallaxia-unsuccessful-experiment');
   if(diagnostic){
-    await page.goto(server.origin+'?artifact='+diagnostic.id);
+    await page.locator('#generation-version').selectOption(diagnostic.id);await page.locator('#generation-play').click();
     await page.getByRole('alert').filter({hasText:'Saved diagnostic: goal unsatisfied'}).waitFor();
     assert.ok((await page.locator('#parallaxia-game').getAttribute('src')).includes(baseline.id));
+    assert.equal(await page.locator('#generation-version').inputValue(),diagnostic.id);
     await page.getByRole('heading',{name:'Goal unsatisfied · original retained',exact:true}).waitFor();
     await page.goto(server.origin);
   }

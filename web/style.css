@@ -1710,6 +1710,33 @@ body.player-expanded::before {
 .experiment-result {
   margin-top: 24px;
 }
+.generation-history {
+  margin: 20px 0;
+  padding: 16px;
+  border: 1px solid #3c4937;
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+}
+.version-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.version-toolbar select {
+  flex: 1 1 260px;
+  min-width: 0;
+  max-width: 100%;
+  padding: 10px;
+  background: #172016;
+  color: #e7f0df;
+  border: 1px solid #6b8552;
+  border-radius: 6px;
+}
+.saved-version-details {
+  margin-top: 12px;
+  font-size: 13px;
+}
 .creation-confirmation {
   width: min(420px, calc(100% - 32px));
   padding: 24px;
