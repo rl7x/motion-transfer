@@ -22,7 +22,9 @@ The candidate prompt discloses the `init`/`step` ABI, `sourceBodyWidth` 8, the g
 
 If the probe's public answer misses the frame counter or the player sprite, the candidate request uses the contact sheet. That request is explicitly image input. Its fidelity condition is `contact-sheet` plus the same supplied public-contract defaults. A localized probe uses condition `video` plus those supplied defaults. `provenance.json` records that label beside the study. A config that changes the supplied defaults is retained and rejected with no second call.
 
-Accepted source is frozen in one study with the existing immutable saved recovery (`components/dashy-dango-dash/component.ts` and `contract.json`) before the study seed is written. The saved candidate's condition is `saved-recovery`. It is the existing component, included for comparison. The saved source is read only while freezing that study, after the provider response, and is never copied into the provider prompt. This command does not score the study and does not repair either candidate from held-out output. Score later with the existing `score:candidate` command.
+Accepted source is frozen in one study with the existing immutable saved recovery (`components/dashy-dango-dash/component.ts` and `contract.json`) before the study seed is written. The saved candidate's condition is `saved-recovery`. It is the existing component, included for comparison. The saved source is read only while freezing that study, after the provider response, and is never copied into the provider prompt. This command does not score the study and does not repair either candidate from held-out output.
+
+Score a finished campaign with `node scripts/score-video-comparison.mjs --campaign <directory>`. That command calls `scoreFidelityStudy` once on the frozen pair, reuses a complete `results.json` without rewriting it, and writes `fidelity-comparison.svg` plus `fidelity-comparison.json`. It does not call Meta, repair source, or change the seed. The scored contact-sheet comparison is pinned under `benchmark/fidelity-recordings/`, and `docs/fidelity-results.md` states its 0/40 and 40/40 counts.
 
 ## Fixed remix campaign
 
@@ -52,7 +54,8 @@ Suggested root scripts, to be added by the owner of `package.json`:
 ```json
 "render:fidelity-media": "node scripts/fidelity-media.mjs",
 "video:candidate": "node scripts/video-candidate.mjs",
-"remix:campaign": "node scripts/remix-campaign.mjs"
+"remix:campaign": "node scripts/remix-campaign.mjs",
+"score:video-comparison": "node scripts/score-video-comparison.mjs"
 ```
 
 No new package dependency is required. Do not run the two paid commands until the shared ledger and the request text have been reviewed.

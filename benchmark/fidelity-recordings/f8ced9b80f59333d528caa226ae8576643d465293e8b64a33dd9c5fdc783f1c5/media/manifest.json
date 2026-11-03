@@ -1,0 +1,425 @@
+{
+  "schemaVersion": 1,
+  "kind": "fidelity-donor-media",
+  "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+  "localEvidenceOnly": true,
+  "note": "Frame observations in this manifest are local audit data. Do not paste them into a model prompt.",
+  "overlay": {
+    "scale": 2,
+    "counterDigits": 4,
+    "lamps": [
+      {
+        "name": "X",
+        "bit": 1
+      },
+      {
+        "name": "Z",
+        "bit": 2
+      },
+      {
+        "name": "L",
+        "bit": 16
+      },
+      {
+        "name": "R",
+        "bit": 32
+      },
+      {
+        "name": "U",
+        "bit": 64
+      },
+      {
+        "name": "D",
+        "bit": 128
+      }
+    ]
+  },
+  "probe": {
+    "fps": 8,
+    "hold": 8,
+    "dashFrames": [
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21
+    ],
+    "videoFile": "probe.mp4",
+    "videoSha256": "5f0b434dd7d06c82d5adfae6a6bb747bf0007cd4864029495fb3e123ceeeca58",
+    "videoBytes": 16061,
+    "frames": [
+      {
+        "frame": 12,
+        "buttons": 32,
+        "ownsMotion": false,
+        "playerBox": {
+          "x": 74,
+          "y": 77,
+          "width": 10,
+          "height": 7
+        },
+        "compositeSha256": "11ead46f3cd4d5008d4973563de80771e4dc17263978417a27085756925dcdc7"
+      },
+      {
+        "frame": 13,
+        "buttons": 32,
+        "ownsMotion": false,
+        "playerBox": {
+          "x": 74,
+          "y": 77,
+          "width": 10,
+          "height": 7
+        },
+        "compositeSha256": "a97b10b1504241853bd736a0591ad677be1eff85e1613965e29febd08018eeb7"
+      },
+      {
+        "frame": 14,
+        "buttons": 33,
+        "ownsMotion": true,
+        "playerBox": {
+          "x": 68,
+          "y": 76,
+          "width": 16,
+          "height": 8
+        },
+        "compositeSha256": "d31f6ce9f07d9b4c4d86c154eff0642737fc903603f58f528b99c6949f6a669c"
+      },
+      {
+        "frame": 15,
+        "buttons": 32,
+        "ownsMotion": true,
+        "playerBox": null,
+        "compositeSha256": "e6c22da6d885f11f106bbbac195f71643e561820f3f7eef62bd8e47939a2f030"
+      },
+      {
+        "frame": 16,
+        "buttons": 32,
+        "ownsMotion": true,
+        "playerBox": {
+          "x": 72,
+          "y": 77,
+          "width": 12,
+          "height": 7
+        },
+        "compositeSha256": "2fb2b6a9526200875419d63fa32ba0811aaf1f80e8d5149d8ee2afa585c665c8"
+      },
+      {
+        "frame": 17,
+        "buttons": 32,
+        "ownsMotion": true,
+        "playerBox": null,
+        "compositeSha256": "2c24600e07860d221cc5de74cb96811e4ee6ecd96191be0459d2ec4d1cff29d2"
+      },
+      {
+        "frame": 18,
+        "buttons": 32,
+        "ownsMotion": true,
+        "playerBox": {
+          "x": 57,
+          "y": 77,
+          "width": 27,
+          "height": 7
+        },
+        "compositeSha256": "e175e0615a25f94e0aa46dc4666f0980dee683370c820ea075c2e5a8b7cd2c09"
+      },
+      {
+        "frame": 19,
+        "buttons": 32,
+        "ownsMotion": true,
+        "playerBox": null,
+        "compositeSha256": "a38fb5ce3c73811ff7c7c38ce77d9f9b126bafd10607180e0473a89f16ed6c2e"
+      },
+      {
+        "frame": 20,
+        "buttons": 32,
+        "ownsMotion": true,
+        "playerBox": null,
+        "compositeSha256": "40dcd8cb38500584de20ac43035b3748f805eb9483c999d0828e9413fcb41a39"
+      },
+      {
+        "frame": 21,
+        "buttons": 32,
+        "ownsMotion": true,
+        "playerBox": null,
+        "compositeSha256": "0a95fd99e44c69b596a3e83885b5af5a4372cb4a246c3676c13ecb699105e0b8"
+      }
+    ]
+  },
+  "candidate": {
+    "fps": 8,
+    "hold": 4,
+    "dashFrames": [
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "videoFile": "candidate.mp4",
+    "videoSha256": "98edda047198b8004f7244af8dc35f68edd83fa806663806c1c1f783c0d455dd",
+    "videoBytes": 29859,
+    "frames": [
+      {
+        "frame": 1,
+        "buttons": 1,
+        "ownsMotion": false,
+        "playerBox": null,
+        "compositeSha256": "9d2e3fd5d306a0b59842a16ba6b7d5a9ef5cb6a9fac41844809b5c875d504f08"
+      },
+      {
+        "frame": 2,
+        "buttons": 32,
+        "ownsMotion": false,
+        "playerBox": null,
+        "compositeSha256": "4118e15771cf40173aa77e830ec8e2707865abe3191b974ff10c72ace9a01f5e"
+      },
+      {
+        "frame": 3,
+        "buttons": 32,
+        "ownsMotion": false,
+        "playerBox": {
+          "x": 74,
+          "y": 77,
+          "width": 10,
+          "height": 7
+        },
+        "compositeSha256": "cae811e3764c2a4beee4406c4765e8e537d0954c18607cf7972224af0a1d5967"
+      },
+      {
+        "frame": 4,
+        "buttons": 32,
+        "ownsMotion": false,
+        "playerBox": {
+          "x": 74,
+          "y": 77,
+          "width": 10,
+          "height": 7
+        },
+        "compositeSha256": "2b04f800af2a90995be0437fc8d669430c1d4a226143c6f2274e2c6e3cc15965"
+      },
+      {
+        "frame": 5,
+        "buttons": 32,
+        "ownsMotion": false,
+        "playerBox": {
+          "x": 74,
+          "y": 77,
+          "width": 10,
+          "height": 7
+        },
+        "compositeSha256": "032e29a2ea186952864de7131b6a303e17d40a2765a4f0ca54749ed76be4b4d5"
+      },
+      {
+        "frame": 6,
+        "buttons": 32,
+        "ownsMotion": false,
+        "playerBox": {
+          "x": 74,
+          "y": 76,
+          "width": 10,
+          "height": 8
+        },
+        "compositeSha256": "f63c8a817cee2c9c38e3663059d727b5445465356bce6e5c75b8ff923bff072f"
+      },
+      {
+        "frame": 7,
+        "buttons": 32,
+        "ownsMotion": false,
+        "playerBox": {
+          "x": 74,
+          "y": 76,
+          "width": 10,
+          "height": 8
+        },
+        "compositeSha256": "e4dd09835b715fb204e21f00e1c6c24b39aec2dcef2af42f3806dc659723ae9b"
+      },
+      {
+        "frame": 8,
+        "buttons": 32,
+        "ownsMotion": false,
+        "playerBox": {
+          "x": 74,
+          "y": 77,
+          "width": 10,
+          "height": 7
+        },
+        "compositeSha256": "a65ae79866e9b0dbcf44aeebf369511b80e892426e4eb68c698ab6c624a688ac"
+      },
+      {
+        "frame": 9,
+        "buttons": 32,
+        "ownsMotion": false,
+        "playerBox": {
+          "x": 74,
+          "y": 77,
+          "width": 10,
+          "height": 7
+        },
+        "compositeSha256": "8f10edf8f99cb4826b30d17536c1082c464834616e883fedc8faac58cec8250e"
+      },
+      {
+        "frame": 10,
+        "buttons": 32,
+        "ownsMotion": false,
+        "playerBox": {
+          "x": 74,
+          "y": 76,
+          "width": 10,
+          "height": 8
+        },
+        "compositeSha256": "d0c23525ca357a73cba923a40ce9ca240161def2e4d7dbdaf2731aaae38a4b7e"
+      },
+      {
+        "frame": 11,
+        "buttons": 32,
+        "ownsMotion": false,
+        "playerBox": {
+          "x": 74,
+          "y": 76,
+          "width": 10,
+          "height": 8
+        },
+        "compositeSha256": "8a05cbccfd4d8e9a46853b23699a8478b4308c83e0370e4ebd8023772e60b70f"
+      },
+      {
+        "frame": 12,
+        "buttons": 33,
+        "ownsMotion": true,
+        "playerBox": {
+          "x": 68,
+          "y": 77,
+          "width": 16,
+          "height": 7
+        },
+        "compositeSha256": "0458324b0af6520959d7a285296bcb5c6a4b43f4ccd47c9026b5c66e7f0e9711"
+      },
+      {
+        "frame": 13,
+        "buttons": 32,
+        "ownsMotion": true,
+        "playerBox": null,
+        "compositeSha256": "4996aec298fc98a0c55b029d6acf126cccdd03a588a977607bec2d9300eb8af3"
+      },
+      {
+        "frame": 14,
+        "buttons": 32,
+        "ownsMotion": true,
+        "playerBox": {
+          "x": 72,
+          "y": 77,
+          "width": 12,
+          "height": 7
+        },
+        "compositeSha256": "f695d3c4c18e3372fd429eb894061001dc1204c355a524c1d277416fab7008f3"
+      },
+      {
+        "frame": 15,
+        "buttons": 32,
+        "ownsMotion": true,
+        "playerBox": null,
+        "compositeSha256": "828569e0c635f81145977bb92eea14a2e18c1987f1f28495e0d658b3879b4fe0"
+      },
+      {
+        "frame": 16,
+        "buttons": 32,
+        "ownsMotion": true,
+        "playerBox": {
+          "x": 57,
+          "y": 77,
+          "width": 27,
+          "height": 7
+        },
+        "compositeSha256": "8b89f1736d10444df36afcf0aeacb8d0d7054728352d232a6abb34d7de74f779"
+      },
+      {
+        "frame": 17,
+        "buttons": 32,
+        "ownsMotion": true,
+        "playerBox": null,
+        "compositeSha256": "e5f54c6f57b213853d4bdb8368af20e6c6e7e741332a5fb03e0761c900f3c69c"
+      },
+      {
+        "frame": 18,
+        "buttons": 32,
+        "ownsMotion": true,
+        "playerBox": null,
+        "compositeSha256": "6e8b809a5f736f97023995e720e7309ac87d09d0fa132c3c2588bf3c220b0e49"
+      },
+      {
+        "frame": 19,
+        "buttons": 32,
+        "ownsMotion": true,
+        "playerBox": null,
+        "compositeSha256": "179001faa0e851d5687d3709e9d7f958501d6e5bf428e434fd08074b0e34af3f"
+      },
+      {
+        "frame": 20,
+        "buttons": 0,
+        "ownsMotion": false,
+        "playerBox": null,
+        "compositeSha256": "363f3c0e23b615dc5b048324309d0617e7b05072c3e749a657af70a171aa397d"
+      },
+      {
+        "frame": 21,
+        "buttons": 0,
+        "ownsMotion": false,
+        "playerBox": {
+          "x": 50,
+          "y": 77,
+          "width": 33,
+          "height": 7
+        },
+        "compositeSha256": "895ab7cfb40bb640e33b9f6db04732f75bbafc470816c09e82dd3fab5882680d"
+      },
+      {
+        "frame": 22,
+        "buttons": 0,
+        "ownsMotion": false,
+        "playerBox": null,
+        "compositeSha256": "4e9d0962e90c289fe1e280d45f3d47fa23cbebe23e0fe3c42849dd94bb01a991"
+      },
+      {
+        "frame": 23,
+        "buttons": 64,
+        "ownsMotion": false,
+        "playerBox": null,
+        "compositeSha256": "10e6905c9588be27e96345515e6947d219f6fe4c8523ba0f6eddccffef9c05b8"
+      },
+      {
+        "frame": 24,
+        "buttons": 64,
+        "ownsMotion": false,
+        "playerBox": null,
+        "compositeSha256": "51a55f4f67998b2671b47f6f48577cf8468e89ce8d1359047cf1d6a4fd4b6502"
+      },
+      {
+        "frame": 25,
+        "buttons": 64,
+        "ownsMotion": false,
+        "playerBox": null,
+        "compositeSha256": "071ae16dfad41fb8fc07c8c4df05910b99238c21cf86df6c7c417b25b84466ef"
+      },
+      {
+        "frame": 26,
+        "buttons": 64,
+        "ownsMotion": false,
+        "playerBox": null,
+        "compositeSha256": "cd6268088f4f278d03ce10b53ffa54d576dd26292c4f173ecb542c3dea33709e"
+      }
+    ]
+  },
+  "contactSheet": {
+    "file": "contact-sheet.png",
+    "sha256": "626c57771d11e228a55080e84fd789d459bd4147d704cd92408c5c763b20993b",
+    "bytes": 18349,
+    "columns": 6,
+    "rows": 5,
+    "labeled": "image-input"
+  }
+}
