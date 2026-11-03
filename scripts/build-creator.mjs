@@ -1,3 +1,4 @@
+import { buildExportedExperiment } from '../web/build.mjs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -63,6 +64,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
   } else {
     await mkdir(out, { recursive: true });
     await writeFile(join(out, 'index.html'), page.html);
+    await writeFile(join(out, 'replay.js'), await buildExportedExperiment());
     console.log(`Wrote ${join(out, 'index.html')}`);
   }
 }

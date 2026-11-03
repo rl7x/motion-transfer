@@ -41,7 +41,10 @@ export async function buildParallaxiaArtifact({ source, intent, component, prove
 export async function saveParallaxiaArtifact(artifact, root = PARALLAXIA_STORE) {
   const directory = new URL(artifact.id + '/', root);
   await mkdir(directory, { recursive: true });
-  for (const [name, value] of Object.entries(artifact.files)) await writeFile(new URL(name, directory), value);
+  for (const [name, value] of Object.entries(artifact.files)) {
+    const file=new URL(name,directory);
+    try {await writeFile(file,value,{flag:'wx'});} catch(error){if(error.code!=='EEXIST')throw error;assert.equal(digest(await readFile(file)),digest(value),'Immutable PARALLAXIA bytes changed');}
+  }
   const { component, summary, ...record } = artifact;
   await writeFile(new URL('manifest.json', directory), JSON.stringify({ ...record,
     files: Object.fromEntries(Object.entries(artifact.files).map(([name, value]) => [name, digest(value)])) }, null, 2) + '\n');

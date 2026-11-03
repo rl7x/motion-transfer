@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { readGenerationMode, readJujumpComparison } from './data-source';
 import { fetchJson, errorMessage } from './api';
 import { linkHref } from './links';
-import { CheckpointGoals, type Checkpoint } from './motion-experiment';
+import {
+  CheckpointGoals,
+  ExperimentResults,
+  type ExperimentReceipt,
+  type Checkpoint,
+} from './motion-experiment';
 import { MotionGeneration, type MotionJob } from './motion-generation';
 import { HoldButton } from './components/hold-button';
 import { Header } from './components/static-content';
@@ -21,6 +27,18 @@ interface Baseline {
 }
 
 export function MotionWorkbench() {
+  const [savedExperiment, setSavedExperiment] = useState<{
+    receipt: ExperimentReceipt;
+    parent: string;
+    candidate: string;
+    download: string;
+  } | null>(null);
+  const [routeVersion, setRouteVersion] = useState(0);
+  useEffect(() => {
+    const route = () => setRouteVersion((value) => value + 1);
+    window.addEventListener('popstate', route);
+    return () => window.removeEventListener('popstate', route);
+  }, []);
   const [base, setBase] = useState<Baseline | null>(null);
   const [active, setActive] = useState<{
     id: string;
@@ -29,6 +47,7 @@ export function MotionWorkbench() {
     report: string;
     rule?: { kind: string } | null;
     fresh?: boolean;
+    intent?: { unitScale: number; activation: string; direction: string } | null;
   } | null>(null);
   const [checkpoint, setCheckpoint] = useState<Checkpoint | null>(null);
   const [experiment, setExperiment] = useState<unknown>(null);
@@ -48,13 +67,21 @@ export function MotionWorkbench() {
     void fetchJson<Baseline>('/api/parallaxia/base', { signal: controller.signal })
       .then(async (value) => {
         setBase(value);
-        const id = new URL(location.href).searchParams.get('artifact');
+        const id =
+          new URL(location.href).searchParams.get('artifact') ??
+          window.__MOTION_TRANSFER__?.featuredArtifactId;
+        if (!id) {
+          setActive(null);
+          setSavedExperiment(null);
+        }
         if (id && /^[a-f0-9]{64}$/.test(id)) {
           const receipt = await fetchJson<{
             componentId: string;
             recipient: { id: string };
             rule?: { kind: string } | null;
-            fresh?: boolean;
+            experiment?: ExperimentReceipt;
+            parentArtifactId: string;
+            intent?: { unitScale: number; activation: string; direction: string } | null;
           }>('/artifacts/' + id + '/receipt.json', { signal: controller.signal });
           if (receipt.componentId !== value.componentId || receipt.recipient.id !== 'parallaxia')
             throw Error('Wrong recipient or component');
@@ -64,14 +91,22 @@ export function MotionWorkbench() {
             download: '/artifacts/' + id + '/download.zip',
             report: '/artifacts/' + id + '/receipt.json',
             rule: receipt.rule,
+            intent: receipt.intent,
           });
+          if (receipt.experiment)
+            setSavedExperiment({
+              receipt: receipt.experiment,
+              parent: '/parents/' + receipt.parentArtifactId,
+              candidate: '/artifacts/' + id + '/play.html',
+              download: '/artifacts/' + id + '/experiment.json',
+            });
         }
       })
       .catch((failure: unknown) => {
         if (!controller.signal.aborted) setError(errorMessage(failure));
       });
     return () => controller.abort();
-  }, []);
+  }, [routeVersion]);
   useEffect(() => {
     const receive = (event: MessageEvent) => {
       if (event.source !== frame.current?.contentWindow || event.data?.channel !== channel) return;
@@ -117,7 +152,14 @@ export function MotionWorkbench() {
           <p>
             Component <code>{base?.componentId ?? 'Loading…'}</code>
           </p>
-          <p>{base?.recipient.unitMapping}</p>
+          <p>Default mapping: {base?.recipient.unitMapping}</p>
+          {active?.intent && (
+            <p>
+              Selected version: {active.intent.unitScale * 60} world-unit nominal burst ·{' '}
+              {active.intent.direction} · {active.intent.activation}. Native bounds and collisions
+              still apply.
+            </p>
+          )}
         </section>
         <section className="games" aria-label="PARALLAXIA movement workbench">
           <article className="game-card transferred">
@@ -217,7 +259,15 @@ export function MotionWorkbench() {
             )}
           </article>
         </section>
-        {base && !practice && (
+        {savedExperiment && (
+          <ExperimentResults
+            receipt={savedExperiment.receipt}
+            parentPlay={savedExperiment.parent}
+            candidatePlay={savedExperiment.candidate}
+            download={savedExperiment.download}
+          />
+        )}
+        {base && !practice && readGenerationMode() !== 'playback-only' && (
           <CheckpointGoals
             checkpoint={checkpoint}
             capture={(curated) =>
@@ -237,6 +287,7 @@ export function MotionWorkbench() {
               setPractice(false);
               setCheckpoint(null);
               setExperiment(null);
+              setSavedExperiment(null);
               setActive({
                 id: job.artifactId,
                 play: job.urls.play,
@@ -244,6 +295,7 @@ export function MotionWorkbench() {
                 report: '/artifacts/' + job.artifactId + '/receipt.json',
                 fresh: true,
                 rule: job.rule,
+                intent: job.intent,
               });
               history.pushState({}, '', '/?artifact=' + job.artifactId);
             }}
@@ -262,7 +314,10 @@ export function MotionWorkbench() {
         )}
 
         <p>
-          <a href="/accepted/jujump/index.html">Same accepted component in JUJUMP</a> ·{' '}
+          <a href={linkHref(readJujumpComparison() ?? '/accepted/jujump/index.html')}>
+            Same accepted component in JUJUMP
+          </a>{' '}
+          ·{' '}
           <a href={linkHref(base?.historicalRoadster ?? '/?destination=roadster')}>
             Historical Roadster
           </a>{' '}

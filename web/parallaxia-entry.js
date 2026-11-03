@@ -439,7 +439,7 @@ function realtimeLoop(now) {
     let steps = 0;
     while (loopAccumulator >= FRAME_MS && steps < 5) {
       const bits =
-        keyboardBits || (assistedMode ? (pilotControls[sim.frame % pilotControls.length] ?? INPUT.SHOT) : INPUT.SHOT);
+        keyboardBits || (assistedMode ? (pilotControls[sim.frame % pilotControls.length] ?? INPUT.SHOT) : 0);
       stepWithInput(bits);
       loopAccumulator -= FRAME_MS;
       steps++;

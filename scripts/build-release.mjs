@@ -5,10 +5,11 @@ import { collectRelease } from '../release/collect.mjs';
 import { publishRelease } from '../release/publish.mjs';
 import { browserCheck } from '../release/browser-check.mjs';
 
+const recipient=option('recipient')??'roadster';
 const acceptedRoadster = option('accepted-roadster');
-const output = acceptedRoadster
+const output = option('output') ?? (recipient==='parallaxia' ? fileURLToPath(new URL('../reports/release-parallaxia',import.meta.url)) : acceptedRoadster
   ? fileURLToPath(new URL('../reports/release-accepted', import.meta.url))
-  : fileURLToPath(new URL('../reports/release', import.meta.url));
+  : fileURLToPath(new URL('../reports/release', import.meta.url)));
 function option(name) {
   const flag = '--' + name;
   const index = process.argv.indexOf(flag);
@@ -19,14 +20,14 @@ function option(name) {
 }
 const publicOrigin = option('public-origin') ?? process.env.RELEASE_PUBLIC_ORIGIN ?? null;
 const release = await collectRelease({
-  publicOrigin,
+  publicOrigin, recipient, liveDirectory:option('live-directory'), featuredId:option('artifact'), taskEvidence:option('task-evidence'),reuseBaseline:process.argv.includes('--reuse-baseline'),
   extraArtifacts: option('extra-artifacts'),
   challengeDirectory: option('challenge'),
   acceptedRoadster,
 });
 await mkdir(dirname(output), { recursive: true });
 const manifest = await publishRelease(output, release, {
-  verify: (directory, audited) => browserCheck(directory, audited),
+  verify: async (directory, audited) => recipient==='parallaxia' ? (await import('../release/parallaxia-browser-check.mjs')).browserCheckParallaxia(directory,audited) : browserCheck(directory, audited),
 });
 console.log(JSON.stringify({
   id: manifest.id, output, publicOrigin: manifest.publicOrigin, recovery: release.recovery,

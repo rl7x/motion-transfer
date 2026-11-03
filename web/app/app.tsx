@@ -68,6 +68,7 @@ function Experience() {
   );
 }
 export function App() {
+  if (window.__MOTION_TRANSFER__?.featuredRecipient === 'parallaxia') return <MotionWorkbench />;
   if (
     !window.__MOTION_TRANSFER__ &&
     (new URL(location.href).searchParams.get('destination') === 'parallaxia' ||

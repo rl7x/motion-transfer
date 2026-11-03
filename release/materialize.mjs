@@ -107,6 +107,7 @@ function indexPage(release, jsonText) {
 }
 
 export async function materialize(release) {
+  if(release.recipient?.id==='parallaxia')return (await import('./parallaxia-materialize.mjs')).materializeParallaxia(release);
   if (!release.versions.some(version => version.id === release.featuredId)) throw Error('Featured version is missing');
   const needsPlayer = release.versions.some((version) => version.protocol === 'challenge');
   if (needsPlayer && !release.shell?.playerJs) throw Error('Challenge pages need the release player bundle');

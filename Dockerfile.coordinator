@@ -4,7 +4,8 @@ WORKDIR /src
 COPY package.json package-lock.json ./
 COPY scripts/build-creator.mjs ./scripts/build-creator.mjs
 COPY web/tsconfig.json ./web/tsconfig.json
-COPY web/app/creator ./web/app/creator
+COPY web/app ./web/app
+COPY web/build.mjs ./web/build.mjs
 RUN npm ci \
     && node scripts/build-creator.mjs /out/creator \
     && test -s /out/creator/index.html
@@ -16,7 +17,7 @@ RUN groupadd --gid 10001 verifier \
 
 WORKDIR /app
 
-COPY hosting/constants.mjs hosting/errors.mjs hosting/protocol.mjs hosting/policy.mjs hosting/queue.mjs hosting/publish.mjs hosting/coordinator.mjs hosting/server.mjs hosting/serve.mjs hosting/broker-client.mjs hosting/generation.mjs hosting/seed-parent.mjs hosting/component-pin.mjs ./hosting/
+COPY hosting/constants.mjs hosting/errors.mjs hosting/protocol.mjs hosting/policy.mjs hosting/queue.mjs hosting/publish.mjs hosting/coordinator.mjs hosting/server.mjs hosting/serve.mjs hosting/broker-client.mjs hosting/generation.mjs hosting/seed-parent.mjs hosting/component-pin.mjs hosting/export.mjs ./hosting/
 COPY release/zip.mjs release/sha.mjs ./release/
 COPY campaign/phase-budget.mjs ./campaign/phase-budget.mjs
 COPY agent/accounting.mjs agent/roadster-request.mjs agent/recipient-request.mjs agent/meta-client.mjs ./agent/

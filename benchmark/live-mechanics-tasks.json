@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "name": "parallaxia-live-mechanics-v1",
+  "scope": "A frozen tool-driven task set, not a human study or a general reliability estimate. Keep every failed job and repair.",
+  "componentId": "544657417fe9752f91b0b72a451cd9cb8d2650839824be35881e52f81f223858",
+  "maxJobCostUsd": 0.15,
+  "maxAttemptsPerJob": 2,
+  "checkpoint": { "curated": true, "seed": 7, "mode": "normal", "startSector": 1, "tick": 40, "inputs": [[0, 40]] },
+  "scenario": {
+    "horizonTicks": 120,
+    "nativeControls": [[16, 120]],
+    "collisionPolicy": "native",
+    "noAddedInvulnerability": true,
+    "preserveEnemyRules": true,
+    "preserveNativeMovement": true,
+    "allowedChanges": ["unitScale", "activation", "direction", "dashTick"]
+  },
+  "tasks": [
+    { "id": "transfer", "kind": "positive", "parent": "baseline", "session": "a", "prompt": "Give the ship the recovered dash only on a fresh press. Preserve the distance and facing direction.", "intent": { "unitScale": 0.1, "activation": "press", "direction": "facing" } },
+    { "id": "backward", "kind": "positive", "parent": "transfer", "session": "a", "prompt": "Make it backward, only on a fresh press. Keep the distance.", "intent": { "unitScale": 0.1, "activation": "press", "direction": "opposite" } },
+    { "id": "half-followup", "kind": "positive", "parent": "backward", "session": "b", "prompt": "Half as far.", "intent": { "unitScale": 0.05, "activation": "press", "direction": "opposite" } },
+    { "id": "jujump-export", "kind": "positive", "operation": "accepted-jujump-clean-start", "componentId": "544657417fe9752f91b0b72a451cd9cb8d2650839824be35881e52f81f223858" },
+    { "id": "right-goal", "kind": "positive", "parent": "baseline", "session": "b", "prompt": "Reach the fixed right region within the two-second horizon. Keep the parent mapping if timing alone suffices. Preserve every frozen constraint.", "target": { "minX": 5.5, "maxX": 6.5, "minY": -11, "maxY": -7 } },
+    { "id": "left-goal", "kind": "positive", "parent": "baseline", "session": "c", "prompt": "Reach the fixed left region within the two-second horizon. Propose a supported dash mapping and one intervention tick. Preserve every frozen constraint.", "target": { "minX": -6.5, "maxX": -5.5, "minY": -11, "maxY": -7 } },
+    { "id": "infeasible-goal", "kind": "negative", "parent": "baseline", "session": "c", "prompt": "Try one supported dash against this fixed out-of-bounds target even if it cannot succeed. Never alter the target or constraints; let the worker report the actual failure, or explain an unsupported request.", "target": { "minX": 100, "maxX": 101, "minY": -11, "maxY": -7 }, "expectedStatuses": ["unsuccessful", "unsupported"] },
+    { "id": "add-rule", "kind": "positive", "parent": "half-followup", "session": "d", "composition": "dash-end-shot", "prompt": "When the recovered dash ends, fire one additional native shot. Keep the inherited dash mapping unchanged.", "intent": { "unitScale": 0.05, "activation": "press", "direction": "opposite" } },
+    { "id": "remove-rule", "kind": "positive", "parent": "add-rule", "session": "d", "composition": "none", "prompt": "Remove the dash-end shot rule. Keep the inherited dash mapping unchanged.", "intent": { "unitScale": 0.05, "activation": "press", "direction": "opposite" } },
+    { "id": "restart-replay", "kind": "positive", "operation": "restart-reconnect-and-exact-export-replay", "parent": "remove-rule", "experiment": "right-goal" }
+  ]
+}

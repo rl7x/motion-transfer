@@ -919,3 +919,14 @@ test('a typed socket rejects a command without starting a worker', async t => {
   assert.match(rejected.error, /Arbitrary command/);
   assert.equal(ran, false);
 });
+
+test('cancelling during native verification stops the browser and publication stages',async t=>{
+ const frame=Buffer.from('<!doctype html><title>cancel fixture</title>');
+ let began,release;const started=new Promise(resolve=>{began=resolve});const blocked=new Promise(resolve=>{release=resolve});
+ const broker=fakeBroker(async job=>{began();await blocked;return verified(parentComponent.id,frame)(job);});
+ const client=createFakeMetaClient({source:'export function init(){return {}}\n',intent});
+ const {coordinator,parentId}=await setup(t,broker,client);const request=remix(parentId);
+ const submitted=await coordinator.submit(request);await started;await coordinator.cancel(submitted.id,request.sessionId);release();
+ const job=await coordinator.wait(submitted.id);assert.equal(job.status,'cancelled');assert.equal(job.artifactId,null);
+ assert.equal(broker.calls.length,1);assert.equal(broker.calls[0].operation,'verify-native');
+});

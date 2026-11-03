@@ -1,3 +1,4 @@
+import { addReplayToArchive } from './export.mjs';
 import { zipStored } from '../release/zip.mjs';
 import { constants } from 'node:fs';
 import { createServer } from 'node:http';
@@ -48,6 +49,7 @@ async function readCreatorFile(root, pathname) {
 
 export async function createHostingServer({ policy, coordinator, creatorRoot = null, port = 0, host = '127.0.0.1' } = {}) {
   if (!policy || !coordinator) throw Error('Production hosting requires a policy and coordinator');
+  const replayScript = creatorRoot ? await readCreatorFile(creatorRoot,'/creator/replay.js').catch(error=>{if(error.code==='ENOENT')return null;throw error;}) : null;
   const send = (request, response, status, type, body, extra = {}) => {
     const headers = {
       'Content-Type': `${type}; charset=utf-8`, 'Cache-Control': extra.cache ?? 'no-store',
@@ -155,6 +157,7 @@ export async function createHostingServer({ policy, coordinator, creatorRoot = n
         if (part === 'download.zip') {
           const files={};for(const name of ['play.html','adapter.ts','adapter.js','intent.json','recipient.json','component.json','receipt.json','generation.json','experiment.json','rule.mjs','notices.txt']){const file=await coordinator.artifactFile(id,name);if(file)files[name]=file;}
           if(!files['receipt.json']){json(request,response,404,{error:'Artifact not found'});return;}
+          addReplayToArchive(files,{parentFrame:await coordinator.parentBytes(JSON.parse(files['receipt.json']).parentArtifactId),replayScript});
           send(request,response,200,'application/zip',zipStored(files),{cache:IMMUTABLE,headers:{'Content-Disposition':`attachment; filename="motion-transfer-${id.slice(0,12)}.zip"`}});return;
         }
         const stored = ['adapter.ts','receipt.json','generation.json','experiment.json','rule.mjs','notices.txt'].includes(part) ? part : part === 'adapter.js' ? 'adapter.js' : part === 'play.html' || part === 'download' ? 'play.html' : 'receipt.json';

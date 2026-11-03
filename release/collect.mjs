@@ -38,7 +38,10 @@ export async function collectRelease({
   extraArtifacts = null,
   challengeDirectory = null,
   acceptedRoadster = null,
+  recipient = 'roadster', liveDirectory = null, featuredId = null, taskEvidence = null, reuseBaseline = false,
 } = {}) {
+  if(recipient==='parallaxia'){if(acceptedRoadster||extraArtifacts||challengeDirectory)throw Error('PARALLAXIA requires its own publication inputs');return (await import('./parallaxia.mjs')).collectParallaxiaRelease({liveDirectory,featuredId,publicOrigin,taskEvidence,reuseBaseline});}
+  if(recipient!=='roadster')throw Error('Unknown release recipient');
   if (acceptedRoadster) {
     if (extraArtifacts || challengeDirectory) {
       throw Error('An accepted Roadster release does not take a saved challenge or extra artifacts');

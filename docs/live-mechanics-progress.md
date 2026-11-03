@@ -54,4 +54,10 @@ Focused native/browser checkpoint and composition checks, including actual restr
 
 ## Remaining
 
-M4: actual recipient release, exact clean-start exports, frozen task evidence and final full-suite results.
+M4 packaging is implemented: explicit PARALLAXIA collection preserves exact worker-published frames, component/rule/source/evidence, parent versions and diagnostic failures. The static React copy labels saved reuse and disables creation. ZIPs include the exact parent and candidate, and experiment exports include a React replay page. The collector also supports explicitly labeled baseline-only reuse; it never silently substitutes that for a requested generated child.
+
+The ten-task manifest is frozen in `benchmark/live-mechanics-tasks.json` (SHA-256 `12cec5a9dc87845f67ca1585a2d95a7db842a08bf2adfc60c8be33d3ecb93a77`) before the measured run. It defines nine positive tasks and one negative, with two jobs per session and no new allowance. `--validate-only` checks the definition without inference. Source must be committed on a feature branch before the paid runner starts. Failed tasks remain in the result and block only dependent tasks.
+
+The baseline static release passed a fresh browser, nested-base-path checks, a system-extracted exact ZIP, no external requests/POSTs and same-component JUJUMP playback. Packaging/creator/hosting checks passed 28/28, and cancellation now prevents the browser/publication stages after a native-stage cancellation. The ordinary free-play controller no longer injects an undeclared held Shoot input; curated experiments still declare their shared native Shoot controls explicitly.
+
+Remaining: execute the frozen measured tasks, package the actual successful generated result, run exact paired-export checks and the full suite, then record measured results and limitations.

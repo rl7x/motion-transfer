@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { readGenerationMode } from './data-source';
 import { fetchJson, postJson, errorMessage } from './api';
 import { ExperimentResults, type ExperimentReceipt } from './motion-experiment';
 import { readSession, writeSession } from './creator/session';
@@ -13,6 +14,7 @@ export interface MotionJob {
   summary: string | null;
   error: string | null;
   estimatedCostUsd: number;
+  intent: { unitScale: number; activation: string; direction: string } | null;
   createdAt: string;
   finishedAt: string | null;
   urls: { play: string; download: string; receipt: string; parent?: string } | null;
@@ -32,8 +34,9 @@ export function MotionGeneration({
   onPlay(job: MotionJob): void;
 }) {
   const age = useAgeAcknowledgment();
+  const playback = readGenerationMode() === 'playback-only';
   const [session] = useState(readSession);
-  const [pending, setPending] = useState<PendingRemix | null>(session.pending);
+  const [pending, setPending] = useState<PendingRemix | null>(playback ? null : session.pending);
   const [job, setJob] = useState<MotionJob | null>(null);
   const [prompt, setPrompt] = useState('Make the dash backward, only on a fresh press.');
   const [composition, setComposition] = useState<'dash-end-shot' | 'none' | ''>('');
@@ -102,6 +105,16 @@ export function MotionGeneration({
     return () => clearInterval(timer);
   }, [job]);
   const busy = Boolean(pending && (!job || !terminal(job.status)));
+  if (playback)
+    return (
+      <section className="destination-section">
+        <h2>Saved verified versions</h2>
+        <p>
+          Creation is unavailable on this static copy. Playing, comparing and downloading these
+          saved results makes no model request.
+        </p>
+      </section>
+    );
   return (
     <section className="destination-section" id="motion-creation">
       <h2>Adapt the dash</h2>

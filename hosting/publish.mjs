@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { mkdir, rename, rm, writeFile } from 'node:fs/promises';
+import { mkdir, rename, rm, writeFile, readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 const digest = value => createHash('sha256').update(value).digest('hex');
@@ -24,6 +24,9 @@ export async function publishArtifact({ directory, parentId, files }) {
       await rename(staging, destination);
     } catch (error) {
       if (!['EEXIST', 'ENOTEMPTY'].includes(error.code)) throw error;
+      const present=await readdir(destination);
+      if(present.length!==buffers.length||buffers.some(file=>!present.includes(file.name)))throw Error('Immutable artifact file set changed');
+      for(const file of buffers)if(digest(await readFile(join(destination,file.name)))!==digest(file.buffer))throw Error('Immutable artifact bytes changed');
       await rm(staging, { recursive: true, force: true });
     }
   } catch (error) {

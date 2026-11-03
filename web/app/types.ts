@@ -93,6 +93,8 @@ export interface GuidedState {
 export type GenerationMode = 'local' | 'public-standard' | 'playback-only';
 /** Static playback injects GET payloads here. Missing keys still use the network. */
 export interface MotionDataSource {
+  featuredRecipient?: 'parallaxia';
+  featuredArtifactId?: string;
   generation?: GenerationMode;
   publicOrigin?: string | null;
   basePath?: string;

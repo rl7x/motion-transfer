@@ -41,7 +41,7 @@ export async function publishRelease(target, release, { verify } = {}) {
   try {
     const files = await materialize(release);
     const listed = Object.fromEntries(Object.keys(files).sort().map(path => [path, sha256(files[path])]));
-    const body = { schemaVersion: 1, kind: 'motion-transfer-static-release', creation: 'unavailable',
+    const body = { ...(release.recipient?{recipient:release.recipient}:{}), schemaVersion: 1, kind: 'motion-transfer-static-release', creation: 'unavailable',
       publicOrigin: release.publicOrigin, componentId: release.componentId, featuredId: release.featuredId,
       remixChain: release.remixChain ?? [], warnings: release.warnings ?? [],
       versions: release.versions.map(summary), files: listed };

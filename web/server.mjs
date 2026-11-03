@@ -1,3 +1,4 @@
+import { addReplayToArchive } from '../hosting/export.mjs';
 import { parseRemixBody } from '../hosting/policy.mjs';
 import { zipStored } from '../release/zip.mjs';
 import { createServer } from 'node:http';
@@ -9,7 +10,7 @@ import { loadPakuTransfer } from '../transfer/saved-paku.mjs';
 import { PAKU_POLICY } from '../transfer/paku-policy.mjs';
 import { experienceAssets } from './experience-assets.mjs';
 import { loadSavedRoadster } from '../roadster/saved.mjs';
-import { buildFrontend } from './build.mjs';
+import { buildFrontend, buildExportedExperiment } from './build.mjs';
 import { developerBenchmarkAssets } from '../benchmark/assets.mjs';
 import { buildRoadsterChallenge } from '../roadster/challenge.mjs';
 import { buildParallaxiaChallenge } from '../parallaxia/challenge.mjs';
@@ -21,6 +22,7 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
   const recipient = await loadPakuPaku();
   const recovered = await loadRecoveredMotion();
   const roadster=await loadSavedRoadster({optional:true});
+  const replayScript=await buildExportedExperiment();
   const parallaxia=await loadParallaxiaBaseline();
   const challenges=new Map();
   const challengeFor=id=>{
@@ -105,6 +107,8 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
       if(part==='download.zip'){
         const files={};for(const name of ['play.html','adapter.ts','adapter.js','intent.json','recipient.json','component.json','receipt.json','generation.json','experiment.json','rule.mjs','notices.txt']){const file=await coordinator.artifactFile(id,name);if(file)files[name]=file;}
         if(!files['receipt.json']){json(404,{error:'Artifact not found'});return;}
+        const receipt=JSON.parse(files['receipt.json']);
+        addReplayToArchive(files,{parentFrame:await coordinator.parentBytes(receipt.parentArtifactId),replayScript});
         bytes=zipStored(files);response.setHeader('Content-Disposition',`attachment; filename="parallaxia-${id.slice(0,12)}.zip"`);
       }else bytes=await coordinator.artifactFile(id,part==='download'?'play.html':part??'receipt.json');
       if(!bytes){json(404,{error:'Artifact not found'});return;}

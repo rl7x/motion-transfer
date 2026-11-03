@@ -196,16 +196,18 @@ export async function createCoordinator({
     };
   }
 
-  async function verifyIsolated({ source, intent, componentId, recipientId, ruleSource = null, ruleId = null, runtime, fallback, localVerifier } = {}) {
+  async function verifyIsolated({ source, intent, componentId, recipientId, ruleSource = null, ruleId = null, checkContinue = () => {}, runtime, fallback, localVerifier } = {}) {
     if (runtime === 'vm' || fallback || localVerifier) throw Error('Hosted mode cannot fall back to vm');
     assertHostedComponentId(componentId);
     if (await broker.available() !== true) throw isolationError();
+    checkContinue();
     const nativePayload = await broker.submit({ operation: 'verify-native', source, intent, componentId, ...(recipientId ? { recipientId,ruleSource } : {}) });
     const native = requireWorker(nativePayload, 'verify-native', source, componentId);
     if (typeof native.javascript !== 'string' || !native.javascript.trim() || Buffer.byteLength(native.javascript) > 32 * 1024
       || native.javascriptSha256 !== digest(native.javascript)) {
       throw statusError('Isolated worker did not return compiled adapter JavaScript; parent unchanged', 422);
     }
+    checkContinue();
     const browserPayload = await broker.submit({ operation: 'verify-browser', source, intent, componentId, ...(recipientId ? { recipientId,ruleSource } : {}) });
     const browser = requireWorker(browserPayload, 'verify-browser', source, componentId);
     if (recipientId==='parallaxia' && ((native.ruleId??null)!==ruleId || (browser.ruleId??null)!==ruleId)) throw statusError('Verifier rule identity changed; parent unchanged',422);
@@ -325,7 +327,7 @@ export async function createCoordinator({
           const ruleSource = job.composition ? submission.ruleSource : context.ruleSource;
           const ruleId = job.composition === 'dash-end-shot' ? digest(ruleSource) : job.composition === 'none' ? null : context.ruleIdentity?.id ?? null;
           job.ruleSource=ruleSource;job.ruleIdentity={id:ruleId,kind:ruleId?'dash-end-shot':'none'};
-          verified = await verifyIsolated({ source: submission.source, intent: submission.intent,
+          verified = await verifyIsolated({ source: submission.source, checkContinue:cancelled, intent: submission.intent,
             componentId: context.component.id, ...(context.recipient.id === 'parallaxia' ? { recipientId: 'parallaxia',ruleSource,ruleId } : {}) });
           if (job.experiment) {
             const payload = await broker.submit({operation:'verify-experiment',recipientId:'parallaxia',source:submission.source,intent:submission.intent,
@@ -342,7 +344,7 @@ export async function createCoordinator({
           await writeFile(join(directory, 'provider', `${job.id}-${attempt}.json`), JSON.stringify(record, null, 2) + '\n', { mode: 0o600 });
           await queue.save(job);
           if (attempt === maxAttempts || /component identity|isolation|terminated|timeout/i.test(error.message)) throw error;
-          feedback = { error: error.message, checks: error.diagnostic?.result?.checks ?? [], rejectedSource: submission?.source ?? null,
+          feedback = { error: error.message, workerError: error.diagnostic?.result?.error ?? error.diagnostic?.error ?? null, failedOperation:error.diagnostic?.operation??null, rejectedRuleSource:submission?.ruleSource??null, checks: error.diagnostic?.result?.checks ?? [], rejectedSource: submission?.source ?? null,
             experiment: job.experimentReport ? {satisfied:job.experimentReport.satisfied,target:job.experimentReport.scenario.target,interventionTick:job.experimentReport.interventionTick,branches:['original','candidate'].map(kind=>{const branch=job.experimentReport[kind];return {kind,reachedTick:branch.reachedTick,lostLife:branch.lostLife,alive:branch.alive,first:branch.frames[0],last:branch.frames.at(-1)}})} : null, instruction: 'Repair only the failed adapter. Preserve the requested complete parent mapping and the accepted component.' };
         }
       }
