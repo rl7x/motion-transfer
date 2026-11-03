@@ -110,6 +110,7 @@ Dashy Dango is upstream work by samX500 and willGuimont. PARALLAXIA, JUJUMP and 
 | [JUJUMP](https://github.com/abagames/crisp-game-lib-games) | Saved transfer | Kenta Cho / ABA Games | MIT | [LICENSE.txt](assets/recipients/jujump/upstream/LICENSE.txt) |
 | [PAKU PAKU](https://github.com/abagames/crisp-game-lib-11-games) | Saved transfer | Kenta Cho / ABA Games | MIT | [LICENSE.txt](assets/recipients/paku-paku/upstream/LICENSE.txt) |
 | [RDSTR Stunts](https://github.com/sebayaki/roadster) at `8486687` | Saved transfer | sebayaki | MIT | [LICENSE](assets/recipients/roadster/upstream/LICENSE) |
+| [BLINK SCOPE, DRAFT LINE, HEAD RUSH, OVERTURN, PILEUP, SKYHAUL, TWIN VECTOR, UNDERTOW, WRECKFALL and ZIG SABER](https://github.com/abagames/agentic-gamedev-games) at `f30b52a` | Unseen games for the auto-port campaign | Kenta Cho / ABA Games | MIT | [LICENSE](assets/auto-port/LICENSE) |
 
 The Dashy Dango repository has no `LICENSE` file, so GitHub shows no license for it. The authors declare ISC in the `wapm.toml` at the pinned revision and in the [Wasmer package](https://wasmer.io/willguimont/dashy-dango), and that package's cartridge is byte-identical to the one used here.
 

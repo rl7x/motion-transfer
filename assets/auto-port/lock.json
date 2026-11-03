@@ -1,0 +1,1067 @@
+{
+  "schemaVersion": 1,
+  "repository": "https://github.com/abagames/agentic-gamedev-games",
+  "revision": "f30b52a1707282b1559f7bae1fc301925612f5a6",
+  "author": "Kenta Cho / ABA Games",
+  "license": "MIT",
+  "licenseFile": "LICENSE",
+  "excluded": "media, tools, reports, Markdown and lockfiles are not vendored",
+  "files": [
+    {
+      "path": "docs/blink-scope/demo-bot.js",
+      "local": "games/blink-scope/demo-bot.js",
+      "bytes": 7048,
+      "sha256": "e3a1dccf6461e7264e648dd96ae9efcabbe056c66677256a9d629fcbbdac9baa"
+    },
+    {
+      "path": "docs/blink-scope/game.js",
+      "local": "games/blink-scope/game.js",
+      "bytes": 69930,
+      "sha256": "83b8696c5304a48c625f4b6653582fe807908195899eaf4bd4779c3758762bd5"
+    },
+    {
+      "path": "docs/blink-scope/index.html",
+      "local": "games/blink-scope/index.html",
+      "bytes": 1422,
+      "sha256": "58e6fc373e34b80ce534681e24a2c2d4cf601ecc44cc77a40ae91e1d8e92c673"
+    },
+    {
+      "path": "docs/blink-scope/game-core.js",
+      "local": "games/blink-scope/game-core.js",
+      "bytes": 16509,
+      "sha256": "34e3e507dfb2519017ac5232763345d98a930a81c71fbd4b54daf174c56c8f74"
+    },
+    {
+      "path": "docs/blink-scope/main.js",
+      "local": "games/blink-scope/main.js",
+      "bytes": 34354,
+      "sha256": "cc6845a8b70c385c3f1e3a74dfb4134cc84b7c4ae6bce865596ca4251941a15e"
+    },
+    {
+      "path": "docs/blink-scope/audio.js",
+      "local": "games/blink-scope/audio.js",
+      "bytes": 9601,
+      "sha256": "5caee9a5bd5df66acf3615b0922481c77e4e7ec31dfbec5e24f5abad2de8d061"
+    },
+    {
+      "path": "docs/blink-scope/package.json",
+      "local": "games/blink-scope/package.json",
+      "bytes": 573,
+      "sha256": "c5f8985adbbbb7abc5900609e0416fc7763cfca770ef18e4ee0c4cc38a664635"
+    },
+    {
+      "path": "docs/blink-scope/vector-font.js",
+      "local": "games/blink-scope/vector-font.js",
+      "bytes": 2148,
+      "sha256": "49593a9f21040eb9eef02ce654062cc50cfab2c54d94f62ae72d0c952956c8c4"
+    },
+    {
+      "path": "docs/blink-scope/tests/capture-play.mjs",
+      "local": "games/blink-scope/tests/capture-play.mjs",
+      "bytes": 1061,
+      "sha256": "2a851c0d7b316a8f0205bf3e8e236eb039c8489f1b8851c5c860094ee4bcaad0"
+    },
+    {
+      "path": "docs/blink-scope/tests/core.test.mjs",
+      "local": "games/blink-scope/tests/core.test.mjs",
+      "bytes": 18883,
+      "sha256": "255361d7126035ea9402ac9b794b3fdd860b374e8733a7c885f243600271dd26"
+    },
+    {
+      "path": "docs/blink-scope/tests/balance.sim.mjs",
+      "local": "games/blink-scope/tests/balance.sim.mjs",
+      "bytes": 2860,
+      "sha256": "217838820acfd7b02c1a47c00a7b3c17beb602cf6b6edbba10a0fb14a4355d15"
+    },
+    {
+      "path": "docs/blink-scope/tests/patience.sim.mjs",
+      "local": "games/blink-scope/tests/patience.sim.mjs",
+      "bytes": 1465,
+      "sha256": "156ba5ac416cbd5f9633934141e888308229d834d9e7fb8e1efc9d44d4521c04"
+    },
+    {
+      "path": "docs/blink-scope/tests/browser.probe.mjs",
+      "local": "games/blink-scope/tests/browser.probe.mjs",
+      "bytes": 29054,
+      "sha256": "9387fce191a10338434e97cea3d20768352fedade04e622e30954b029918b67f"
+    },
+    {
+      "path": "docs/draft-line/index.html",
+      "local": "games/draft-line/index.html",
+      "bytes": 628,
+      "sha256": "e595567acda049bb73eecd5c37104fa699c6be8ea05a8f885e7b099c19b91723"
+    },
+    {
+      "path": "docs/draft-line/package.json",
+      "local": "games/draft-line/package.json",
+      "bytes": 935,
+      "sha256": "5e9a9dd0b2a6f4dd85b9c24d3086d3bc7e418a2860542d2b4e62b5bd76920a51"
+    },
+    {
+      "path": "docs/draft-line/test/smoke.mjs",
+      "local": "games/draft-line/test/smoke.mjs",
+      "bytes": 16858,
+      "sha256": "e2adc79696cea8c7ffcf0890289ca28850031a25a9a7911800faef4bb709576d"
+    },
+    {
+      "path": "docs/draft-line/test/checkpoint-display.test.mjs",
+      "local": "games/draft-line/test/checkpoint-display.test.mjs",
+      "bytes": 1897,
+      "sha256": "6f44ac805bedaccf926cb7d65cccff6d117f2301177c09aec9fcdc7140f2df30"
+    },
+    {
+      "path": "docs/draft-line/test/high-score.test.mjs",
+      "local": "games/draft-line/test/high-score.test.mjs",
+      "bytes": 4920,
+      "sha256": "016fa02c96172c6fff4cb5cc5576293d2abb855fad746ddfa7db12fad056e55d"
+    },
+    {
+      "path": "docs/draft-line/test/render-order.test.mjs",
+      "local": "games/draft-line/test/render-order.test.mjs",
+      "bytes": 4297,
+      "sha256": "42c70b1eb2516735c60b2d6cfc3c6e2ef2eec7ef95f4e57767abece17c1c33f5"
+    },
+    {
+      "path": "docs/draft-line/test/ready-overlay.test.mjs",
+      "local": "games/draft-line/test/ready-overlay.test.mjs",
+      "bytes": 2562,
+      "sha256": "6510200b8d0ad56416cbb7f6ae0d3586458884ed9491c4bf98a3cf631c2e1560"
+    },
+    {
+      "path": "docs/draft-line/test/name-entry.probe.mjs",
+      "local": "games/draft-line/test/name-entry.probe.mjs",
+      "bytes": 7747,
+      "sha256": "ec65ec78456d4ef8a8eae66632c1f91998efbafa6da390891bc0deeb47e1d17f"
+    },
+    {
+      "path": "docs/draft-line/test/overtake-pan.test.mjs",
+      "local": "games/draft-line/test/overtake-pan.test.mjs",
+      "bytes": 9718,
+      "sha256": "c6c6a3a4fd6f0530e555f8ebeb7e50078fedb01d7ef2f9e1f973ff185efc3af2"
+    },
+    {
+      "path": "docs/draft-line/test/shallow-cap.test.mjs",
+      "local": "games/draft-line/test/shallow-cap.test.mjs",
+      "bytes": 11969,
+      "sha256": "3bd01de92fb0d785fdfa13d94bc25d24ee5dda092cef2e18277e31c0a1594f10"
+    },
+    {
+      "path": "docs/draft-line/test/sim.test.mjs",
+      "local": "games/draft-line/test/sim.test.mjs",
+      "bytes": 120120,
+      "sha256": "c13ef7c5dfb5662839429bf16146c914d21461a4e7f1af269bddde98413a3476"
+    },
+    {
+      "path": "docs/draft-line/test/overpass-regression.mjs",
+      "local": "games/draft-line/test/overpass-regression.mjs",
+      "bytes": 4493,
+      "sha256": "ecb4df4484e8d3e3aae965812085e13621330261218b5d84ad5b8fec65c95494"
+    },
+    {
+      "path": "docs/draft-line/test/playable.test.mjs",
+      "local": "games/draft-line/test/playable.test.mjs",
+      "bytes": 13917,
+      "sha256": "996ccf4765a77d8656ef9712eb5422a7b7538cefc95afcdc5c528ee01c7b0c31"
+    },
+    {
+      "path": "docs/draft-line/test/sling-ready.test.mjs",
+      "local": "games/draft-line/test/sling-ready.test.mjs",
+      "bytes": 21436,
+      "sha256": "75ccbfabc99b5a7b14b86affa93cbdde6b034a33865322054bb85bb3ccf46cb7"
+    },
+    {
+      "path": "docs/draft-line/test/chain.test.mjs",
+      "local": "games/draft-line/test/chain.test.mjs",
+      "bytes": 11261,
+      "sha256": "d92957610b2c6ac0a66a0841fe357411ec1ceb23aa7722a6f63cce0053710cb0"
+    },
+    {
+      "path": "docs/draft-line/test/focus-lifecycle.test.mjs",
+      "local": "games/draft-line/test/focus-lifecycle.test.mjs",
+      "bytes": 6656,
+      "sha256": "4540494fc91c7d54137079247cfa1613c1ebeb250d5e2965baf937f4d3aa073d"
+    },
+    {
+      "path": "docs/draft-line/test/attract.test.mjs",
+      "local": "games/draft-line/test/attract.test.mjs",
+      "bytes": 6944,
+      "sha256": "956b1709d89ec87fc1ddc5e0be8f9643299d0f8234082095202c28a103c3a510"
+    },
+    {
+      "path": "docs/draft-line/test/audio-lifecycle.test.mjs",
+      "local": "games/draft-line/test/audio-lifecycle.test.mjs",
+      "bytes": 12567,
+      "sha256": "50550b1c836217ee3f74152aaa1d6b083f9338e5b2ae6ee61ccd7560148a99af"
+    },
+    {
+      "path": "docs/draft-line/test/sling-grace.test.mjs",
+      "local": "games/draft-line/test/sling-grace.test.mjs",
+      "bytes": 7796,
+      "sha256": "afd045ee3c18c875dd115fb05bf9edea0b69ffeaafa52edfe9a92188a096eb36"
+    },
+    {
+      "path": "docs/draft-line/test/name-entry.test.mjs",
+      "local": "games/draft-line/test/name-entry.test.mjs",
+      "bytes": 7187,
+      "sha256": "e9e88c356491b2885f793867fbe4c9de990bce2bc9be9354105cff8fd840739b"
+    },
+    {
+      "path": "docs/draft-line/assets/cover.png",
+      "local": "games/draft-line/assets/cover.png",
+      "bytes": 13893,
+      "sha256": "dba7a948cf0cd0f78175e6e839a34bc4db2e87efb012ac0f5033baa94639141a"
+    },
+    {
+      "path": "docs/draft-line/src/rng.js",
+      "local": "games/draft-line/src/rng.js",
+      "bytes": 591,
+      "sha256": "2ff44aca21a2bd3e90e93cfb3d7b4cd22955e819ff9e9d5bf39a4144132c3fe9"
+    },
+    {
+      "path": "docs/draft-line/src/game.js",
+      "local": "games/draft-line/src/game.js",
+      "bytes": 63009,
+      "sha256": "c88db679592d56c608e647d1ad1c455b24a9d526ba41debc846e38009c885487"
+    },
+    {
+      "path": "docs/draft-line/src/font.js",
+      "local": "games/draft-line/src/font.js",
+      "bytes": 3298,
+      "sha256": "b141471286ea7e754a79d848cf510b79076161a059da98754c89d53604a47c6c"
+    },
+    {
+      "path": "docs/draft-line/src/spec.js",
+      "local": "games/draft-line/src/spec.js",
+      "bytes": 93430,
+      "sha256": "c603a99fab4a30bd7503fd3f62323c699a3cfdd4c17649fa422292b1a77c98c4"
+    },
+    {
+      "path": "docs/draft-line/src/sim.js",
+      "local": "games/draft-line/src/sim.js",
+      "bytes": 31548,
+      "sha256": "a5df07a619c91727fadfeb053019f3dc8b804cef2eedbc4ada42dc2ae53816b9"
+    },
+    {
+      "path": "docs/draft-line/src/render.js",
+      "local": "games/draft-line/src/render.js",
+      "bytes": 59279,
+      "sha256": "468736bc93659f539ee35f0396baca23006ef01c4777e181c30d76267b4d7f6c"
+    },
+    {
+      "path": "docs/draft-line/src/course.js",
+      "local": "games/draft-line/src/course.js",
+      "bytes": 34909,
+      "sha256": "a853f85d4ef8bf9a5a1c063453bd87857362531d2d824174dd3a3b7e69d2a84e"
+    },
+    {
+      "path": "docs/draft-line/src/driver.js",
+      "local": "games/draft-line/src/driver.js",
+      "bytes": 27740,
+      "sha256": "d3545755b9a9d46ed5155831687367026906eb39c86184266e9d0e14a15b30f4"
+    },
+    {
+      "path": "docs/draft-line/src/main.js",
+      "local": "games/draft-line/src/main.js",
+      "bytes": 1520,
+      "sha256": "76bccc540fb01b769f25cfe8821d31d013c3e0387c16fb1a5b7047fefaddfceb"
+    },
+    {
+      "path": "docs/draft-line/src/props.js",
+      "local": "games/draft-line/src/props.js",
+      "bytes": 16048,
+      "sha256": "4d5ebad4293eb42c2ab16d003fe19fdcfc595ed31dc674ef427a4ed0295b6250"
+    },
+    {
+      "path": "docs/draft-line/src/audio.js",
+      "local": "games/draft-line/src/audio.js",
+      "bytes": 31009,
+      "sha256": "863a99249ab3df7b38dd353d4c8cfa5fd5bff0ccece36ddaf9f09b7d9896b5b7"
+    },
+    {
+      "path": "docs/head-rush/psg.js",
+      "local": "games/head-rush/psg.js",
+      "bytes": 18187,
+      "sha256": "b20cce06eb3c3f53f9342d7adf7502643f347db759edc91245c4e0d69228e404"
+    },
+    {
+      "path": "docs/head-rush/bots.js",
+      "local": "games/head-rush/bots.js",
+      "bytes": 10190,
+      "sha256": "57fa01c6a7142394ed30bfbe330b4cb1a7953782366ae479b4677721542ff12e"
+    },
+    {
+      "path": "docs/head-rush/index.html",
+      "local": "games/head-rush/index.html",
+      "bytes": 670,
+      "sha256": "d7a96500f9cd9205996fdc6f3391c7d0035c842459d876a6d906c287ccff4ddd"
+    },
+    {
+      "path": "docs/head-rush/core.js",
+      "local": "games/head-rush/core.js",
+      "bytes": 45007,
+      "sha256": "e29ee20e94a22de2551ebe20986a11dd9713216d07f5a899010d4d485708b61e"
+    },
+    {
+      "path": "docs/head-rush/main.js",
+      "local": "games/head-rush/main.js",
+      "bytes": 46508,
+      "sha256": "a47409e58be7d865c80656b7cc68e9318192bf728b836d88fdf2e212fa7a987a"
+    },
+    {
+      "path": "docs/head-rush/audio.js",
+      "local": "games/head-rush/audio.js",
+      "bytes": 3468,
+      "sha256": "1b25c9f281ed01889866c5743974d93bcdc18c1c44e3806bf3f05c3ab48183b0"
+    },
+    {
+      "path": "docs/head-rush/package.json",
+      "local": "games/head-rush/package.json",
+      "bytes": 497,
+      "sha256": "e7dcd03dfc0a6e415b9216a7670f857d5d7367a8f310004f97f76280e5a2e869"
+    },
+    {
+      "path": "docs/head-rush/tests/balance.cjs",
+      "local": "games/head-rush/tests/balance.cjs",
+      "bytes": 1523,
+      "sha256": "1b3087338b6b2171d48e2f6f9f79615d20776093496b6a54541990682d87c573"
+    },
+    {
+      "path": "docs/head-rush/tests/audio.cjs",
+      "local": "games/head-rush/tests/audio.cjs",
+      "bytes": 12900,
+      "sha256": "615789c27954dfc9ad126a76ffa28cd8b95c382b102c226943ee22f1108232ea"
+    },
+    {
+      "path": "docs/head-rush/tests/feel.cjs",
+      "local": "games/head-rush/tests/feel.cjs",
+      "bytes": 14144,
+      "sha256": "2069ab7a2ba36f03a51a16b38878868553767c6d6b43d6998906393a0cd380bc"
+    },
+    {
+      "path": "docs/head-rush/tests/browser.cjs",
+      "local": "games/head-rush/tests/browser.cjs",
+      "bytes": 15151,
+      "sha256": "223861d8a70b30b24645998cfd16e43bce4a17d7dc6bda20c36ea4beedbd4e91"
+    },
+    {
+      "path": "docs/head-rush/tests/shots.cjs",
+      "local": "games/head-rush/tests/shots.cjs",
+      "bytes": 1442,
+      "sha256": "5006b53f4219e76780734e8cd808aa97d9a1f45e8bd44e84e9ae97896befc446"
+    },
+    {
+      "path": "docs/head-rush/tests/rules.cjs",
+      "local": "games/head-rush/tests/rules.cjs",
+      "bytes": 36359,
+      "sha256": "68dfab061687d748bbbf4f01c3ed95b21f3608035a4ffd9d81cfce1f722d23ba"
+    },
+    {
+      "path": "docs/head-rush/tests/input-devices.cjs",
+      "local": "games/head-rush/tests/input-devices.cjs",
+      "bytes": 3584,
+      "sha256": "0aebc6554570ebffbb86c8ab022ef3e928f2ed04f37072e98a84337d63628859"
+    },
+    {
+      "path": "docs/head-rush/tests/courses-shot.cjs",
+      "local": "games/head-rush/tests/courses-shot.cjs",
+      "bytes": 839,
+      "sha256": "0e1d9e49b69475742865707b4b1e38a7cf0bcccf0a8f05c2c7432fa908ec139d"
+    },
+    {
+      "path": "docs/overturn/bots.js",
+      "local": "games/overturn/bots.js",
+      "bytes": 5470,
+      "sha256": "c6f826b4b587f2ce561e678137062e9fd77e5071af6a89615e6f0c0c53ad2b86"
+    },
+    {
+      "path": "docs/overturn/index.html",
+      "local": "games/overturn/index.html",
+      "bytes": 638,
+      "sha256": "be890bee1036165f69e46665d3082af3361d24d10164e2543d03b6e9bca7be68"
+    },
+    {
+      "path": "docs/overturn/core.js",
+      "local": "games/overturn/core.js",
+      "bytes": 21849,
+      "sha256": "c0a36c5f01e69994ecc02a1c62cce24d5fac41daa918b57638f7c717b1361f02"
+    },
+    {
+      "path": "docs/overturn/main.js",
+      "local": "games/overturn/main.js",
+      "bytes": 43355,
+      "sha256": "1a094c47838f8cfd3c45d96862e309b9ce640a0e780e6561dd5753ee9978479a"
+    },
+    {
+      "path": "docs/overturn/audio.js",
+      "local": "games/overturn/audio.js",
+      "bytes": 10996,
+      "sha256": "448e57d9304856d9d7c144cbc18b297c1fab4c1ce2e93672403e602fd2fc5c99"
+    },
+    {
+      "path": "docs/overturn/package.json",
+      "local": "games/overturn/package.json",
+      "bytes": 613,
+      "sha256": "e022fd97a92bef761be5410bce4803d4f7888c8e5d5720730173715eee16f890"
+    },
+    {
+      "path": "docs/overturn/tests/balance.cjs",
+      "local": "games/overturn/tests/balance.cjs",
+      "bytes": 1908,
+      "sha256": "82d22499ffd28363fe211fd42c5525b2ce20e0d08a040a64405d48425f4240a9"
+    },
+    {
+      "path": "docs/overturn/tests/adapter.cjs",
+      "local": "games/overturn/tests/adapter.cjs",
+      "bytes": 2012,
+      "sha256": "cac8bc8ddb59c4eab28ffa8e5dbe1ce61cb0fa2afb48d7df8f23ba00d0a14f91"
+    },
+    {
+      "path": "docs/overturn/tests/audio.cjs",
+      "local": "games/overturn/tests/audio.cjs",
+      "bytes": 3349,
+      "sha256": "40915795eed481aacf3616f8fb9e726ce892400a9b923ca5204f7d7607d07c6e"
+    },
+    {
+      "path": "docs/overturn/tests/browser.cjs",
+      "local": "games/overturn/tests/browser.cjs",
+      "bytes": 18653,
+      "sha256": "8f08f97770d7f50ac40f63d57faf26b208c8dbba3ab2d53db8b75d9568dd5b60"
+    },
+    {
+      "path": "docs/overturn/tests/rules.cjs",
+      "local": "games/overturn/tests/rules.cjs",
+      "bytes": 15974,
+      "sha256": "f8d21120521acabbb30373e66141cf255697e660fa71981de7800272e2861055"
+    },
+    {
+      "path": "docs/overturn/tests/touch.cjs",
+      "local": "games/overturn/tests/touch.cjs",
+      "bytes": 3208,
+      "sha256": "cb881e76fc6a9cc33db6ce9a98b2cf084025ecbb14bf02f4480fc2d6d3f8e15e"
+    },
+    {
+      "path": "docs/overturn/tests/deaths.cjs",
+      "local": "games/overturn/tests/deaths.cjs",
+      "bytes": 1591,
+      "sha256": "074fe764722cf45dd7898af3193757e392c7ec2ceae543ff872018ae776bd274"
+    },
+    {
+      "path": "docs/pileup/bots.js",
+      "local": "games/pileup/bots.js",
+      "bytes": 8740,
+      "sha256": "ad11f6be6871ee8b569ac89eac9b3d7897b473162283bf50492bb081971d9d75"
+    },
+    {
+      "path": "docs/pileup/index.html",
+      "local": "games/pileup/index.html",
+      "bytes": 753,
+      "sha256": "5cef8b09f8a239f1b48a817987c9f11ca605dcf3b3135d91d33a84349ad9218d"
+    },
+    {
+      "path": "docs/pileup/core.js",
+      "local": "games/pileup/core.js",
+      "bytes": 24635,
+      "sha256": "244cf91ecaceed9db9ce11b0b8bc24dd267b4293d4c2f31c778b3087a045f064"
+    },
+    {
+      "path": "docs/pileup/main.js",
+      "local": "games/pileup/main.js",
+      "bytes": 32475,
+      "sha256": "49fa30150eaf9677edb714312ce80d5f719a23e1f7e5c00713b621b377937817"
+    },
+    {
+      "path": "docs/pileup/demo.js",
+      "local": "games/pileup/demo.js",
+      "bytes": 2532,
+      "sha256": "ac47de9d751f6febfafcaafd1165a00194864c119b8d99f30fb426d998343a76"
+    },
+    {
+      "path": "docs/pileup/audio.js",
+      "local": "games/pileup/audio.js",
+      "bytes": 17983,
+      "sha256": "dedc5d71458a682cd75a9bca752bd7757da23f302d10464c8a4d0385dc800393"
+    },
+    {
+      "path": "docs/pileup/package.json",
+      "local": "games/pileup/package.json",
+      "bytes": 679,
+      "sha256": "5edfc1db37ce765af4fb6137a33f5ff384ec19a5d5abdd3c10f9fa9d8503e5fe"
+    },
+    {
+      "path": "docs/pileup/tests/route.cjs",
+      "local": "games/pileup/tests/route.cjs",
+      "bytes": 1486,
+      "sha256": "7fa796d2900754375023534746dd168ab607bf31e9e29069a911802c1fffd1fd"
+    },
+    {
+      "path": "docs/pileup/tests/adapter.cjs",
+      "local": "games/pileup/tests/adapter.cjs",
+      "bytes": 3247,
+      "sha256": "2dde670a3624e161703a71798fd014ece6f0f85dd342f8b84556923bce81647e"
+    },
+    {
+      "path": "docs/pileup/tests/ascii.cjs",
+      "local": "games/pileup/tests/ascii.cjs",
+      "bytes": 882,
+      "sha256": "2be6909a514d2bd246b2c889026e44ed65c2e99e04f579a25f87f426fa140d75"
+    },
+    {
+      "path": "docs/pileup/tests/audio.cjs",
+      "local": "games/pileup/tests/audio.cjs",
+      "bytes": 6593,
+      "sha256": "1ef7c72e9c38b3fbc24cfffd010901c8b167dc86b50fd0e1e3df381580cf47f8"
+    },
+    {
+      "path": "docs/pileup/tests/browser.cjs",
+      "local": "games/pileup/tests/browser.cjs",
+      "bytes": 8369,
+      "sha256": "80d8bd845f060f55799dccb59058681476cdb10efda4b0913a1923d9094f88bb"
+    },
+    {
+      "path": "docs/pileup/tests/district.cjs",
+      "local": "games/pileup/tests/district.cjs",
+      "bytes": 2073,
+      "sha256": "7d13f27c70b8778d34cb4f7a03e51cb94acbc6de4aad4cd2d5117ee4b13dbab5"
+    },
+    {
+      "path": "docs/pileup/tests/rules.cjs",
+      "local": "games/pileup/tests/rules.cjs",
+      "bytes": 10959,
+      "sha256": "6a5af129c2c29c6e572299e17e8a7dc54a44cd6205fc22bb0145f848a6ee326a"
+    },
+    {
+      "path": "docs/pileup/tests/campaign.cjs",
+      "local": "games/pileup/tests/campaign.cjs",
+      "bytes": 1252,
+      "sha256": "245c422eb628b9bbc43de744374195f4e4ef3eaa07c7f483cc76d11e30af8202"
+    },
+    {
+      "path": "docs/pileup/tests/deaths.cjs",
+      "local": "games/pileup/tests/deaths.cjs",
+      "bytes": 1327,
+      "sha256": "1dc2d8c1848a46787f32dd846cf186e45562354f69fb083fd0ba16a503432c9b"
+    },
+    {
+      "path": "docs/pileup/tests/shot.cjs",
+      "local": "games/pileup/tests/shot.cjs",
+      "bytes": 1672,
+      "sha256": "69c6c035b4ac434214af4dbf3dc101a8145df44004ae65109428e01ed5887ae4"
+    },
+    {
+      "path": "docs/pileup/tests/demo.cjs",
+      "local": "games/pileup/tests/demo.cjs",
+      "bytes": 1257,
+      "sha256": "bbfd87adab5614142a0dad0bb8e45b6a7129b573068ddf0ff85b89f7a65d9e60"
+    },
+    {
+      "path": "docs/skyhaul/bots.js",
+      "local": "games/skyhaul/bots.js",
+      "bytes": 12607,
+      "sha256": "5ebc64dae47464fcc0a01b4b5ad80c5d812b3c1d9138e1e46f498f5694a8b5e1"
+    },
+    {
+      "path": "docs/skyhaul/index.html",
+      "local": "games/skyhaul/index.html",
+      "bytes": 1264,
+      "sha256": "a2a828002857614911b78601e9e6277f05343eb0d855f259ea5a07a29e30bd49"
+    },
+    {
+      "path": "docs/skyhaul/core.js",
+      "local": "games/skyhaul/core.js",
+      "bytes": 52402,
+      "sha256": "4a8ccb7e9f5cf7d0365d37d0d5d1615618ab7174101d123e9cdf0a67c920b870"
+    },
+    {
+      "path": "docs/skyhaul/main.js",
+      "local": "games/skyhaul/main.js",
+      "bytes": 46548,
+      "sha256": "5707ef24ae2e80e774ebb2e3ccaacabc8951365fd71ac85b4b4967b5e7d50fff"
+    },
+    {
+      "path": "docs/skyhaul/audio.js",
+      "local": "games/skyhaul/audio.js",
+      "bytes": 11217,
+      "sha256": "a1176f50e31ed20c10705e2f4ec78d0b0fc7dd858700cd42e206a5942a78471c"
+    },
+    {
+      "path": "docs/skyhaul/package.json",
+      "local": "games/skyhaul/package.json",
+      "bytes": 521,
+      "sha256": "44e7a919da9dd811f53f2b9f2d15e505a4fe2ed4282be324505051a0cd48f8e8"
+    },
+    {
+      "path": "docs/skyhaul/tests/rescuer.sim.cjs",
+      "local": "games/skyhaul/tests/rescuer.sim.cjs",
+      "bytes": 1579,
+      "sha256": "2a6cff8b853ade157f00d4208474a40d46783559c86ffdbb2d2ddd1fbad7e980"
+    },
+    {
+      "path": "docs/skyhaul/tests/core.test.cjs",
+      "local": "games/skyhaul/tests/core.test.cjs",
+      "bytes": 29332,
+      "sha256": "013d716a9b434e37662a0ed92e156b27be6d57138e6400f62dc08ffe31d49ad6"
+    },
+    {
+      "path": "docs/skyhaul/tests/pocket.sim.cjs",
+      "local": "games/skyhaul/tests/pocket.sim.cjs",
+      "bytes": 1102,
+      "sha256": "6df4af5af33bf8dde5fb4c375bd12fa88a4bc59ab13b44dd878f40951f85c7c4"
+    },
+    {
+      "path": "docs/skyhaul/tests/human-sweep.cjs",
+      "local": "games/skyhaul/tests/human-sweep.cjs",
+      "bytes": 1009,
+      "sha256": "c926356461ded6c3100e4c8aee5c1e22da51f06964712b1ff00b98f607c86448"
+    },
+    {
+      "path": "docs/skyhaul/tests/exploit.sim.cjs",
+      "local": "games/skyhaul/tests/exploit.sim.cjs",
+      "bytes": 2004,
+      "sha256": "1af91f221d47a946edad9b878f5b65a93b262137babb9436af4758b62bfb98e6"
+    },
+    {
+      "path": "docs/skyhaul/tests/campaign.sim.cjs",
+      "local": "games/skyhaul/tests/campaign.sim.cjs",
+      "bytes": 1798,
+      "sha256": "d76b5897447634db1ddfeb35e3b10506f0a7f05237145d19d3b972c832fcfe4c"
+    },
+    {
+      "path": "docs/skyhaul/tests/balance.sim.cjs",
+      "local": "games/skyhaul/tests/balance.sim.cjs",
+      "bytes": 3834,
+      "sha256": "e3dcc331f2fdd09d8ca8f5d9b1776d62b8d1f083e47b23a54c18b3a5b107bb3c"
+    },
+    {
+      "path": "docs/skyhaul/tests/browser.probe.cjs",
+      "local": "games/skyhaul/tests/browser.probe.cjs",
+      "bytes": 13563,
+      "sha256": "4b226ad4339e26f33c773a897afb8148dd242a9e70923f3b233e61b57cb41d2a"
+    },
+    {
+      "path": "docs/skyhaul/tests/stages.sim.cjs",
+      "local": "games/skyhaul/tests/stages.sim.cjs",
+      "bytes": 1695,
+      "sha256": "e7188d819c8595976528f54d7e63e5c175af35d44043c8346cea83709fbffb65"
+    },
+    {
+      "path": "docs/twin-vector/game.js",
+      "local": "games/twin-vector/game.js",
+      "bytes": 26775,
+      "sha256": "b3b261d68dc96b1d303ced34fcbb40b50a0b54e92997708230982fa5dd8cc915"
+    },
+    {
+      "path": "docs/twin-vector/human-policy.js",
+      "local": "games/twin-vector/human-policy.js",
+      "bytes": 5925,
+      "sha256": "7eeebc65eb8e501018bc531dfe5e9e0452636c0db8c583dc37c59724d8e5f344"
+    },
+    {
+      "path": "docs/twin-vector/index.html",
+      "local": "games/twin-vector/index.html",
+      "bytes": 982,
+      "sha256": "af3cabaa9c76dfd7c1bb2938cae18b0322dabe36680fe217c5fc7b5984dc13ab"
+    },
+    {
+      "path": "docs/twin-vector/rounds.js",
+      "local": "games/twin-vector/rounds.js",
+      "bytes": 2662,
+      "sha256": "f64ccfac0839b2171a223236d7297fbf56f83aaf242a74132ba7da4d3ba10758"
+    },
+    {
+      "path": "docs/twin-vector/audio.js",
+      "local": "games/twin-vector/audio.js",
+      "bytes": 10254,
+      "sha256": "0cf75b66acc3f20491e4afc169523a8b8cee6aa4965f8eac44932596c2792a1b"
+    },
+    {
+      "path": "docs/twin-vector/engine.js",
+      "local": "games/twin-vector/engine.js",
+      "bytes": 13014,
+      "sha256": "33bdc2fbed7fb40260916b5db6d1308a8ca8fdc571ef4681c50c9790c57c51a0"
+    },
+    {
+      "path": "docs/twin-vector/ranking.js",
+      "local": "games/twin-vector/ranking.js",
+      "bytes": 1090,
+      "sha256": "38fc8e55d026a4e87be24701505a300b205364166e34f54b890daa3f671b5265"
+    },
+    {
+      "path": "docs/twin-vector/tests/balance.cjs",
+      "local": "games/twin-vector/tests/balance.cjs",
+      "bytes": 1303,
+      "sha256": "00d2fdaa3307033a348d43d96846b8d069de089a70211ec8cee07a533404cd75"
+    },
+    {
+      "path": "docs/twin-vector/tests/view.cjs",
+      "local": "games/twin-vector/tests/view.cjs",
+      "bytes": 1082,
+      "sha256": "e7db0cffe45412734e1e933413615bc37399a334d9a0e1df209757f29235630a"
+    },
+    {
+      "path": "docs/twin-vector/tests/feel.cjs",
+      "local": "games/twin-vector/tests/feel.cjs",
+      "bytes": 7481,
+      "sha256": "a632f7f7dce5cdca0c5ed5b2c094592422159de6bf1441cec60d79725c9a6324"
+    },
+    {
+      "path": "docs/twin-vector/tests/boss-progression.cjs",
+      "local": "games/twin-vector/tests/boss-progression.cjs",
+      "bytes": 4811,
+      "sha256": "42c5fc7150a7cf56ba4b2a9ef71b14509734deed3b93aa04df3b524192e2f34b"
+    },
+    {
+      "path": "docs/twin-vector/tests/browser.cjs",
+      "local": "games/twin-vector/tests/browser.cjs",
+      "bytes": 18932,
+      "sha256": "9fec5a72f035e9ea6507f8f084ed0e3433e7bef912b32dbf213b48c39507a3a9"
+    },
+    {
+      "path": "docs/twin-vector/tests/intercept.cjs",
+      "local": "games/twin-vector/tests/intercept.cjs",
+      "bytes": 2169,
+      "sha256": "6d419f3c3e54dc4e2fc99fe29bc3f5145bbce41e51193623e29cac1458a497f7"
+    },
+    {
+      "path": "docs/twin-vector/tests/nine-stage.cjs",
+      "local": "games/twin-vector/tests/nine-stage.cjs",
+      "bytes": 6073,
+      "sha256": "f4d6f61aa2fbe2f2942e4fb2af3d19966d21221ee8ab7ed11d14ba45e265aaab"
+    },
+    {
+      "path": "docs/twin-vector/tests/rules.cjs",
+      "local": "games/twin-vector/tests/rules.cjs",
+      "bytes": 7933,
+      "sha256": "19b06f03369c30d7d66ef1d9976dac79eddb498fa1127d627bd8d27c2056ea08"
+    },
+    {
+      "path": "docs/twin-vector/tests/policies.cjs",
+      "local": "games/twin-vector/tests/policies.cjs",
+      "bytes": 3706,
+      "sha256": "6f5b7145eb4dc5a25f256dcebe7e6cf923804e1432bb64bc8db802ee11a68b1c"
+    },
+    {
+      "path": "docs/twin-vector/tests/human-policy.cjs",
+      "local": "games/twin-vector/tests/human-policy.cjs",
+      "bytes": 118,
+      "sha256": "f95be7a797f2a5a67a09bd13e0ac82dc87e7453c33683ac8ceb4199d2d7a5a4f"
+    },
+    {
+      "path": "docs/twin-vector/tests/arcade.cjs",
+      "local": "games/twin-vector/tests/arcade.cjs",
+      "bytes": 4453,
+      "sha256": "c0cd0b6cf54aa6b747986e296fa2cda3fa97612277ffa3e9c633329dd7142640"
+    },
+    {
+      "path": "docs/twin-vector/tests/boss-balance.cjs",
+      "local": "games/twin-vector/tests/boss-balance.cjs",
+      "bytes": 1522,
+      "sha256": "4348226bab5209767bd46e3af2c2db676809f42b18eb4c07b86a068b0426936b"
+    },
+    {
+      "path": "docs/twin-vector/tests/human-policy.test.cjs",
+      "local": "games/twin-vector/tests/human-policy.test.cjs",
+      "bytes": 2225,
+      "sha256": "0273572a66c48363fae1029b866975ef9acb04af65b163273ef625d3df0fa3d2"
+    },
+    {
+      "path": "docs/twin-vector/tests/dreadnought.cjs",
+      "local": "games/twin-vector/tests/dreadnought.cjs",
+      "bytes": 3249,
+      "sha256": "a8bbf17fac29fec4aabe0907606709b166db28a954e85758cc11e83f0a2042e7"
+    },
+    {
+      "path": "docs/undertow/bots.js",
+      "local": "games/undertow/bots.js",
+      "bytes": 26544,
+      "sha256": "455a9648179a3b96bea45771a492f39b02ff3d55d84086792ffdc59eabd06c54"
+    },
+    {
+      "path": "docs/undertow/index.html",
+      "local": "games/undertow/index.html",
+      "bytes": 1265,
+      "sha256": "339412cf834061f6f5ee2fd6ae50190d1c7995f0a941a8894c94a6b9695986d2"
+    },
+    {
+      "path": "docs/undertow/core.js",
+      "local": "games/undertow/core.js",
+      "bytes": 47628,
+      "sha256": "26f87d93d79d3e21551c968d988cbef85c4dd47b56c7349c5ec39334a01c825e"
+    },
+    {
+      "path": "docs/undertow/main.js",
+      "local": "games/undertow/main.js",
+      "bytes": 64580,
+      "sha256": "83141207666902cb2846607778ddbb0e056b6d70cf50bf46a53a181103fe776f"
+    },
+    {
+      "path": "docs/undertow/audio.js",
+      "local": "games/undertow/audio.js",
+      "bytes": 7646,
+      "sha256": "41b0c78bf1439ff90ccf8fe6e4c39f4b084cb6846c0c0d3c209fd9072f4cb22b"
+    },
+    {
+      "path": "docs/undertow/package.json",
+      "local": "games/undertow/package.json",
+      "bytes": 621,
+      "sha256": "0c012ed266240f950a8c686e91e8170d4496ff2fbf1637f4ecf27adef1a6e855"
+    },
+    {
+      "path": "docs/undertow/tests/core.test.cjs",
+      "local": "games/undertow/tests/core.test.cjs",
+      "bytes": 28288,
+      "sha256": "854518d7f49862369843a57122512fa7619141c3a701ee5f4affc1cc15827276"
+    },
+    {
+      "path": "docs/undertow/tests/endgame.sim.cjs",
+      "local": "games/undertow/tests/endgame.sim.cjs",
+      "bytes": 1482,
+      "sha256": "dc068412b28bd64a4544669a2ec8c877d8b2985822ca08d728b89d068fed15c5"
+    },
+    {
+      "path": "docs/undertow/tests/survivors.sim.cjs",
+      "local": "games/undertow/tests/survivors.sim.cjs",
+      "bytes": 2344,
+      "sha256": "3c47aaf92281294e1fb81fd4e41b3c5af56c4eb59a6f183d280413267d049be6"
+    },
+    {
+      "path": "docs/undertow/tests/ladder.sim.cjs",
+      "local": "games/undertow/tests/ladder.sim.cjs",
+      "bytes": 2514,
+      "sha256": "a9b7c5c9da8671b051df2b8429d8d8cf2f3c89678b718786f556c56acb1af1b5"
+    },
+    {
+      "path": "docs/undertow/tests/depth.sim.cjs",
+      "local": "games/undertow/tests/depth.sim.cjs",
+      "bytes": 957,
+      "sha256": "7d8076baf156424a7292e93557954ec0226900c48e642620e5a021040dd479ad"
+    },
+    {
+      "path": "docs/undertow/tests/perfect.sim.cjs",
+      "local": "games/undertow/tests/perfect.sim.cjs",
+      "bytes": 1674,
+      "sha256": "4c0cd6995b121fce1249b1d85dcd15cf9064904fd24cb1912dc234a4893da367"
+    },
+    {
+      "path": "docs/undertow/tests/pacing.sim.cjs",
+      "local": "games/undertow/tests/pacing.sim.cjs",
+      "bytes": 1478,
+      "sha256": "8f2b9ab88544c9389b1b433c43ea467600784422f2f6082e8b855462730d8600"
+    },
+    {
+      "path": "docs/undertow/tests/browser.probe.cjs",
+      "local": "games/undertow/tests/browser.probe.cjs",
+      "bytes": 7710,
+      "sha256": "ee83315f3773e0573e687e84444c8849df8e57c560d31c96b85bfd72a3644a06"
+    },
+    {
+      "path": "docs/wreckfall/bots.js",
+      "local": "games/wreckfall/bots.js",
+      "bytes": 14453,
+      "sha256": "fb29b7fb81e2628e83f56e7ab5a9091887c916686d149a3018986b3ca72d2976"
+    },
+    {
+      "path": "docs/wreckfall/index.html",
+      "local": "games/wreckfall/index.html",
+      "bytes": 1265,
+      "sha256": "9407f92e436e29031b8ade844ade396fea9a69f12b5c0956ad36c65f1174372a"
+    },
+    {
+      "path": "docs/wreckfall/core.js",
+      "local": "games/wreckfall/core.js",
+      "bytes": 24864,
+      "sha256": "0cc22c0ff7da641762a74c25f94dc8ce8e74331528576dd963109d95f3ac9b00"
+    },
+    {
+      "path": "docs/wreckfall/main.js",
+      "local": "games/wreckfall/main.js",
+      "bytes": 37181,
+      "sha256": "6ae5046d34cb45abf8b2e4ace62a320a8bc7932852907cf31ce425e13008e7f2"
+    },
+    {
+      "path": "docs/wreckfall/audio.js",
+      "local": "games/wreckfall/audio.js",
+      "bytes": 7126,
+      "sha256": "68d937082e4da41aa91efc0d7d8f087c59beecb8bf4404c5320326c07982e3e8"
+    },
+    {
+      "path": "docs/wreckfall/package.json",
+      "local": "games/wreckfall/package.json",
+      "bytes": 865,
+      "sha256": "e5caac27eb304e5f907a7630b31acfad9cdee1e00b95d6ca0d2c7f33cbe3fb2a"
+    },
+    {
+      "path": "docs/wreckfall/tests/fairness.sim.cjs",
+      "local": "games/wreckfall/tests/fairness.sim.cjs",
+      "bytes": 1878,
+      "sha256": "3224c5015ffec27fb73f6a0225b29a1351a907166485d130740b20db6bf2af09"
+    },
+    {
+      "path": "docs/wreckfall/tests/core.test.cjs",
+      "local": "games/wreckfall/tests/core.test.cjs",
+      "bytes": 17948,
+      "sha256": "3c62e3b7e367cbdcef1e7c874cccd0a833ac3b7d638c2358035e4a6577c5dbd9"
+    },
+    {
+      "path": "docs/wreckfall/tests/ladder.sim.cjs",
+      "local": "games/wreckfall/tests/ladder.sim.cjs",
+      "bytes": 1834,
+      "sha256": "d2bac916819759892b299ef4d2232081926538a91520fa8d5dd8d9426c69390f"
+    },
+    {
+      "path": "docs/wreckfall/tests/extras.sim.cjs",
+      "local": "games/wreckfall/tests/extras.sim.cjs",
+      "bytes": 3217,
+      "sha256": "8813ec35e7df25992d64ff8ee2af863b3f27958dc173b46ec62bef0c70974535"
+    },
+    {
+      "path": "docs/wreckfall/tests/campaign.sim.cjs",
+      "local": "games/wreckfall/tests/campaign.sim.cjs",
+      "bytes": 2175,
+      "sha256": "cf38df6a20ce83bef8b6a72115a8984ea451bf3a3261d2a362b529ffd3394fe5"
+    },
+    {
+      "path": "docs/wreckfall/tests/specials.sim.cjs",
+      "local": "games/wreckfall/tests/specials.sim.cjs",
+      "bytes": 3201,
+      "sha256": "3999874f1e1092668c58806f8ed703cdd092222d8b94cb4848f85700067866bc"
+    },
+    {
+      "path": "docs/wreckfall/tests/behaviors.sim.cjs",
+      "local": "games/wreckfall/tests/behaviors.sim.cjs",
+      "bytes": 2500,
+      "sha256": "6660948924fc790bf20b0cf987101ca3cba2824f139862286d0f10d18c09b731"
+    },
+    {
+      "path": "docs/wreckfall/tests/waves.sim.cjs",
+      "local": "games/wreckfall/tests/waves.sim.cjs",
+      "bytes": 1683,
+      "sha256": "7b4c418997fab1bb91229e5d341b4040404243184a68a94d009bacd9b53fa60a"
+    },
+    {
+      "path": "docs/wreckfall/tests/botcheck.sim.cjs",
+      "local": "games/wreckfall/tests/botcheck.sim.cjs",
+      "bytes": 1333,
+      "sha256": "ed020cfe563af68ea2d17943d6fedac3f64d99d1ac9a54af9076ef17ae2cbe74"
+    },
+    {
+      "path": "docs/wreckfall/tests/browser.probe.cjs",
+      "local": "games/wreckfall/tests/browser.probe.cjs",
+      "bytes": 9863,
+      "sha256": "48d7a07311e57a7ca9cbb2d034591b7a297c47d42309ca6df5e15c70ff6fe67f"
+    },
+    {
+      "path": "docs/wreckfall/tests/farm.sim.cjs",
+      "local": "games/wreckfall/tests/farm.sim.cjs",
+      "bytes": 1272,
+      "sha256": "8ad11b27b30b6af0350679b39326663e2c0d961f365127ecc194fd42542303ef"
+    },
+    {
+      "path": "docs/zig-saber/psg.js",
+      "local": "games/zig-saber/psg.js",
+      "bytes": 15934,
+      "sha256": "e28cc3ab0e3146cf61adaa7315078ae867ed7454a2cf87cf8dd4eb88beacb77b"
+    },
+    {
+      "path": "docs/zig-saber/bots.js",
+      "local": "games/zig-saber/bots.js",
+      "bytes": 10313,
+      "sha256": "439d9e462e191a7f177919cb308382bacb320da4ea8375b78f8f71f2756f7dad"
+    },
+    {
+      "path": "docs/zig-saber/index.html",
+      "local": "games/zig-saber/index.html",
+      "bytes": 670,
+      "sha256": "9302786d423c790d3e60b79d5519ff49797a7b57e25ce7974b90f4febaa1d709"
+    },
+    {
+      "path": "docs/zig-saber/core.js",
+      "local": "games/zig-saber/core.js",
+      "bytes": 37273,
+      "sha256": "30515171c865533284539caa82a16acb64938a176d9d0eee8e898d976b94ce5b"
+    },
+    {
+      "path": "docs/zig-saber/main.js",
+      "local": "games/zig-saber/main.js",
+      "bytes": 38187,
+      "sha256": "50658c3dd33bb794da240d21e0dfff7104c652b9e85299765b390ffc0c147b4b"
+    },
+    {
+      "path": "docs/zig-saber/audio.js",
+      "local": "games/zig-saber/audio.js",
+      "bytes": 3287,
+      "sha256": "dbd7f123a2b524044082f4c283045c803d32a9776b3d51446a03e9d1d28cd7c2"
+    },
+    {
+      "path": "docs/zig-saber/package.json",
+      "local": "games/zig-saber/package.json",
+      "bytes": 744,
+      "sha256": "892df6bec7a5dede25f91778ccc075c524298e1a19ab64e6e2a2d8eb83badde3"
+    },
+    {
+      "path": "docs/zig-saber/tests/balance.cjs",
+      "local": "games/zig-saber/tests/balance.cjs",
+      "bytes": 1961,
+      "sha256": "2ba3c4a4bca72cfdf2f13a7b1f43fe04b265829a5aef269901b0cb62b25fd50a"
+    },
+    {
+      "path": "docs/zig-saber/tests/audio.cjs",
+      "local": "games/zig-saber/tests/audio.cjs",
+      "bytes": 6787,
+      "sha256": "43e06eae30c30f518563cfa2a15fbd20c501788f637d41aabbf6d25f4be59f2a"
+    },
+    {
+      "path": "docs/zig-saber/tests/browser.cjs",
+      "local": "games/zig-saber/tests/browser.cjs",
+      "bytes": 9397,
+      "sha256": "55238322d7663c6d87b0e8525c9ee7a6fede718f6a4a984f3947ce91233e2d56"
+    },
+    {
+      "path": "docs/zig-saber/tests/shots.cjs",
+      "local": "games/zig-saber/tests/shots.cjs",
+      "bytes": 1430,
+      "sha256": "a7580ae3b4d5aaf4ac65ad2b5ef140e06e126c35d89e1c9e168910a72bcecd4b"
+    },
+    {
+      "path": "docs/zig-saber/tests/loops.cjs",
+      "local": "games/zig-saber/tests/loops.cjs",
+      "bytes": 957,
+      "sha256": "959dce9fbd9ea2cb546a67084f8498486709fb957d9389442d4fc66f04ca1e6a"
+    },
+    {
+      "path": "docs/zig-saber/tests/rules.cjs",
+      "local": "games/zig-saber/tests/rules.cjs",
+      "bytes": 29525,
+      "sha256": "de264c15138e4568ab8dc3fc3fbb24785649357baa144f2cd12b22176c9ac507"
+    },
+    {
+      "path": "docs/zig-saber/tests/campaign.cjs",
+      "local": "games/zig-saber/tests/campaign.cjs",
+      "bytes": 810,
+      "sha256": "76a13a68f974480c66366b01d782094aba9cc9c6c2f0ba17acc0b53dc6a272a9"
+    },
+    {
+      "path": "docs/zig-saber/tests/dump.cjs",
+      "local": "games/zig-saber/tests/dump.cjs",
+      "bytes": 768,
+      "sha256": "40d8107c1c02112173458c54b926b2a21bbd0bb863b953094d9dfafbc2918e93"
+    },
+    {
+      "path": "docs/zig-saber/tests/bossshot.cjs",
+      "local": "games/zig-saber/tests/bossshot.cjs",
+      "bytes": 1583,
+      "sha256": "ce6628e83b9819aee0ea8976cf6cec1c636ffb59be53354a5b380d8f3192d0e8"
+    },
+    {
+      "path": "docs/zig-saber/tests/deaths.cjs",
+      "local": "games/zig-saber/tests/deaths.cjs",
+      "bytes": 915,
+      "sha256": "07b421a88f4e89577f9dbb3f4e8a27b60c81fba334abb4c6084ef1de4328ab75"
+    },
+    {
+      "path": "docs/zig-saber/tests/feelshot.cjs",
+      "local": "games/zig-saber/tests/feelshot.cjs",
+      "bytes": 1600,
+      "sha256": "3fa5d8e08de486720ca4fd5c878a0f85ea4f66de0b4b103f881a4b92170b75b7"
+    }
+  ]
+}
