@@ -23,6 +23,7 @@ import { Library, useCatalog } from './arcade/library';
 import { MetaChip } from './arcade/meta-chip';
 import { PipelineRibbon } from './arcade/pipeline-ribbon';
 import { PixelSprite } from './arcade/pixel-sprite';
+import { RecoveryPanel } from './arcade/recovery-panel';
 
 interface Baseline {
   id: string;
@@ -321,6 +322,7 @@ export function MotionWorkbench() {
         <AgeAcknowledgment />
         <Hero playback={playback} savedCount={catalog.loading ? null : catalog.versions.length} />
         <PipelineRibbon onPlayDonor={() => setDonorOpen(true)} />
+        <RecoveryPanel />
         <section className="stage" id="stage" aria-label="PARALLAXIA movement workbench">
           <aside className="component-card" aria-labelledby="component-title">
             <p className="eyebrow">STEP 1 · THE COMPONENT</p>

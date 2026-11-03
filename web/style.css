@@ -2386,6 +2386,121 @@ html:has(.arcade) body {
   color: var(--faint);
 }
 
+.arcade > .recovery {
+  width: min(1280px, calc(100% - 32px));
+  margin-inline: auto;
+}
+.arcade .recovery {
+  margin-top: 40px;
+  padding: 26px;
+  background: var(--panel);
+  border: 1px solid rgba(139, 108, 255, 0.5);
+  border-radius: var(--radius);
+  scroll-margin-top: 64px;
+}
+.arcade .recovery__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+}
+.arcade .recovery__header .eyebrow {
+  flex-basis: 100%;
+}
+.arcade .recovery h2 {
+  margin: 0;
+  font: 800 clamp(26px, 3.4vw, 40px) / 1.06 var(--display);
+  letter-spacing: -0.03em;
+}
+.arcade .recovery__intro {
+  max-width: 760px;
+  margin: 12px 0 18px;
+  color: var(--mute);
+  font-size: 15px;
+}
+.arcade .recovery__attempts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.arcade .recovery__attempt {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: var(--panel-2);
+  border: 1.5px solid rgba(255, 93, 108, 0.45);
+  border-radius: 14px;
+}
+.arcade .recovery__attempt.is-passed {
+  border-color: var(--lime);
+}
+.arcade .recovery__label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font: 700 12px var(--mono);
+  letter-spacing: 0.08em;
+  color: var(--mute);
+}
+.arcade .recovery__score {
+  margin: 0;
+  font: 800 44px/1 var(--mono);
+  color: var(--red);
+}
+.arcade .is-passed .recovery__score {
+  color: var(--lime);
+}
+.arcade .recovery__where {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink);
+}
+.arcade .recovery__compare {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+.arcade .recovery__compare div {
+  display: flex;
+  flex-direction: column-reverse;
+  padding: 8px 10px;
+  background: #11132a;
+  border-radius: 8px;
+}
+.arcade .recovery__compare dt {
+  font: 600 10.5px var(--mono);
+  color: var(--mute);
+}
+.arcade .recovery__compare dd {
+  margin: 0;
+  font: 800 17px var(--mono);
+  color: var(--lime);
+}
+.arcade .recovery__compare .is-wrong dd {
+  color: var(--red);
+}
+.arcade .recovery .recovery__lesson {
+  margin: auto 0 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--mute);
+}
+.arcade .recovery .recovery__foot {
+  margin: 14px 0 0;
+  font: 600 12px var(--mono);
+  color: var(--faint);
+}
+@media (max-width: 900px) {
+  .arcade .recovery__attempts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* Transfer stage */
 .arcade .stage {
   display: grid;

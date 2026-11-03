@@ -1,0 +1,139 @@
+{
+  "model": "muse-wonder-1.0",
+  "startedAt": "2026-11-02T23:44:46.546Z",
+  "finishedAt": "2026-11-02T23:47:59.016Z",
+  "requests": 20,
+  "estimatedCostUsd": 1.689036,
+  "inputTokens": 326703,
+  "outputTokens": 19818,
+  "stages": {
+    "investigate": 6,
+    "select": 5,
+    "develop": 6,
+    "freeze": 1,
+    "accept": 1,
+    "conclude": 1
+  },
+  "tools": {
+    "run_experiment_program": 1,
+    "inspect_wasm": 1,
+    "list_functions": 1,
+    "inspect_function": 1,
+    "prepare_checkpoint": 1,
+    "run_experiment": 4,
+    "read_experiment": 4,
+    "select_component_evidence": 1,
+    "submit_component_candidate": 3,
+    "freeze_component": 1,
+    "accept_component": 1
+  },
+  "frozenCandidateId": "accf3a817133ddc94b9d2c00de1a87f18aab34c6bb7d8b3f9ae66b4cedc18c0f",
+  "acceptedAttempt": 3,
+  "attempts": [
+    {
+      "attempt": 1,
+      "candidateId": "7c7d417cfbae8218c1b8b93b9b1e0d42afa4760c969a7041889eb956ada08245",
+      "passed": 0,
+      "total": 13,
+      "failedTraces": [
+        "idle",
+        "walking-directions",
+        "startup-held",
+        "tap-right",
+        "tap-left",
+        "tap-up-down",
+        "diagonal",
+        "neutral-dash",
+        "conflicting-inputs",
+        "change-direction",
+        "held-retrigger",
+        "cooldown-boundary",
+        "neutral-after-left-dash"
+      ],
+      "firstFailure": {
+        "trace": "idle",
+        "tick": 1,
+        "expected": {
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "ownsMotion": false,
+          "events": [],
+          "timers": {
+            "cooldown": 9,
+            "remaining": 0
+          }
+        },
+        "actual": {
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "ownsMotion": false,
+          "events": [],
+          "timers": {
+            "cooldown": 0,
+            "remaining": 0
+          }
+        }
+      },
+      "acceptance": null
+    },
+    {
+      "attempt": 2,
+      "candidateId": "668981162d05b9ab727e876bee973e8d7499cb0e4342144d01a45e879f19bff3",
+      "passed": 11,
+      "total": 13,
+      "failedTraces": [
+        "diagonal",
+        "neutral-after-left-dash"
+      ],
+      "firstFailure": {
+        "trace": "diagonal",
+        "tick": 11,
+        "expected": {
+          "position": {
+            "x": 5.303300857543945,
+            "y": -5.303300857543945
+          },
+          "ownsMotion": true,
+          "events": [
+            "dash-start"
+          ],
+          "timers": {
+            "cooldown": 25,
+            "remaining": 7
+          }
+        },
+        "actual": {
+          "position": {
+            "x": 7.5,
+            "y": -7.5
+          },
+          "ownsMotion": true,
+          "events": [
+            "dash-start"
+          ],
+          "timers": {
+            "cooldown": 25,
+            "remaining": 7
+          }
+        }
+      },
+      "acceptance": null
+    },
+    {
+      "attempt": 3,
+      "candidateId": "accf3a817133ddc94b9d2c00de1a87f18aab34c6bb7d8b3f9ae66b4cedc18c0f",
+      "passed": 13,
+      "total": 13,
+      "failedTraces": [],
+      "firstFailure": null,
+      "acceptance": {
+        "passed": 20,
+        "total": 20
+      }
+    }
+  ]
+}
