@@ -10,7 +10,7 @@ const ONE_GAME = `
   article.transferred { max-width: 960px; margin: 24px auto; }
 `;
 
-function launchOptions(headed) {
+export function launchOptions(headed) {
   return {
     channel: process.env.BROWSER_CHANNEL || 'chrome',
     headless: !headed,
@@ -90,7 +90,7 @@ async function scrollToText(page, selector, needle) {
   if (!found) throw Error('Could not show the recorded sentence: ' + needle);
 }
 
-async function recordShot(browser, origin, directory, name, action) {
+export async function recordShot(browser, origin, directory, name, action) {
   const context = await browser.newContext({
     viewport: { width: 1280, height: 720 },
     deviceScaleFactor: 1,

@@ -3,6 +3,7 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import test from 'node:test';
+import { assertAcceptedProof, loadAcceptedRoadster } from '../demo/accepted-roadster.mjs';
 import { parseArgs } from '../demo/cli.mjs';
 import { SAVED_REMIX_ID, materializeCommittedRemix, remixRecordFromEvidence } from '../demo/committed-remix.mjs';
 import { overlayFilter, probeVideo, runProcess, scrub, segmentArgs, writeCaption, writeSolidPng } from '../demo/compose.mjs';
@@ -10,7 +11,7 @@ import { loadDemoFacts } from '../demo/facts.mjs';
 import { createReadOnlyRoadsterLab } from '../demo/read-only-lab.mjs';
 import { assertCreationDisabled, startRecordingServer } from '../demo/server.mjs';
 import { buildSrt, formatTimestamp } from '../demo/srt.mjs';
-import { VIDEO_FPS, VIDEO_SECONDS, buildTimeline, resolveFreshAcceptance, resultsCopy } from '../demo/story.mjs';
+import { VIDEO_FPS, VIDEO_SECONDS, acceptedResultsLines, buildAcceptedTimeline, buildTimeline, resolveFreshAcceptance, resultsCopy } from '../demo/story.mjs';
 import { readRoadsterArtifact } from '../roadster/artifact.mjs';
 
 const root = resolve(import.meta.dirname, '..');
@@ -149,9 +150,60 @@ test('recording commands reject speed changes and secret-shaped logs', () => {
   }), /speed/);
   assert.equal(scrub('Authorization Bearer sk-live-secret and api_key=abc123'), 'Authorization Bearer [redacted] and api_key=[redacted]');
   assert.deepEqual(parseArgs(['render', '--fresh-acceptance', 'reports/demo/fresh.json']), {
-    mode: 'render', out: 'reports/demo', fresh: 'reports/demo/fresh.json', headed: false,
+    mode: 'render', out: 'reports/demo', fresh: 'reports/demo/fresh.json', headed: false, accepted: false,
   });
+  assert.deepEqual(parseArgs(['capture', '--accepted-roadster']), {
+    mode: 'capture', out: 'reports/demo-accepted', fresh: null, headed: false, accepted: true,
+  });
+  assert.throws(() => parseArgs(['render', '--accepted-roadster', '--out', 'reports/demo']), /cannot overwrite/);
+  assert.throws(() => parseArgs(['--accepted-roadster', '--fresh-acceptance', 'reports/demo/fresh.json']), /does not use/);
   assert.throws(() => parseArgs(['ship']), /Mode/);
+});
+
+test('accepted roadster proof is pinned to files, not an accepted flag', async () => {
+  const proof = await loadAcceptedRoadster(root);
+  assert.equal(proof.liveMeta, true);
+  assert.equal(proof.fixture, false);
+  assert.equal(proof.injected, false);
+  assert.equal(proof.adapterCostUsd, 0.008666);
+  assert.equal(proof.wonder.costUsd, 1.689036);
+  assert.deepEqual(proof.wonder.development, ['0/13', '11/13', '13/13']);
+  assert.equal(proof.wonder.acceptance, '20/20');
+  assert.equal(proof.wonder.acceptedDeliveries, 0);
+  assert.equal(proof.wonder.failureCategory, 'recipient-or-export');
+  assert.equal(proof.wonder.offlineDelivery, true);
+  assert.equal(proof.wonder.metaCalled, false);
+  assert.equal(proof.fidelity.inputKind, 'image');
+  assert.equal(proof.fidelity.contactPassed, 0);
+  assert.equal(proof.fidelity.savedPassed, 40);
+  assert.equal(proof.fidelity.costUsd, 0.02293425);
+  assert.equal(proof.remixCampaign.completed, 8);
+  assert.equal(proof.remixCampaign.matched, 6);
+  assert.equal(proof.remixCampaign.negatives, 2);
+  assert.equal(proof.remixCampaign.costUsd, 0.06688125);
+  assert.notEqual(proof.remixCampaign.olderComponentId, proof.componentId);
+  assert.throws(() => assertAcceptedProof({ accepted: true }), /accepted flag/);
+  assert.throws(() => assertAcceptedProof({ ...proof, reportSha256: 'ab'.repeat(32) }), /report/);
+  assert.throws(() => assertAcceptedProof({ ...proof, remixCampaign: { ...proof.remixCampaign, olderComponentId: proof.componentId } }), /older saved component/);
+  const timeline = buildAcceptedTimeline({ proof, measurements, donorDashVisible: true });
+  assert.equal(timeline.reduce((sum, segment) => sum + segment.seconds, 0), VIDEO_SECONDS);
+  const text = timelineText(timeline) + '\n' + acceptedResultsLines(proof).join('\n');
+  assert.match(text, /9699b756/);
+  assert.match(text, /0\/13/);
+  assert.match(text, /11\/13/);
+  assert.match(text, /13\/13/);
+  assert.match(text, /20\/20/);
+  assert.match(text, /\$1\.689036/);
+  assert.match(text, /\$0\.008666/);
+  assert.match(text, /\$0\.02293425/);
+  assert.match(text, /\$0\.06688125/);
+  assert.match(text, /0\/40/);
+  assert.match(text, /40\/40/);
+  assert.match(text, /older saved component|OLDER SAVED COMPONENT/);
+  assert.match(text, /samX500 and willGuimont/);
+  assert.match(text, /Not a video file/);
+  assert.doesNotMatch(text, /FRESH ACCEPTANCE|Muse Code|k\/10|\$45|\$50|on a phone|public url/i);
+  assert.equal(timeline.some(segment => segment.id === 'investigation-result'), false);
 });
 
 test('read-only lab cannot submit and the preview refuses creation', { timeout: 180000 }, async () => {
@@ -219,8 +271,8 @@ test('ffmpeg writes a two-second h264 segment with a lower third', { timeout: 60
 
 test('recorder source does not load an API key or the live preview script', async () => {
   for (const path of [
-    'scripts/record-demo.mjs', 'demo/capture.mjs', 'demo/render.mjs', 'demo/server.mjs', 'demo/facts.mjs',
-    'demo/committed-remix.mjs',
+    'scripts/record-demo.mjs', 'demo/capture.mjs', 'demo/capture-accepted.mjs', 'demo/render.mjs', 'demo/server.mjs', 'demo/facts.mjs',
+    'demo/committed-remix.mjs', 'demo/accepted-roadster.mjs', 'demo/static-server.mjs', 'demo/cli.mjs',
   ]) {
     const source = await readFile(join(root, path), 'utf8');
     assert.doesNotMatch(source, /loadEnvFile|MODEL_API_KEY|scripts\/preview/);

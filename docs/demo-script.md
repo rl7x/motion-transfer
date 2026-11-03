@@ -84,7 +84,7 @@ Use these lines and no others. Leave a blank line where a count does not exist.
 - Saved component `1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2`. Muse Wonder 1.0 generated it; Muse Spark 1.3 repaired it. Estimated generation cost `$0.28511425` across three historical requests. Finite checks: 12 development, 21 regression, 20 acceptance traces; 6,744 ticks; maximum position error 0 at tolerance 0.25 source pixels. Source: `components/dashy-dango-dash/README.md`.
 - November 2 developer campaign `eb9ac874-30ad-4a0b-9bcc-78f8c25f539a`: 2 of 3 tasks completed, estimated `$0.7299162`, reservations settled. The recovery task submitted no candidate. Source: `benchmark/recordings/README.md`. The root README rounds the same campaign to `$0.7299` and reports two later development trials at `$0.640187`, one reaching 10 of 13 development checks. Neither passed acceptance.
 - Phase budget: do not recreate a journal. The missing historical v1 ledger is not quoted. If a different ledger is on disk, the card says it is not quoted and gives no ceiling or reservation. Say that this is not an acceptance and not a finished ten-trial rate.
-- `docs/fresh-recovery.md` describes a historical Wonder trial. Its raw campaign files are not in this checkout, so do not label that prose as a verified fresh acceptance.
+- The Wonder campaign files are restored. The default cut still does not label that trial as its own acceptance. The accepted Roadster cut is `node scripts/record-demo.mjs --accepted-roadster`, and it has to match the pinned receipt, report, and chart hashes.
 - Public player counts, independent users, a fidelity chart, a Muse Code clean-room rate, and a hosted link: omit. They are not evidenced in this cut.
 
 ## Fallbacks

@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { isAbsolute, resolve } from 'node:path';
+import { usd } from './accepted-roadster.mjs';
 
 export const VIDEO_SECONDS = 180;
 export const VIDEO_FPS = 30;
@@ -218,6 +219,138 @@ function pairCues(lines) {
   const cues = [];
   for (let index = 0; index < lines.length; index += 2) cues.push(lines.slice(index, index + 2).join('\n'));
   return cues;
+}
+
+export function wonderExperimentLines(proof) {
+  return [
+    'RECORDED WONDER REPORT',
+    'Chosen controlled experiment ' + shortId(proof.wonder.experimentId, 20, 6) + '.',
+    'Cooldown set from 21 to 0. Same X and right inputs.',
+    'Frame 1 diverged: dx 7.5 versus 2.',
+    'Dash lasted 8 frames.',
+    'Human-supplied boundary, ABI, and evaluator.',
+    'This card quotes the saved report. It is not a live session.',
+  ];
+}
+
+export function wonderProgressLines(proof) {
+  const [first, second, third] = proof.wonder.development;
+  return [
+    'LATER SELECTION',
+    'Attempt 1 development: ' + first + '.',
+    'Attempt 2 development: ' + second + '.',
+    'Attempt 3 development: ' + third + '.',
+    'Separate acceptance: ' + proof.wonder.acceptance + '.',
+    'Candidate ' + shortId(proof.candidateId) + '.',
+    'Campaign publication stayed failed.',
+    'Offline JUJUMP delivery then succeeded.',
+    'Wonder ' + usd(proof.wonder.costUsd) + '. Not a ten-trial rate.',
+  ];
+}
+
+export function acceptedResultsLines(proof) {
+  return [
+    'ACCEPTED ROADSTER',
+    'Spark adapter ' + usd(proof.adapterCostUsd) + '. Live Meta. Not a fixture.',
+    'Both zone checks passed. 8 conformance, 8 browser.',
+    'Wonder ' + usd(proof.wonder.costUsd) + '. Development ' + proof.wonder.development.join(', ') + '.',
+    'Acceptance ' + proof.wonder.acceptance + '. Campaign publication stayed failed.',
+    'Offline JUJUMP delivery succeeded afterward.',
+    'Fidelity image input ' + usd(proof.fidelity.costUsd) + '. Scores 0/40 and 40/40.',
+    'Remix campaign ' + usd(proof.remixCampaign.costUsd) + '. 6 supported, 2 negative.',
+    'That remix set uses the older saved component.',
+    'Human boundary, ABI, and evaluator. One behavior.',
+    'Finite checks. Not adoption and not a public link.',
+  ];
+}
+
+export function buildAcceptedTimeline({ proof, measurements, donorDashVisible = true }) {
+  const base = Number(measurements.baselineLandingX).toFixed(2);
+  const moved = Number(measurements.transferredLandingX).toFixed(2);
+  const segments = [
+    segment('hook-miss', 8, 'original', {
+      window: 'end',
+      corner: ['ACCEPTED ROADSTER', 'Pinned challenge'],
+      lower: ['Same recorded stunt. This landing misses the zone.'],
+      cues: ['Ordinary landing from the pinned accepted challenge. It misses the green zone.'],
+    }),
+    segment('hook-land', 8, 'borrowed', {
+      window: 'end',
+      corner: ['ACCEPTED ROADSTER', 'Same component as JUJUMP'],
+      lower: ['Same controls, plus the accepted dash.', 'Native ' + base + ' m. Borrowed ' + moved + ' m.'],
+      cues: ['Same controls plus the accepted dash land in the green zone.', 'Native landing ' + base + ' m. Borrowed landing ' + moved + ' m.'],
+    }),
+    segment('donor', 6, 'donor', {
+      corner: ['UPSTREAM · DASHY DANGO', 'samX500 and willGuimont'],
+      lower: donorDashVisible
+        ? ['Upstream Dashy Dango, by samX500 and willGuimont.', 'The compiled cartridge this dash was borrowed from.']
+        : ['Upstream Dashy Dango, by samX500 and willGuimont.', 'Dash input was sent. An active burst was not confirmed.'],
+      cues: ['Upstream Dashy Dango, by samX500 and willGuimont.'],
+    }),
+    segment('wonder-experiment', 24, 'wonder-experiment', {
+      kind: 'card',
+      card: 'wonder-experiment',
+      corner: ['RECORDED WONDER REPORT', 'Not a live session'],
+      lower: null,
+      cues: pairCues(wonderExperimentLines(proof)),
+    }),
+    segment('wonder-progress', 18, 'wonder-progress', {
+      kind: 'card',
+      card: 'wonder-progress',
+      corner: ['LATER SELECTION', 'Saved report'],
+      lower: null,
+      cues: pairCues(wonderProgressLines(proof)),
+    }),
+    segment('fidelity', 24, 'fidelity', {
+      kind: 'card',
+      card: 'fidelity',
+      corner: ['FIDELITY · IMAGE INPUT', 'Not a video file'],
+      lower: ['Contact sheet plus supplied defaults: 0/40.', 'Saved recovery on these traces: 40/40.'],
+      cues: [
+        'Contact-sheet image input plus supplied defaults scored 0 of 40.',
+        'Saved recovery scored 40 of 40. Cost ' + usd(proof.fidelity.costUsd) + '. Not a video file.',
+      ],
+    }),
+    segment('jujump', 10, 'jujump', {
+      corner: ['OFFLINE JUJUMP', 'Same accepted component'],
+      lower: ["Kenta Cho's JUJUMP. Human-authored adapter.", 'Campaign failure stays. No new model call.'],
+      cues: ["Fresh player from the pinned JUJUMP publication. Kenta Cho's game, human-authored adapter."],
+    }),
+    segment('remix', 20, 'remix', {
+      window: 'end',
+      corner: ['OLDER SAVED COMPONENT', 'Not this accepted dash'],
+      lower: ['Saved remix clip from the older component.', 'Eight of eight outcomes. Six supported, two negative.'],
+      cues: ['Saved remix clip. This campaign used the older saved component, not the accepted dash.'],
+    }),
+    segment('results', 32, 'results-card', {
+      kind: 'card',
+      card: 'results',
+      corner: ['HACKATHON · RESULTS', 'Finite checks'],
+      lower: null,
+      cues: pairCues(acceptedResultsLines(proof)),
+    }),
+    segment('credits', 16, 'credits', {
+      corner: ['CREDITS', 'Local preview only'],
+      lower: ['Hackathon: harness, dash, adapters, challenge, checks.', 'Upstream: Dashy Dango, PAKU PAKU, JUJUMP, RDSTR.'],
+      cues: ['Hackathon work is the harness, dash, adapters, challenge, and checks. The four games are upstream.'],
+    }),
+    segment('close', 14, 'closing-card', {
+      kind: 'card',
+      card: 'closing',
+      corner: ['LOCAL PREVIEW', 'Not a public link'],
+      lower: null,
+      cues: ['Run npm run dev:transfer and open http://127.0.0.1:4173. This is a local preview, not a public or phone link.'],
+    }),
+  ];
+  let cursor = 0;
+  for (const item of segments) {
+    item.start = cursor;
+    cursor += item.seconds;
+    item.frames = item.seconds * VIDEO_FPS;
+  }
+  if (cursor !== VIDEO_SECONDS) throw Error('Timeline is ' + cursor + ' seconds');
+  assertClaimBoundary(segments, null);
+  return segments;
 }
 
 export function assertClaimBoundary(segments, fresh) {

@@ -1,13 +1,16 @@
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { chromium } from 'playwright';
+import { loadAcceptedRoadster } from './accepted-roadster.mjs';
 import { captionCardHtml, closingCardHtml, resultsCardHtml } from './cards.mjs';
 import {
   CAPTION_BOX, FONT, ffmpegVersion, overlayFilter, probeDuration, probeVideo, runProcess, scrub, segmentArgs, writeCaption,
 } from './compose.mjs';
 import { loadDemoFacts } from './facts.mjs';
 import { buildSrt } from './srt.mjs';
-import { VIDEO_FPS, VIDEO_SECONDS, buildTimeline, closingCopy, resolveFreshAcceptance, resultsCopy } from './story.mjs';
+import {
+  VIDEO_FPS, VIDEO_SECONDS, acceptedResultsLines, buildAcceptedTimeline, buildTimeline, closingCopy, resolveFreshAcceptance, resultsCopy, wonderExperimentLines, wonderProgressLines,
+} from './story.mjs';
 
 function shotFor(segment, capture, fresh) {
   if (segment.kind === 'card') return null;
@@ -45,9 +48,174 @@ async function shootCaption(browser, lines, png, box) {
   }
 }
 
-export async function renderDemo({ root, out, freshPath = null }) {
+function cardImage(out, segment) {
+  const name = segment.card ?? (segment.id === 'close' ? 'closing' : segment.id);
+  return join(out, 'cards', name + '.png');
+}
+
+async function renderAcceptedDemo({ root, out, capture }) {
+  const proof = await loadAcceptedRoadster(root);
+  if (proof.artifactId !== capture.proof?.artifactId || proof.reportSha256 !== capture.proof?.reportSha256) {
+    throw Error('Capture proof does not match the pinned accepted Roadster');
+  }
+  if (proof.playSha256 !== capture.proof.playSha256 || proof.projectSha256 !== capture.proof.projectSha256 || proof.fidelity.svgSha256 !== capture.proof.fidelity?.svgSha256) {
+    throw Error('Capture hashes do not match the pinned files');
+  }
+  const timeline = buildAcceptedTimeline({
+    proof,
+    measurements: capture.measurements,
+    donorDashVisible: capture.donorDashVisible === true,
+  });
+  await mkdir(join(out, 'segments'), { recursive: true });
+  await mkdir(join(out, 'text'), { recursive: true });
+  await mkdir(join(out, 'cards'), { recursive: true });
+  const svg = await readFile(proof.fidelity.svgPath, 'utf8');
+  const fidelityHtml = `<!doctype html><html><body style="margin:0;width:1280px;height:720px;background:#ffffff;display:flex;align-items:center;justify-content:center">${svg.replace(/<\?xml[^?]*\?>/, '')}</body></html>`;
+  const browser = await chromium.launch({
+    channel: process.env.BROWSER_CHANNEL || 'chrome',
+    headless: true,
+    env: { PATH: process.env.PATH ?? '', HOME: process.env.HOME ?? '', TMPDIR: process.env.TMPDIR ?? '' },
+  });
+  const commands = [];
+  const segments = [];
+  const prepared = [];
+  try {
+    await shootCard(browser, resultsCardHtml(acceptedResultsLines(proof)), join(out, 'cards', 'results.png'));
+    await shootCard(browser, resultsCardHtml(wonderExperimentLines(proof)), join(out, 'cards', 'wonder-experiment.png'));
+    await shootCard(browser, resultsCardHtml(wonderProgressLines(proof)), join(out, 'cards', 'wonder-progress.png'));
+    await shootCard(browser, fidelityHtml, join(out, 'cards', 'fidelity.png'));
+    await shootCard(browser, closingCardHtml(closingCopy()), join(out, 'cards', 'closing.png'));
+    for (const segment of timeline) {
+      const cornerPng = join(out, 'text', segment.id + '-corner.png');
+      const lowerPng = segment.lower ? join(out, 'text', segment.id + '-lower.png') : null;
+      await writeCaption(join(out, 'text', segment.id + '-corner.txt'), segment.corner);
+      await shootCaption(browser, segment.corner, cornerPng, CAPTION_BOX.corner);
+      if (lowerPng) {
+        await writeCaption(join(out, 'text', segment.id + '-lower.txt'), segment.lower);
+        await shootCaption(browser, segment.lower, lowerPng, CAPTION_BOX.lower);
+      }
+      prepared.push({ segment, cornerPng, lowerPng });
+    }
+  } finally {
+    await browser.close();
+  }
+  for (const [index, item] of prepared.entries()) {
+    const { segment, cornerPng, lowerPng } = item;
+    const shot = segment.kind === 'card' ? null : capture.shots[segment.clip];
+    if (segment.kind !== 'card' && !shot?.file) throw Error('Accepted capture is missing ' + segment.id);
+    const start = await segmentStart(segment, shot);
+    const filter = overlayFilter({
+      start,
+      seconds: segment.kind === 'card' ? null : segment.seconds,
+      pad: segment.kind !== 'card',
+      lower: Boolean(lowerPng),
+    });
+    const input = segment.kind === 'card'
+      ? { kind: 'image', path: cardImage(out, segment) }
+      : { kind: 'file', path: shot.file };
+    const output = join(out, 'segments', String(index + 1).padStart(2, '0') + '-' + segment.id + '.mp4');
+    const args = segmentArgs({
+      input, frames: segment.frames, filter, images: lowerPng ? [cornerPng, lowerPng] : [cornerPng], output,
+    });
+    commands.push(['ffmpeg', ...args]);
+    console.log('render ' + segment.id);
+    await runProcess('ffmpeg', args);
+    segments.push(output);
+  }
+  const list = join(out, 'segments', 'concat.txt');
+  await writeFile(list, segments.map(file => `file '${file.replace(/'/g, "'\\''")}'`).join('\n') + '\n');
+  const video = join(out, 'draft.mp4');
+  const concatArgs = ['-y', '-hide_banner', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', '-movflags', '+faststart', video];
+  commands.push(['ffmpeg', ...concatArgs]);
+  await runProcess('ffmpeg', concatArgs);
+  let probe = await probeVideo(video);
+  let exactFrames = probe.frames === timeline.reduce((sum, segment) => sum + segment.frames, 0);
+  if (!exactFrames) {
+    const fixed = video + '.exact.mp4';
+    const fixArgs = ['-y', '-hide_banner', '-loglevel', 'error', '-i', video, '-frames:v', String(VIDEO_SECONDS * VIDEO_FPS), '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-r', '30', '-an', '-movflags', '+faststart', fixed];
+    commands.push(['ffmpeg', ...fixArgs]);
+    await runProcess('ffmpeg', fixArgs);
+    await rename(fixed, video);
+    probe = await probeVideo(video);
+    exactFrames = probe.frames === VIDEO_SECONDS * VIDEO_FPS;
+  }
+  if (probe.codec !== 'h264' || probe.pixFmt !== 'yuv420p' || probe.width !== 1280 || probe.height !== 720) {
+    throw Error('Final video is not 1280x720 H.264 yuv420p');
+  }
+  if (!exactFrames || Math.abs(probe.duration - VIDEO_SECONDS) > 0.08) {
+    throw Error('Final video is not 180 seconds (' + probe.duration + 's, ' + probe.frames + ' frames)');
+  }
+  const srt = buildSrt(timeline);
+  const srtPath = join(out, 'draft.srt');
+  await writeFile(srtPath, srt);
+  const provenance = {
+    schemaVersion: 1,
+    generatedAt: new Date().toISOString(),
+    mode: 'accepted-roadster',
+    localOrigin: capture.origin,
+    playerOrigin: capture.playerOrigin,
+    note: 'Challenge and JUJUMP shots were served from pinned local files. Reused clips came from the saved cut. None of these URLs are public.',
+    video: { path: video, bytes: probe.size, durationSeconds: probe.duration, frames: probe.frames, codec: probe.codec, pixFmt: probe.pixFmt, width: probe.width, height: probe.height },
+    srt: srtPath,
+    ffmpeg: await ffmpegVersion(),
+    font: FONT,
+    commands: commands.map(command => command.map(scrub)),
+    checks: {
+      durationSeconds: probe.duration,
+      frames: probe.frames,
+      codec: probe.codec,
+      pixFmt: probe.pixFmt,
+      postsDuringCapture: 0,
+      creationDisabled: true,
+      ordinaryOutsideTarget: true,
+      borrowedInsideTarget: true,
+      liveBaselineLandingX: capture.measurements.liveBaselineLandingX,
+      liveTransferredLandingX: capture.measurements.liveTransferredLandingX,
+      speedUnchanged: true,
+      phaseLedgerQuoted: false,
+      artifactId: proof.artifactId,
+      componentId: proof.componentId,
+      candidateId: proof.candidateId,
+      publicationId: proof.publicationId,
+      reportSha256: proof.reportSha256,
+      playSha256: proof.playSha256,
+      projectSha256: proof.projectSha256,
+      fidelitySvgSha256: proof.fidelity.svgSha256,
+    },
+    measurements: capture.measurements,
+    proof,
+    shots: Object.fromEntries(Object.entries(capture.shots).map(([name, shot]) => [name, {
+      file: shot.file,
+      reusedFrom: shot.reusedFrom ?? null,
+      sha256: shot.sha256 ?? null,
+      wallClockMs: shot.wallClockMs ?? null,
+      result: shot.result ?? null,
+      landing: shot.landing ?? null,
+    }])),
+    caveats: [
+      'Landings and other new gameplay were not time-compressed. A short clip is padded by holding its last frame.',
+      'The Wonder cards quote the saved public report. They are not a live model session and do not animate model activity.',
+      'The campaign journal still records publication failure. The later JUJUMP file is a separate offline delivery.',
+      'The fidelity chart is the pinned SVG. Its input was a contact-sheet image, not a video file.',
+      'The remix clip and its 8-outcome campaign use the older saved component, not the accepted component.',
+      'Donor, remix, and credits clips are reused from reports/demo. The phase ledger is not quoted.',
+      'No adoption, public player, phone recording, ten-trial rate, or Muse Code claim is in this cut.',
+    ],
+  };
+  const provenancePath = join(out, 'provenance.json');
+  await writeFile(provenancePath, JSON.stringify(provenance, null, 2) + '\n');
+  return { video, srt: srtPath, provenance: provenancePath, probe };
+}
+
+export async function renderDemo({ root, out, freshPath = null, accepted = false }) {
   const capturePath = join(out, 'capture.json');
   const capture = JSON.parse(await readFile(capturePath, 'utf8'));
+  if (accepted || capture.mode === 'accepted-roadster') {
+    if (!accepted || capture.mode !== 'accepted-roadster') {
+      throw Error('Accepted render needs --accepted-roadster and an accepted capture');
+    }
+    return renderAcceptedDemo({ root, out, capture });
+  }
   if (!capture.measurements?.ordinaryOutsideTarget || !capture.measurements?.borrowedInsideTarget) {
     throw Error('Capture does not record a miss and a borrowed landing');
   }
@@ -194,7 +362,7 @@ export async function renderDemo({ root, out, freshPath = null }) {
       'One Roadster scene is recorded at a time. Pixel shots hide the donor and before cards so the transferred game fills the frame.',
       'The saved neutral-after-left conclusion is the model interpretation. conclusionVerified is false.',
       'No public player counts, phone capture, fidelity chart, or Muse Code session is in the default cut.',
-      'docs/fresh-recovery.md records a historical Wonder trial. Its raw campaign files are not in this checkout, so this cut does not show that trial as a fresh acceptance.',
+      'The restored Wonder campaign is a separate historical trial. This default cut does not present it as the video acceptance.',
       facts.phase.quoted
         ? 'Phase budget figures come from the historical journal read at render time.'
         : facts.phase.present
