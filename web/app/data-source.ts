@@ -8,6 +8,18 @@ export function readGenerationMode(): GenerationMode {
   return 'local';
 }
 
+export function readRecovery(): 'saved' | 'accepted' {
+  return window.__MOTION_TRANSFER__?.recovery === 'accepted' ? 'accepted' : 'saved';
+}
+
+/** Standalone comparison bundled with an accepted playback copy. Absent on the saved copy. */
+export function readJujumpComparison(): string | null {
+  const value = window.__MOTION_TRANSFER__?.jujumpComparison;
+  return typeof value === 'string' && value.startsWith('/') && !value.startsWith('//')
+    ? value
+    : null;
+}
+
 /** Return a static GET payload when a release build injected this path. */
 export function injectedResource(path: string): unknown {
   const resources = window.__MOTION_TRANSFER__?.resources;

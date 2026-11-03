@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { readRecovery } from '../data-source';
 import { useTransfer } from '../transfer-context';
 import { linkHref } from '../links';
 import type { PlayerSnapshot, PlayerWindow } from '../types';
@@ -458,7 +459,9 @@ export function Destinations() {
             <span className="destination-action">Give it the dash →</span>
             <small>
               {item.id === 'roadster'
-                ? 'Saved transfer · live Meta adaptation'
+                ? readRecovery() === 'accepted'
+                  ? 'Accepted transfer'
+                  : 'Saved transfer · live Meta adaptation'
                 : item.liveEdits.length
                   ? 'Saved transfer · live remix supported'
                   : 'Saved transfer · gravity and landing'}

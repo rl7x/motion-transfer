@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useTransfer } from '../transfer-context';
 import { useJob, useLabStatus } from '../hooks/use-job';
-import { modelFailure, readGenerationMode, stageLabel } from '../data-source';
+import { modelFailure, readGenerationMode, readRecovery, stageLabel } from '../data-source';
 import { linkHref } from '../links';
 import { useAgeAcknowledgment } from './age-acknowledgment';
 import { ShareStatus } from './share-status';
@@ -62,7 +62,9 @@ function RoadsterRemix({ status }: { status: ServiceStatus | null }) {
         <dd>
           {artifact?.parentArtifactId
             ? 'Keeps the parent rules except the checked change.'
-            : 'Saved transfer. No earlier remix.'}
+            : readRecovery() === 'accepted'
+              ? 'Accepted transfer. No earlier remix.'
+              : 'Saved transfer. No earlier remix.'}
         </dd>
       </dl>
       <p id="roadster-mapping">
@@ -76,13 +78,19 @@ function RoadsterRemix({ status }: { status: ServiceStatus | null }) {
             <a href={linkHref('/roadster/play/' + artifact.parentArtifactId)}>Parent version</a> →
             this checked transfer
           </>
+        ) : readRecovery() === 'accepted' ? (
+          'Accepted Roadster transfer. The native simulation is upstream work.'
         ) : (
           'Saved initial Meta transfer. The native simulation is upstream work.'
         )}
       </p>
       <a
         id="roadster-source"
-        href={linkHref('/api/roadster/artifacts/' + artifact?.id + '/source')}
+        href={linkHref(
+          playbackOnly && artifact?.id
+            ? '/versions/' + artifact.id + '/download.zip'
+            : '/api/roadster/artifacts/' + artifact?.id + '/source',
+        )}
       >
         Download adapter, verification and source ↗
       </a>
@@ -296,6 +304,7 @@ function PakuRemix() {
 }
 export function RemixPanel({ status }: { status: ServiceStatus | null }) {
   const { destination, share } = useTransfer();
+  const playbackOnly = readGenerationMode() === 'playback-only';
   const car = destination?.id === 'roadster',
     paku = destination?.id === 'paku-paku';
   return (
@@ -334,9 +343,11 @@ export function RemixPanel({ status }: { status: ServiceStatus | null }) {
       <div hidden={!car}>
         <RoadsterRemix status={status} />
       </div>
-      <div hidden={!paku}>
-        <PakuRemix />
-      </div>
+      {playbackOnly && !paku ? null : (
+        <div hidden={!paku}>
+          <PakuRemix />
+        </div>
+      )}
     </section>
   );
 }

@@ -20,9 +20,15 @@ export function motionData(release) {
   const challenge = release.versions.find(version => version.id === release.featuredId);
   const parent = challenge && release.versions.find(version => version.id === challenge.parentArtifactId);
   const resources = {
-    '/api/ability': { id: release.componentId, name: 'Dash', status: 'saved-recovery' },
+    '/api/ability': {
+      id: release.componentId, name: 'Dash',
+      status: release.recovery === 'accepted' ? 'accepted-recovery' : 'saved-recovery',
+    },
     '/api/transfer': { status: 'playback-only' },
-    '/api/destinations': { componentId: release.componentId, destinations: parent ? [roadsterDestination(release, parent)] : [] },
+    '/api/destinations': {
+      componentId: release.componentId,
+      destinations: parent && parent.componentId === release.componentId ? [roadsterDestination(release, parent)] : [],
+    },
     '/api/lab/status': { enabled: false, activeRunId: null, budget: null, creation: 'unavailable' },
     '/api/remixes/status': { enabled: false, activeRunId: null, budget: null, creation: 'unavailable' },
   };
@@ -50,7 +56,12 @@ export function motionData(release) {
       report: '/versions/' + challenge.id + '/' + challenge.evidenceName,
     };
   }
-  return { generation: 'playback-only', publicOrigin: release.publicOrigin, recovery: 'saved', resources };
+  const recovery = release.recovery === 'accepted' ? 'accepted' : 'saved';
+  return {
+    generation: 'playback-only', publicOrigin: release.publicOrigin, recovery,
+    ...(release.jujumpComparison ? { jujumpComparison: release.jujumpComparison } : {}),
+    resources,
+  };
 }
 
 function roadsterDestination(release, parent) {
@@ -81,7 +92,7 @@ function versionPage(version, release) {
     ? `<a data-parent href="../${version.parentArtifactId}/index.html">Parent version</a>`
     : version.parentArtifactId
       ? `<p data-parent-missing>Parent ${escapeHtml(version.parentArtifactId)} is not in this copy.</p>`
-      : '<p data-root>Saved root. This version has no parent.</p>';
+      : `<p data-root>${release.recovery === 'accepted' ? 'Accepted root. This version has no parent.' : 'Saved root. This version has no parent.'}</p>`;
   const landing = version.api ? `<p data-landing>The recorded native controls land at ${version.api.measurements.baselineLandingX.toFixed(2)} m. The same controls plus the borrowed dash land at ${version.api.measurements.transferredLandingX.toFixed(2)} m.</p>` : '';
   const activation = version.intent?.activation === 'press' ? 'press' : 'held';
   const player = version.protocol === 'challenge'

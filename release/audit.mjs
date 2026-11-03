@@ -36,7 +36,20 @@ export async function auditDirectory(root) {
   for (const [path, hash] of Object.entries(body.files)) assert.equal(found.get(path), hash, path);
   const motion = JSON.parse(await readFile(join(root, 'motion-data.json'), 'utf8'));
   assert.equal(motion.generation, 'playback-only');
-  assert.equal(motion.recovery, 'saved');
+  assert.ok(motion.recovery === 'saved' || motion.recovery === 'accepted');
+  assert.equal(motion.resources['/api/ability'].id, body.componentId);
+  assert.equal(motion.resources['/api/ability'].status, motion.recovery === 'accepted' ? 'accepted-recovery' : 'saved-recovery');
+  if (motion.recovery === 'accepted') {
+    assert.equal(motion.jujumpComparison, '/jujump/index.html');
+    const comparison = JSON.parse(await readFile(join(root, 'jujump/config.json'), 'utf8'));
+    assert.equal(comparison.componentId, body.componentId);
+    assert.match(await readFile(join(root, 'jujump/index.html'), 'utf8'), /id="compare"/);
+  } else {
+    assert.equal(motion.jujumpComparison ?? null, null);
+  }
+  for (const destination of motion.resources['/api/destinations'].destinations) {
+    assert.equal(destination.componentId, body.componentId);
+  }
   assert.equal(motion.publicOrigin, body.publicOrigin);
   assert.equal(motion.resources['/api/lab/status'].enabled, false);
   assert.equal(motion.resources['/api/remixes/status'].enabled, false);
@@ -72,6 +85,10 @@ export async function auditDirectory(root) {
     if (!body.publicOrigin) assert.match(page, /data-share-state="unconfigured"/);
     if (version.parentArtifactId && byId.has(version.parentArtifactId)) {
       assert.match(page, new RegExp('data-parent href="\\.\\./' + version.parentArtifactId + '/index.html"'));
+    }
+    if (motion.recovery === 'accepted') {
+      const lineage = JSON.parse(await readFile(join(directory, 'lineage.json'), 'utf8'));
+      assert.equal(lineage.componentId, body.componentId);
     }
   }
   const featured = byId.get(body.featuredId);

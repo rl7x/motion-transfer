@@ -1,9 +1,11 @@
+import { readGenerationMode, readJujumpComparison, readRecovery } from '../data-source';
 import { useResource } from '../hooks/use-resource';
 import { linkHref } from '../links';
+import { useTransfer } from '../transfer-context';
 interface Measurements {
   measurements: { traceCount: number; updates: number; maxPositionError: number };
 }
-function RecoveryVerdict() {
+function LiveRecoveryVerdict() {
   const { data, error } = useResource<Measurements>('/api/developer-task');
   const m = data?.measurements;
   return (
@@ -13,6 +15,16 @@ function RecoveryVerdict() {
         : (error ?? 'Loading saved recovery results…')}
     </p>
   );
+}
+function RecoveryVerdict() {
+  if (readGenerationMode() === 'playback-only') {
+    return (
+      <p id="recovery-verdict">
+        Playback uses the bundled source, report, and notices for this component.
+      </p>
+    );
+  }
+  return <LiveRecoveryVerdict />;
 }
 export function Header() {
   return (
@@ -25,6 +37,9 @@ export function Header() {
   );
 }
 export function Intro() {
+  const playback = readGenerationMode() === 'playback-only';
+  const accepted = readRecovery() === 'accepted';
+  const comparison = readJujumpComparison();
   return (
     <section className="intro">
       <div>
@@ -43,25 +58,40 @@ export function Intro() {
           <span className="ability-icon" aria-hidden="true">
             ↠
           </span>
-          <span className="pill">SAVED RECOVERY</span>
+          <span className="pill">{accepted ? 'ACCEPTED RECOVERY' : 'SAVED RECOVERY'}</span>
         </div>
         <p className="eyebrow">EXTRACTED FROM DASHY DANGO</p>
         <h2>Borrow the dash ↠</h2>
-        <p>One saved recovery, with its own burst and recharge. Try it in the car below.</p>
+        <p>
+          {accepted
+            ? 'One accepted recovery, with its own burst and recharge. Try it in the car below.'
+            : 'One saved recovery, with its own burst and recharge. Try it in the car below.'}
+        </p>
         <div className="ability-links">
           <a href={linkHref('/donor/play')} target="_blank" rel="noreferrer">
             Play Dashy Dango ↗
           </a>
-          <a href={linkHref('/component/export')} download="recovered-dash.json">
+          <a
+            href={linkHref(playback ? '/evidence/component.ts' : '/component/export')}
+            download={playback ? 'component.ts' : 'recovered-dash.json'}
+          >
             Component source ↗
           </a>
           <a href="#evidence-details">Recovery evidence ↓</a>
+          {comparison ? (
+            <a id="jujump-comparison" href={linkHref(comparison)} target="_blank" rel="noreferrer">
+              JUJUMP comparison ↗
+            </a>
+          ) : null}
         </div>
       </aside>
     </section>
   );
 }
 export function RecoveryDetails() {
+  const playback = readGenerationMode() === 'playback-only';
+  const { artifact, destination } = useTransfer();
+  const version = artifact?.id;
   return (
     <details className="recovery-details" id="recovery-details">
       <summary>
@@ -122,24 +152,60 @@ export function RecoveryDetails() {
           collision rules. Contact never resets the recovered timers.
         </p>
         <p>
-          <a href={linkHref('/artifact/adapter.ts')}>PAKU PAKU adapter</a> ·{' '}
-          <a href={linkHref('/jujump/adapter.ts')}>JUJUMP adapter</a> ·{' '}
-          <a href={linkHref('/roadster/adapter.ts')}>Roadster adapter</a> ·{' '}
-          <a href={linkHref('/evidence/contract.json')}>Recovered contract</a> ·{' '}
-          <a href={linkHref('/evidence/provenance.json')}>Component identity</a>
+          {playback ? (
+            <>
+              {destination?.source ? (
+                <a href={linkHref(destination.source)}>Roadster adapter</a>
+              ) : null}
+              {version ? (
+                <>
+                  {' '}
+                  · <a href={linkHref('/versions/' + version + '/notices.txt')}>Notices</a>
+                </>
+              ) : null}{' '}
+              · <a href={linkHref('/evidence/contract.json')}>Recovered contract</a> ·{' '}
+              <a href={linkHref('/evidence/provenance.json')}>Component identity</a> ·{' '}
+              <a href={linkHref('/evidence/component.ts')}>Component source</a>
+            </>
+          ) : (
+            <>
+              <a href={linkHref('/artifact/adapter.ts')}>PAKU PAKU adapter</a> ·{' '}
+              <a href={linkHref('/jujump/adapter.ts')}>JUJUMP adapter</a> ·{' '}
+              <a href={linkHref('/roadster/adapter.ts')}>Roadster adapter</a> ·{' '}
+              <a href={linkHref('/evidence/contract.json')}>Recovered contract</a> ·{' '}
+              <a href={linkHref('/evidence/provenance.json')}>Component identity</a>
+            </>
+          )}
         </p>
       </details>
     </details>
   );
 }
 export function Footer() {
+  const playback = readGenerationMode() === 'playback-only';
+  const { artifact } = useTransfer();
   return (
     <footer>
       <span>
         Dashy Dango by willGuimont · PAKU PAKU &amp; JUJUMP by Kenta Cho / ABA Games · RDSTR Stunts
-        by sebayaki · <a href={linkHref('/licenses')}>PAKU notices</a> ·{' '}
-        <a href={linkHref('/jujump/licenses')}>JUJUMP notices</a> ·{' '}
-        <a href={linkHref('/roadster/notices')}>Roadster notices</a> ·{' '}
+        by sebayaki ·{' '}
+        {playback ? (
+          <>
+            <a href={linkHref('/NOTICE.txt')}>Donor notice</a> ·{' '}
+            {artifact ? (
+              <a href={linkHref('/versions/' + artifact.id + '/notices.txt')}>Roadster notices</a>
+            ) : (
+              'Roadster notices'
+            )}{' '}
+            ·{' '}
+          </>
+        ) : (
+          <>
+            <a href={linkHref('/licenses')}>PAKU notices</a> ·{' '}
+            <a href={linkHref('/jujump/licenses')}>JUJUMP notices</a> ·{' '}
+            <a href={linkHref('/roadster/notices')}>Roadster notices</a> ·{' '}
+          </>
+        )}
         <a href="#privacy-note">Privacy</a>
       </span>
       <span>Local preview · adults 18 and older · one saved dash, different worlds</span>

@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
+import { readGenerationMode } from './data-source';
 import { TransferProvider } from './transfer-context';
 import { useLabStatus } from './hooks/use-job';
 import { AgeAcknowledgment, AgeProvider } from './components/age-acknowledgment';
@@ -37,6 +38,7 @@ class AppBoundary extends Component<{ children: ReactNode }, { error: boolean }>
 }
 function Experience() {
   const status = useLabStatus();
+  const playback = readGenerationMode() === 'playback-only';
   return (
     <main>
       <Header />
@@ -48,10 +50,14 @@ function Experience() {
       <details className="evidence-drawer" id="evidence-details">
         <summary>Explore the recovery, source and verification</summary>
         <TransferExplanation />
-        <DeveloperTask />
-        <DeveloperBenchmarks />
-        <Proof />
-        <InvestigationPanel status={status} />
+        {playback ? null : (
+          <>
+            <DeveloperTask />
+            <DeveloperBenchmarks />
+            <Proof />
+            <InvestigationPanel status={status} />
+          </>
+        )}
         <RecoveryDetails />
         <ArtifactDetails />
       </details>

@@ -17,11 +17,11 @@ import { loadSuppliedChallenge } from './supplied.mjs';
 
 const savedRoot = fileURLToPath(new URL('../transfers/roadster/versions/', import.meta.url));
 
-function roadsterVersion(artifact, manifestBytes, origin) {
+export function roadsterVersion(artifact, manifestBytes, origin) {
   const verification = artifact.files['verification.json'];
   return {
     id: artifact.id, kind: artifact.parentArtifactId ? 'roadster-remix' : 'roadster-transfer',
-    title: artifact.parentArtifactId ? artifact.summary : 'Saved Roadster transfer',
+    title: artifact.parentArtifactId ? artifact.summary : (origin === 'accepted-roadster' ? 'Accepted Roadster transfer' : 'Saved Roadster transfer'),
     summary: artifact.summary, parentArtifactId: artifact.parentArtifactId || null,
     componentId: artifact.componentId, intent: artifact.intent, protocol: 'roadster', origin,
     model: artifact.model ?? null,
@@ -29,7 +29,7 @@ function roadsterVersion(artifact, manifestBytes, origin) {
     estimatedGenerationCostUsd: Number.isFinite(artifact.estimatedGenerationCostUsd) ? artifact.estimatedGenerationCostUsd : null,
     frame: artifact.files['frame.html'], notices: artifact.files['notices.txt'], adapter: artifact.files['adapter.ts'],
     sourceBytes: manifestBytes, evidenceName: 'verification.json', evidenceBytes: verification,
-    zipFiles: artifact.files, report: origin === 'transfers/roadster' ? reportInject(verification) : null,
+    zipFiles: artifact.files, report: origin === 'transfers/roadster' || origin === 'accepted-roadster' ? reportInject(verification) : null,
   };
 }
 
@@ -37,15 +37,29 @@ export async function collectRelease({
   publicOrigin = process.env.RELEASE_PUBLIC_ORIGIN ?? null,
   extraArtifacts = null,
   challengeDirectory = null,
+  acceptedRoadster = null,
 } = {}) {
+  if (acceptedRoadster) {
+    if (extraArtifacts || challengeDirectory) {
+      throw Error('An accepted Roadster release does not take a saved challenge or extra artifacts');
+    }
+    const { collectAcceptedRelease } = await import('./accepted.mjs');
+    return collectAcceptedRelease({ publicOrigin, acceptedRoadster }, { roadsterVersion });
+  }
   const origin = normalizePublicOrigin(publicOrigin);
-  const [component, notice, provenance, contract, style] = await Promise.all([
+  const savedComponent = new URL('../components/dashy-dango-dash/', import.meta.url);
+  const [component, notice, provenance, contract, componentSource, history, evidence, acceptance, style] = await Promise.all([
     loadRecoveredMotion(),
     readFile(new URL('../targets/dashy-dango/NOTICE.txt', import.meta.url)),
-    readFile(new URL('../components/dashy-dango-dash/provenance.json', import.meta.url), 'utf8'),
-    readFile(new URL('../components/dashy-dango-dash/contract.json', import.meta.url), 'utf8'),
+    readFile(new URL('provenance.json', savedComponent), 'utf8'),
+    readFile(new URL('contract.json', savedComponent), 'utf8'),
+    readFile(new URL('component.ts', savedComponent), 'utf8'),
+    readFile(new URL('recovery-history.json', savedComponent), 'utf8'),
+    readFile(new URL('evidence.json', savedComponent), 'utf8'),
+    readFile(new URL('evaluation-acceptance.json', savedComponent), 'utf8'),
     readFile(new URL('../web/style.css', import.meta.url), 'utf8'),
   ]);
+  assert.equal(componentSource, component.source);
   const saved = await loadSavedRoadster();
   const savedFrame = join(savedRoot, saved.id, 'frame.html');
   const savedHash = sha256(await readFile(savedFrame));
@@ -115,13 +129,17 @@ export async function collectRelease({
     if (remixChain.length < 2 && extra.chain.length >= 2) remixChain = extra.chain.map(item => item.id);
   }
   return {
-    publicOrigin: origin, componentId: component.provenance.id, featuredId: featured.id, warnings,
+    publicOrigin: origin, recovery: 'saved', componentId: component.provenance.id, featuredId: featured.id, warnings,
     remixChain, versions,
     shell: { css: style, appJs, playerJs },
     extras: {
       'NOTICE.txt': notice,
       'evidence/provenance.json': provenance,
       'evidence/contract.json': contract,
+      'evidence/component.ts': componentSource,
+      'evidence/recovery-history.json': history,
+      'evidence/evidence.json': evidence,
+      'evidence/evaluation-acceptance.json': acceptance,
       'donor/play.html': donor,
       'roadster/play.html': original.html,
       ['roadster/artifacts/' + saved.id + '/play.html']: saved.files['frame.html'],

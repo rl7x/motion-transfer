@@ -29,6 +29,7 @@ test('release boot injects data and does not patch prototypes', async () => {
   assert.equal(/prototype|window\.fetch|history\[/.test(boot), false);
   assert.match(boot, /__MOTION_TRANSFER__/);
   assert.match(boot, /basePath/);
+  assert.match(boot, /recovery !== 'accepted'/);
   assert.match(boot, /recovery = 'saved'/);
 });
 

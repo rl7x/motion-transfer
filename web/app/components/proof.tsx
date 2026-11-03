@@ -1,3 +1,4 @@
+import { readGenerationMode } from '../data-source';
 import { useResource } from '../hooks/use-resource';
 import { useTransfer } from '../transfer-context';
 import { linkHref } from '../links';
@@ -21,6 +22,7 @@ interface Flight {
 export function TransferExplanation() {
   const { destination, artifact } = useTransfer(),
     car = destination?.id === 'roadster';
+  const playback = readGenerationMode() === 'playback-only';
   return (
     <section className="transfer-explanation" aria-label="What changes with the transfer">
       <div>
@@ -38,7 +40,11 @@ export function TransferExplanation() {
       <div>
         <p className="eyebrow">THE COMPONENT STAYS THE SAME</p>
         <p>Different adapters. One unchanged dash.</p>
-        <a href="#comparison-details">Compare the recorded behavior ↓</a>
+        {playback && destination?.report ? (
+          <a href={linkHref(destination.report)}>Bundled transfer report ↓</a>
+        ) : (
+          <a href="#comparison-details">Compare the recorded behavior ↓</a>
+        )}
       </div>
     </section>
   );

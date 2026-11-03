@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTransfer } from '../transfer-context';
-import { readGenerationMode } from '../data-source';
+import { readGenerationMode, readRecovery } from '../data-source';
 import { linkHref } from '../links';
 import { useResource } from '../hooks/use-resource';
 import { HoldButton } from './hold-button';
@@ -241,8 +241,9 @@ export function ChallengePlayer() {
           </p>
         )}
         <p className="saved-note" id="guided-progress">
-          Saved ability. Borrowing and replaying make no model request. The car&apos;s native
-          physics, landing, and collisions stay active.
+          {readRecovery() === 'accepted' ? 'Accepted ability.' : 'Saved ability.'} Borrowing and
+          replaying make no model request. The car&apos;s native physics, landing, and collisions
+          stay active.
         </p>
         <p className="controls" id="transfer-controls">
           An assisted launch drives the car. You choose the dash timing with X or the ability

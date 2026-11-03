@@ -96,8 +96,10 @@ export interface MotionDataSource {
   generation?: GenerationMode;
   publicOrigin?: string | null;
   basePath?: string;
-  /** Always the saved controller. A missing raw recovery does not become a fresh claim. */
-  recovery?: 'saved';
+  /** `saved` for the default playback copy. `accepted` only after a validated accepted-roadster delivery. */
+  recovery?: 'saved' | 'accepted';
+  /** Root-absolute path of the standalone JUJUMP comparison, when this copy bundles it. */
+  jujumpComparison?: string;
   resources?: Record<string, unknown>;
 }
 declare global {
