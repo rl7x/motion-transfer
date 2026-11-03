@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "kind": "accepted-roadster-delivery",
+  "status": "delivered",
+  "recordedAt": "2026-11-03T01:01:37.635Z",
+  "campaignId": "67a02792-0e21-48fa-832c-991d00085d85",
+  "trialId": "0f594188-18ed-4e7a-9aaf-6e2843823e9a",
+  "report": {
+    "path": "reports/aa6b3cf7c82f88102242356fa5aab2f3cb9e9f8a4e61f069e6251aecf598cf76.json",
+    "sha256": "aa6b3cf7c82f88102242356fa5aab2f3cb9e9f8a4e61f069e6251aecf598cf76"
+  },
+  "protocolId": "9c7cda7c802c7ca4ab51729266af7ca21e52b886c6e61659e21ff38d6b922c5e",
+  "sessionId": "fa8e3d4a-8578-4098-8042-f29e607c9267",
+  "candidateId": "accf3a817133ddc94b9d2c00de1a87f18aab34c6bb7d8b3f9ae66b4cedc18c0f",
+  "componentId": "544657417fe9752f91b0b72a451cd9cb8d2650839824be35881e52f81f223858",
+  "parentArtifactId": null,
+  "artifactId": "216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c",
+  "challengeId": "6aa98fb93cd2e921fbf15966c4fcc0517f947e436994b0e12dc816977ce7ed64",
+  "ordinaryOutsideTarget": true,
+  "borrowedInsideTarget": true,
+  "injected": false,
+  "fixture": false,
+  "liveMeta": true,
+  "sha256": "09fa0c8b65ef24c499a5aba6a4e0ffafe9d76d6e0c01637e95848581a919ee38"
+}

@@ -14,6 +14,7 @@ import {
 import { createPhaseBudget } from '../campaign/phase-budget.mjs';
 import { readRecoveryCampaign, runRecoveryCampaign } from '../campaign/recovery-runner.mjs';
 import { digest } from '../component/build.mjs';
+import { componentIdentity, resolveComponentRef } from '../component/reference.mjs';
 import { loadAcceptedComponent } from '../integration/accepted-component.mjs';
 import { readRoadsterArtifact } from '../roadster/artifact.mjs';
 import { ROADSTER_INTENT } from '../roadster/port.mjs';
@@ -291,6 +292,59 @@ test('an injected fixture client publishes the local component and does not repe
   assert.equal(again.definition.sha256, campaign.definition.sha256);
   assert.equal(again.job.outcome, 'local-fixture');
   assert.equal(await readAcceptedRoadster(out).then(value => value.job.artifactId), artifact.id);
+});
+
+test('the pinned accepted Roadster delivery agrees on ids, source, frame, and receipt', async () => {
+  const id = '216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c';
+  const challengeId = '6aa98fb93cd2e921fbf15966c4fcc0517f947e436994b0e12dc816977ce7ed64';
+  const componentId = '544657417fe9752f91b0b72a451cd9cb8d2650839824be35881e52f81f223858';
+  const pin = join(repo, 'transfers/roadster/accepted', id);
+  const campaign = await readAcceptedRoadster(pin);
+  const artifact = await readRoadsterArtifact(join(pin, 'published/artifacts'), id);
+  const component = await resolveComponentRef(artifact.component);
+  const identity = componentIdentity(component);
+  const delivery = JSON.parse(await readFile(join(pin, 'delivery.json'), 'utf8'));
+  const { sha256, ...deliveryBody } = delivery;
+  const play = await readFile(join(pin, 'challenge/play.html'), 'utf8');
+  const source = await readFile(join(pin, 'challenge/adapter.ts'), 'utf8');
+  const notices = await readFile(join(pin, 'challenge/notices.txt'), 'utf8');
+  const evidence = JSON.parse(await readFile(join(pin, 'challenge/challenge.json'), 'utf8'));
+  const manifest = JSON.parse(await readFile(join(pin, 'challenge/manifest.json'), 'utf8'));
+  const { id: manifestId, ...manifestBody } = manifest;
+  assert.equal(digest(JSON.stringify(deliveryBody)), sha256);
+  assert.equal(delivery.status, 'delivered');
+  assert.equal(delivery.liveMeta, true);
+  assert.equal(delivery.fixture, false);
+  assert.equal(delivery.injected, false);
+  assert.equal(campaign.status, 'complete');
+  assert.equal(campaign.job.outcome, 'delivered');
+  assert.equal(campaign.job.estimatedCostUsd, 0.008666);
+  assert.equal(campaign.summary.estimatedCostUsd, 0.008666);
+  assert.equal(artifact.id, id);
+  assert.equal(artifact.parentArtifactId, null);
+  assert.equal(artifact.componentId, componentId);
+  assert.equal(component.provenance.id, componentId);
+  assert.equal(identity.kind, 'accepted');
+  assert.equal(identity.candidateId, delivery.candidateId);
+  assert.equal(identity.sessionId, delivery.sessionId);
+  assert.equal(source, artifact.files['adapter.ts']);
+  assert.equal(notices, artifact.files['notices.txt']);
+  assert.match(notices, /Copyright \(c\) samX500 and willGuimont/);
+  assert.match(notices, /Copyright \(c\) 2026 sebayaki\.eth/);
+  assert.equal(digest(play), evidence.frameSha256);
+  assert.equal(digest(source), evidence.sourceSha256);
+  assert.equal(digest(JSON.stringify(manifestBody)), manifestId);
+  assert.equal(manifestId, challengeId);
+  assert.equal(evidence.componentId, componentId);
+  assert.equal(evidence.ordinaryOutsideTarget, true);
+  assert.equal(evidence.borrowedInsideTarget, true);
+  assert.equal(JSON.parse(artifact.files['generation.json']).estimatedCostUsd, 0.008666);
+  const verification = JSON.parse(artifact.files['verification.json']);
+  assert.equal(verification.conformance.passed, true);
+  assert.equal(verification.conformance.results.length, 8);
+  assert.equal(verification.browser.passed, true);
+  assert.equal(verification.browser.results.length, 8);
+  assert.equal(verification.browser.componentId, componentId);
 });
 
 test('restored Wonder evidence names the accepted component when the campaign is present', {
