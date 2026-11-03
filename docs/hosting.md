@@ -1,5 +1,7 @@
 # Hosting
 
+The public deployment is [Motion Transfer on Vercel](https://motion-transfer-rl7x.vercel.app). Its [Hobby deployment architecture](vercel-hosting.md) uses separate Vercel microVM workers and a $5 public whole-job cap. The sections below describe the retained local Docker and coordinator-container workflow.
+
 This is local release packaging for bounded public remixes. It does not deploy the service, change repository visibility, or spend the shared public reserve.
 
 Playback and creation are separate. The coordinator admits requests, talks to the model provider, accounts for them, and publishes artifacts. Generated adapter code is compiled and executed only inside a short-lived verifier container. If that container cannot be started, hosted mode stops. It does not fall back to the local `vm` worker.

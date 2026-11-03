@@ -1,4 +1,5 @@
 import { resolve } from 'node:path';
+import { existsSync } from 'node:fs';
 import { createMetaClient } from '../agent/meta-client.mjs';
 import { loadParallaxiaBaseline } from '../parallaxia/artifact.mjs';
 import { createWorkerBroker } from './broker.mjs';
@@ -20,6 +21,6 @@ export async function createLocalParallaxia({ directory = resolve('reports/paral
   return { coordinator, baseline, async close() { await coordinator.close(); if (!suppliedBroker) await broker.close(); } };
 }
 
-export function localMetaClient(env = process.env) {
-  return env.MODEL_API_KEY ? createMetaClient(env.MODEL_API_KEY) : null;
+export function localMetaClient(env = process.env, { remoteLedger = existsSync(new URL('../../.vercel/remote-generation.json', import.meta.url)) } = {}) {
+  return !remoteLedger && env.MODEL_API_KEY ? createMetaClient(env.MODEL_API_KEY) : null;
 }

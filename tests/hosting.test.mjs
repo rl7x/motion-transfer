@@ -695,6 +695,22 @@ test('seven-dollar jobs preserve existing reservations and reserve the whole env
   assert.equal(await ledgerHash(), before);
 });
 
+test('five-dollar public jobs reserve their full cap without resetting historical remix charges', async t => {
+  const broker=fakeBroker(verified(parentComponent.id,Buffer.from('<!doctype html><title>five dollar fixture</title>')));
+  const client=createFakeMetaClient({source:'export function init(){return {}}\n',intent});
+  const {coordinator,parentId,ledgerDirectory}=await setup(t,broker,client,{maxJobCostUsd:5});
+  const budget=await createPhaseBudget(ledgerDirectory);
+  await budget.reserve({id:'historical-remix',category:'remix',maxCostUsd:0.15});
+  const legacy=(await budget.journal()).reservations[0];
+  const count=client.countInputTokens.bind(client);
+  client.countInputTokens=async(...args)=>{assert.equal((await budget.status()).categories.reserve.reservedUsd,5);return count(...args);};
+  const job=await coordinator.wait((await coordinator.submit(remix(parentId))).id);
+  assert.equal(job.status,'ready',job.error);assert.equal(coordinator.status().maxJobCostUsd,5);
+  const journal=await budget.journal();assert.deepEqual(journal.reservations[0],legacy);
+  assert.equal(journal.reservations[1].maxCostUsd,5);assert.equal(journal.reservations[1].category,'reserve');
+  assert.equal(journal.definition.maxCostUsd,50);
+});
+
 test('a missing or shared ledger never starts a provider call', async t => {
   const before = await ledgerHash();
   const broker = fakeBroker(verified(parentComponent.id, Buffer.from('<!doctype html>')));
