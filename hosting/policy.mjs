@@ -88,7 +88,7 @@ export function admitProductionRequest({ policy, headers = {}, remoteAddress: pe
   if (RECOVERY_PATHS.has(pathname) || pathname.startsWith('/api/investigations/') || pathname.startsWith('/recovery-projects/')) {
     return deny(403, 'Broad recovery is disabled on the public service');
   }
-  if (pathname === '/api/remixes' && method === 'POST') {
+  if ((pathname === '/api/remixes' || /^\/api\/remixes\/[0-9a-f-]{36}\/cancel$/i.test(pathname)) && method === 'POST') {
     const origin = header(headers, 'origin');
     const type = header(headers, 'content-type').split(';')[0];
     if (!policy.origins.has(origin.toLowerCase())) return deny(403, 'Unrecognized public origin');
@@ -96,7 +96,7 @@ export function admitProductionRequest({ policy, headers = {}, remoteAddress: pe
     if (bodyLength > BODY_LIMIT) return deny(413, 'Request exceeds 4 KB');
     const code = header(headers, 'x-invite-code');
     if (!acceptInvite(policy, code)) return deny(401, 'Invite required');
-    return { ok: true, route: 'remix', inviteAccepted: true };
+    return { ok: true, route: pathname.endsWith('/cancel') ? 'cancel' : 'remix', inviteAccepted: true };
   }
   if (method === 'POST') return deny(403, 'Only bounded remix jobs are accepted');
   if (!['GET', 'HEAD'].includes(method)) return deny(405, 'Method not allowed');
@@ -107,7 +107,7 @@ export function admitProductionRequest({ policy, headers = {}, remoteAddress: pe
   }
   if (/^\/api\/remixes\/[0-9a-f-]{36}$/i.test(pathname)) return { ok: true, route: 'job' };
   if (/^\/parents\/[a-f0-9]{64}(?:\/download)?$/.test(pathname)) return { ok: true, route: 'parent' };
-  if (/^\/artifacts\/[a-f0-9]{64}(?:\/(?:play\.html|adapter\.js|download))?$/.test(pathname)) return { ok: true, route: 'artifact' };
+  if (/^\/artifacts\/[a-f0-9]{64}(?:\/(?:play\.html|adapter\.js|adapter\.ts|receipt\.json|generation\.json|notices\.txt|download|download\.zip))?$/.test(pathname)) return { ok: true, route: 'artifact' };
   return deny(404, 'Not found');
 }
 

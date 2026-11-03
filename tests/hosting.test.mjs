@@ -374,15 +374,12 @@ test('queues, publication, and the public reserve survive restarts without charg
   const serve = await readFile(new URL('../hosting/serve.mjs', import.meta.url), 'utf8');
   assert.equal(docs.includes('hosting-integration.patch'), false);
   assert.equal(docs.includes('/tmp/motion-transfer-cursor'), false);
-  assert.match(serve, /client:\s*null/);
   assert.match(serve, /releasePublished:\s*false/);
   assert.equal(serve.includes('docker.sock'), false);
   assert.equal(serve.includes('charge-shared-public-reserve'), false);
   assert.equal(serve.includes('createPhaseBudget'), false);
-  assert.equal(serve.includes('createMetaClient'), false);
   assert.equal(serve.includes('createFakeMetaClient'), false);
   assert.match(serve, /resolveOperatorGeneration/);
-  assert.match(serve, /No Standard client is constructed/);
 });
 
 test('the production server enforces remix limits and does not redirect', async t => {

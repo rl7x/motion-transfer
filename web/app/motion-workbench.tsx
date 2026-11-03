@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { fetchJson, errorMessage } from './api';
 import { linkHref } from './links';
+import { MotionGeneration, type MotionJob } from './motion-generation';
 import { HoldButton } from './components/hold-button';
 import { Header } from './components/static-content';
 import { AgeAcknowledgment, AgeProvider } from './components/age-acknowledgment';
@@ -17,6 +18,12 @@ interface Baseline {
 
 export function MotionWorkbench() {
   const [base, setBase] = useState<Baseline | null>(null);
+  const [active, setActive] = useState<{
+    id: string;
+    play: string;
+    download: string;
+    report: string;
+  } | null>(null);
   const [error, setError] = useState('');
   const [practice, setPractice] = useState(false);
   const [channel] = useState(() => crypto.randomUUID());
@@ -31,7 +38,24 @@ export function MotionWorkbench() {
   useEffect(() => {
     const controller = new AbortController();
     void fetchJson<Baseline>('/api/parallaxia/base', { signal: controller.signal })
-      .then(setBase)
+      .then(async (value) => {
+        setBase(value);
+        const id = new URL(location.href).searchParams.get('artifact');
+        if (id && /^[a-f0-9]{64}$/.test(id)) {
+          const receipt = await fetchJson<{ componentId: string; recipient: { id: string } }>(
+            '/artifacts/' + id,
+            { signal: controller.signal },
+          );
+          if (receipt.componentId !== value.componentId || receipt.recipient.id !== 'parallaxia')
+            throw Error('Wrong recipient or component');
+          setActive({
+            id,
+            play: '/artifacts/' + id + '/play.html',
+            download: '/artifacts/' + id + '/download.zip',
+            report: '/artifacts/' + id,
+          });
+        }
+      })
       .catch((failure: unknown) => {
         if (!controller.signal.aborted) setError(errorMessage(failure));
       });
@@ -65,7 +89,9 @@ export function MotionWorkbench() {
             Reuse the accepted eight-update dash with its 25-tick recharge. PARALLAXIA keeps its
             native movement, enemy rules and collisions.
           </p>
-          <p className="pill">VERIFIED REUSE · NO MODEL REQUEST</p>
+          <p className="pill">
+            {active ? 'NEW META GENERATION · VERIFIED CHILD' : 'VERIFIED REUSE · NO MODEL REQUEST'}
+          </p>
           <p>
             Component <code>{base?.componentId ?? 'Loading…'}</code>
           </p>
@@ -81,7 +107,9 @@ export function MotionWorkbench() {
                 ref={frame}
                 id="parallaxia-game"
                 title="PARALLAXIA with accepted recovered dash"
-                src={linkHref((practice ? base.practice : base.play) + '#channel=' + channel)}
+                src={linkHref(
+                  (practice ? base.practice : (active?.play ?? base.play)) + '#channel=' + channel,
+                )}
                 sandbox="allow-scripts"
                 allow="autoplay"
               />
@@ -131,22 +159,42 @@ export function MotionWorkbench() {
             </p>
             {base && (
               <p>
-                <a href={linkHref(base.download)} download>
+                <a href={linkHref(active?.download ?? base.download)} download>
                   Download this exact game
                 </a>{' '}
-                · <a href={linkHref(base.report)}>Recipient verification</a>
+                · <a href={linkHref(active?.report ?? base.report)}>Recipient verification</a>
               </p>
             )}
           </article>
         </section>
-        <section className="destination-section" id="motion-creation">
-          <h2>Adapt the dash</h2>
-          <p>Supported changes: distance, direction, and held or fresh-press activation.</p>
-          <p>
-            Live generation is being connected to the isolated recipient verifier. The saved
-            integration above makes no model call.
-          </p>
-        </section>
+        {base && (
+          <MotionGeneration
+            parentId={active?.id ?? base.id}
+            onPlay={(job: MotionJob) => {
+              if (!job.artifactId || !job.urls) return;
+              setPractice(false);
+              setActive({
+                id: job.artifactId,
+                play: job.urls.play,
+                download: '/artifacts/' + job.artifactId + '/download.zip',
+                report: job.urls.receipt,
+              });
+              history.pushState({}, '', '/?artifact=' + job.artifactId);
+            }}
+          />
+        )}
+        {active && (
+          <button
+            onClick={() => {
+              setActive(null);
+              setPractice(false);
+              history.pushState({}, '', '/');
+            }}
+          >
+            Keep original integration
+          </button>
+        )}
+
         <p>
           <a href="/accepted/jujump/index.html">Same accepted component in JUJUMP</a> ·{' '}
           <a href="/?destination=roadster">Historical Roadster</a> ·{' '}

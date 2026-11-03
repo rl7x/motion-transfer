@@ -2,7 +2,7 @@ import { mkdir, readFile, readdir, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { GLOBAL_ACTIVE_LIMIT, SESSION_JOB_LIMIT } from './constants.mjs';
 
-const TERMINAL = new Set(['ready', 'failed', 'unsupported']);
+const TERMINAL = new Set(['ready', 'failed', 'unsupported', 'cancelled']);
 
 async function atomicWrite(path, value) {
   const temporary = `${path}.${process.pid}.tmp`;

@@ -115,3 +115,27 @@ export async function readVerifiedPin(artifactDirectory) {
     recipient: { name: lock.name, revision: lock.revision },
   };
 }
+
+/** An operator-selected PARALLAXIA root must bind its own accepted package, frame and recipient reports. */
+export async function readParallaxiaPin(directory) {
+  const id = basename(resolve(directory));
+  if (!/^[a-f0-9]{64}$/.test(id)) throw Error('Invalid PARALLAXIA artifact identity');
+  const {id: claimed, ...manifest} = JSON.parse(await readFile(join(directory, 'manifest.json'), 'utf8'));
+  if (claimed !== id || digest(JSON.stringify(manifest)) !== id || manifest.kind !== 'parallaxia-transfer') throw Error('PARALLAXIA artifact identity mismatch');
+  const files = {};
+  for (const [name, hash] of Object.entries(manifest.files)) {
+    if (!/^[a-z][a-z0-9.-]+$/.test(name) || name.includes('..')) throw Error('PARALLAXIA artifact integrity mismatch');
+    files[name] = await readFile(join(directory,name), 'utf8');
+    if (digest(files[name]) !== hash) throw Error('PARALLAXIA artifact integrity mismatch');
+  }
+  const verification = JSON.parse(files['verification.json']);
+  const component = acceptedPackage(JSON.parse(files['component.json']));
+  const lock = JSON.parse(await readFile(new URL('../recipients/parallaxia/recipient.lock.json',import.meta.url),'utf8'));
+  if (manifest.recipient.id !== 'parallaxia' || manifest.recipient.revision !== lock.revision || manifest.componentId !== ACCEPTED_COMPONENT_ID
+    || verification.passed !== true || verification.conformance.passed !== true || verification.browser.passed !== true
+    || verification.conformance.componentId !== component.id || verification.browser.componentId !== component.id
+    || verification.conformance.sourceSha256 !== digest(files['adapter.ts']) || verification.browser.sourceSha256 !== digest(files['adapter.ts'])
+    || verification.browser.frameSha256 !== digest(files['frame.html']) || verification.collisionPolicy !== 'native' || verification.addedDashInvulnerability !== false) throw Error('PARALLAXIA root evidence mismatch');
+  return {id, componentId:component.id, component, source:files['adapter.ts'], frame:files['frame.html'], intent:manifest.intent,
+    recipient:{...manifest.recipient,notices:files['notices.txt']}, summary:'Accepted dash reused in PARALLAXIA; native collisions.'};
+}

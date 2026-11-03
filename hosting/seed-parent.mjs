@@ -1,7 +1,7 @@
-import { access, mkdir, writeFile } from 'node:fs/promises';
+import { access, mkdir, writeFile, readFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { validateRoadsterIntent } from '../roadster/port.mjs';
-import { readVerifiedPin } from './component-pin.mjs';
+import { readVerifiedPin, readParallaxiaPin } from './component-pin.mjs';
 
 /**
  * Copies one allowlisted verified Roadster artifact into the playback parent store.
@@ -10,7 +10,8 @@ import { readVerifiedPin } from './component-pin.mjs';
  */
 export async function seedVerifiedParent({ dataDirectory, artifactDirectory } = {}) {
   if (!dataDirectory || !artifactDirectory) throw Error('A verified parent artifact directory is required');
-  const pin = await readVerifiedPin(artifactDirectory);
+  const manifest = JSON.parse(await readFile(join(artifactDirectory,'manifest.json'),'utf8'));
+  const pin = manifest.kind === 'parallaxia-transfer' ? await readParallaxiaPin(artifactDirectory) : await readVerifiedPin(artifactDirectory);
   validateRoadsterIntent(pin.intent);
   if (!pin.source.trim() || Buffer.byteLength(pin.source) > 16384) throw Error('Verified parent source is invalid');
   if (!pin.component.javascript.trim() || Buffer.byteLength(pin.component.javascript) > 65536) throw Error('Verified parent component is invalid');

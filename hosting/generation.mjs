@@ -27,10 +27,10 @@ export function resolveOperatorGeneration(env, { origins = [] } = {}) {
 }
 
 /** Opens a ledger that already exists. A missing file is an error, never a new journal. */
-export async function openExistingPhaseLedger(directory) {
+export async function openExistingPhaseLedger(directory, { confirmSharedLedger } = {}) {
   if (!directory || typeof directory !== 'string') throw Error('An explicit phase ledger path is required');
   const root = resolve(directory);
-  if (root === resolve(SHARED_PHASE_DIRECTORY)) throw Error('Shared public reserve was not confirmed');
+  if (root === resolve(SHARED_PHASE_DIRECTORY) && confirmSharedLedger !== SHARED_LEDGER_CONFIRMATION) throw Error('Shared public reserve was not confirmed');
   const path = join(root, 'phase-budget.json');
   try { await access(path); }
   catch (error) {

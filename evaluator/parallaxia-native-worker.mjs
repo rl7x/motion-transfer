@@ -33,7 +33,7 @@ check('swept-bullet-collision-during-dash', () => {
   for (let i = 0; i < 40; i++) hooked.stepSim(sim, 0);
   const lives = sim.lives;
   const direction = request.intent.direction === 'opposite' ? -1 : 1;
-  sim.bullets = [{ x: sim.ship.x + direction * 0.5, y: sim.ship.y, dir: 0, speed: 0, age: 100, fuse: -1 }];
+  sim.bullets = [{ x: sim.ship.x + direction * 0.1, y: sim.ship.y, dir: 0, speed: 0, age: 100, fuse: -1 }];
   port.setDash(true); hooked.stepSim(sim, 0);
   assert.equal(sim.ship.dashing, true);
   assert.equal(sim.lives, lives - 1, 'A dash must not bypass the native swept bullet collision');

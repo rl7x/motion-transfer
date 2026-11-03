@@ -10,5 +10,4 @@ docs
 *.key
 .DS_Store
 coverage
-agent/meta-client.mjs
 npm-debug.log*

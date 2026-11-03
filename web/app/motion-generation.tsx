@@ -1,0 +1,185 @@
+import { useEffect, useState } from 'react';
+import { fetchJson, postJson, errorMessage } from './api';
+import { readSession, writeSession } from './creator/session';
+import type { PendingRemix } from './creator/types';
+import { useAgeAcknowledgment } from './components/age-acknowledgment';
+
+export interface MotionJob {
+  id: string;
+  status: string;
+  parentArtifactId: string;
+  artifactId: string | null;
+  summary: string | null;
+  error: string | null;
+  estimatedCostUsd: number;
+  createdAt: string;
+  finishedAt: string | null;
+  urls: { play: string; download: string; receipt: string } | null;
+}
+const terminal = (status: string) =>
+  ['ready', 'failed', 'unsupported', 'cancelled'].includes(status);
+
+export function MotionGeneration({
+  parentId,
+  onPlay,
+}: {
+  parentId: string;
+  onPlay(job: MotionJob): void;
+}) {
+  const age = useAgeAcknowledgment();
+  const [session] = useState(readSession);
+  const [pending, setPending] = useState<PendingRemix | null>(session.pending);
+  const [job, setJob] = useState<MotionJob | null>(null);
+  const [prompt, setPrompt] = useState('Make the dash backward, only on a fresh press.');
+  const [enabled, setEnabled] = useState(false);
+  const [error, setError] = useState('');
+  const [now, setNow] = useState(Date.now);
+  useEffect(() => {
+    const controller = new AbortController();
+    void fetchJson<{ generationConfigured: boolean }>('/api/remixes/status', {
+      signal: controller.signal,
+    })
+      .then((status) => setEnabled(status.generationConfigured === true))
+      .catch(() => {
+        if (!controller.signal.aborted) setEnabled(false);
+      });
+    return () => controller.abort();
+  }, []);
+  useEffect(() => {
+    if (!pending) return;
+    const controller = new AbortController();
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      try {
+        const result = pending.jobId
+          ? await fetchJson<MotionJob>('/api/remixes/' + pending.jobId, {
+              signal: controller.signal,
+            })
+          : await fetchJson<MotionJob>('/api/remixes', {
+              ...postJson({
+                idempotencyKey: pending.idempotencyKey,
+                parentArtifactId: pending.parentArtifactId,
+                prompt: pending.prompt,
+                sessionId: session.sessionId,
+                adultConfirmed: true,
+              }),
+              signal: controller.signal,
+            });
+        if (controller.signal.aborted) return;
+        setJob(result);
+        setError('');
+        if (!pending.jobId) {
+          const next = { ...pending, jobId: result.id };
+          writeSession({ ...session, pending: next });
+          setPending(next);
+          return;
+        }
+        if (!terminal(result.status)) timer = setTimeout(() => void poll(), 800);
+      } catch (failure) {
+        if (!controller.signal.aborted) {
+          setError(errorMessage(failure));
+          timer = setTimeout(() => void poll(), 2500);
+        }
+      }
+    };
+    void poll();
+    return () => {
+      controller.abort();
+      clearTimeout(timer);
+    };
+  }, [pending, session]);
+  useEffect(() => {
+    if (!job || terminal(job.status)) return;
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, [job]);
+  const busy = Boolean(pending && (!job || !terminal(job.status)));
+  return (
+    <section className="destination-section" id="motion-creation">
+      <h2>Adapt the dash</h2>
+      <p>
+        Change distance, direction, or held/fresh-press activation. Other mapping properties are
+        inherited. The parent stays playable while Meta generates and the isolated worker checks the
+        candidate.
+      </p>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (busy || !enabled || !age.allow(false)) return;
+          const next = {
+            idempotencyKey: crypto.randomUUID(),
+            parentArtifactId: parentId,
+            prompt: prompt.trim(),
+            jobId: null,
+          };
+          writeSession({ ...session, pending: next });
+          setJob(null);
+          setPending(next);
+          setError('');
+        }}
+      >
+        <label htmlFor="motion-prompt">Request a supported alternative</label>
+        <textarea
+          id="motion-prompt"
+          maxLength={1000}
+          value={prompt}
+          onChange={(event) => setPrompt(event.target.value)}
+          required
+        />
+        <button id="motion-submit" disabled={!enabled || busy}>
+          Generate and verify · Standard Meta
+        </button>
+      </form>
+      {!enabled && (
+        <p>
+          Generation is unavailable in this process. Saved play remains available. Start the
+          configured local preview with Docker and Standard Meta credentials to create a new
+          version.
+        </p>
+      )}
+      {job && (
+        <div role="status" id="motion-job">
+          <p>
+            {job.status} ·{' '}
+            {Math.max(0, (Date.parse(job.finishedAt ?? '') || now) - Date.parse(job.createdAt)) /
+              1000}
+            s · estimated ${job.estimatedCostUsd.toFixed(5)}
+          </p>
+          <p>{job.summary ?? job.error}</p>
+          {job.status === 'ready' && (
+            <button id="motion-play-child" onClick={() => onPlay(job)}>
+              Play this checked candidate
+            </button>
+          )}
+          {terminal(job.status) && (
+            <p>
+              The original and every published parent remain available. Requests and failures are
+              retained with the job.
+            </p>
+          )}
+          {!terminal(job.status) && (
+            <button
+              onClick={() => {
+                void fetchJson(
+                  '/api/remixes/' + job.id + '/cancel',
+                  postJson({ sessionId: session.sessionId }),
+                ).catch((failure) => setError(errorMessage(failure)));
+              }}
+            >
+              Cancel future stages
+            </button>
+          )}
+        </div>
+      )}
+      {error && (
+        <p role="alert">
+          {error} Reconnecting with the same request ID; no new request is created.
+        </p>
+      )}
+      <p>
+        Maximum $0.15 for the whole job, including at most one repair. Refresh reconnects to this
+        job. Uncertain charges remain reserved.
+      </p>
+    </section>
+  );
+}

@@ -29,7 +29,7 @@ export function createFakeMetaClient({
           input_tokens_details: { cached_tokens: 0 }, output_tokens_details: { reasoning_tokens: 0 },
         },
         output: [{
-          type: 'function_call', name: 'submit_roadster_adapter',
+          type: 'function_call', name: request.tools?.[0]?.name ?? 'submit_roadster_adapter',
           arguments: JSON.stringify({ status, source, summary, intent }),
         }],
       };

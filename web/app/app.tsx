@@ -71,6 +71,7 @@ export function App() {
   if (
     !window.__MOTION_TRANSFER__ &&
     (new URL(location.href).searchParams.get('destination') === 'parallaxia' ||
+      new URL(location.href).searchParams.has('artifact') ||
       (location.pathname === '/' && !location.search))
   )
     return <MotionWorkbench />;

@@ -1,6 +1,7 @@
 import { access } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createMetaClient } from '../agent/meta-client.mjs';
 import { createBrokerClient } from './broker-client.mjs';
 import { createCoordinator } from './coordinator.mjs';
 import { isolationError } from './errors.mjs';
@@ -18,10 +19,6 @@ if (hosts.length === 0 || origins.length === 0) {
   process.exit(1);
 }
 const generation = resolveOperatorGeneration(process.env, { origins });
-if (generation) {
-  console.error('Hosted generation is not enabled in this build. No Standard client is constructed and no phase ledger is opened.');
-  process.exit(1);
-}
 const directory = resolve(process.env.HOSTING_DATA_DIR ?? '/data');
 if (process.env.HOSTING_PARENT_ARTIFACT) {
   try {
@@ -54,10 +51,10 @@ const broker = socketPath ? createBrokerClient(socketPath) : {
   async submit() { throw isolationError(); },
 };
 const policy = createProductionPolicy({ hosts, origins, trustedProxies: proxies, inviteCodes });
-const coordinator = await createCoordinator({ directory, broker, client: null, releasePublished: false });
+const coordinator = await createCoordinator({ directory, broker, client: generation ? createMetaClient(process.env.MODEL_API_KEY) : null, releasePublished: false, ledgerDirectory: generation?.ledgerDirectory, confirmSharedLedger: generation?.confirmSharedLedger, operatorConfirmation: process.env.HOSTING_GENERATION_CONFIRMATION, publishedOrigin: generation?.origin });
 const server = await createHostingServer({ policy, coordinator, creatorRoot, port: Number(process.env.PORT ?? 8080), host: '0.0.0.0' });
 console.log(`Hosting coordinator listening on ${server.origin}`);
-console.log('Public generation is not configured; playback stays up and the public reserve stays unused');
+console.log(generation ? 'Standard Meta generation configured; each whole job is capped at $0.15 using the existing remix allowance' : 'Generation is not configured; playback stays available');
 for (const signal of ['SIGINT', 'SIGTERM']) {
   process.once(signal, async () => { await server.close(); await coordinator.close(); process.exit(0); });
 }

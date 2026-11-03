@@ -22,15 +22,16 @@ export function parseJob(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw Error('Invalid worker job');
   for (const key of FORBIDDEN) if (Object.hasOwn(value, key)) throw Error('Arbitrary command is not a hosting operation');
   if (!OPERATIONS.has(value.operation)) throw Error('Unknown hosting operation');
-  const allowed = VERIFY.has(value.operation) ? ['operation', 'source', 'intent', 'componentId'] : ['operation'];
+  const allowed = VERIFY.has(value.operation) ? ['operation', 'source', 'intent', 'componentId', 'recipientId'] : ['operation'];
   for (const key of Object.keys(value)) if (!allowed.includes(key)) throw Error('Worker job has an unexpected field');
   if (PROBES.has(value.operation)) return { operation: value.operation };
   if (typeof value.source !== 'string' || !value.source.trim() || Buffer.byteLength(value.source) > SOURCE_LIMIT) {
     throw Error('Adapter source must contain 1–16 KB');
   }
+  if (value.recipientId !== undefined && !['roadster', 'parallaxia'].includes(value.recipientId)) throw Error('Unknown recipient');
   if (!intentOk(value.intent)) throw Error('Unsupported Roadster mapping');
   if (!hexId.test(value.componentId)) throw Error('Worker job component id is invalid');
-  return { operation: value.operation, source: value.source, componentId: value.componentId, intent: {
+  return { ...(value.recipientId ? { recipientId: value.recipientId } : {}), operation: value.operation, source: value.source, componentId: value.componentId, intent: {
     unitScale: value.intent.unitScale, activation: value.intent.activation, direction: value.intent.direction,
   } };
 }

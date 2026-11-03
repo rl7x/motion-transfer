@@ -1,3 +1,4 @@
+import { zipStored } from '../release/zip.mjs';
 import { constants } from 'node:fs';
 import { createServer } from 'node:http';
 import { open } from 'node:fs/promises';
@@ -118,6 +119,10 @@ export async function createHostingServer({ policy, coordinator, creatorRoot = n
       }
       if (path === '/privacy') { send(request, response, 200, 'text/plain', PRIVACY_NOTE); return; }
       if (path === '/api/remixes/status') { json(request, response, 200, { ...coordinator.status(), model: PUBLIC_MODEL, publicReserveUsd: PUBLIC_RESERVE_USD }); return; }
+      if (decision.route === 'cancel') {
+        const value = JSON.parse(body);
+        json(request,response,200,await coordinator.cancel(path.split('/')[3],value.sessionId)); return;
+      }
       if (decision.route === 'remix') {
         let remix;
         try { remix = parseRemixBody(JSON.parse(body)); }
@@ -144,10 +149,15 @@ export async function createHostingServer({ policy, coordinator, creatorRoot = n
         send(request, response, 200, html ? 'text/html' : 'application/octet-stream', bytes, { cache: IMMUTABLE, headers });
         return;
       }
-      const artifactPath = path.match(/^\/artifacts\/([a-f0-9]{64})(?:\/(play\.html|adapter\.js|download))?$/);
+      const artifactPath = path.match(/^\/artifacts\/([a-f0-9]{64})(?:\/(play\.html|adapter\.js|adapter\.ts|receipt\.json|generation\.json|notices\.txt|download|download\.zip))?$/);
       if (artifactPath) {
         const [, id, part] = artifactPath;
-        const stored = part === 'adapter.js' ? 'adapter.js' : part === 'play.html' || part === 'download' ? 'play.html' : 'receipt.json';
+        if (part === 'download.zip') {
+          const files={};for(const name of ['play.html','adapter.ts','adapter.js','intent.json','recipient.json','component.json','receipt.json','generation.json','notices.txt']){const file=await coordinator.artifactFile(id,name);if(file)files[name]=file;}
+          if(!files['receipt.json']){json(request,response,404,{error:'Artifact not found'});return;}
+          send(request,response,200,'application/zip',zipStored(files),{cache:IMMUTABLE,headers:{'Content-Disposition':`attachment; filename="motion-transfer-${id.slice(0,12)}.zip"`}});return;
+        }
+        const stored = ['adapter.ts','receipt.json','generation.json','notices.txt'].includes(part) ? part : part === 'adapter.js' ? 'adapter.js' : part === 'play.html' || part === 'download' ? 'play.html' : 'receipt.json';
         const file = await coordinator.artifactFile(id, stored);
         if (!file) { json(request, response, 404, { error: 'Artifact not found' }); return; }
         if (part === 'download') {
@@ -166,7 +176,7 @@ export async function createHostingServer({ policy, coordinator, creatorRoot = n
           });
           return;
         }
-        send(request, response, 200, 'application/json', file, { cache: IMMUTABLE });
+        send(request, response, 200, part === 'adapter.ts' || part === 'notices.txt' ? 'text/plain' : 'application/json', file, { cache: IMMUTABLE });
         return;
       }
       json(request, response, 404, { error: 'Not found' });

@@ -17,11 +17,13 @@ RUN groupadd --gid 10001 verifier \
 WORKDIR /app
 
 COPY hosting/constants.mjs hosting/errors.mjs hosting/protocol.mjs hosting/policy.mjs hosting/queue.mjs hosting/publish.mjs hosting/coordinator.mjs hosting/server.mjs hosting/serve.mjs hosting/broker-client.mjs hosting/generation.mjs hosting/seed-parent.mjs hosting/component-pin.mjs ./hosting/
+COPY release/zip.mjs release/sha.mjs ./release/
 COPY campaign/phase-budget.mjs ./campaign/phase-budget.mjs
-COPY agent/accounting.mjs agent/roadster-request.mjs ./agent/
+COPY agent/accounting.mjs agent/roadster-request.mjs agent/recipient-request.mjs agent/meta-client.mjs ./agent/
 COPY roadster/port.mjs ./roadster/port.mjs
 COPY components/dashy-dango-dash/component.ts components/dashy-dango-dash/component.js components/dashy-dango-dash/contract.json components/dashy-dango-dash/provenance.json ./components/dashy-dango-dash/
 COPY recipients/roadster/recipient.lock.json ./recipients/roadster/recipient.lock.json
+COPY recipients/parallaxia/recipient.lock.json ./recipients/parallaxia/recipient.lock.json
 COPY --from=creator /out/creator ./web/dist/creator
 
 USER 10001:10001

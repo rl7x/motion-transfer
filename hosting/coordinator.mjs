@@ -5,6 +5,7 @@ import { PRICES, readUsage, tokenCost } from '../agent/accounting.mjs';
 import {
   assertRoadsterInputTokens, readRoadsterSubmission, ROADSTER_MAX_OUTPUT_TOKENS, ROADSTER_TOOL, roadsterEvidence, roadsterProviderRequest,
 } from '../agent/roadster-request.mjs';
+import { recipientRequest, recipientSubmission } from '../agent/recipient-request.mjs';
 import { createPhaseBudget } from '../campaign/phase-budget.mjs';
 import {
   FRAME_LIMIT, HOSTING_GENERATION_CONFIRMATION, PROVIDER_DEADLINE_MS, PUBLIC_MODEL, PUBLIC_RESERVE_USD,
@@ -86,7 +87,9 @@ function requireWorker(payload, operation, source, componentId) {
   const result = payload?.result;
   if (payload?.ok !== true || result?.ok !== true || result.passed !== true || result.executedIn !== 'worker'
     || result.operation !== operation || result.uid !== WORKER_UID || result.sourceSha256 !== digest(source)) {
-    throw statusError('Publication requires a real isolated worker result; parent unchanged', 422);
+    const error = statusError('Publication requires a real isolated worker result; parent unchanged', 422);
+    error.diagnostic = { ...payload, frame: undefined, operation };
+    throw error;
   }
   if (result.componentId !== componentId) throw statusError('Verifier component identity changed; parent unchanged', 422);
   return result;
@@ -94,7 +97,7 @@ function requireWorker(payload, operation, source, componentId) {
 
 export async function createCoordinator({
   directory, broker, client = null, releasePublished = false, ledgerDirectory = null, localVerification = false,
-  providerDeadlineMs = PROVIDER_DEADLINE_MS, publishedOrigin = null, operatorConfirmation = null, onAdmit = null,
+  providerDeadlineMs = PROVIDER_DEADLINE_MS, publishedOrigin = null, operatorConfirmation = null, confirmSharedLedger = null, onAdmit = null,
 } = {}) {
   if (releasePublished === true) throw Error('This release build cannot publish or spend the public reserve');
   if (!broker?.submit || !broker.available) throw Error('Hosted mode requires an isolated worker broker');
@@ -188,22 +191,23 @@ export async function createCoordinator({
       parentChain: job.parentChain ?? job.ancestors ?? null,
       error: job.error ?? null, model: PUBLIC_MODEL, estimatedCostUsd: job.inference?.estimatedCostUsd ?? 0,
       publicReservedUsd: 0, publicReserveUsd: PUBLIC_RESERVE_USD, urls: job.urls ?? null,
-      intent: job.intent ?? null, summary: job.summary ?? null,
+      intent: job.intent ?? null, summary: job.summary ?? null, events: job.events, createdAt: job.createdAt, finishedAt: job.finishedAt,
     };
   }
 
-  async function verifyIsolated({ source, intent, componentId, runtime, fallback, localVerifier } = {}) {
+  async function verifyIsolated({ source, intent, componentId, recipientId, runtime, fallback, localVerifier } = {}) {
     if (runtime === 'vm' || fallback || localVerifier) throw Error('Hosted mode cannot fall back to vm');
     assertHostedComponentId(componentId);
     if (await broker.available() !== true) throw isolationError();
-    const nativePayload = await broker.submit({ operation: 'verify-native', source, intent, componentId });
+    const nativePayload = await broker.submit({ operation: 'verify-native', source, intent, componentId, ...(recipientId ? { recipientId } : {}) });
     const native = requireWorker(nativePayload, 'verify-native', source, componentId);
     if (typeof native.javascript !== 'string' || !native.javascript.trim() || Buffer.byteLength(native.javascript) > 32 * 1024
       || native.javascriptSha256 !== digest(native.javascript)) {
       throw statusError('Isolated worker did not return compiled adapter JavaScript; parent unchanged', 422);
     }
-    const browserPayload = await broker.submit({ operation: 'verify-browser', source, intent, componentId });
+    const browserPayload = await broker.submit({ operation: 'verify-browser', source, intent, componentId, ...(recipientId ? { recipientId } : {}) });
     const browser = requireWorker(browserPayload, 'verify-browser', source, componentId);
+    if (recipientId && (native.recipientId !== recipientId || browser.recipientId !== recipientId)) throw statusError('Verifier recipient identity changed; parent unchanged', 422);
     if (native.componentId !== componentId || browser.componentId !== componentId) {
       throw statusError('Verifier component identity changed; parent unchanged', 422);
     }
@@ -241,7 +245,7 @@ export async function createCoordinator({
         intent,
         source,
         component: { id: component.id ?? null, javascript: component.javascript, contract: component.contract },
-        recipient: { name: recipient.name, revision: recipient.revision },
+        recipient: { ...recipient },
       };
     } catch (error) {
       if (error.code === 'ENOENT' || error instanceof SyntaxError) throw statusError('Verified parent context is incomplete', 422);
@@ -251,10 +255,10 @@ export async function createCoordinator({
   }
 
   async function run(job) {
-    let before = null;
-    let reserved = false;
-    let settled = false;
+    let before = null, budget = null, reserved = false, settled = false, uncertain = false, cost = 0;
     const reservationId = `remix:${job.id}`;
+    const cancelled = () => { if (job.cancelRequested) throw statusError('Cancelled; parent unchanged. In-flight charges are retained.', 409); };
+    const stage = async status => { job.status = status; job.events.push({ status, at: new Date().toISOString() }); await queue.save(job); };
     try {
       if (await broker.available() !== true) throw isolationError();
       const ancestors = await lineage(job.parentArtifactId);
@@ -262,115 +266,100 @@ export async function createCoordinator({
       before = await parentBytes(job.parentArtifactId);
       const context = await parentContext(job.parentArtifactId);
       assertHostedComponentId(context.component.id);
-      const budget = await openExistingPhaseLedger(ledgerDirectory);
-      await budget.reserve({
-        id: reservationId, category: 'remix', maxCostUsd: REMIX_MAX_COST_USD,
-        metadata: { localVerification: localVerification === true, model: PUBLIC_MODEL, jobId: job.id },
-      });
+      budget = await openExistingPhaseLedger(ledgerDirectory, { confirmSharedLedger });
+      await budget.reserve({ id: reservationId, category: 'remix', maxCostUsd: REMIX_MAX_COST_USD,
+        metadata: { localVerification: localVerification === true, model: PUBLIC_MODEL, jobId: job.id, recipientId: context.recipient.id ?? 'roadster' } });
       reserved = true;
-      job.status = 'pending';
-      job.provider = { status: 'pending', reservationId };
-      job.events.push({ status: 'pending', at: new Date().toISOString() });
-      await queue.save(job);
-      await journal({ kind: 'provider-pending', jobId: job.id, reservationId, publicReservedUsd: 0 });
-      {
-        const evidence = roadsterEvidence({
-          prompt: job.prompt, parentIntent: context.intent, parentSource: context.source,
-          component: context.component, recipient: context.recipient,
-        });
-        const request = roadsterProviderRequest({ model: PUBLIC_MODEL, evidence });
+      job.attempts = [];
+      let submission, verified;
+      const maxAttempts = context.recipient.id === 'parallaxia' ? 2 : 1;
+      let feedback = null;
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        cancelled();
+        job.provider = { status: 'pending', reservationId, attempt };
+        await stage(attempt === 1 ? 'pending' : 'repairing');
+        uncertain = true;
+        const request = recipientRequest({ model: PUBLIC_MODEL, context, prompt: job.prompt, feedback });
         const signal = AbortSignal.timeout(providerDeadlineMs);
-        const price = PRICES[PUBLIC_MODEL];
         const inputTokens = assertRoadsterInputTokens(await withDeadline(signal, client.countInputTokens(request, signal)));
-        const estimate = (inputTokens * price.input + ROADSTER_MAX_OUTPUT_TOKENS * price.output) / 1e6;
-        if (estimate > REMIX_MAX_COST_USD) throw statusError('Roadster budget cannot cover this request; no generation started', 402);
+        const estimate = (inputTokens * PRICES[PUBLIC_MODEL].input + ROADSTER_MAX_OUTPUT_TOKENS * PRICES[PUBLIC_MODEL].output) / 1e6;
+        if (cost + estimate > REMIX_MAX_COST_USD) throw statusError('Whole-job budget cannot cover another response; no generation started', 402);
+        cancelled();
+        job.provider = { status: 'pending', reservationId, attempt }; await queue.save(job);
+        const startedAt = new Date().toISOString();
+        uncertain = true;
         const response = await withDeadline(signal, client.respond(request, signal));
-        job.provider = { status: 'responded', reservationId };
-        job.events.push({ status: 'responded', at: new Date().toISOString() });
-        await queue.save(job);
-        await journal({ kind: 'provider-responded', jobId: job.id, reservationId, publicReservedUsd: 0 });
-        const estimatedCostUsd = tokenCost(readUsage(response.usage), price);
-        const incomplete = response.status !== 'completed' || estimatedCostUsd > REMIX_MAX_COST_USD;
-        await budget.settle({ id: reservationId, estimatedCostUsd, uncertain: incomplete });
-        settled = true;
-        if (incomplete) throw statusError('Roadster response incomplete or budget exceeded', 402);
-        job.inference = {
-          model: PUBLIC_MODEL, estimatedCostUsd, publicReserveUsd: PUBLIC_RESERVE_USD, publicReservedUsd: 0,
-          ledgerReservedUsd: REMIX_MAX_COST_USD, ledgerSettledUsd: estimatedCostUsd,
-          reason: 'release not published; public reserve unused',
-        };
-        await journal({ kind: 'provider', jobId: job.id, model: PUBLIC_MODEL, estimatedCostUsd, publicReservedUsd: 0 });
-        const calls = response.output?.filter(item => item.type === 'function_call') ?? [];
-        if (calls.length !== 1 || calls[0].name !== ROADSTER_TOOL.name) throw statusError('Meta did not submit one Roadster adapter', 502);
-        const submission = readRoadsterSubmission(calls[0].arguments, context.intent, { parentSource: context.source });
-        if ((submission.status ?? 'supported') === 'unsupported') {
-          job.status = 'unsupported';
-          job.summary = submission.summary;
-          job.intent = submission.intent;
-          job.error = submission.summary.slice(0, 500);
-          job.finishedAt = new Date().toISOString();
-          job.events.push({ status: 'unsupported', at: job.finishedAt });
+        cost += tokenCost(readUsage(response.usage), PRICES[PUBLIC_MODEL]);
+        uncertain = response.status !== 'completed' || cost > REMIX_MAX_COST_USD;
+        const record = { attempt, startedAt, finishedAt: new Date().toISOString(), inputTokens, request, response, estimatedCostUsd: cost };
+        await mkdir(join(directory, 'provider'), { recursive: true });
+        await writeFile(join(directory, 'provider', `${job.id}-${attempt}.json`), JSON.stringify(record, null, 2) + '\n', { mode: 0o600 });
+        job.attempts.push(record);
+        job.inference = { model: PUBLIC_MODEL, estimatedCostUsd: cost, publicReserveUsd: PUBLIC_RESERVE_USD, publicReservedUsd: 0,
+          ledgerReservedUsd: REMIX_MAX_COST_USD, ledgerSettledUsd: 0, reason: 'local development; existing remix allocation' };
+        job.provider = { status: 'responded', reservationId, attempt }; await stage('responded');
+        await journal({ kind: 'provider-responded', jobId: job.id, reservationId, attempt, estimatedCostUsd: cost, publicReservedUsd: 0 });
+        if (uncertain) throw statusError('Recipient response incomplete or whole-job budget exceeded', 402);
+        cancelled();
+        try {
+          submission = recipientSubmission(response, context, job.prompt);
+          if (submission.status === 'unsupported') {
+            await budget.settle({ id: reservationId, estimatedCostUsd: cost, uncertain: false }); settled = true;
+            job.summary = submission.summary; job.intent = submission.intent; job.error = submission.summary;
+            job.finishedAt = new Date().toISOString(); await stage('unsupported'); return;
+          }
+          await stage('verifying');
+          verified = await verifyIsolated({ source: submission.source, intent: submission.intent,
+            componentId: context.component.id, ...(context.recipient.id === 'parallaxia' ? { recipientId: 'parallaxia' } : {}) });
+          record.passed = true; break;
+        } catch (error) {
+          record.passed = false; record.failure = error.message; record.diagnostic = error.diagnostic ?? null;
+          await writeFile(join(directory, 'provider', `${job.id}-${attempt}.json`), JSON.stringify(record, null, 2) + '\n', { mode: 0o600 });
           await queue.save(job);
-          await journal({ kind: 'unsupported', jobId: job.id, parentChain: ancestors });
-          return;
+          if (attempt === maxAttempts || /component identity|isolation|terminated|timeout/i.test(error.message)) throw error;
+          feedback = { error: error.message, checks: error.diagnostic?.result?.checks ?? [], rejectedSource: submission?.source ?? null,
+            instruction: 'Repair only the failed adapter. Preserve the requested complete parent mapping and the accepted component.' };
         }
-        job.status = 'verifying';
-        job.events.push({ status: 'verifying', at: new Date().toISOString() });
-        await queue.save(job);
-        const verified = await verifyIsolated({
-          source: submission.source, intent: submission.intent, componentId: context.component.id,
-        });
-        const during = await parentBytes(job.parentArtifactId);
-        if (!before.equals(during)) throw statusError('Parent artifact changed during verification', 422);
-        const nativeReceipt = { ...verified.native };
-        delete nativeReceipt.javascript;
-        const rooted = await hasRoot(job.parentArtifactId);
-        const published = await publishArtifact({
-          directory, parentId: job.parentArtifactId, files: {
-            'adapter.ts': submission.source,
-            'adapter.js': verified.javascript,
-            'intent.json': `${JSON.stringify(submission.intent)}\n`,
-            'component.json': `${JSON.stringify(context.component)}\n`,
-            'recipient.json': `${JSON.stringify(context.recipient)}\n`,
-            'receipt.json': `${JSON.stringify({
-              passed: true, model: PUBLIC_MODEL, parentArtifactId: job.parentArtifactId, parentChain: ancestors,
-              summary: submission.summary, intent: submission.intent,
-              componentId: verified.native.componentId, sourceSha256: verified.native.sourceSha256,
-              javascriptSha256: verified.native.javascriptSha256, frameSha256: verified.browser.frameSha256,
-              native: nativeReceipt, browser: verified.browser,
-            }, null, 2)}\n`,
-            'play.html': verified.frame,
-          },
-        });
-      const urls = { ...published.urls, ...parentLinks(job.parentArtifactId, rooted) };
-      assertPaths(urls);
-      job.status = 'ready';
-      job.intent = submission.intent;
-      job.summary = submission.summary;
-      job.artifactId = published.id;
-      job.parentChain = [...ancestors, published.id];
-      job.urls = urls;
-      job.finishedAt = new Date().toISOString();
-      job.events.push({ status: 'ready', at: job.finishedAt });
-      await queue.save(job);
-      await journal({ kind: 'published', jobId: job.id, artifactId: published.id, parentChain: job.parentChain, urls });
       }
+      cancelled();
+      await budget.settle({ id: reservationId, estimatedCostUsd: cost, uncertain: false }); settled = true;
+      job.inference.ledgerSettledUsd = cost;
+      if (!before.equals(await parentBytes(job.parentArtifactId))) throw statusError('Parent artifact changed during verification', 422);
+      const nativeReceipt = { ...verified.native }; delete nativeReceipt.javascript;
+      const rooted = await hasRoot(job.parentArtifactId);
+      await stage('publishing'); cancelled();
+      const published = await publishArtifact({ directory, parentId: job.parentArtifactId, files: {
+        'adapter.ts': submission.source, 'adapter.js': verified.javascript,
+        'intent.json': JSON.stringify(submission.intent) + '\n',
+        'component.json': JSON.stringify(context.component) + '\n',
+        'recipient.json': JSON.stringify(context.recipient) + '\n',
+        'notices.txt': context.recipient.notices ?? '',
+        'generation.json': JSON.stringify({ kind: 'new-meta-generation', jobId: job.id, prompt: job.prompt,
+          model: PUBLIC_MODEL, attempts: job.attempts, estimatedCostUsd: cost, createdAt: job.createdAt }, null, 2) + '\n',
+        'receipt.json': JSON.stringify({ passed: true, model: PUBLIC_MODEL, parentArtifactId: job.parentArtifactId, parentChain: ancestors,
+          summary: submission.summary, intent: submission.intent, recipient: context.recipient,
+          componentId: verified.native.componentId, sourceSha256: verified.native.sourceSha256,
+          javascriptSha256: verified.native.javascriptSha256, frameSha256: verified.browser.frameSha256,
+          native: nativeReceipt, browser: verified.browser }, null, 2) + '\n',
+        'play.html': verified.frame,
+      } });
+      const urls = { ...published.urls, ...parentLinks(job.parentArtifactId, rooted) }; assertPaths(urls);
+      job.intent = submission.intent; job.summary = submission.summary; job.artifactId = published.id;
+      job.parentChain = [...ancestors, published.id]; job.urls = urls; job.finishedAt = new Date().toISOString();
+      await stage('ready');
+      await journal({ kind: 'published', jobId: job.id, artifactId: published.id, parentChain: job.parentChain, urls });
     } catch (error) {
       if (reserved && !settled) {
-        try {
-          const budget = await openExistingPhaseLedger(ledgerDirectory);
-          await budget.settle({ id: reservationId, estimatedCostUsd: 0, uncertain: true });
-        } catch { /* a failed settlement stays reserved and still blocks the next call once the owner is gone */ }
+        try { await budget.settle({ id: reservationId, estimatedCostUsd: cost, uncertain }); }
+        catch { /* Retain the existing full reservation if settlement fails. */ }
       }
-      await fail(job, error);
+      if (job.cancelRequested) {
+        job.error = error.message; job.finishedAt = new Date().toISOString(); await stage('cancelled');
+      } else await fail(job, error);
     } finally {
       if (before) {
-        try {
-          const after = await parentBytes(job.parentArtifactId);
-          if (!before.equals(after)) await fail(job, Error('Parent artifact changed during verification'));
-        } catch (error) {
-          await fail(job, error);
-        }
+        try { if (!before.equals(await parentBytes(job.parentArtifactId))) await fail(job, Error('Parent artifact changed during verification')); }
+        catch (error) { await fail(job, error); }
       }
     }
   }
@@ -409,7 +398,7 @@ export async function createCoordinator({
       }
       if (recipient != null) {
         if (typeof recipient.name !== 'string' || typeof recipient.revision !== 'string') throw Error('Parent recipient is invalid');
-        await writeFile(join(parents, `${id}.recipient.json`), JSON.stringify({ name: recipient.name, revision: recipient.revision }), { flag: 'wx' });
+        await writeFile(join(parents, `${id}.recipient.json`), JSON.stringify(recipient), { flag: 'wx' });
       }
       if (summary != null) {
         if (typeof summary !== 'string' || !summary.trim() || summary.length > 1000) throw Error('Parent summary is invalid');
@@ -486,7 +475,7 @@ export async function createCoordinator({
             }
           }
           if (!ledgerDirectory) throw statusError('An explicit phase ledger path is required', 503);
-          const phase = await (await openExistingPhaseLedger(ledgerDirectory)).status();
+          const phase = await (await openExistingPhaseLedger(ledgerDirectory, { confirmSharedLedger })).status();
           if (phase.uncertain || phase.overrun) throw statusError('Phase billing is uncertain or exceeded a reservation; no further inference admitted', 402);
           const job = {
             schemaVersion: 1, id: randomUUID(), sessionId: request.sessionId, idempotencyKey: request.idempotencyKey,
@@ -513,6 +502,12 @@ export async function createCoordinator({
       const found = queue.get(id);
       if (!found) throw statusError('Run not found', 404);
       return publicJob(found);
+    },
+    async cancel(id, sessionId) {
+      const job = queue.get(id); if (!job) throw statusError('Run not found', 404);
+      if (sessionId !== job.sessionId) throw statusError('Session does not own this job', 403);
+      if (['ready','failed','unsupported','cancelled'].includes(job.status)) return publicJob(job);
+      job.cancelRequested = true; job.events.push({status:'cancel-requested',at:new Date().toISOString()}); await queue.save(job); return publicJob(job);
     },
     async wait(id) {
       if (runners.has(id)) await runners.get(id);
