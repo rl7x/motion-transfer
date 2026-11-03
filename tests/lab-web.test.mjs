@@ -48,7 +48,7 @@ test('a lost Roadster response retains its request across refresh and reconnects
   }});
   const harness=await createPakuBrowser({lab});
   try{
-    const {page}=await harness.page();await page.goto(harness.origin);
+    const {page}=await harness.page();await page.goto(harness.origin+'/?destination=roadster');
     await page.waitForFunction(()=>window.currentRoadsterArtifact);await prepareVisitor(page);
     await page.waitForFunction(()=>!document.querySelector('#roadster-submit').disabled);
     await page.route('**/api/roadster/transfers',async route=>{await route.fetch();await route.abort('failed');},{times:1});

@@ -24,7 +24,7 @@ test('an offscreen Roadster receives visibility after delayed player initializat
       const body = (await response.text()).replace('<script>', '<script>setTimeout(() => {').replace('</script>', '}, 400);</script>');
       await route.fulfill({ response, body });
     });
-    await page.goto(harness.origin);
+    await page.goto(harness.origin+'/?destination=roadster');
     await page.waitForFunction(() => document.querySelector('#transfer-status').textContent === 'VERIFIED TRANSFER');
     await prepareVisitor(page);
     const frame = await (await page.$('#transfer-game')).contentFrame();

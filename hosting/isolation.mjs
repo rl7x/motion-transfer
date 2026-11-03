@@ -27,6 +27,7 @@ export const PROFILES = Object.freeze({
 export function profileFor(operation) {
   if (operation === 'probe-spin') return PROFILES.spin;
   if (operation === 'probe-memory') return PROFILES.memory;
+  if (['verify-checkpoint','verify-experiment'].includes(operation)) return PROFILES['verify-native'];
   if (operation === 'verify-native') return PROFILES['verify-native'];
   if (operation === 'verify-browser') return PROFILES['verify-browser'];
   if (operation.startsWith('probe-')) return PROFILES.probe;

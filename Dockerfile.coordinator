@@ -20,6 +20,7 @@ COPY hosting/constants.mjs hosting/errors.mjs hosting/protocol.mjs hosting/polic
 COPY release/zip.mjs release/sha.mjs ./release/
 COPY campaign/phase-budget.mjs ./campaign/phase-budget.mjs
 COPY agent/accounting.mjs agent/roadster-request.mjs agent/recipient-request.mjs agent/meta-client.mjs ./agent/
+COPY parallaxia/replay.mjs ./parallaxia/replay.mjs
 COPY roadster/port.mjs ./roadster/port.mjs
 COPY components/dashy-dango-dash/component.ts components/dashy-dango-dash/component.js components/dashy-dango-dash/contract.json components/dashy-dango-dash/provenance.json ./components/dashy-dango-dash/
 COPY recipients/roadster/recipient.lock.json ./recipients/roadster/recipient.lock.json

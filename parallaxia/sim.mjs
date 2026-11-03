@@ -128,8 +128,8 @@ export function patchParallaxiaCanvas(source) {
   if (targetZone && Number.isFinite(targetZone.minX) && Number.isFinite(targetZone.maxX)) {
     const zx0 = sx(targetZone.minX);
     const zx1 = sx(targetZone.maxX);
-    const zy0 = sy(-5.2);
-    const zy1 = sy(-10.8);
+    const zy0 = sy(targetZone.maxY ?? -5.2);
+    const zy1 = sy(targetZone.minY ?? -10.8);
     const zw = Math.max(8, zx1 - zx0);
     const zh = Math.max(8, zy1 - zy0);
     const lit = targetZone.phase === "landed" || (sim.frame >> 3) % 2 === 0;

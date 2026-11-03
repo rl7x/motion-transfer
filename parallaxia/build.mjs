@@ -6,6 +6,7 @@ import { resolveComponentRef, componentIdentity } from '../component/reference.m
 import { PARALLAXIA_SOURCE, parallaxiaHooks } from './sim.mjs';
 import { ROADSTER_INTENT, validateRoadsterIntent } from '../roadster/port.mjs';
 import { parallaxiaDescriptor } from './recipient.mjs';
+import { assertParallaxiaSource } from '../evaluator/parallaxia-source.mjs';
 import { digest } from '../component/build.mjs';
 
 const cache = new Map();
@@ -18,6 +19,7 @@ export async function buildParallaxiaFrame({
   collisionPolicy = challenge ? 'practice-shield' : 'native',
 } = {}) {
   validateRoadsterIntent(intent);
+  if (source) assertParallaxiaSource(source);
   if (!['native', 'practice-shield'].includes(collisionPolicy)) throw Error('Unsupported collision policy');
   const recipient = await loadParallaxia();
   const component = await resolveComponentRef(componentRef);
@@ -39,6 +41,8 @@ export async function buildParallaxiaFrame({
     'roadster/port.mjs',
     'parallaxia/port.mjs',
     'parallaxia/recipient.mjs',
+    'parallaxia/replay.mjs',
+    'evaluator/parallaxia-source.mjs',
     'web/parallaxia-entry.js',
     'transfer/adapter.mjs',
     'transfer/worker.mjs',
@@ -103,6 +107,7 @@ export async function buildParallaxiaFrame({
       componentId: component.provenance.id,
       transferred: Boolean(source),
       collisionPolicy,
+      replayIdentity: { componentId: component.provenance.id, recipientRevision: recipient.manifest.revision, hooksSha256: environment.recipient.hooksSha256, adapterSha256: source ? digest(source) : null },
       ...(challenge ? { challenge } : {}),
     })};`,
   };

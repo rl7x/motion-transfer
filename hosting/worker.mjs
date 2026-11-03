@@ -139,6 +139,12 @@ async function verifyBrowser(job) {
 }
 
 async function dispatch(job) {
+  if (['verify-checkpoint','verify-experiment'].includes(job.operation)) {
+    if (secretNames().length) throw Error('Worker refuses credentials');
+    const component = await boundComponent(job);
+    const {verifyCheckpointJob} = await import('./experiment.mjs');
+    return {ok:true,passed:true,operation:job.operation,recipientId:'parallaxia',componentId:job.componentId,sourceSha256:digest(job.source),...await verifyCheckpointJob(job,component),...facts()};
+  }
   if (job.operation === 'probe-egress') return probeEgress();
   if (job.operation === 'probe-env') {
     const present = secretNames();

@@ -1694,3 +1694,24 @@ body.player-expanded::before {
 .motion-workbench .toolbar {
   flex-wrap: wrap;
 }
+
+.motion-workbench textarea {
+  width: 100%;
+  min-height: 90px;
+}
+.experiment-comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.motion-workbench .experiment-comparison iframe {
+  height: 380px;
+}
+.experiment-result {
+  margin-top: 24px;
+}
+@media (max-width: 600px) {
+  .experiment-comparison {
+    grid-template-columns: 1fr;
+  }
+}

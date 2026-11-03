@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchJson, postJson, errorMessage } from './api';
+import { ExperimentResults, type ExperimentReceipt } from './motion-experiment';
 import { readSession, writeSession } from './creator/session';
 import type { PendingRemix } from './creator/types';
 import { useAgeAcknowledgment } from './components/age-acknowledgment';
@@ -14,16 +15,19 @@ export interface MotionJob {
   estimatedCostUsd: number;
   createdAt: string;
   finishedAt: string | null;
-  urls: { play: string; download: string; receipt: string } | null;
+  urls: { play: string; download: string; receipt: string; parent?: string } | null;
+  experiment?: ExperimentReceipt | null;
 }
 const terminal = (status: string) =>
-  ['ready', 'failed', 'unsupported', 'cancelled'].includes(status);
+  ['ready', 'failed', 'unsupported', 'cancelled', 'unsuccessful'].includes(status);
 
 export function MotionGeneration({
   parentId,
   onPlay,
+  experiment = null,
 }: {
   parentId: string;
+  experiment?: unknown;
   onPlay(job: MotionJob): void;
 }) {
   const age = useAgeAcknowledgment();
@@ -62,6 +66,7 @@ export function MotionGeneration({
                 prompt: pending.prompt,
                 sessionId: session.sessionId,
                 adultConfirmed: true,
+                ...(pending.experiment ? { experiment: pending.experiment } : {}),
               }),
               signal: controller.signal,
             });
@@ -107,6 +112,7 @@ export function MotionGeneration({
           event.preventDefault();
           if (busy || !enabled || !age.allow(false)) return;
           const next = {
+            experiment,
             idempotencyKey: crypto.randomUUID(),
             parentArtifactId: parentId,
             prompt: prompt.trim(),
@@ -127,7 +133,9 @@ export function MotionGeneration({
           required
         />
         <button id="motion-submit" disabled={!enabled || busy}>
-          Generate and verify · Standard Meta
+          {experiment
+            ? 'Generate alternative · frozen checkpoint'
+            : 'Generate and verify · Standard Meta'}
         </button>
       </form>
       {!enabled && (
@@ -170,6 +178,14 @@ export function MotionGeneration({
             </button>
           )}
         </div>
+      )}
+      {job?.experiment && job.urls?.parent && (
+        <ExperimentResults
+          receipt={job.experiment}
+          parentPlay={job.urls.parent}
+          candidatePlay={job.urls.play}
+          download={'/artifacts/' + job.artifactId + '/experiment.json'}
+        />
       )}
       {error && (
         <p role="alert">

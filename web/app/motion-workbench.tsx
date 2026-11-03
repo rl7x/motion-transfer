@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { fetchJson, errorMessage } from './api';
 import { linkHref } from './links';
+import { CheckpointGoals, type Checkpoint } from './motion-experiment';
 import { MotionGeneration, type MotionJob } from './motion-generation';
 import { HoldButton } from './components/hold-button';
 import { Header } from './components/static-content';
@@ -24,6 +25,8 @@ export function MotionWorkbench() {
     download: string;
     report: string;
   } | null>(null);
+  const [checkpoint, setCheckpoint] = useState<Checkpoint | null>(null);
+  const [experiment, setExperiment] = useState<unknown>(null);
   const [error, setError] = useState('');
   const [practice, setPractice] = useState(false);
   const [channel] = useState(() => crypto.randomUUID());
@@ -64,6 +67,13 @@ export function MotionWorkbench() {
   useEffect(() => {
     const receive = (event: MessageEvent) => {
       if (event.source !== frame.current?.contentWindow || event.data?.channel !== channel) return;
+      if (event.data.type === 'parallaxia-checkpoint-result') {
+        if (event.data.error) setError(String(event.data.error));
+        else {
+          setCheckpoint(event.data.checkpoint as Checkpoint);
+          setError('');
+        }
+      }
       if (event.data.type === 'motion-status') {
         setStatus(
           event.data.motion?.output?.ownsMotion
@@ -167,12 +177,26 @@ export function MotionWorkbench() {
             )}
           </article>
         </section>
+        {base && !practice && (
+          <CheckpointGoals
+            checkpoint={checkpoint}
+            capture={(curated) =>
+              send(curated ? 'parallaxia-curated-checkpoint' : 'parallaxia-checkpoint')
+            }
+            resume={() => send('parallaxia-resume')}
+            onFreeze={setExperiment}
+          />
+        )}
+        {error && <p role="alert">{error}</p>}
         {base && (
           <MotionGeneration
+            experiment={experiment}
             parentId={active?.id ?? base.id}
             onPlay={(job: MotionJob) => {
               if (!job.artifactId || !job.urls) return;
               setPractice(false);
+              setCheckpoint(null);
+              setExperiment(null);
               setActive({
                 id: job.artifactId,
                 play: job.urls.play,

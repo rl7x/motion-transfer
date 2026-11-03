@@ -5,8 +5,10 @@ import { evaluateRoadsterAdapter } from './roadster.mjs';
 import { compileAdapter } from '../transfer/adapter.mjs';
 import { resolveComponentRef, componentIdentity } from '../component/reference.mjs';
 import { parallaxiaDescriptor } from '../parallaxia/recipient.mjs';
+import { assertParallaxiaSource } from './parallaxia-source.mjs';
 
 export async function evaluateParallaxiaAdapter(source, intent, { componentRef } = {}) {
+  assertParallaxiaSource(source);
   const component = await resolveComponentRef(componentRef);
   const conformance = await evaluateRoadsterAdapter(source, intent, { componentRef: component });
   const compiled = await compileAdapter(source, { componentRef: component });

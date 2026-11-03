@@ -26,6 +26,20 @@ PARALLAXIA generation uses its own Standard Meta request contract and independen
 
 `node --test --test-concurrency=1 tests/hosting.test.mjs tests/hosting-component.test.mjs tests/parallaxia-generation.test.mjs` passed 24/24. The repair test uses an explicitly synthetic provider/broker fixture and proves two attempts share one reservation and that restart reuses the job. The live run needed no repair; it is not evidence of a real repair benefit. Public deployment was not performed.
 
+## M2: deterministic checkpoints and fixed goals
+
+Checkpoints record the recipient/hooks, component and adapter identities; seed/mode/sector; logical tick; bounded run-length encoded native **and dash** inputs; and a SHA-256 digest covering native state, RNG, component timers and adapter edge state. The worker reconstructs and validates that digest before any paid request. Candidate adapters warm from reset and must reproduce the same required starting state. Transcript expansion is bounded before allocation.
+
+The React workbench can pause native play or select a clearly labeled curated seed-7 checkpoint at tick 40. It freezes a target, a 120-tick horizon, unchanged native Shoot controls and explicit no-life-loss/no-added-invulnerability constraints. Generation proposes a supported mapping and dash trigger tick. The worker scores both branches at 60 Hz and retains actual failures; browser replay at normal speed independently matches each worker end digest. Checkpoint inputs, targets, interventions, outcomes and source identities are included in the child export. An adapter capability gate additionally rejects direct globals, clocks, dynamic capability lookup and attempts to install a hidden shield; Docker isolation is still required.
+
+An early no-shoot development replay entered the target but lost a life, correctly failing. Its six explored native-control conditions are retained in `reports/live-mechanics/checkpoint-development-scenarios.json`. They are development curation, not benchmark trials.
+
+The first real experiment generated a wrong-direction candidate and failed its fixed goal. Oversized replay feedback then exceeded the existing 12,000-input-token repair preflight; no second response was made. That entire failed job remains in `reports/live-mechanics/experiments-f145ad35-2e0d-47fa-bdd0-5b24a021b74d/`. Its known $0.01017725 cost and **full $0.15 bound** remain in the ledger as an audited bounded-unknown reservation. No charge was erased. Feedback is now a compact measured outcome summary, and the worker supplies actual ship facing explicitly.
+
+The separate v2 development run passed: reachable goal job `ba3e8a5d-db48-43f0-90e0-034b65cd86f4`, artifact `beefe0afa993c9557eac2176dd111e7a25a4fe0ca7cb722a0d3c6b9486c449e4`, estimated $0.01055325; infeasible goal job `fe4bd35d-09a9-4f01-be41-49b25b5da3b9`, diagnostic artifact `2bb40b50082883f350d72c833ab900f2d6c464900a9a6b130e73cdc86285c2dd`, estimated $0.01706525 across both attempts. The out-of-bounds target remained unchanged. Both branch players reproduced the worker digests, and no page errors occurred. These are development measurements. Raw evidence and screenshots are in `reports/live-mechanics/experiments-87f61dff-d908-495b-9988-165ffcd08ea2/`.
+
+Focused validation passed 31/31 across PARALLAXIA identity, checkpoints, generation and hosting. The added capability/browser checks passed 5/5; the explicit historical Roadster/React browser checks passed 6/6. Frontend typecheck, lint and formatting passed. Historical tests now select Roadster explicitly; the default route is the new PARALLAXIA workbench.
+
 ## Remaining
 
-M2: deterministic checkpoints and fixed-goal comparison. M3: bounded composition if the core flow works. M4: actual recipient release, exact clean-start exports, frozen task evidence and final full-suite results.
+M3: bounded dash-end/native-shot composition. M4: actual recipient release, exact clean-start exports, frozen task evidence and final full-suite results.

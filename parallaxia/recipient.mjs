@@ -5,7 +5,7 @@ import { loadParallaxia } from '../recipients/parallaxia/load.mjs';
 export async function parallaxiaDescriptor() {
   const recipient = await loadParallaxia();
   const hooks = {};
-  for (const file of ['sim.mjs', 'port.mjs', 'challenge-contract.mjs']) {
+  for (const file of ['sim.mjs', 'port.mjs', 'challenge-contract.mjs', 'replay.mjs', '../web/parallaxia-entry.js']) {
     hooks[file] = digest(await readFile(new URL(file, import.meta.url)));
   }
   return {

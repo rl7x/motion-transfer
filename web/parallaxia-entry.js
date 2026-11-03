@@ -8,6 +8,7 @@ import { createWebAudioAdapter } from '@/audio/webaudio.js';
 import { bossTuneAt, cueFor, loopForMusic } from '@/audio/music.js';
 import { createParallaxiaPort } from '../parallaxia/port.mjs';
 import { createParallaxiaChallengeControls } from '../parallaxia/challenge-contract.mjs';
+import { captureCheckpoint, NATIVE_INPUT_MASK, DASH_INPUT, MAX_CHECKPOINT_TICKS, validateCheckpoint, validateScenario, replayDigest, checkpointState } from '../parallaxia/replay.mjs';
 import * as component from 'roadster-core';
 import * as candidate from 'roadster-adapter';
 import config from 'roadster-config';
@@ -133,6 +134,8 @@ let dash = false;
 let realtimeActive = !testing;
 let assistedMode = false;
 let guided = false;
+let playbackEpoch = 0;
+let recordedInputs = [];
 let sim = createSim({ seed: 7, mode: 'normal', startSector: 1 });
 let fx = createFx();
 const hud = { hiScore: 12400, newRecord: false, label: MODES[sim.mode].name, notice: null };
@@ -166,6 +169,7 @@ function shipCarState() {
 
 function stepWithInput(bits, { sound = !testing } = {}) {
   const prevOwns = port.snapshot(sim)?.output?.ownsMotion;
+  if (recordedInputs.length <= MAX_CHECKPOINT_TICKS) recordedInputs.push((bits & NATIVE_INPUT_MASK) | (dash ? DASH_INPUT : 0));
   stepSim(sim, bits);
   fxStep(fx, sim);
   const nowOwns = port.snapshot(sim)?.output?.ownsMotion;
@@ -219,8 +223,10 @@ document.addEventListener('visibilitychange', () => {
 });
 
 function start(assisted = true) {
+  playbackEpoch++;
   release();
   assistedMode = Boolean(assisted);
+  recordedInputs = [];
   sim = createSim({ seed: 7, mode: 'normal', startSector: 1 });
   fx = createFx();
   hud.label = MODES[sim.mode].name;
@@ -262,6 +268,35 @@ window.__game = {
     }
     stepWithInput(bits);
   },
+};
+
+window.parallaxiaCaptureCheckpoint = async () => {
+  if (config.collisionPolicy !== 'native') throw Error('Experiments require native collisions, not a practice shield');
+  window.__game.realtime(false); release();
+  return captureCheckpoint({sim,port,inputs:recordedInputs,identity:config.replayIdentity});
+};
+
+window.parallaxiaReplayExperiment = async (receipt, branch = 'original') => {
+  if (!['original', 'candidate'].includes(branch)) throw Error('Unknown replay branch');
+  const expectedSource = branch === 'original' ? receipt.parentAdapterSha256 : receipt.candidateAdapterSha256;
+  if (config.replayIdentity.adapterSha256 !== expectedSource) throw Error('Replay adapter differs from the verified branch');
+  const inputs = validateCheckpoint(receipt.checkpoint, {...config.replayIdentity, adapterSha256:receipt.checkpoint.adapterSha256});
+  const future = validateScenario(receipt.scenario);
+  globalThis.parallaxiaChallengeTarget={...receipt.scenario.target,phase:receipt[branch].succeeded?'landed':'missed'};
+  start(false); window.__game.realtime(false); const epoch = playbackEpoch;
+  renderBatch(() => { for(const bits of inputs) { dash=Boolean(bits & DASH_INPUT);port.setDash(dash);stepWithInput(bits & NATIVE_INPUT_MASK,{sound:false}); } });
+  release();
+  if (await replayDigest(checkpointState(sim,port)) !== receipt.checkpoint.stateDigest) throw Error('Displayed checkpoint digest differs');
+  const begin=performance.now();
+  for(let tick=0;tick<future.length;tick++) {
+    const due=begin+tick*FRAME_MS;
+    while(performance.now()<due) await new Promise(requestAnimationFrame);
+    if(playbackEpoch!==epoch) throw Error('Replay stopped by reset');
+    dash=branch==='candidate' && tick===receipt.interventionTick;port.setDash(dash);stepWithInput(future[tick]);
+  }
+  const endDigest=await replayDigest(checkpointState(sim,port));
+  if(endDigest!==receipt[branch].endDigest) throw Error('Displayed replay outcome differs from worker');
+  release(); return {branch,endDigest,succeeded:receipt[branch].succeeded};
 };
 
 window.roadsterPresentation = () => ({
@@ -327,6 +362,17 @@ const channel = location.hash.match(/(?:#|&)channel=([a-zA-Z0-9-]+)/)?.[1];
 window.addEventListener('message', (event) => {
   if (event.source !== parent || !channel || event.data?.channel !== channel) return;
   const { type, pressed } = event.data;
+  if (type === 'parallaxia-replay') {
+    window.parallaxiaReplayExperiment(event.data.receipt,event.data.branch).then(result=>parent.postMessage({type:'parallaxia-replay-result',channel,result},'*'),error=>parent.postMessage({type:'parallaxia-replay-result',channel,error:error.message},'*'));
+  }
+  if (type === 'parallaxia-curated-checkpoint') {
+    start(false);window.__game.realtime(false);renderBatch(()=>{for(let tick=0;tick<40;tick++)stepWithInput(0,{sound:false});});
+    window.parallaxiaCaptureCheckpoint().then(checkpoint=>parent.postMessage({type:'parallaxia-checkpoint-result',channel,checkpoint,curated:true},'*'));
+  }
+  if (type === 'parallaxia-checkpoint') {
+    window.parallaxiaCaptureCheckpoint().then(checkpoint => parent.postMessage({type:'parallaxia-checkpoint-result',channel,requestId:event.data.requestId,checkpoint},'*'), error => parent.postMessage({type:'parallaxia-checkpoint-result',channel,requestId:event.data.requestId,error:error.message},'*'));
+  }
+  if (type === 'parallaxia-resume') window.__game.realtime(true);
   if (type === 'parallaxia-input') {
     const bit = { left: INPUT.LEFT, right: INPUT.RIGHT, up: INPUT.UP, down: INPUT.DOWN, shot: INPUT.SHOT }[event.data.control];
     if (bit !== undefined) keyboardBits = pressed ? keyboardBits | bit : keyboardBits & ~bit;

@@ -16,7 +16,7 @@ test('the challenge keeps one 3D player, a local share address, and the saved ab
     const posts = [];
     page.on('request', request => { if (request.method() === 'POST') posts.push(request.url()); });
     await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto(harness.origin);
+    await page.goto(harness.origin+'/?destination=roadster');
     await page.waitForFunction(() => window.currentDestination === 'roadster' && document.querySelector('#transfer-status')?.textContent === 'VERIFIED TRANSFER', undefined, { timeout: 90000 });
     assert.equal(await page.locator('.games iframe').count(), 1);
     assert.equal(await page.locator('#original-game').count(), 0);
@@ -69,7 +69,7 @@ test('the challenge keeps one 3D player, a local share address, and the saved ab
     const mobile = await context.newPage();
     const mobileErrors = [];
     mobile.on('pageerror', error => mobileErrors.push(error.message));
-    await mobile.goto(harness.origin);
+    await mobile.goto(harness.origin+'/?destination=roadster');
     await mobile.waitForFunction(() => document.querySelector('#transfer-status')?.textContent === 'VERIFIED TRANSFER', undefined, { timeout: 90000 });
     assert.equal(await mobile.locator('.games iframe').count(), 1);
     assert.ok(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
@@ -100,7 +100,7 @@ test('an 18+ confirmation blocks a new adaptation and a rejected request leaves 
     const { page, errors } = await harness.page();
     const posts = [];
     page.on('request', request => { if (request.method() === 'POST') posts.push(new URL(request.url()).pathname); });
-    await page.goto(harness.origin);
+    await page.goto(harness.origin+'/?destination=roadster');
     await page.waitForFunction(() => window.currentRoadsterArtifact && document.querySelector('#transfer-game') && !document.querySelector('#roadster-submit').disabled, undefined, { timeout: 90000 });
     await page.locator('#roadster-prompt').fill('Give me one air dash, and restore it when I land.');
     await page.locator('#roadster-submit').click();
@@ -142,7 +142,7 @@ test('reconnecting a stored adaptation polls the same job and does not POST', as
       },
       id: '11111111-1111-4111-8111-111111111111',
     });
-    await page.goto(harness.origin);
+    await page.goto(harness.origin+'/?destination=roadster');
     await page.waitForFunction(() => window.currentRoadsterArtifact
       && document.querySelector('#roadster-submit')?.textContent.includes('Reconnect')
       && !document.querySelector('#roadster-submit').disabled, undefined, { timeout: 90000 });
@@ -194,7 +194,7 @@ test('an injected playback catalog renders the challenge without the live catalo
       if (Object.prototype.hasOwnProperty.call(resources, path)) { hits.push(path); return route.abort(); }
       return route.continue();
     });
-    await page.goto(harness.origin);
+    await page.goto(harness.origin+'/?destination=roadster');
     await page.waitForFunction(expected => document.querySelector('#challenge-download')?.getAttribute('href') === expected, '/roadster/challenge/' + id + '/download.html');
     assert.deepEqual(hits, []);
     assert.equal(await page.locator('#confirm-age').count(), 0);

@@ -56,6 +56,7 @@ export interface RemixJob {
 }
 
 export interface PendingRemix {
+  experiment?: unknown;
   idempotencyKey: string;
   parentArtifactId: string;
   prompt: string;

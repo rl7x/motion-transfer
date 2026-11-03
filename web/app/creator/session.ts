@@ -26,6 +26,7 @@ function parsedSession(value: Partial<CreatorSession>): CreatorSession | null {
       typeof value.pending.parentArtifactId === 'string' &&
       typeof value.pending.prompt === 'string'
         ? {
+            experiment: value.pending.experiment ?? null,
             idempotencyKey: value.pending.idempotencyKey,
             parentArtifactId: value.pending.parentArtifactId,
             prompt: value.pending.prompt,

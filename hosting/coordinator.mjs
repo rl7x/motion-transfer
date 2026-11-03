@@ -1,3 +1,4 @@
+import { replayDigest, validateScenario, expandInputs } from '../parallaxia/replay.mjs';
 import { randomUUID, createHash } from 'node:crypto';
 import { access, appendFile, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
@@ -191,7 +192,7 @@ export async function createCoordinator({
       parentChain: job.parentChain ?? job.ancestors ?? null,
       error: job.error ?? null, model: PUBLIC_MODEL, estimatedCostUsd: job.inference?.estimatedCostUsd ?? 0,
       publicReservedUsd: 0, publicReserveUsd: PUBLIC_RESERVE_USD, urls: job.urls ?? null,
-      intent: job.intent ?? null, summary: job.summary ?? null, events: job.events, createdAt: job.createdAt, finishedAt: job.finishedAt,
+      intent: job.intent ?? null, summary: job.summary ?? null, events: job.events, createdAt: job.createdAt, finishedAt: job.finishedAt, experiment: job.experimentReport ?? null,
     };
   }
 
@@ -266,6 +267,14 @@ export async function createCoordinator({
       before = await parentBytes(job.parentArtifactId);
       const context = await parentContext(job.parentArtifactId);
       assertHostedComponentId(context.component.id);
+      let observation = null;
+      if (job.experiment) {
+        await stage('reconstructing');
+        const payload = await broker.submit({operation:'verify-checkpoint',recipientId:'parallaxia',source:context.source,intent:context.intent,componentId:context.component.id,checkpoint:job.experiment.checkpoint});
+        const checked = requireWorker(payload,'verify-checkpoint',context.source,context.component.id);
+        if (checked.checkpointId !== await replayDigest(job.experiment.checkpoint)) throw Error('Checkpoint identity changed in worker');
+        observation = checked.observation;
+      }
       budget = await openExistingPhaseLedger(ledgerDirectory, { confirmSharedLedger });
       await budget.reserve({ id: reservationId, category: 'remix', maxCostUsd: REMIX_MAX_COST_USD,
         metadata: { localVerification: localVerification === true, model: PUBLIC_MODEL, jobId: job.id, recipientId: context.recipient.id ?? 'roadster' } });
@@ -279,7 +288,7 @@ export async function createCoordinator({
         job.provider = { status: 'pending', reservationId, attempt };
         await stage(attempt === 1 ? 'pending' : 'repairing');
         uncertain = true;
-        const request = recipientRequest({ model: PUBLIC_MODEL, context, prompt: job.prompt, feedback });
+        const request = recipientRequest({ model: PUBLIC_MODEL, context, prompt: job.prompt, feedback, experiment: job.experiment, observation });
         const signal = AbortSignal.timeout(providerDeadlineMs);
         const inputTokens = assertRoadsterInputTokens(await withDeadline(signal, client.countInputTokens(request, signal)));
         const estimate = (inputTokens * PRICES[PUBLIC_MODEL].input + ROADSTER_MAX_OUTPUT_TOKENS * PRICES[PUBLIC_MODEL].output) / 1e6;
@@ -302,7 +311,7 @@ export async function createCoordinator({
         if (uncertain) throw statusError('Recipient response incomplete or whole-job budget exceeded', 402);
         cancelled();
         try {
-          submission = recipientSubmission(response, context, job.prompt);
+          submission = recipientSubmission(response, context, job.prompt, { experiment: job.experiment });
           if (submission.status === 'unsupported') {
             await budget.settle({ id: reservationId, estimatedCostUsd: cost, uncertain: false }); settled = true;
             job.summary = submission.summary; job.intent = submission.intent; job.error = submission.summary;
@@ -311,14 +320,23 @@ export async function createCoordinator({
           await stage('verifying');
           verified = await verifyIsolated({ source: submission.source, intent: submission.intent,
             componentId: context.component.id, ...(context.recipient.id === 'parallaxia' ? { recipientId: 'parallaxia' } : {}) });
-          record.passed = true; break;
+          if (job.experiment) {
+            const payload = await broker.submit({operation:'verify-experiment',recipientId:'parallaxia',source:submission.source,intent:submission.intent,
+              parentSource:context.source,parentIntent:context.intent,componentId:context.component.id,checkpoint:job.experiment.checkpoint,scenario:job.experiment.scenario,interventionTick:submission.interventionTick});
+            const checked = requireWorker(payload,'verify-experiment',submission.source,context.component.id);
+            if (checked.checkpointId !== await replayDigest(job.experiment.checkpoint) || checked.scenarioSha256 !== await replayDigest(job.experiment.scenario)) throw Error('Frozen experiment identity changed in worker');
+            job.experimentReport = {...checked.report,parentAdapterSha256:digest(context.source),candidateAdapterSha256:digest(submission.source)};
+            record.experiment = job.experimentReport;
+            if (!checked.report.satisfied && attempt < maxAttempts) throw Error('Candidate failed the fixed goal or no-life-loss constraint');
+          }
+          record.passed = !job.experiment || job.experimentReport.satisfied; break;
         } catch (error) {
           record.passed = false; record.failure = error.message; record.diagnostic = error.diagnostic ?? null;
           await writeFile(join(directory, 'provider', `${job.id}-${attempt}.json`), JSON.stringify(record, null, 2) + '\n', { mode: 0o600 });
           await queue.save(job);
           if (attempt === maxAttempts || /component identity|isolation|terminated|timeout/i.test(error.message)) throw error;
           feedback = { error: error.message, checks: error.diagnostic?.result?.checks ?? [], rejectedSource: submission?.source ?? null,
-            instruction: 'Repair only the failed adapter. Preserve the requested complete parent mapping and the accepted component.' };
+            experiment: job.experimentReport ? {satisfied:job.experimentReport.satisfied,target:job.experimentReport.scenario.target,interventionTick:job.experimentReport.interventionTick,branches:['original','candidate'].map(kind=>{const branch=job.experimentReport[kind];return {kind,reachedTick:branch.reachedTick,lostLife:branch.lostLife,alive:branch.alive,first:branch.frames[0],last:branch.frames.at(-1)}})} : null, instruction: 'Repair only the failed adapter. Preserve the requested complete parent mapping and the accepted component.' };
         }
       }
       cancelled();
@@ -329,6 +347,7 @@ export async function createCoordinator({
       const rooted = await hasRoot(job.parentArtifactId);
       await stage('publishing'); cancelled();
       const published = await publishArtifact({ directory, parentId: job.parentArtifactId, files: {
+        ...(job.experimentReport ? {'experiment.json':JSON.stringify(job.experimentReport,null,2)+'\n'} : {}),
         'adapter.ts': submission.source, 'adapter.js': verified.javascript,
         'intent.json': JSON.stringify(submission.intent) + '\n',
         'component.json': JSON.stringify(context.component) + '\n',
@@ -336,8 +355,8 @@ export async function createCoordinator({
         'notices.txt': context.recipient.notices ?? '',
         'generation.json': JSON.stringify({ kind: 'new-meta-generation', jobId: job.id, prompt: job.prompt,
           model: PUBLIC_MODEL, attempts: job.attempts, estimatedCostUsd: cost, createdAt: job.createdAt }, null, 2) + '\n',
-        'receipt.json': JSON.stringify({ passed: true, model: PUBLIC_MODEL, parentArtifactId: job.parentArtifactId, parentChain: ancestors,
-          summary: submission.summary, intent: submission.intent, recipient: context.recipient,
+        'receipt.json': JSON.stringify({ passed: !job.experimentReport || job.experimentReport.satisfied, adapterVerified: true, kind: job.experimentReport ? 'checkpoint-experiment' : 'recipient-adaptation', model: PUBLIC_MODEL, parentArtifactId: job.parentArtifactId, parentChain: ancestors,
+          summary: submission.summary, intent: submission.intent, recipient: context.recipient, ...(job.experimentReport ? {experiment:job.experimentReport} : {}),
           componentId: verified.native.componentId, sourceSha256: verified.native.sourceSha256,
           javascriptSha256: verified.native.javascriptSha256, frameSha256: verified.browser.frameSha256,
           native: nativeReceipt, browser: verified.browser }, null, 2) + '\n',
@@ -346,7 +365,7 @@ export async function createCoordinator({
       const urls = { ...published.urls, ...parentLinks(job.parentArtifactId, rooted) }; assertPaths(urls);
       job.intent = submission.intent; job.summary = submission.summary; job.artifactId = published.id;
       job.parentChain = [...ancestors, published.id]; job.urls = urls; job.finishedAt = new Date().toISOString();
-      await stage('ready');
+      await stage(job.experimentReport && !job.experimentReport.satisfied ? 'unsuccessful' : 'ready');
       await journal({ kind: 'published', jobId: job.id, artifactId: published.id, parentChain: job.parentChain, urls });
     } catch (error) {
       if (reserved && !settled) {
@@ -365,7 +384,7 @@ export async function createCoordinator({
   }
 
   function sameRequest(existing, request) {
-    return existing.prompt === request.prompt && existing.parentArtifactId === request.parentArtifactId && existing.sessionId === request.sessionId;
+    return existing.prompt === request.prompt && existing.parentArtifactId === request.parentArtifactId && existing.sessionId === request.sessionId && JSON.stringify(existing.experiment ?? null) === JSON.stringify(request.experiment ?? null);
   }
   function replay(request) {
     const existing = queue.findIdempotent(request.idempotencyKey);
@@ -415,6 +434,7 @@ export async function createCoordinator({
       const artifacts = [];
       for (const id of await names(join(directory, 'artifacts'))) {
         const receipt = await readReceipt(id);
+        if (receipt?.experiment && receipt.experiment.satisfied !== true) continue;
         artifacts.push({
           id, parentArtifactId: receipt?.parentArtifactId ?? null,
           parentChain: Array.isArray(receipt?.parentChain) ? [...receipt.parentChain, id] : [id],
@@ -454,7 +474,7 @@ export async function createCoordinator({
       const gate = new Promise((resolveGate, rejectGate) => { settle = resolveGate; failSubmit = rejectGate; });
       gate.catch(() => {});
       inflight.set(request.idempotencyKey, {
-        request: { prompt: request.prompt, parentArtifactId: request.parentArtifactId, sessionId: request.sessionId },
+        request: { prompt: request.prompt, parentArtifactId: request.parentArtifactId, sessionId: request.sessionId, experiment: request.experiment ?? null },
         gate,
       });
       try {
@@ -465,6 +485,7 @@ export async function createCoordinator({
         if (queue.activeCount() >= queue.globalActiveLimit || admitting) throw statusError('A remix is already running', 429);
         admitting = true;
         try {
+          if (request.experiment) {validateScenario(request.experiment.scenario);expandInputs(request.experiment.checkpoint?.frames);}
           const ancestors = await lineage(request.parentArtifactId);
           if (await broker.available() !== true) throw isolationError();
           if (!generationConfigured) throw statusError('Public generation is not configured', 503);
@@ -479,7 +500,7 @@ export async function createCoordinator({
           if (phase.uncertain || phase.overrun) throw statusError('Phase billing is uncertain or exceeded a reservation; no further inference admitted', 402);
           const job = {
             schemaVersion: 1, id: randomUUID(), sessionId: request.sessionId, idempotencyKey: request.idempotencyKey,
-            parentArtifactId: request.parentArtifactId, ancestors, prompt: request.prompt, model: PUBLIC_MODEL, status: 'queued',
+            parentArtifactId: request.parentArtifactId, experiment: request.experiment ?? null, ancestors, prompt: request.prompt, model: PUBLIC_MODEL, status: 'queued',
             error: null, artifactId: null, urls: null, inference: null,
             events: [{ status: 'queued', at: new Date().toISOString() }],
             createdAt: new Date().toISOString(), finishedAt: null,
@@ -506,7 +527,7 @@ export async function createCoordinator({
     async cancel(id, sessionId) {
       const job = queue.get(id); if (!job) throw statusError('Run not found', 404);
       if (sessionId !== job.sessionId) throw statusError('Session does not own this job', 403);
-      if (['ready','failed','unsupported','cancelled'].includes(job.status)) return publicJob(job);
+      if (['ready','failed','unsupported','cancelled','unsuccessful'].includes(job.status)) return publicJob(job);
       job.cancelRequested = true; job.events.push({status:'cancel-requested',at:new Date().toISOString()}); await queue.save(job); return publicJob(job);
     },
     async wait(id) {

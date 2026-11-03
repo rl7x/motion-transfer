@@ -98,12 +98,12 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
       else json(404,{error:'Not found'});
       return;
     }
-    const hostedFile=path.match(/^\/artifacts\/([a-f0-9]{64})(?:\/(play\.html|adapter\.ts|adapter\.js|receipt\.json|generation\.json|notices\.txt|download|download\.zip))?$/);
+    const hostedFile=path.match(/^\/artifacts\/([a-f0-9]{64})(?:\/(play\.html|adapter\.ts|adapter\.js|receipt\.json|generation\.json|experiment\.json|notices\.txt|download|download\.zip))?$/);
     if(coordinator&&hostedFile){
       const [,id,part]=hostedFile;
       let bytes;
       if(part==='download.zip'){
-        const files={};for(const name of ['play.html','adapter.ts','adapter.js','intent.json','recipient.json','component.json','receipt.json','generation.json','notices.txt']){const file=await coordinator.artifactFile(id,name);if(file)files[name]=file;}
+        const files={};for(const name of ['play.html','adapter.ts','adapter.js','intent.json','recipient.json','component.json','receipt.json','generation.json','experiment.json','notices.txt']){const file=await coordinator.artifactFile(id,name);if(file)files[name]=file;}
         if(!files['receipt.json']){json(404,{error:'Artifact not found'});return;}
         bytes=zipStored(files);response.setHeader('Content-Disposition',`attachment; filename="parallaxia-${id.slice(0,12)}.zip"`);
       }else bytes=await coordinator.artifactFile(id,part==='download'?'play.html':part??'receipt.json');

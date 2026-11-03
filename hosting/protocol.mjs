@@ -1,9 +1,10 @@
+import { expandInputs, validateScenario } from '../parallaxia/replay.mjs';
 import { JOB_LIMIT, SOURCE_LIMIT, STDOUT_LIMIT } from './constants.mjs';
 
 const OPERATIONS = new Set([
-  'verify-native', 'verify-browser', 'probe-egress', 'probe-env', 'probe-write', 'probe-spin', 'probe-memory',
+  'verify-native', 'verify-browser', 'verify-checkpoint', 'verify-experiment', 'probe-egress', 'probe-env', 'probe-write', 'probe-spin', 'probe-memory',
 ]);
-const VERIFY = new Set(['verify-native', 'verify-browser']);
+const VERIFY = new Set(['verify-native', 'verify-browser', 'verify-checkpoint', 'verify-experiment']);
 const PROBES = new Set(['probe-egress', 'probe-env', 'probe-write', 'probe-spin', 'probe-memory']);
 const FORBIDDEN = ['command', 'argv', 'args', 'shell', 'entrypoint', 'image', 'env', 'privileged', 'network', 'mounts'];
 const hexId = /^[a-f0-9]{64}$/;
@@ -22,7 +23,8 @@ export function parseJob(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw Error('Invalid worker job');
   for (const key of FORBIDDEN) if (Object.hasOwn(value, key)) throw Error('Arbitrary command is not a hosting operation');
   if (!OPERATIONS.has(value.operation)) throw Error('Unknown hosting operation');
-  const allowed = VERIFY.has(value.operation) ? ['operation', 'source', 'intent', 'componentId', 'recipientId'] : ['operation'];
+  const experiment = ['verify-checkpoint','verify-experiment'].includes(value.operation);
+  const allowed = VERIFY.has(value.operation) ? ['operation', 'source', 'intent', 'componentId', 'recipientId', ...(experiment ? ['checkpoint','scenario','parentSource','parentIntent','interventionTick'] : [])] : ['operation'];
   for (const key of Object.keys(value)) if (!allowed.includes(key)) throw Error('Worker job has an unexpected field');
   if (PROBES.has(value.operation)) return { operation: value.operation };
   if (typeof value.source !== 'string' || !value.source.trim() || Buffer.byteLength(value.source) > SOURCE_LIMIT) {
@@ -31,7 +33,16 @@ export function parseJob(value) {
   if (value.recipientId !== undefined && !['roadster', 'parallaxia'].includes(value.recipientId)) throw Error('Unknown recipient');
   if (!intentOk(value.intent)) throw Error('Unsupported Roadster mapping');
   if (!hexId.test(value.componentId)) throw Error('Worker job component id is invalid');
-  return { ...(value.recipientId ? { recipientId: value.recipientId } : {}), operation: value.operation, source: value.source, componentId: value.componentId, intent: {
+  if (experiment) {
+    if (value.recipientId !== 'parallaxia') throw Error('Only PARALLAXIA checkpoints are supported');
+    expandInputs(value.checkpoint?.frames);
+    if (value.operation === 'verify-experiment') {
+      validateScenario(value.scenario);
+      if (!intentOk(value.parentIntent) || typeof value.parentSource !== 'string' || Buffer.byteLength(value.parentSource) > SOURCE_LIMIT) throw Error('Invalid experiment parent');
+      if (!Number.isInteger(value.interventionTick) || value.interventionTick < 0 || value.interventionTick >= value.scenario.horizonTicks) throw Error('Invalid intervention tick');
+    }
+  }
+  return { ...(experiment ? {checkpoint:value.checkpoint,...(value.operation === 'verify-experiment' ? {scenario:value.scenario,parentSource:value.parentSource,parentIntent:value.parentIntent,interventionTick:value.interventionTick} : {})} : {}), ...(value.recipientId ? { recipientId: value.recipientId } : {}), operation: value.operation, source: value.source, componentId: value.componentId, intent: {
     unitScale: value.intent.unitScale, activation: value.intent.activation, direction: value.intent.direction,
   } };
 }
