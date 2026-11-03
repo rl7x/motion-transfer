@@ -75,3 +75,13 @@ The shared ledger now reports $2.16501937 estimated usage, $1.045174398 retained
 ### Remaining limits
 
 The left checkpoint goal remains unsuccessful. Native enemy body contact keeps its upstream 60 Hz position-sampled behavior; swept bullet collisions remain active. Arbitrary goals, mid-dash migration, a second live recipient and additional composition rules are outside this implementation. The missing pinned Muse CLI is the only full-suite skip. Public deployment, visibility changes, outside-network tests, video and submission were not performed. No new PR was merged. Work remains on `feat/parallaxia-live-mechanics`; main remains `a0aed8e`.
+
+## Local testing follow-up
+
+Richard hit the public two-request session quota while testing locally. The two new jobs were unsupported/cancelled and returned a combined estimated $0.014611 usage; both count toward the public request quota regardless of cost. Their $7 reservations were settled in the existing ledger. This is separate from the $7 per-job cap and the $50 phase allowance.
+
+The local operator preview now explicitly has no session request-count limit. Public coordinators retain two jobs per session and reject an unlimited configuration; the frozen v1 task runner explicitly retains its two-job quota. Global concurrency, whole-job reservation, phase/category bounds, uncertain-charge handling and isolated publication remain enforced. No spending or job history was reset.
+
+The React client now stops automatic retries on definitive HTTP admission rejections, restores the editable prompt, and keeps the same idempotency key only for genuine reconnects. The previously blocked browser request was stopped under the old quota before enabling unlimited local sessions, so restarting the preview did not automatically submit another paid request.
+
+Validation: focused hosting/generation tests passed 24/24, including local continuation beyond two requests, restart/idempotency, preserved reservation history and public quota protection. The browser admission regression passed 1/1 after correcting a test initialization script that had attempted storage access in sandboxed game frames. Typecheck, lint, formatting and diff checks passed. These checks used temporary provider fixtures; no extra paid generation or full-suite rerun was performed for this follow-up.

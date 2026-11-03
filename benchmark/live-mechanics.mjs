@@ -33,7 +33,7 @@ export async function runLiveMechanicsTasks({client,directory,allowDirty=false,o
  let local,server,browser;const jobs=new Map();let checkpoint;
  const save=()=>writeFile(join(directory,'results.json'),JSON.stringify(result,null,2)+'\n');
  try{
-  local=await createLocalParallaxia({directory:join(directory,'live'),client,maxJobCostUsd:manifest.maxJobCostUsd});server=await createPreviewServer({coordinator:local.coordinator});
+  local=await createLocalParallaxia({directory:join(directory,'live'),client,maxJobCostUsd:manifest.maxJobCostUsd,sessionJobLimit:2});server=await createPreviewServer({coordinator:local.coordinator});
   result.baselineId=local.baseline.id;assert.equal(local.baseline.componentId,manifest.componentId);
   browser=await chromium.launch({channel:process.env.BROWSER_CHANNEL||'chrome',headless:true,env:cleanEnv()});
   const capture=await browser.newPage();await capture.goto(server.origin+`/parallaxia/artifacts/${local.baseline.id}/play.html?test=1`);await capture.waitForFunction(()=>window.roadsterReady);
@@ -55,7 +55,7 @@ export async function runLiveMechanicsTasks({client,directory,allowDirty=false,o
     }else if(task.operation==='restart-reconnect-and-exact-export-replay'){
      const final=jobs.get(task.parent),experiment=jobs.get(task.experiment);assert.equal(final?.status,'ready');assert.equal(experiment?.status,'ready');
      await server.close();server=null;await local.close();local=null;
-     local=await createLocalParallaxia({directory:join(directory,'live'),client,maxJobCostUsd:manifest.maxJobCostUsd});server=await createPreviewServer({coordinator:local.coordinator});
+     local=await createLocalParallaxia({directory:join(directory,'live'),client,maxJobCostUsd:manifest.maxJobCostUsd,sessionJobLimit:2});server=await createPreviewServer({coordinator:local.coordinator});
      assert.equal((await local.coordinator.job(final.id)).artifactId,final.artifactId);
      const request=result.tasks.find(item=>item.job?.id===final.id).request;assert.equal((await local.coordinator.submit(request)).artifactId,final.artifactId);
      const page=await browser.newPage();await page.goto(server.origin+'/?artifact='+final.artifactId);await page.waitForFunction(id=>document.querySelector('#parallaxia-game')?.getAttribute('src').includes(id),final.artifactId);

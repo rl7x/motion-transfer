@@ -10,7 +10,7 @@ import { recipientRequest, recipientSubmission } from '../agent/recipient-reques
 import { createPhaseBudget, PHASE_ALLOCATIONS } from '../campaign/phase-budget.mjs';
 import {
   FRAME_LIMIT, HOSTING_GENERATION_CONFIRMATION, PROVIDER_DEADLINE_MS, PUBLIC_MODEL, PUBLIC_RESERVE_USD,
-  REMIX_MAX_COST_USD, SHARED_LEDGER_CONFIRMATION, SHARED_PHASE_DIRECTORY, SOURCE_LIMIT, WORKER_UID,
+  REMIX_MAX_COST_USD, SESSION_JOB_LIMIT, SHARED_LEDGER_CONFIRMATION, SHARED_PHASE_DIRECTORY, SOURCE_LIMIT, WORKER_UID,
 } from './constants.mjs';
 import { assertHostedComponentId } from './component-pin.mjs';
 import { isolationError } from './errors.mjs';
@@ -99,16 +99,17 @@ function requireWorker(payload, operation, source, componentId) {
 export async function createCoordinator({
   directory, broker, client = null, releasePublished = false, ledgerDirectory = null, localVerification = false,
   providerDeadlineMs = PROVIDER_DEADLINE_MS, publishedOrigin = null, operatorConfirmation = null, confirmSharedLedger = null, onAdmit = null,
-  maxJobCostUsd = REMIX_MAX_COST_USD,
+  maxJobCostUsd = REMIX_MAX_COST_USD, sessionJobLimit = SESSION_JOB_LIMIT,
 } = {}) {
   if (releasePublished === true) throw Error('This release build cannot publish or spend the public reserve');
   if (!broker?.submit || !broker.available) throw Error('Hosted mode requires an isolated worker broker');
   if (!Number.isFinite(providerDeadlineMs) || providerDeadlineMs <= 0) throw Error('Invalid provider deadline');
   if (!Number.isFinite(maxJobCostUsd) || maxJobCostUsd <= 0 || maxJobCostUsd > REMIX_MAX_COST_USD) throw Error('Invalid whole-job cost cap');
+  if (sessionJobLimit === null && localVerification !== true) throw Error('Unlimited sessions are only supported in the local operator preview');
   // A $7 envelope fits the existing $10 reserve allocation. Keep the $50 ledger,
   // its fixed allocations and every historical reservation unchanged.
   const budgetCategory = maxJobCostUsd > PHASE_ALLOCATIONS.remix ? 'reserve' : 'remix';
-  const queue = await createJobQueue(directory);
+  const queue = await createJobQueue(directory, { sessionJobLimit });
   const parents = join(directory, 'parents');
   await mkdir(parents, { recursive: true });
   const runners = new Map();
@@ -467,7 +468,7 @@ export async function createCoordinator({
       }
       return {
         playback: true, generationConfigured, releasePublished: false, publicReservedUsd: 0,
-        publicReserveUsd: PUBLIC_RESERVE_USD, model: PUBLIC_MODEL, maxJobCostUsd,
+        publicReserveUsd: PUBLIC_RESERVE_USD, model: PUBLIC_MODEL, maxJobCostUsd, sessionJobLimit,
         routes: {
           catalog: '/api/catalog', remix: '/api/remixes', job: '/api/remixes/:id', privacy: '/privacy',
           parent: '/parents/:id', play: '/artifacts/:id/play.html', creator: '/',
@@ -496,7 +497,9 @@ export async function createCoordinator({
         if (onAdmit) await onAdmit(request);
         const raced = replay(request);
         if (raced) { settle(raced); return raced; }
-        if (queue.sessionCount(request.sessionId) >= queue.sessionJobLimit) throw statusError('Session remix quota is exhausted', 429);
+        if (queue.sessionJobLimit !== null && queue.sessionCount(request.sessionId) >= queue.sessionJobLimit) {
+          throw statusError(`Session request quota of ${queue.sessionJobLimit} jobs is exhausted; this is separate from the dollar budget`, 429);
+        }
         if (queue.activeCount() >= queue.globalActiveLimit || admitting) throw statusError('A remix is already running', 429);
         admitting = true;
         try {
@@ -556,7 +559,7 @@ export async function createCoordinator({
     status() {
       return {
         ok: true, model: PUBLIC_MODEL, publicReserveUsd: PUBLIC_RESERVE_USD, publicReservedUsd: 0,
-        releasePublished: false, recoveryEnabled: false, generationConfigured, maxJobCostUsd,
+        releasePublished: false, recoveryEnabled: false, generationConfigured, maxJobCostUsd, sessionJobLimit,
       };
     },
     async close() {

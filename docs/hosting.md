@@ -97,3 +97,9 @@ PARALLAXIA roots may be seeded from their independently verified artifact direct
 Validation on this Mac: the formerly failing `npm run verify:hosting:isolation` passed with no skips (218.24 seconds). The direct Roadster worker response also passed all eight browser gates; the historical other-Mac failure could not be reproduced. Rejected payloads are now retained with failed attempts rather than discarded behind the generic publication error. No isolation check was weakened.
 
 The persistent age/privacy/model banner was removed at Richard’s request. Playing has no age dialog. A first new creation uses a focused age-confirmation dialog; cancel and Escape send no request, and confirmation resumes the pending creation once. Backend age, invite, host/origin and quota checks remain. The current whole-job cap is returned in status and displayed by the React request panel. Historical frozen-task v1 retains its explicit $0.15 cap and measurements.
+
+## Local request limits
+
+The local operator preview no longer applies the public two-request session quota. Its coordinator uses an explicit local-only unlimited session setting; public coordinators keep the two-request default and reject an unlimited setting. Frozen-task v1 still explicitly uses two jobs per session. The $7 whole-job reservation, existing $50 ledger, reserve allocation, one active job at a time, worker isolation and uncertainty checks remain enforced. Failed, unsupported and cancelled jobs stay in history.
+
+A definitive HTTP admission rejection (including quota, budget or invalid-request errors) stops automatic retries and restores the editable prompt. A transport or server error continues reconnecting with the same idempotency key. The UI only says “reconnecting” while it is actually retrying. Rejections are not provider charges; admitted unsupported or cancelled jobs may already have returned usage and that usage remains recorded.

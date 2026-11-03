@@ -14,6 +14,7 @@ async function atomicWrite(path, value) {
 export async function createJobQueue(directory, {
   sessionJobLimit = SESSION_JOB_LIMIT, globalActiveLimit = GLOBAL_ACTIVE_LIMIT,
 } = {}) {
+  if (sessionJobLimit !== null && (!Number.isSafeInteger(sessionJobLimit) || sessionJobLimit < 1)) throw Error('Invalid session job limit');
   const root = join(directory, 'jobs');
   await mkdir(root, { recursive: true });
   const jobs = new Map();

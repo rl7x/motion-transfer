@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { readGenerationMode } from './data-source';
-import { fetchJson, postJson, errorMessage } from './api';
+import { ApiError, fetchJson, postJson, errorMessage } from './api';
 import { ExperimentResults, type ExperimentReceipt } from './motion-experiment';
 import { readSession, writeSession } from './creator/session';
 import type { PendingRemix } from './creator/types';
@@ -38,11 +38,16 @@ export function MotionGeneration({
   const [session] = useState(readSession);
   const [pending, setPending] = useState<PendingRemix | null>(playback ? null : session.pending);
   const [job, setJob] = useState<MotionJob | null>(null);
-  const [prompt, setPrompt] = useState('Make the dash backward, only on a fresh press.');
-  const [composition, setComposition] = useState<'dash-end-shot' | 'none' | ''>('');
+  const [prompt, setPrompt] = useState(
+    session.pending?.prompt ?? 'Make the dash backward, only on a fresh press.',
+  );
+  const [composition, setComposition] = useState<'dash-end-shot' | 'none' | ''>(
+    session.pending?.composition ?? '',
+  );
   const [enabled, setEnabled] = useState(false);
   const [maxJobCostUsd, setMaxJobCostUsd] = useState(7);
   const [error, setError] = useState('');
+  const [reconnecting, setReconnecting] = useState(false);
   const [now, setNow] = useState(Date.now);
   useEffect(() => {
     const controller = new AbortController();
@@ -87,6 +92,7 @@ export function MotionGeneration({
         if (controller.signal.aborted) return;
         setJob(result);
         setError('');
+        setReconnecting(false);
         if (!pending.jobId) {
           const next = { ...pending, jobId: result.id };
           writeSession({ ...session, pending: next });
@@ -97,6 +103,20 @@ export function MotionGeneration({
       } catch (failure) {
         if (!controller.signal.aborted) {
           setError(errorMessage(failure));
+          if (
+            failure instanceof ApiError &&
+            failure.status >= 400 &&
+            failure.status < 500 &&
+            failure.status !== 408
+          ) {
+            setReconnecting(false);
+            setPrompt(pending.prompt);
+            setComposition(pending.composition ?? '');
+            writeSession({ ...session, pending: null });
+            setPending(null);
+            return;
+          }
+          setReconnecting(true);
           timer = setTimeout(() => void poll(), 2500);
         }
       }
@@ -148,6 +168,7 @@ export function MotionGeneration({
             setJob(null);
             setPending(next);
             setError('');
+            setReconnecting(false);
           };
           if (age.allow(false, submit)) submit();
         }}
@@ -248,7 +269,10 @@ export function MotionGeneration({
       )}
       {error && (
         <p role="alert">
-          {error} Reconnecting with the same request ID; no new request is created.
+          {error}{' '}
+          {reconnecting
+            ? 'Reconnecting with the same request ID; no new request is created.'
+            : 'Automatic retries stopped. Review the request before submitting again.'}
         </p>
       )}
       <p>

@@ -99,6 +99,34 @@ function remix(parentId, sessionId = randomUUID()) {
   };
 }
 
+test('the local operator can continue beyond two jobs without resetting spending or history', async t => {
+  const broker=fakeBroker(verified(parentComponent.id,Buffer.from('<!doctype html><title>local</title>')));
+  const client=createFakeMetaClient({source:'export function init(){return {}}\n',intent});
+  const {directory,coordinator,parentId,ledgerDirectory}=await setup(t,broker,client,{sessionJobLimit:null});
+  const session=randomUUID(),requests=[];
+  for(let count=0;count<3;count++){
+    const request=remix(parentId,session);requests.push(request);
+    const job=await coordinator.wait((await coordinator.submit(request)).id);assert.equal(job.status,'ready',job.error);
+  }
+  assert.equal(coordinator.status().sessionJobLimit,null);assert.equal(coordinator.status().maxJobCostUsd,7);
+  const budget=await createPhaseBudget(ledgerDirectory),before=await budget.journal();
+  assert.equal(before.reservations.length,3);assert.equal(before.definition.maxCostUsd,50);
+  assert.ok(before.reservations.every(entry=>entry.maxCostUsd===7&&entry.category==='reserve'&&entry.status==='settled'));
+  await coordinator.close();
+  const reopened=await createCoordinator({directory,broker,client,ledgerDirectory,localVerification:true,sessionJobLimit:null});
+  t.after(()=>reopened.close());
+  await reopened.submit(requests[0]);assert.equal(client.calls.filter(call=>call.method==='respond').length,3);
+  const fourth=await reopened.wait((await reopened.submit(remix(parentId,session))).id);assert.equal(fourth.status,'ready',fourth.error);
+  const after=await budget.journal();assert.deepEqual(after.reservations.slice(0,3),before.reservations);
+  assert.equal(after.reservations.length,4);assert.deepEqual(after.definition,before.definition);
+});
+
+test('a public coordinator cannot disable its session quota', async t => {
+  const directory=await temp(t),broker=fakeBroker(verified(parentComponent.id,Buffer.from('<!doctype html>')));
+  await assert.rejects(()=>createCoordinator({directory,broker,sessionJobLimit:null}),/only supported in the local operator preview/);
+  for(const sessionJobLimit of [0,-1,NaN,1.5])await assert.rejects(()=>createJobQueue(directory,{sessionJobLimit}),/Invalid session job limit/);
+});
+
 test('worker jobs reject arbitrary commands and unsafe launch flags', async t => {
   assert.throws(() => parseJob({ operation: 'verify-native', command: 'id', source: 'x', intent }), /Arbitrary command/);
   assert.throws(() => parseJob({ operation: 'verify-native', shell: '/bin/sh', source: 'x', intent }), /Arbitrary command/);
