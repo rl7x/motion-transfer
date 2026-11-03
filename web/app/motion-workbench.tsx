@@ -12,6 +12,9 @@ interface Baseline {
   componentId: string;
   play: string;
   practice: string;
+  practiceDownload?: string;
+  practiceReport?: string;
+  historicalRoadster?: string;
   download: string;
   report: string;
   recipient: { name: string; unitMapping: string };
@@ -24,6 +27,8 @@ export function MotionWorkbench() {
     play: string;
     download: string;
     report: string;
+    rule?: { kind: string } | null;
+    fresh?: boolean;
   } | null>(null);
   const [checkpoint, setCheckpoint] = useState<Checkpoint | null>(null);
   const [experiment, setExperiment] = useState<unknown>(null);
@@ -45,17 +50,20 @@ export function MotionWorkbench() {
         setBase(value);
         const id = new URL(location.href).searchParams.get('artifact');
         if (id && /^[a-f0-9]{64}$/.test(id)) {
-          const receipt = await fetchJson<{ componentId: string; recipient: { id: string } }>(
-            '/artifacts/' + id,
-            { signal: controller.signal },
-          );
+          const receipt = await fetchJson<{
+            componentId: string;
+            recipient: { id: string };
+            rule?: { kind: string } | null;
+            fresh?: boolean;
+          }>('/artifacts/' + id + '/receipt.json', { signal: controller.signal });
           if (receipt.componentId !== value.componentId || receipt.recipient.id !== 'parallaxia')
             throw Error('Wrong recipient or component');
           setActive({
             id,
             play: '/artifacts/' + id + '/play.html',
             download: '/artifacts/' + id + '/download.zip',
-            report: '/artifacts/' + id,
+            report: '/artifacts/' + id + '/receipt.json',
+            rule: receipt.rule,
           });
         }
       })
@@ -100,7 +108,11 @@ export function MotionWorkbench() {
             native movement, enemy rules and collisions.
           </p>
           <p className="pill">
-            {active ? 'NEW META GENERATION · VERIFIED CHILD' : 'VERIFIED REUSE · NO MODEL REQUEST'}
+            {active
+              ? active.fresh
+                ? 'NEW META GENERATION · VERIFIED CHILD'
+                : 'SAVED META-GENERATED CHILD · REUSE'
+              : 'VERIFIED REUSE · NO MODEL REQUEST'}
           </p>
           <p>
             Component <code>{base?.componentId ?? 'Loading…'}</code>
@@ -163,16 +175,44 @@ export function MotionWorkbench() {
               </button>
             </div>
             <p role="status">{status}</p>
+            {practice && (
+              <p>
+                Shielded practice reuses the baseline integration. Return to native play to use your
+                selected child.
+              </p>
+            )}
+            {active?.rule?.kind === 'dash-end-shot' && (
+              <p>
+                Host composition: dash-end → one next-tick native shot attempt, subject to the
+                native cooldown and projectile cap.
+              </p>
+            )}
             <p>
               Focus the game. Arrows/WASD move; Space/Z shoots; X dashes. Native mode adds no
               invulnerability. Practice measures position with a shield, not survival.
             </p>
             {base && (
               <p>
-                <a href={linkHref(active?.download ?? base.download)} download>
+                <a
+                  href={linkHref(
+                    practice
+                      ? (base.practiceDownload ?? base.download)
+                      : (active?.download ?? base.download),
+                  )}
+                  download
+                >
                   Download this exact game
                 </a>{' '}
-                · <a href={linkHref(active?.report ?? base.report)}>Recipient verification</a>
+                ·{' '}
+                <a
+                  href={linkHref(
+                    practice
+                      ? (base.practiceReport ?? base.report)
+                      : (active?.report ?? base.report),
+                  )}
+                >
+                  Recipient verification
+                </a>
               </p>
             )}
           </article>
@@ -201,7 +241,9 @@ export function MotionWorkbench() {
                 id: job.artifactId,
                 play: job.urls.play,
                 download: '/artifacts/' + job.artifactId + '/download.zip',
-                report: job.urls.receipt,
+                report: '/artifacts/' + job.artifactId + '/receipt.json',
+                fresh: true,
+                rule: job.rule,
               });
               history.pushState({}, '', '/?artifact=' + job.artifactId);
             }}
@@ -221,8 +263,10 @@ export function MotionWorkbench() {
 
         <p>
           <a href="/accepted/jujump/index.html">Same accepted component in JUJUMP</a> ·{' '}
-          <a href="/?destination=roadster">Historical Roadster</a> ·{' '}
-          <a href="/donor/play">Compiled donor</a>
+          <a href={linkHref(base?.historicalRoadster ?? '/?destination=roadster')}>
+            Historical Roadster
+          </a>{' '}
+          · <a href="/donor/play">Compiled donor</a>
         </p>
         <footer>
           Dashy Dango by willGuimont · PARALLAXIA and JUJUMP by Kenta Cho / ABA Games.{' '}

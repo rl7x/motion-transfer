@@ -7,6 +7,7 @@ import { loadPinnedComponent } from '../hosting/component-load.mjs';
 import { ACCEPTED_COMPONENT_ID } from '../hosting/component-pin.mjs';
 import { compileAdapter } from '../transfer/adapter.mjs';
 import { loadParallaxiaSim } from '../parallaxia/sim.mjs';
+import {installParallaxiaRule} from '../parallaxia/rule.mjs';
 import { createParallaxiaPort } from '../parallaxia/port.mjs';
 import { parallaxiaDescriptor } from '../parallaxia/recipient.mjs';
 import { buildParallaxiaFrame } from '../parallaxia/build.mjs';
@@ -24,6 +25,7 @@ async function fixture() {
   const {component,adapter}=new vm.Script(`${compiled.componentCode}\n${compiled.code}\n({component:recovered,adapter:candidate})`).runInNewContext(Object.create(null));
   const recipient=await parallaxiaDescriptor(),engine=await loadParallaxiaSim();
   const identity={componentId:ACCEPTED_COMPONENT_ID,recipientRevision:recipient.revision,hooksSha256:recipient.hooksSha256,adapterSha256:digest(source)};
+  installParallaxiaRule(null,engine);
   const port=createParallaxiaPort({component,adapter,defaults:compiled.defaults,intent});
   globalThis.roadsterPort=port;globalThis.parallaxiaChallengeShield=false;
   const sim=engine.createSim({seed:7});for(let i=0;i<40;i++)engine.stepSim(sim,0);

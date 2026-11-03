@@ -57,6 +57,7 @@ export interface RemixJob {
 
 export interface PendingRemix {
   experiment?: unknown;
+  composition?: 'dash-end-shot' | 'none' | null;
   idempotencyKey: string;
   parentArtifactId: string;
   prompt: string;

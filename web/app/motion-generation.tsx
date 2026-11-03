@@ -17,6 +17,7 @@ export interface MotionJob {
   finishedAt: string | null;
   urls: { play: string; download: string; receipt: string; parent?: string } | null;
   experiment?: ExperimentReceipt | null;
+  rule?: { id: string | null; kind: string } | null;
 }
 const terminal = (status: string) =>
   ['ready', 'failed', 'unsupported', 'cancelled', 'unsuccessful'].includes(status);
@@ -35,6 +36,7 @@ export function MotionGeneration({
   const [pending, setPending] = useState<PendingRemix | null>(session.pending);
   const [job, setJob] = useState<MotionJob | null>(null);
   const [prompt, setPrompt] = useState('Make the dash backward, only on a fresh press.');
+  const [composition, setComposition] = useState<'dash-end-shot' | 'none' | ''>('');
   const [enabled, setEnabled] = useState(false);
   const [error, setError] = useState('');
   const [now, setNow] = useState(Date.now);
@@ -67,6 +69,7 @@ export function MotionGeneration({
                 sessionId: session.sessionId,
                 adultConfirmed: true,
                 ...(pending.experiment ? { experiment: pending.experiment } : {}),
+                ...(pending.composition ? { composition: pending.composition } : {}),
               }),
               signal: controller.signal,
             });
@@ -113,6 +116,7 @@ export function MotionGeneration({
           if (busy || !enabled || !age.allow(false)) return;
           const next = {
             experiment,
+            composition: experiment ? null : composition || null,
             idempotencyKey: crypto.randomUUID(),
             parentArtifactId: parentId,
             prompt: prompt.trim(),
@@ -124,6 +128,37 @@ export function MotionGeneration({
           setError('');
         }}
       >
+        {!experiment && (
+          <label>
+            Request kind{' '}
+            <select
+              id="motion-task"
+              value={composition}
+              onChange={(event) => {
+                const value = event.target.value as 'dash-end-shot' | 'none' | '';
+                setComposition(value);
+                setPrompt(
+                  value === 'dash-end-shot'
+                    ? 'When the recovered dash ends, fire one additional native shot. Keep the dash mapping unchanged.'
+                    : value === 'none'
+                      ? 'Remove the dash-end shot rule. Keep the dash mapping unchanged.'
+                      : 'Make the dash backward, only on a fresh press.',
+                );
+              }}
+            >
+              <option value="">Adapt distance, direction or activation</option>
+              <option value="dash-end-shot">Compose dash-end → native shot</option>
+              <option value="none">Remove composition, keep the dash</option>
+            </select>
+          </label>
+        )}
+        {composition && !experiment && (
+          <p>
+            One native shot attempt on the next tick. Ordinary shooting runs first; the native
+            cooldown and projectile cap can suppress the extra shot. A suppressed action is
+            consumed.
+          </p>
+        )}
         <label htmlFor="motion-prompt">Request a supported alternative</label>
         <textarea
           id="motion-prompt"

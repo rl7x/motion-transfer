@@ -27,6 +27,7 @@ export function patchParallaxiaSim(source) {
   sim.pitch = 0;
   sim.roll = 0;
   globalThis.roadsterPort?.reset(sim);
+  globalThis.parallaxiaRuleReset?.(sim);
 }`,
     'startRun reset hook',
   );
@@ -35,6 +36,7 @@ export function patchParallaxiaSim(source) {
     '    updateBullets(sim);\n    updateMultiplier(sim);\n  }',
     `    updateBullets(sim);
     updateMultiplier(sim);
+    globalThis.parallaxiaRuleStep?.(sim);
     globalThis.parallaxiaChallengeStep?.(sim);
   }`,
     'stepSim challenge hook',
@@ -43,6 +45,7 @@ export function patchParallaxiaSim(source) {
 }
 
 export function patchParallaxiaPlayer(source) {
+  source = replaceOnce(source, 'function fireShot(sim) {', 'export function fireShot(sim) {', 'native shot action export');
   let out = replaceOnce(
     source,
     `  if (shipAbsent(ship)) return;
@@ -96,6 +99,7 @@ export function patchParallaxiaPlayer(source) {
       port.substep(sim, sim.phase === "play" && !absent);
     }
   }
+  globalThis.parallaxiaRuleEvent?.(sim, port?.snapshot(sim)?.output?.events ?? []);
   if (absent) return;
   const dashStep = port?.movement(sim);
   const dx = dashStep !== null && dashStep !== undefined ? dashStep * 4 : vx;
@@ -191,8 +195,9 @@ export async function loadParallaxiaSim({ native = false } = {}) {
   const entry = `
     export { createSim, stepSim, FPS, FRAME_MS, capabilities, observe, hashState } from './sim/sim.js';
     export { INPUT } from './sim/input.js';
-    export { missShip, updateShip } from './sim/player.js';
-    export { FIELD, VIEW, SHIP, MODES } from './sim/constants.js';
+    export { missShip, updateShip, shipAbsent } from './sim/player.js';
+    ${native ? '' : "export { fireShot } from './sim/player.js';"}
+    export { FIELD, VIEW, SHIP, MODES, SHOT } from './sim/constants.js';
   `;
   const virtual = {
     name: 'parallaxia-sim-entry',

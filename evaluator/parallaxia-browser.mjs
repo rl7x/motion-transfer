@@ -4,8 +4,8 @@ import { chromium } from 'playwright';
 import { buildParallaxiaFrame } from '../parallaxia/build.mjs';
 import { digest } from '../component/build.mjs';
 
-export async function verifyParallaxiaBrowser(source, intent, { componentRef } = {}) {
-  const built = await buildParallaxiaFrame({ source, intent, componentRef, collisionPolicy: 'native' });
+export async function verifyParallaxiaBrowser(source, intent, { componentRef, ruleSource = null } = {}) {
+  const built = await buildParallaxiaFrame({ source, intent, componentRef, ruleSource, collisionPolicy: 'native' });
   const server = createServer((req, res) => { res.writeHead(200, { 'Content-Type': 'text/html', 'Content-Security-Policy': 'sandbox allow-scripts' }); res.end(built.html); });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const origin = 'http://127.0.0.1:' + server.address().port;
@@ -26,6 +26,7 @@ export async function verifyParallaxiaBrowser(source, intent, { componentRef } =
     assert.equal(run.frames.at(-1).motion.coreCalls, 50);
     assert.equal(run.frames.filter(frame => frame.motion.output.ownsMotion).length, 8);
     for (const frame of run.frames) assert.equal(frame.car.position.y, run.before.car.position.y);
+    if (built.environment.ruleId) {assert.equal(run.frames.at(-1).game.rule.attempts,1);assert.equal(run.frames.at(-1).game.rule.fired,1);}
     results.push({ name: 'standalone-native-frame-and-component-clock', passed: true, updates: 50, activeUpdates: 8 });
     await page.keyboard.down('KeyX'); assert.equal(await page.evaluate(() => roadsterSnapshot().motion.dashHeld), true);
     await page.keyboard.up('KeyX'); assert.equal(await page.evaluate(() => roadsterSnapshot().motion.dashHeld), false);

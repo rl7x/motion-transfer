@@ -107,7 +107,7 @@ export function admitProductionRequest({ policy, headers = {}, remoteAddress: pe
   }
   if (/^\/api\/remixes\/[0-9a-f-]{36}$/i.test(pathname)) return { ok: true, route: 'job' };
   if (/^\/parents\/[a-f0-9]{64}(?:\/download)?$/.test(pathname)) return { ok: true, route: 'parent' };
-  if (/^\/artifacts\/[a-f0-9]{64}(?:\/(?:play\.html|adapter\.js|adapter\.ts|receipt\.json|generation\.json|experiment\.json|notices\.txt|download|download\.zip))?$/.test(pathname)) return { ok: true, route: 'artifact' };
+  if (/^\/artifacts\/[a-f0-9]{64}(?:\/(?:play\.html|adapter\.js|adapter\.ts|receipt\.json|generation\.json|experiment\.json|rule\.mjs|notices\.txt|download|download\.zip))?$/.test(pathname)) return { ok: true, route: 'artifact' };
   return deny(404, 'Not found');
 }
 
@@ -120,7 +120,8 @@ export function acceptInvite(policy, code) {
 export function parseRemixBody(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw Error('Invalid remix request');
   const keys = Object.keys(value).sort().join(',');
-  if (!['adultConfirmed,idempotencyKey,parentArtifactId,prompt,sessionId','adultConfirmed,experiment,idempotencyKey,parentArtifactId,prompt,sessionId'].includes(keys)) throw Error('Invalid remix request');
+  if (!['adultConfirmed,idempotencyKey,parentArtifactId,prompt,sessionId','adultConfirmed,experiment,idempotencyKey,parentArtifactId,prompt,sessionId','adultConfirmed,composition,idempotencyKey,parentArtifactId,prompt,sessionId'].includes(keys)) throw Error('Invalid remix request');
+  if(value.composition!=null&&!['dash-end-shot','none'].includes(value.composition))throw Error('Unsupported composition');
   if (value.adultConfirmed !== true) throw Error('Remix creation is limited to adults 18 and older');
   if (typeof value.prompt !== 'string' || !value.prompt.trim() || value.prompt.length > PROMPT_LIMIT) throw Error('Invalid remix prompt');
   if (!hex.test(value.parentArtifactId)) throw Error('Invalid parent artifact');
@@ -129,6 +130,6 @@ export function parseRemixBody(value) {
   return {
     prompt: value.prompt, parentArtifactId: value.parentArtifactId,
     idempotencyKey: value.idempotencyKey.toLowerCase(), sessionId: value.sessionId.toLowerCase(), adultConfirmed: true,
-    ...(value.experiment ? {experiment:value.experiment} : {}), model: PUBLIC_MODEL,
+    ...(value.experiment ? {experiment:value.experiment} : {}), ...(value.composition ? {composition:value.composition}:{}), model: PUBLIC_MODEL,
   };
 }

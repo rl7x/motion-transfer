@@ -34,21 +34,21 @@ export function expandInputs(frames, limit = MAX_CHECKPOINT_TICKS) {
 }
 export function validateCheckpoint(value, identity) {
   if (!value || value.version !== 1 || value.collisionPolicy !== 'native' || value.boundaryDash !== false
-    || value.ruleId !== null || value.seed !== 7 || value.mode !== 'normal' || value.startSector !== 1
+    || (value.ruleId !== null && !/^[a-f0-9]{64}$/.test(value.ruleId)) || value.seed !== 7 || value.mode !== 'normal' || value.startSector !== 1
     || !Number.isInteger(value.tick) || value.tick < 0 || value.tick > MAX_CHECKPOINT_TICKS || !/^[a-f0-9]{64}$/.test(value.stateDigest)) throw Error('Unsupported checkpoint');
-  for (const key of ['componentId', 'recipientRevision', 'hooksSha256', 'adapterSha256']) {
-    if (value[key] !== identity[key]) throw Error('Checkpoint identity differs: ' + key);
+  for (const key of ['componentId', 'recipientRevision', 'hooksSha256', 'adapterSha256', 'ruleId']) {
+    if ((value[key] ?? null) !== (identity[key] ?? null)) throw Error('Checkpoint identity differs: ' + key);
   }
   const inputs = expandInputs(value.frames);
   if (inputs.length !== value.tick) throw Error('Checkpoint tick differs from transcript');
   return inputs;
 }
 export function checkpointState(sim, port) {
-  return JSON.parse(JSON.stringify({ native: sim, motion: port.snapshot(sim), rule: null }));
+  return JSON.parse(JSON.stringify({ native: sim, motion: port.snapshot(sim), rule: sim.motionRule ?? null }));
 }
 export async function captureCheckpoint({ sim, port, inputs, identity }) {
   port.setDash(false);
-  const checkpoint = { version: 1, ...identity, ruleId: null, seed: 7, mode: 'normal', startSector: 1,
+  const checkpoint = { version: 1, ...identity, ruleId: identity.ruleId ?? null, seed: 7, mode: 'normal', startSector: 1,
     tick: inputs.length, frames: encodeInputs(inputs), boundaryDash: false, collisionPolicy: 'native',
     stateDigest: await replayDigest(checkpointState(sim, port)) };
   validateCheckpoint(checkpoint, identity);

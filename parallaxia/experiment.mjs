@@ -1,10 +1,12 @@
 import { loadParallaxiaSim } from './sim.mjs';
+import { installParallaxiaRule } from './rule.mjs';
 import { createParallaxiaPort } from './port.mjs';
 import { validateCheckpoint, validateScenario, checkpointState, replayDigest, NATIVE_INPUT_MASK, DASH_INPUT } from './replay.mjs';
 
-export async function reconstructCheckpoint({ checkpoint, identity, component, adapter, defaults, intent }) {
+export async function reconstructCheckpoint({ checkpoint, identity, component, adapter, defaults, intent, rule = null }) {
   const inputs = validateCheckpoint(checkpoint, identity);
   const engine = await loadParallaxiaSim();
+  installParallaxiaRule(rule, engine);
   const port = createParallaxiaPort({ component, adapter, defaults, intent });
   globalThis.roadsterPort = port; globalThis.parallaxiaChallengeShield = false;
   const sim = engine.createSim({ seed: checkpoint.seed, mode: checkpoint.mode, startSector: checkpoint.startSector });
@@ -20,7 +22,7 @@ export async function compareExperiment({ checkpoint, identity, scenario, compon
   if (!Number.isInteger(interventionTick) || interventionTick < 0 || interventionTick >= scenario.horizonTicks) throw Error('Dash intervention exceeds the fixed horizon');
   const branches = [];
   for (const [kind, source] of [['original', parent], ['candidate', candidate]]) {
-    const run = await reconstructCheckpoint({ checkpoint, identity, component, adapter: source.adapter, defaults: source.defaults, intent: source.intent });
+    const run = await reconstructCheckpoint({ checkpoint, identity, component, adapter: source.adapter, defaults: source.defaults, intent: source.intent, rule: source.rule });
     const startLives = run.sim.lives; const frames = []; let reachedTick = null; let lostLife = false;
     for (let tick = 0; tick < controls.length; tick++) {
       const dash = kind === 'candidate' && tick === interventionTick;

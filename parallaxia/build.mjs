@@ -5,6 +5,7 @@ import { loadParallaxia } from '../recipients/parallaxia/load.mjs';
 import { resolveComponentRef, componentIdentity } from '../component/reference.mjs';
 import { PARALLAXIA_SOURCE, parallaxiaHooks } from './sim.mjs';
 import { ROADSTER_INTENT, validateRoadsterIntent } from '../roadster/port.mjs';
+import { readRuleSource } from './rule.mjs';
 import { parallaxiaDescriptor } from './recipient.mjs';
 import { assertParallaxiaSource } from '../evaluator/parallaxia-source.mjs';
 import { digest } from '../component/build.mjs';
@@ -16,6 +17,7 @@ export async function buildParallaxiaFrame({
   intent = ROADSTER_INTENT,
   componentRef,
   challenge,
+  ruleSource = null,
   collisionPolicy = challenge ? 'practice-shield' : 'native',
 } = {}) {
   validateRoadsterIntent(intent);
@@ -42,6 +44,7 @@ export async function buildParallaxiaFrame({
     'parallaxia/port.mjs',
     'parallaxia/recipient.mjs',
     'parallaxia/replay.mjs',
+    'parallaxia/rule.mjs',
     'evaluator/parallaxia-source.mjs',
     'web/parallaxia-entry.js',
     'transfer/adapter.mjs',
@@ -61,7 +64,11 @@ export async function buildParallaxiaFrame({
       await readFile(new URL('../web/parallaxia-challenge-entry.js', import.meta.url)),
     );
   }
+  const rule = readRuleSource(ruleSource);
+  const ruleId = rule ? digest(ruleSource) : null;
   const environment = {
+    ruleId, ruleSourceSha256: ruleSource ? digest(ruleSource) : null,
+    composition: rule ? { ...rule, policy: 'One next-tick native attempt; honor native shot cooldown and cap, consume even if suppressed. Ordinary shooting runs first.' } : null,
     recipient: await parallaxiaDescriptor(),
     collisionPolicy,
     addedDashInvulnerability: false,
@@ -106,8 +113,8 @@ export async function buildParallaxiaFrame({
       intent,
       componentId: component.provenance.id,
       transferred: Boolean(source),
-      collisionPolicy,
-      replayIdentity: { componentId: component.provenance.id, recipientRevision: recipient.manifest.revision, hooksSha256: environment.recipient.hooksSha256, adapterSha256: source ? digest(source) : null },
+      collisionPolicy, rule, ruleId,
+      replayIdentity: { ruleId, componentId: component.provenance.id, recipientRevision: recipient.manifest.revision, hooksSha256: environment.recipient.hooksSha256, adapterSha256: source ? digest(source) : null },
       ...(challenge ? { challenge } : {}),
     })};`,
   };

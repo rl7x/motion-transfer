@@ -24,13 +24,14 @@ export function parseJob(value) {
   for (const key of FORBIDDEN) if (Object.hasOwn(value, key)) throw Error('Arbitrary command is not a hosting operation');
   if (!OPERATIONS.has(value.operation)) throw Error('Unknown hosting operation');
   const experiment = ['verify-checkpoint','verify-experiment'].includes(value.operation);
-  const allowed = VERIFY.has(value.operation) ? ['operation', 'source', 'intent', 'componentId', 'recipientId', ...(experiment ? ['checkpoint','scenario','parentSource','parentIntent','interventionTick'] : [])] : ['operation'];
+  const allowed = VERIFY.has(value.operation) ? ['operation', 'source', 'intent', 'componentId', 'recipientId', 'ruleSource', ...(experiment ? ['checkpoint','scenario','parentSource','parentIntent','interventionTick','parentRuleSource'] : [])] : ['operation'];
   for (const key of Object.keys(value)) if (!allowed.includes(key)) throw Error('Worker job has an unexpected field');
   if (PROBES.has(value.operation)) return { operation: value.operation };
   if (typeof value.source !== 'string' || !value.source.trim() || Buffer.byteLength(value.source) > SOURCE_LIMIT) {
     throw Error('Adapter source must contain 1–16 KB');
   }
   if (value.recipientId !== undefined && !['roadster', 'parallaxia'].includes(value.recipientId)) throw Error('Unknown recipient');
+  for(const key of ['ruleSource','parentRuleSource']) if(value[key]!=null && (value.recipientId!=='parallaxia'||typeof value[key]!=='string'||Buffer.byteLength(value[key])>2048)) throw Error('Invalid bounded rule module');
   if (!intentOk(value.intent)) throw Error('Unsupported Roadster mapping');
   if (!hexId.test(value.componentId)) throw Error('Worker job component id is invalid');
   if (experiment) {
@@ -42,7 +43,7 @@ export function parseJob(value) {
       if (!Number.isInteger(value.interventionTick) || value.interventionTick < 0 || value.interventionTick >= value.scenario.horizonTicks) throw Error('Invalid intervention tick');
     }
   }
-  return { ...(experiment ? {checkpoint:value.checkpoint,...(value.operation === 'verify-experiment' ? {scenario:value.scenario,parentSource:value.parentSource,parentIntent:value.parentIntent,interventionTick:value.interventionTick} : {})} : {}), ...(value.recipientId ? { recipientId: value.recipientId } : {}), operation: value.operation, source: value.source, componentId: value.componentId, intent: {
+  return { ...(value.ruleSource != null ? {ruleSource:value.ruleSource}:{}), ...(experiment ? {checkpoint:value.checkpoint,...(value.operation === 'verify-experiment' ? {scenario:value.scenario,parentSource:value.parentSource,parentRuleSource:value.parentRuleSource??null,parentIntent:value.parentIntent,interventionTick:value.interventionTick} : {})} : {}), ...(value.recipientId ? { recipientId: value.recipientId } : {}), operation: value.operation, source: value.source, componentId: value.componentId, intent: {
     unitScale: value.intent.unitScale, activation: value.intent.activation, direction: value.intent.direction,
   } };
 }

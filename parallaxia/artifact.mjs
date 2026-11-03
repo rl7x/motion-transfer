@@ -23,6 +23,7 @@ export async function buildParallaxiaArtifact({ source, intent, component, prove
     addedDashInvulnerability: false, conformance, browser };
   const notice = await readFile(new URL('../targets/dashy-dango/NOTICE.txt', import.meta.url), 'utf8');
   const files = {
+    'rule.mjs': 'export default null;\n',
     'adapter.ts': source, 'frame.html': frame.html,
     'verification.json': JSON.stringify(verification, null, 2) + '\n',
     'generation.json': JSON.stringify(provenance, null, 2) + '\n',

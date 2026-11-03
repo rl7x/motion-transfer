@@ -1,5 +1,7 @@
 import { createSim, stepSim, FRAME_MS } from '@/sim/sim.js';
 import { INPUT } from '@/sim/input.js';
+import { fireShot, shipAbsent } from '@/sim/player.js';
+import { installParallaxiaRule } from '../parallaxia/rule.mjs';
 import { MODES } from '@/sim/constants.js';
 import { draw as drawFrame, CANVAS_WIDTH, CANVAS_HEIGHT } from '@/render/canvas.js';
 import { createFx, fxStep } from '@/render/fx.js';
@@ -78,6 +80,7 @@ const port = createParallaxiaPort({
   onReset: resetPresentation,
 });
 globalThis.roadsterPort = port;
+installParallaxiaRule(config.rule, {fireShot,shipAbsent});
 
 const canvas = document.querySelector('#scene');
 const ctx = canvas.getContext('2d');
@@ -253,6 +256,7 @@ window.__game = {
       lives: sim.lives,
       sector: sim.stage.section + 1,
       phase: sim.phase,
+      rule: sim.motionRule ? {...sim.motionRule} : null,
     };
   },
   advance(dt, controls) {

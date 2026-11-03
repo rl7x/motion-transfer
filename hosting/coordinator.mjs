@@ -4,7 +4,7 @@ import { access, appendFile, mkdir, readFile, readdir, writeFile } from 'node:fs
 import { join, resolve } from 'node:path';
 import { PRICES, readUsage, tokenCost } from '../agent/accounting.mjs';
 import {
-  assertRoadsterInputTokens, readRoadsterSubmission, ROADSTER_MAX_OUTPUT_TOKENS, ROADSTER_TOOL, roadsterEvidence, roadsterProviderRequest,
+  assertRoadsterInputTokens, ROADSTER_MAX_OUTPUT_TOKENS,
 } from '../agent/roadster-request.mjs';
 import { recipientRequest, recipientSubmission } from '../agent/recipient-request.mjs';
 import { createPhaseBudget } from '../campaign/phase-budget.mjs';
@@ -192,22 +192,23 @@ export async function createCoordinator({
       parentChain: job.parentChain ?? job.ancestors ?? null,
       error: job.error ?? null, model: PUBLIC_MODEL, estimatedCostUsd: job.inference?.estimatedCostUsd ?? 0,
       publicReservedUsd: 0, publicReserveUsd: PUBLIC_RESERVE_USD, urls: job.urls ?? null,
-      intent: job.intent ?? null, summary: job.summary ?? null, events: job.events, createdAt: job.createdAt, finishedAt: job.finishedAt, experiment: job.experimentReport ?? null,
+      intent: job.intent ?? null, summary: job.summary ?? null, events: job.events, createdAt: job.createdAt, finishedAt: job.finishedAt, rule: job.ruleIdentity ?? null, experiment: job.experimentReport ?? null,
     };
   }
 
-  async function verifyIsolated({ source, intent, componentId, recipientId, runtime, fallback, localVerifier } = {}) {
+  async function verifyIsolated({ source, intent, componentId, recipientId, ruleSource = null, ruleId = null, runtime, fallback, localVerifier } = {}) {
     if (runtime === 'vm' || fallback || localVerifier) throw Error('Hosted mode cannot fall back to vm');
     assertHostedComponentId(componentId);
     if (await broker.available() !== true) throw isolationError();
-    const nativePayload = await broker.submit({ operation: 'verify-native', source, intent, componentId, ...(recipientId ? { recipientId } : {}) });
+    const nativePayload = await broker.submit({ operation: 'verify-native', source, intent, componentId, ...(recipientId ? { recipientId,ruleSource } : {}) });
     const native = requireWorker(nativePayload, 'verify-native', source, componentId);
     if (typeof native.javascript !== 'string' || !native.javascript.trim() || Buffer.byteLength(native.javascript) > 32 * 1024
       || native.javascriptSha256 !== digest(native.javascript)) {
       throw statusError('Isolated worker did not return compiled adapter JavaScript; parent unchanged', 422);
     }
-    const browserPayload = await broker.submit({ operation: 'verify-browser', source, intent, componentId, ...(recipientId ? { recipientId } : {}) });
+    const browserPayload = await broker.submit({ operation: 'verify-browser', source, intent, componentId, ...(recipientId ? { recipientId,ruleSource } : {}) });
     const browser = requireWorker(browserPayload, 'verify-browser', source, componentId);
+    if (recipientId==='parallaxia' && ((native.ruleId??null)!==ruleId || (browser.ruleId??null)!==ruleId)) throw statusError('Verifier rule identity changed; parent unchanged',422);
     if (recipientId && (native.recipientId !== recipientId || browser.recipientId !== recipientId)) throw statusError('Verifier recipient identity changed; parent unchanged', 422);
     if (native.componentId !== componentId || browser.componentId !== componentId) {
       throw statusError('Verifier component identity changed; parent unchanged', 422);
@@ -238,13 +239,16 @@ export async function createCoordinator({
       const component = JSON.parse(await readFile(componentPath, 'utf8'));
       const recipient = JSON.parse(await readFile(recipientPath, 'utf8'));
       const intent = await parentIntent(id);
+      let ruleIdentity = (await readReceipt(id))?.rule ?? null;
+      let ruleSource = null;
+      try {const bytes=await readFile(rooted?join(parents,`${id}.rule.mjs`):join(directory,'artifacts',id,'rule.mjs'),'utf8');if(ruleIdentity?.id)ruleSource=bytes;}catch(error){if(error.code!=='ENOENT')throw error;}
       if (!intent || typeof source !== 'string' || !source.trim() || Buffer.byteLength(source) > SOURCE_LIMIT) throw Error('Verified parent context is incomplete');
       if (!component?.javascript || component.contract == null || Buffer.byteLength(component.javascript) > 65536) throw Error('Verified parent context is incomplete');
       if (component.id && !hexId.test(component.id)) throw Error('Verified parent context is incomplete');
       if (typeof recipient?.name !== 'string' || typeof recipient?.revision !== 'string') throw Error('Verified parent context is incomplete');
       return {
         intent,
-        source,
+        source, ruleSource, ruleIdentity,
         component: { id: component.id ?? null, javascript: component.javascript, contract: component.contract },
         recipient: { ...recipient },
       };
@@ -270,7 +274,7 @@ export async function createCoordinator({
       let observation = null;
       if (job.experiment) {
         await stage('reconstructing');
-        const payload = await broker.submit({operation:'verify-checkpoint',recipientId:'parallaxia',source:context.source,intent:context.intent,componentId:context.component.id,checkpoint:job.experiment.checkpoint});
+        const payload = await broker.submit({operation:'verify-checkpoint',recipientId:'parallaxia',source:context.source,intent:context.intent,componentId:context.component.id,checkpoint:job.experiment.checkpoint,ruleSource:context.ruleSource});
         const checked = requireWorker(payload,'verify-checkpoint',context.source,context.component.id);
         if (checked.checkpointId !== await replayDigest(job.experiment.checkpoint)) throw Error('Checkpoint identity changed in worker');
         observation = checked.observation;
@@ -288,7 +292,7 @@ export async function createCoordinator({
         job.provider = { status: 'pending', reservationId, attempt };
         await stage(attempt === 1 ? 'pending' : 'repairing');
         uncertain = true;
-        const request = recipientRequest({ model: PUBLIC_MODEL, context, prompt: job.prompt, feedback, experiment: job.experiment, observation });
+        const request = recipientRequest({ model: PUBLIC_MODEL, context, prompt: job.prompt, feedback, experiment: job.experiment, observation, composition: job.composition });
         const signal = AbortSignal.timeout(providerDeadlineMs);
         const inputTokens = assertRoadsterInputTokens(await withDeadline(signal, client.countInputTokens(request, signal)));
         const estimate = (inputTokens * PRICES[PUBLIC_MODEL].input + ROADSTER_MAX_OUTPUT_TOKENS * PRICES[PUBLIC_MODEL].output) / 1e6;
@@ -311,18 +315,21 @@ export async function createCoordinator({
         if (uncertain) throw statusError('Recipient response incomplete or whole-job budget exceeded', 402);
         cancelled();
         try {
-          submission = recipientSubmission(response, context, job.prompt, { experiment: job.experiment });
+          submission = recipientSubmission(response, context, job.prompt, { experiment: job.experiment, composition: job.composition });
           if (submission.status === 'unsupported') {
             await budget.settle({ id: reservationId, estimatedCostUsd: cost, uncertain: false }); settled = true;
             job.summary = submission.summary; job.intent = submission.intent; job.error = submission.summary;
             job.finishedAt = new Date().toISOString(); await stage('unsupported'); return;
           }
           await stage('verifying');
+          const ruleSource = job.composition ? submission.ruleSource : context.ruleSource;
+          const ruleId = job.composition === 'dash-end-shot' ? digest(ruleSource) : job.composition === 'none' ? null : context.ruleIdentity?.id ?? null;
+          job.ruleSource=ruleSource;job.ruleIdentity={id:ruleId,kind:ruleId?'dash-end-shot':'none'};
           verified = await verifyIsolated({ source: submission.source, intent: submission.intent,
-            componentId: context.component.id, ...(context.recipient.id === 'parallaxia' ? { recipientId: 'parallaxia' } : {}) });
+            componentId: context.component.id, ...(context.recipient.id === 'parallaxia' ? { recipientId: 'parallaxia',ruleSource,ruleId } : {}) });
           if (job.experiment) {
             const payload = await broker.submit({operation:'verify-experiment',recipientId:'parallaxia',source:submission.source,intent:submission.intent,
-              parentSource:context.source,parentIntent:context.intent,componentId:context.component.id,checkpoint:job.experiment.checkpoint,scenario:job.experiment.scenario,interventionTick:submission.interventionTick});
+              parentSource:context.source,parentIntent:context.intent,parentRuleSource:context.ruleSource,ruleSource:job.ruleSource,componentId:context.component.id,checkpoint:job.experiment.checkpoint,scenario:job.experiment.scenario,interventionTick:submission.interventionTick});
             const checked = requireWorker(payload,'verify-experiment',submission.source,context.component.id);
             if (checked.checkpointId !== await replayDigest(job.experiment.checkpoint) || checked.scenarioSha256 !== await replayDigest(job.experiment.scenario)) throw Error('Frozen experiment identity changed in worker');
             job.experimentReport = {...checked.report,parentAdapterSha256:digest(context.source),candidateAdapterSha256:digest(submission.source)};
@@ -348,6 +355,7 @@ export async function createCoordinator({
       await stage('publishing'); cancelled();
       const published = await publishArtifact({ directory, parentId: job.parentArtifactId, files: {
         ...(job.experimentReport ? {'experiment.json':JSON.stringify(job.experimentReport,null,2)+'\n'} : {}),
+        ...(context.recipient.id==='parallaxia'?{'rule.mjs':job.ruleSource??'export default null;\n'}:{}),
         'adapter.ts': submission.source, 'adapter.js': verified.javascript,
         'intent.json': JSON.stringify(submission.intent) + '\n',
         'component.json': JSON.stringify(context.component) + '\n',
@@ -356,7 +364,7 @@ export async function createCoordinator({
         'generation.json': JSON.stringify({ kind: 'new-meta-generation', jobId: job.id, prompt: job.prompt,
           model: PUBLIC_MODEL, attempts: job.attempts, estimatedCostUsd: cost, createdAt: job.createdAt }, null, 2) + '\n',
         'receipt.json': JSON.stringify({ passed: !job.experimentReport || job.experimentReport.satisfied, adapterVerified: true, kind: job.experimentReport ? 'checkpoint-experiment' : 'recipient-adaptation', model: PUBLIC_MODEL, parentArtifactId: job.parentArtifactId, parentChain: ancestors,
-          summary: submission.summary, intent: submission.intent, recipient: context.recipient, ...(job.experimentReport ? {experiment:job.experimentReport} : {}),
+          summary: submission.summary, intent: submission.intent, recipient: context.recipient, rule:job.ruleIdentity??null, ...(job.experimentReport ? {experiment:job.experimentReport} : {}),
           componentId: verified.native.componentId, sourceSha256: verified.native.sourceSha256,
           javascriptSha256: verified.native.javascriptSha256, frameSha256: verified.browser.frameSha256,
           native: nativeReceipt, browser: verified.browser }, null, 2) + '\n',
@@ -384,7 +392,7 @@ export async function createCoordinator({
   }
 
   function sameRequest(existing, request) {
-    return existing.prompt === request.prompt && existing.parentArtifactId === request.parentArtifactId && existing.sessionId === request.sessionId && JSON.stringify(existing.experiment ?? null) === JSON.stringify(request.experiment ?? null);
+    return existing.prompt === request.prompt && existing.parentArtifactId === request.parentArtifactId && existing.sessionId === request.sessionId && JSON.stringify(existing.experiment ?? null) === JSON.stringify(request.experiment ?? null) && (existing.composition??null)===(request.composition??null);
   }
   function replay(request) {
     const existing = queue.findIdempotent(request.idempotencyKey);
@@ -474,7 +482,7 @@ export async function createCoordinator({
       const gate = new Promise((resolveGate, rejectGate) => { settle = resolveGate; failSubmit = rejectGate; });
       gate.catch(() => {});
       inflight.set(request.idempotencyKey, {
-        request: { prompt: request.prompt, parentArtifactId: request.parentArtifactId, sessionId: request.sessionId, experiment: request.experiment ?? null },
+        request: { prompt: request.prompt, parentArtifactId: request.parentArtifactId, sessionId: request.sessionId, experiment: request.experiment ?? null, composition: request.composition ?? null },
         gate,
       });
       try {
@@ -500,7 +508,7 @@ export async function createCoordinator({
           if (phase.uncertain || phase.overrun) throw statusError('Phase billing is uncertain or exceeded a reservation; no further inference admitted', 402);
           const job = {
             schemaVersion: 1, id: randomUUID(), sessionId: request.sessionId, idempotencyKey: request.idempotencyKey,
-            parentArtifactId: request.parentArtifactId, experiment: request.experiment ?? null, ancestors, prompt: request.prompt, model: PUBLIC_MODEL, status: 'queued',
+            parentArtifactId: request.parentArtifactId, experiment: request.experiment ?? null, composition: request.composition ?? null, ancestors, prompt: request.prompt, model: PUBLIC_MODEL, status: 'queued',
             error: null, artifactId: null, urls: null, inference: null,
             events: [{ status: 'queued', at: new Date().toISOString() }],
             createdAt: new Date().toISOString(), finishedAt: null,

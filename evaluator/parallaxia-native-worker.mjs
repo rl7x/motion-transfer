@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { loadParallaxiaSim } from '../parallaxia/sim.mjs';
+import { readRuleSource, installParallaxiaRule } from '../parallaxia/rule.mjs';
 import { createParallaxiaPort } from '../parallaxia/port.mjs';
 
 let text = '';
@@ -10,6 +11,8 @@ const context = vm.createContext(Object.create(null), { codeGeneration: { string
 const { component, adapter } = new vm.Script(`${request.componentCode}\n${request.adapterCode}\n({component:recovered,adapter:candidate})`).runInContext(context, { timeout: 500 });
 const hooked = await loadParallaxiaSim();
 const native = await loadParallaxiaSim({ native: true });
+const recipe = readRuleSource(request.ruleSource);
+installParallaxiaRule(recipe,hooked);
 const results = [];
 const check = (name, run) => { try { results.push({ name, passed: true, ...run() }); } catch (error) { results.push({ name, passed: false, error: error.message }); } };
 const createPort = () => createParallaxiaPort({ component, adapter, defaults: request.defaults, intent: request.intent });
@@ -52,6 +55,36 @@ check('practice-shield-is-explicit', () => {
   hooked.missShip(sim); assert.equal(sim.lives, lives); assert.ok(sim.events.some(event => event.type === 'hit'));
   globalThis.parallaxiaChallengeShield = false;
   return { survivalClaim: false };
+});
+check('bounded-rule-native-shot-and-reset', () => {
+  const run = () => {
+    const port=createPort();globalThis.roadsterPort=port;const sim=hooked.createSim({seed:7});
+    for(let tick=0;tick<40;tick++)hooked.stepSim(sim,0);
+    port.setDash(true);hooked.stepSim(sim,0);port.setDash(false);
+    for(let tick=1;tick<8;tick++)hooked.stepSim(sim,0);
+    return {sim,port};
+  };
+  const {sim}=run();
+  assert.equal(sim.motionRule.attempts,0,'No action on the dash-end tick');
+  const pending=JSON.stringify(sim.motionRule);assert.equal(JSON.stringify(sim.motionRule),pending,'Pause does not advance rule state');
+  hooked.stepSim(sim,0);
+  assert.equal(sim.motionRule.attempts,recipe?1:0);assert.equal(sim.motionRule.fired,recipe?1:0);
+  assert.equal(sim.ship.fireCount,recipe?1:0);
+  for(let tick=0;tick<4;tick++)hooked.stepSim(sim,0);
+  assert.equal(sim.motionRule.fired,recipe?1:0,'A pending effect cannot fire twice');
+  const reset=hooked.createSim({seed:7});assert.equal(reset.motionRule.pendingFrame,null);assert.equal(reset.motionRule.fired,0);
+  return {rule:recipe,nextTick:true,disabledMatchesNative:!recipe};
+});
+if(recipe)check('composition-honors-projectile-cap-and-native-cooldown', () => {
+  for(const kind of ['cap','cooldown']) {
+    const port=createPort();globalThis.roadsterPort=port;const sim=hooked.createSim({seed:7});
+    for(let tick=0;tick<40;tick++)hooked.stepSim(sim,0);
+    port.setDash(true);hooked.stepSim(sim,0);port.setDash(false);for(let tick=1;tick<8;tick++)hooked.stepSim(sim,0);
+    if(kind==='cap')sim.shots=Array.from({length:hooked.SHOT.max},()=>({x:0,y:-14,vy:0}));else sim.ship.shotCool=5;
+    hooked.stepSim(sim,0);assert.equal(sim.motionRule.attempts,1);assert.equal(sim.motionRule.fired,0);assert.equal(sim.motionRule.suppressed,1);
+    sim.shots=[];sim.ship.shotCool=0;hooked.stepSim(sim,0);assert.equal(sim.motionRule.fired,0,'Suppressed action is consumed, not retried');
+  }
+  return {ordinaryShotFirst:true,cooldown:'native',cap:hooked.SHOT.max};
 });
 delete globalThis.roadsterPort; delete globalThis.parallaxiaChallengeShield;
 process.stdout.write(JSON.stringify({ passed: results.every(result => result.passed), results }));

@@ -89,13 +89,15 @@ export async function verifyNative(job) {
   const component = await boundComponent(job);
   const { evaluateRoadsterAdapter } = await import('../evaluator/roadster.mjs');
   const evaluate = job.recipientId === 'parallaxia' ? (await import('../evaluator/parallaxia.mjs')).evaluateParallaxiaAdapter : evaluateRoadsterAdapter;
-  const report = await evaluate(job.source, job.intent, { componentRef: component });
+  const report = await evaluate(job.source, job.intent, { componentRef: component, ruleSource: job.ruleSource });
   if (report.componentId !== job.componentId) throw Error('Verifier component identity changed');
   const checks = summarizeChecks(report.results);
+  const recipe = job.recipientId==='parallaxia' ? (await import('../parallaxia/rule.mjs')).readRuleSource(job.ruleSource) : null;
+  const ruleId = recipe ? digest(job.ruleSource) : null;
   const result = {
     ok: true, operation: 'verify-native', passed: report.passed === true, gate: report.gate,
     componentId: report.componentId, sourceSha256: report.sourceSha256, javascriptSha256: report.javascriptSha256,
-    intent: job.intent, ...(job.recipientId ? { recipientId: job.recipientId } : {}), checks, results: checks, javascript: null, ...facts(),
+    ruleId, ruleKind: recipe ? 'dash-end-shot' : 'none', intent: job.intent, ...(job.recipientId ? { recipientId: job.recipientId } : {}), checks, results: checks, javascript: null, ...facts(),
   };
   if (result.passed) {
     const { compileAdapter } = await import('../transfer/adapter.mjs');
@@ -116,16 +118,18 @@ async function verifyBrowser(job) {
   const { buildRoadsterFrame } = await import('../roadster/build.mjs');
   const verify = job.recipientId === 'parallaxia' ? (await import('../evaluator/parallaxia-browser.mjs')).verifyParallaxiaBrowser : verifyRoadsterBrowser;
   const build = job.recipientId === 'parallaxia' ? (await import('../parallaxia/build.mjs')).buildParallaxiaFrame : buildRoadsterFrame;
-  const report = await verify(job.source, job.intent, { componentRef: component });
+  const report = await verify(job.source, job.intent, { componentRef: component, ruleSource: job.ruleSource });
   if (report.componentId !== job.componentId) throw Error('Verifier component identity changed');
   const checks = summarizeChecks(report.results);
+  const recipe = job.recipientId==='parallaxia' ? (await import('../parallaxia/rule.mjs')).readRuleSource(job.ruleSource) : null;
+  const ruleId = recipe ? digest(job.ruleSource) : null;
   const result = {
     ok: true, operation: 'verify-browser', passed: report.passed === true, gate: report.gate,
     componentId: report.componentId, sourceSha256: report.sourceSha256, frameSha256: report.frameSha256,
-    intent: job.intent, ...(job.recipientId ? { recipientId: job.recipientId } : {}), checks, results: checks, frame: null, ...facts(),
+    ruleId, ruleKind: recipe ? 'dash-end-shot' : 'none', intent: job.intent, ...(job.recipientId ? { recipientId: job.recipientId } : {}), checks, results: checks, frame: null, ...facts(),
   };
   if (result.passed) {
-    const built = await build({ source: job.source, intent: job.intent, componentRef: component });
+    const built = await build({ source: job.source, intent: job.intent, componentRef: component, ruleSource: job.ruleSource });
     if (built.environment?.componentId !== job.componentId) throw Error('Verifier component identity changed');
     const hash = digest(built.html);
     if (hash !== report.frameSha256) throw Error('Frame hash changed after browser verification');

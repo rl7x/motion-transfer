@@ -40,6 +40,18 @@ The separate v2 development run passed: reachable goal job `ba3e8a5d-db48-43f0-9
 
 Focused validation passed 31/31 across PARALLAXIA identity, checkpoints, generation and hosting. The added capability/browser checks passed 5/5; the explicit historical Roadster/React browser checks passed 6/6. Frontend typecheck, lint and formatting passed. Historical tests now select Roadster explicitly; the default route is the new PARALLAXIA workbench.
 
+## M3: bounded event composition
+
+Meta can emit one declarative rule module: `dash-end` → a single `native-shot` attempt on the next simulation tick, or `export default null;` to remove it. The host owns scheduling, native projectile creation, cooldown and cap enforcement. Ordinary shooting runs first. A suppressed extra shot is consumed, never retried. The rule cannot execute arbitrary code or modify the recovered component. This is a new host composition, not another recovered donor mechanic.
+
+Rule identity and exact module bytes enter the playable artifact and export; pending action, event guard and counters enter the checkpoint digest. Native and browser gates check next-tick timing, no duplicate action, reset, native cooldown/cap and disabled behavior. A pending effect reconstructed from an actual browser checkpoint fires exactly once in both browser and worker.
+
+The real add-rule job `485de0e6-97a6-42be-bd26-0d48d50082cd` passed at an estimated $0.00816175. Removal job `ad5602ae-6026-43f9-9adc-6617329e15c7` initially supplied a nonliteral module, which the worker rejected; its one repair emitted the accepted null declaration. That job cost an estimated $0.0167875 total. The mapping stayed held/facing/0.1 in both children. Actual browser measurements show zero attempts on the dash-end tick, one shot on the next tick when enabled, no extra shot when removed, and 49 unchanged component updates.
+
+The development validation harness initially failed on a mutable snapshot reference and on iframe navigation timing, then incorrectly expected exactly two provider responses despite the legitimate repair. Those validation failures are retained alongside the original jobs. The corrected harness reused the already generated children without another paid response; the final continuation passed, including restart/reconnection. Evidence: `reports/live-mechanics/composition-125b2fdf-e686-4e16-adea-520403d6f17f/development-evidence-v2.json`. There were three provider responses total, not two. Browser game snapshots now copy rule counters so historical observations remain stable.
+
+Focused native/browser checkpoint and composition checks, including actual restricted Docker publication gates, passed. Frontend typecheck, lint and formatting passed. No graze-token rule or other composition was added.
+
 ## Remaining
 
-M3: bounded dash-end/native-shot composition. M4: actual recipient release, exact clean-start exports, frozen task evidence and final full-suite results.
+M4: actual recipient release, exact clean-start exports, frozen task evidence and final full-suite results.

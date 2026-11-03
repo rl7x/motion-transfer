@@ -5,7 +5,7 @@ import { loadParallaxia } from '../recipients/parallaxia/load.mjs';
 export async function parallaxiaDescriptor() {
   const recipient = await loadParallaxia();
   const hooks = {};
-  for (const file of ['sim.mjs', 'port.mjs', 'challenge-contract.mjs', 'replay.mjs', '../web/parallaxia-entry.js']) {
+  for (const file of ['sim.mjs', 'port.mjs', 'challenge-contract.mjs', 'replay.mjs', 'rule.mjs', '../web/parallaxia-entry.js']) {
     hooks[file] = digest(await readFile(new URL(file, import.meta.url)));
   }
   return {
@@ -14,6 +14,7 @@ export async function parallaxiaDescriptor() {
     unitMapping: 'One source pixel maps to 0.1 world units; the eight-update 60-pixel dash maps to 6 world units. Canvas renders 10 pixels per world unit.',
     nativeEvents: ['shot', 'miss', 'graze'], abilityEvents: ['dash-start', 'dash-end'],
     supportedChanges: ['unitScale', 'activation', 'direction'],
+    compositionRules: [{id:'dash-end-shot',event:'dash-end',action:'native-shot',delayTicks:1,limits:'Honor native SHOT.max and shot cooldown. Ordinary firing runs first; a suppressed attempt is consumed.',authorship:'Meta-generated declarative rule; human-authored scheduler and native-action boundary, not recovered donor combat.'}],
     collisionPolicies: ['native', 'practice-shield'],
     collisionPolicy: 'native', addedDashInvulnerability: false,
     buildEntry: 'parallaxia/build.mjs', verificationEntry: 'evaluator/parallaxia.mjs',

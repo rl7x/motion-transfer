@@ -98,23 +98,23 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
       else json(404,{error:'Not found'});
       return;
     }
-    const hostedFile=path.match(/^\/artifacts\/([a-f0-9]{64})(?:\/(play\.html|adapter\.ts|adapter\.js|receipt\.json|generation\.json|experiment\.json|notices\.txt|download|download\.zip))?$/);
+    const hostedFile=path.match(/^\/artifacts\/([a-f0-9]{64})(?:\/(play\.html|adapter\.ts|adapter\.js|receipt\.json|generation\.json|experiment\.json|rule\.mjs|notices\.txt|download|download\.zip))?$/);
     if(coordinator&&hostedFile){
       const [,id,part]=hostedFile;
       let bytes;
       if(part==='download.zip'){
-        const files={};for(const name of ['play.html','adapter.ts','adapter.js','intent.json','recipient.json','component.json','receipt.json','generation.json','experiment.json','notices.txt']){const file=await coordinator.artifactFile(id,name);if(file)files[name]=file;}
+        const files={};for(const name of ['play.html','adapter.ts','adapter.js','intent.json','recipient.json','component.json','receipt.json','generation.json','experiment.json','rule.mjs','notices.txt']){const file=await coordinator.artifactFile(id,name);if(file)files[name]=file;}
         if(!files['receipt.json']){json(404,{error:'Artifact not found'});return;}
         bytes=zipStored(files);response.setHeader('Content-Disposition',`attachment; filename="parallaxia-${id.slice(0,12)}.zip"`);
       }else bytes=await coordinator.artifactFile(id,part==='download'?'play.html':part??'receipt.json');
       if(!bytes){json(404,{error:'Artifact not found'});return;}
       if(part==='play.html'||part==='download')response.setHeader('Content-Security-Policy','sandbox allow-scripts');
       if(part==='download')response.setHeader('Content-Disposition',`attachment; filename="parallaxia-${id.slice(0,12)}.html"`);
-      send(200,part==='download.zip'?'application/zip':part==='play.html'||part==='download'?'text/html':part?.endsWith('.ts')||part?.endsWith('.txt')?'text/plain':part?.endsWith('.js')?'text/javascript':'application/json',bytes);return;
+      send(200,part==='download.zip'?'application/zip':part==='play.html'||part==='download'?'text/html':part?.endsWith('.ts')||part?.endsWith('.txt')||part==='rule.mjs'?'text/plain':part?.endsWith('.js')?'text/javascript':'application/json',bytes);return;
     }
     const hostedParent=path.match(/^\/parents\/([a-f0-9]{64})(\/download)?$/);
     if(coordinator&&hostedParent){const bytes=await coordinator.parentBytes(hostedParent[1]);response.setHeader('Content-Security-Policy','sandbox allow-scripts');if(hostedParent[2])response.setHeader('Content-Disposition','attachment; filename="parent.html"');send(200,'text/html',bytes);return;}
-    if(path==='/api/parallaxia/base'){json(200,{id:parallaxia.id,componentId:parallaxia.componentId,componentRef:parallaxia.componentRef,intent:parallaxia.intent,recipient:parallaxia.recipient,provenance:parallaxia.provenance,play:`/parallaxia/artifacts/${parallaxia.id}/play.html`,report:`/parallaxia/artifacts/${parallaxia.id}/report.json`,download:`/parallaxia/artifacts/${parallaxia.id}/download.html`,practice:`/parallaxia/challenge/${parallaxia.id}/play.html`});return;}
+    if(path==='/api/parallaxia/base'){json(200,{id:parallaxia.id,componentId:parallaxia.componentId,componentRef:parallaxia.componentRef,intent:parallaxia.intent,recipient:parallaxia.recipient,provenance:parallaxia.provenance,play:`/parallaxia/artifacts/${parallaxia.id}/play.html`,report:`/parallaxia/artifacts/${parallaxia.id}/report.json`,download:`/parallaxia/artifacts/${parallaxia.id}/download.html`,practice:`/parallaxia/challenge/${parallaxia.id}/play.html`,practiceId:parallaxiaChallenge.id,practiceDownload:`/parallaxia/challenge/${parallaxia.id}/download.html`,practiceReport:`/parallaxia/challenge/${parallaxia.id}/report.json`,historicalRoadster:`/roadster/artifacts/${roadster.id}/play.html`});return;}
     const parallaxiaPath=path.match(/^\/parallaxia\/(artifacts|challenge)\/([a-f0-9]{64})\/(play\.html|download\.html|adapter\.ts|report\.json|notices\.txt)$/);
     if(parallaxiaPath){
       const [,kind,id,file]=parallaxiaPath;

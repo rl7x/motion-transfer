@@ -7,7 +7,7 @@ import { resolveComponentRef, componentIdentity } from '../component/reference.m
 import { parallaxiaDescriptor } from '../parallaxia/recipient.mjs';
 import { assertParallaxiaSource } from './parallaxia-source.mjs';
 
-export async function evaluateParallaxiaAdapter(source, intent, { componentRef } = {}) {
+export async function evaluateParallaxiaAdapter(source, intent, { componentRef, ruleSource = null } = {}) {
   assertParallaxiaSource(source);
   const component = await resolveComponentRef(componentRef);
   const conformance = await evaluateRoadsterAdapter(source, intent, { componentRef: component });
@@ -15,7 +15,7 @@ export async function evaluateParallaxiaAdapter(source, intent, { componentRef }
   const pending = promisify(execFile)(process.execPath, ['--max-old-space-size=128', fileURLToPath(new URL('parallaxia-native-worker.mjs', import.meta.url))], {
     env: { PATH: process.env.PATH ?? '' }, timeout: 15000, maxBuffer: 1048576,
   });
-  pending.child.stdin.end(JSON.stringify({ adapterCode: compiled.code, componentCode: compiled.componentCode, defaults: compiled.defaults, intent }));
+  pending.child.stdin.end(JSON.stringify({ adapterCode: compiled.code, componentCode: compiled.componentCode, defaults: compiled.defaults, intent, ruleSource }));
   const native = JSON.parse((await pending).stdout);
   const results = [...conformance.results, ...native.results];
   return { ...conformance, gate: 'parallaxia-native', passed: results.every(result => result.passed),
