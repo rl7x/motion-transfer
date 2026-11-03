@@ -1,8 +1,13 @@
 import { spawn } from 'node:child_process';
 import { writeFile } from 'node:fs/promises';
+import { deflateSync } from 'node:zlib';
 
 export const FRAME = Object.freeze({ width: 1280, height: 720, fps: 30, seconds: 180 });
-export const FONT = '/System/Library/Fonts/Supplemental/Arial.ttf';
+export const FONT = 'Arial, sans-serif';
+export const CAPTION_BOX = Object.freeze({
+  corner: { width: 720, height: 86, fontSize: 22 },
+  lower: { width: 1280, height: 108, fontSize: 28 },
+});
 
 export function limitedEnv() {
   return {
@@ -41,29 +46,60 @@ export function runProcess(command, args) {
   });
 }
 
-function ffPath(file) {
-  return `'${file.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/:/g, '\\:')}'`;
+function pngChunk(type, data) {
+  const name = Buffer.from(type);
+  const body = Buffer.concat([name, data]);
+  let crc = ~0;
+  for (const byte of body) {
+    crc ^= byte;
+    for (let bit = 0; bit < 8; bit += 1) crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
+  }
+  const out = Buffer.alloc(12 + data.length);
+  out.writeUInt32BE(data.length, 0);
+  body.copy(out, 4);
+  out.writeUInt32BE(~crc >>> 0, 8 + data.length);
+  return out;
 }
 
-export function overlayFilter({ font = FONT, cornerFile, lowerFile, seconds, pad = false }) {
-  const filters = [];
-  if (seconds != null) filters.push(`trim=duration=${seconds}`, 'setpts=PTS-STARTPTS');
-  filters.push('fps=30');
-  if (pad) filters.push('tpad=stop_mode=clone:stop=-1');
-  filters.push(
+export async function writeSolidPng(file, width, height, rgba) {
+  const header = Buffer.alloc(13);
+  header.writeUInt32BE(width, 0);
+  header.writeUInt32BE(height, 4);
+  header[8] = 8;
+  header[9] = 6;
+  const row = Buffer.alloc(1 + width * 4);
+  for (let x = 0; x < width; x += 1) {
+    const offset = 1 + x * 4;
+    row[offset] = rgba[0];
+    row[offset + 1] = rgba[1];
+    row[offset + 2] = rgba[2];
+    row[offset + 3] = rgba[3];
+  }
+  const raw = Buffer.alloc(row.length * height);
+  for (let y = 0; y < height; y += 1) row.copy(raw, y * row.length);
+  const png = Buffer.concat([
+    Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
+    pngChunk('IHDR', header),
+    pngChunk('IDAT', deflateSync(raw)),
+    pngChunk('IEND', Buffer.alloc(0)),
+  ]);
+  await writeFile(file, png);
+}
+
+export function overlayFilter({ start = 0, seconds, pad = false, lower = false }) {
+  const prep = [];
+  if (seconds != null) prep.push(`trim=start=${Number(start).toFixed(3)}:duration=${seconds}`, 'setpts=PTS-STARTPTS');
+  prep.push('fps=30');
+  if (pad) prep.push('tpad=stop_mode=clone:stop=-1');
+  prep.push(
     `scale=${FRAME.width}:${FRAME.height}:force_original_aspect_ratio=decrease`,
     `pad=${FRAME.width}:${FRAME.height}:(ow-iw)/2:(oh-ih)/2:color=0x111315`,
     'setsar=1',
-    'drawbox=x=20:y=20:w=720:h=86:color=0x111315@0.86:t=fill',
-    `drawtext=fontfile=${ffPath(font)}:textfile=${ffPath(cornerFile)}:fontsize=22:fontcolor=0xF0ECE2:x=36:y=34:line_spacing=6`,
   );
-  if (lowerFile) {
-    filters.push(
-      `drawbox=x=0:y=${FRAME.height - 108}:w=${FRAME.width}:h=108:color=0x111315@0.88:t=fill`,
-      `drawtext=fontfile=${ffPath(font)}:textfile=${ffPath(lowerFile)}:fontsize=28:fontcolor=0xF0ECE2:x=40:y=${FRAME.height - 86}:line_spacing=8`,
-    );
-  }
-  return filters.join(',');
+  let chain = `[0:v]${prep.join(',')}[base];[base][1:v]overlay=20:20:format=auto`;
+  if (lower) chain += `[withcorner];[withcorner][2:v]overlay=0:${FRAME.height - CAPTION_BOX.lower.height}:format=auto[out]`;
+  else chain += '[out]';
+  return chain;
 }
 
 export async function writeCaption(file, lines) {
@@ -73,13 +109,15 @@ export async function writeCaption(file, lines) {
   await writeFile(file, lines.join('\n') + '\n');
 }
 
-export function segmentArgs({ input, start = 0, frames, filter, output }) {
+export function segmentArgs({ input, frames, filter, images = [], output }) {
   const args = ['-y', '-hide_banner', '-loglevel', 'error'];
   if (input.kind === 'lavfi') args.push('-f', 'lavfi', '-i', `color=c=${input.color}:s=${FRAME.width}x${FRAME.height}:r=30:d=${input.seconds}`);
   else if (input.kind === 'image') args.push('-loop', '1', '-framerate', '30', '-i', input.path);
-  else args.push('-i', input.path, '-ss', Number(start).toFixed(3));
+  else args.push('-i', input.path);
+  for (const image of images) args.push('-loop', '1', '-framerate', '30', '-i', image);
   args.push(
-    '-vf', filter,
+    '-filter_complex', filter,
+    '-map', '[out]',
     '-frames:v', String(frames),
     '-c:v', 'libx264',
     '-pix_fmt', 'yuv420p',

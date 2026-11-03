@@ -1,8 +1,13 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { describeCommittedRemix } from './committed-remix.mjs';
 
 const CAMPAIGN_ID = 'eb9ac874-30ad-4a0b-9bcc-78f8c25f539a';
-const SAVED_REMIX_ID = 'f67245c401fc82cfd516d6e333fe67dad2acfd232ca7607baea6a6d05d912fbf';
+const HUMAN_ASSISTANCE = [
+  'Selected the motion boundary and function slices',
+  'Mapped live registry and numeric state fields',
+  'Selected development inputs and evaluator events',
+];
 
 function mustMatch(text, pattern, label) {
   const match = text.match(pattern);
@@ -50,6 +55,10 @@ export async function loadDemoFacts(root) {
   if (history.data.requests.length !== 3 || history.data.status !== 'accepted') {
     throw Error('Saved recovery history is not the three-request accepted component');
   }
+  const humanAssistance = provenance.data.humanAssistance ?? [];
+  for (const item of HUMAN_ASSISTANCE) {
+    if (!humanAssistance.includes(item)) throw Error('Component provenance is missing recorded human assistance');
+  }
 
   const journal = await readJson(root, `benchmark/recordings/${CAMPAIGN_ID}/journal.json`);
   const benchmarkReadme = await readFile(join(root, 'benchmark/recordings/README.md'), 'utf8');
@@ -72,8 +81,41 @@ export async function loadDemoFacts(root) {
   }
   if (!/Neither passed fresh recovery/.test(handoff)) throw Error('Recovery handoff is missing the acceptance result');
 
-  const phase = await readJson(root, 'reports/motion-transfer-phase/phase-budget.json');
-  if (phase.data.definition.maxCostUsd !== 45) throw Error('Phase budget ceiling is not $45');
+  let phase = { present: false, quoted: false, ceiling: null, reservations: [], reservationCount: 0 };
+  try {
+    const phaseFile = await readJson(root, 'reports/motion-transfer-phase/phase-budget.json');
+    const definition = phaseFile.data.definition ?? {};
+    const reservations = Array.isArray(phaseFile.data.reservations) ? phaseFile.data.reservations : [];
+    const historical = definition.name === 'motion-transfer-additional-inference-v1' && definition.maxCostUsd === 45;
+    phase = historical
+      ? {
+        present: true,
+        quoted: true,
+        ceiling: 45,
+        onDiskName: definition.name,
+        onDiskCeiling: 45,
+        historicalSpendingIncluded: definition.historicalSpendingIncluded !== false,
+        reservationCount: reservations.length,
+        reservations: reservations.map(item => ({
+          category: item.category,
+          status: item.status,
+          cap: item.maxCostUsd,
+          estimate: item.estimatedCostUsd ?? null,
+        })),
+      }
+      : {
+        present: true,
+        quoted: false,
+        ceiling: null,
+        reservations: [],
+        onDiskName: definition.name ?? null,
+        onDiskCeiling: typeof definition.maxCostUsd === 'number' ? definition.maxCostUsd : null,
+        historicalSpendingIncluded: definition.historicalSpendingIncluded === true,
+        reservationCount: reservations.length,
+      };
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+  }
   const investigation = await readJson(root, 'lab/recordings/neutral-after-left.json');
   const manifest = JSON.parse(await readFile(join(root, 'lab/recordings/manifest.json'), 'utf8'));
   const recorded = manifest.records.find(record => record.id === 'neutral-after-left');
@@ -85,22 +127,7 @@ export async function loadDemoFacts(root) {
   }
 
   const roadster = await readJson(root, 'transfers/roadster/current.json');
-  let remix = null;
-  try {
-    const remixRecord = await readJson(root, `reports/lab/artifacts/${SAVED_REMIX_ID}/manifest.json`);
-    if (remixRecord.data.parentArtifactId !== roadster.data.id || remixRecord.data.componentId !== provenance.data.id) {
-      throw Error('Saved remix is not a child of the current Roadster transfer');
-    }
-    remix = {
-      id: SAVED_REMIX_ID,
-      parentId: remixRecord.data.parentArtifactId,
-      componentId: remixRecord.data.componentId,
-      intent: remixRecord.data.intent,
-      summary: remixRecord.data.summary,
-    };
-  } catch (error) {
-    if (error.code !== 'ENOENT') throw error;
-  }
+  const remix = await describeCommittedRemix(root);
 
   return {
     component: {
@@ -116,6 +143,7 @@ export async function loadDemoFacts(root) {
       maxPositionError: totals.maxPositionError,
       tolerance: totals.tolerance,
       historicallyAccepted: true,
+      humanAssistance,
     },
     campaign: {
       id: CAMPAIGN_ID,
@@ -132,15 +160,7 @@ export async function loadDemoFacts(root) {
       passedAcceptance: false,
       ids: ['dec3cd86-cbbe-48dd-8e73-36b6ad79db44', '6a53d6da-c6f4-4dec-a53f-c2d638769885'],
     },
-    phase: {
-      ceiling: phase.data.definition.maxCostUsd,
-      reservations: phase.data.reservations.map(item => ({
-        category: item.category,
-        status: item.status,
-        cap: item.maxCostUsd,
-        estimate: item.estimatedCostUsd ?? null,
-      })),
-    },
+    phase,
     investigation: {
       id: 'neutral-after-left',
       runId: recorded.runId,

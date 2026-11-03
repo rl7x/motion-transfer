@@ -10,7 +10,7 @@ export function createReadOnlyRoadsterLab(directory) {
       return readRoadsterArtifact(directory, id);
     },
     submit() {
-      throw Error('Demo recording disables model creation');
+      return Promise.reject(Error('Demo recording disables model creation'));
     },
   };
 }

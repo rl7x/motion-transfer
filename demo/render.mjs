@@ -1,9 +1,9 @@
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { chromium } from 'playwright';
-import { closingCardHtml, resultsCardHtml } from './cards.mjs';
+import { captionCardHtml, closingCardHtml, resultsCardHtml } from './cards.mjs';
 import {
-  FONT, ffmpegVersion, overlayFilter, probeDuration, probeVideo, runProcess, scrub, segmentArgs, writeCaption,
+  CAPTION_BOX, FONT, ffmpegVersion, overlayFilter, probeDuration, probeVideo, runProcess, scrub, segmentArgs, writeCaption,
 } from './compose.mjs';
 import { loadDemoFacts } from './facts.mjs';
 import { buildSrt } from './srt.mjs';
@@ -35,6 +35,16 @@ async function shootCard(browser, html, png) {
   }
 }
 
+async function shootCaption(browser, lines, png, box) {
+  const page = await browser.newPage({ viewport: { width: box.width, height: box.height }, deviceScaleFactor: 1 });
+  try {
+    await page.setContent(captionCardHtml(lines, box), { waitUntil: 'load' });
+    await page.screenshot({ path: png, omitBackground: true });
+  } finally {
+    await page.close();
+  }
+}
+
 export async function renderDemo({ root, out, freshPath = null }) {
   const capturePath = join(out, 'capture.json');
   const capture = JSON.parse(await readFile(capturePath, 'utf8'));
@@ -61,25 +71,33 @@ export async function renderDemo({ root, out, freshPath = null }) {
   });
   const commands = [];
   const segments = [];
+  const prepared = [];
   try {
     await shootCard(browser, resultsCardHtml(resultsCopy(facts, fresh)), join(out, 'cards', 'results.png'));
     await shootCard(browser, closingCardHtml(closingCopy()), join(out, 'cards', 'closing.png'));
+    for (const segment of timeline) {
+      const cornerPng = join(out, 'text', segment.id + '-corner.png');
+      const lowerPng = segment.lower ? join(out, 'text', segment.id + '-lower.png') : null;
+      await writeCaption(join(out, 'text', segment.id + '-corner.txt'), segment.corner);
+      await shootCaption(browser, segment.corner, cornerPng, CAPTION_BOX.corner);
+      if (lowerPng) {
+        await writeCaption(join(out, 'text', segment.id + '-lower.txt'), segment.lower);
+        await shootCaption(browser, segment.lower, lowerPng, CAPTION_BOX.lower);
+      }
+      prepared.push({ segment, cornerPng, lowerPng });
+    }
   } finally {
     await browser.close();
   }
-  for (const [index, segment] of timeline.entries()) {
-    const cornerFile = join(out, 'text', segment.id + '-corner.txt');
-    const lowerFile = segment.lower ? join(out, 'text', segment.id + '-lower.txt') : null;
-    await writeCaption(cornerFile, segment.corner);
-    if (lowerFile) await writeCaption(lowerFile, segment.lower);
+  for (const [index, item] of prepared.entries()) {
+    const { segment, cornerPng, lowerPng } = item;
     const shot = shotFor(segment, capture, fresh);
     const start = await segmentStart(segment, shot);
     const filter = overlayFilter({
-      font: FONT,
-      cornerFile,
-      lowerFile,
+      start,
       seconds: segment.kind === 'card' ? null : segment.seconds,
       pad: segment.kind !== 'card',
+      lower: Boolean(lowerPng),
     });
     const input = segment.id === 'results'
       ? { kind: 'image', path: join(out, 'cards', 'results.png') }
@@ -87,7 +105,9 @@ export async function renderDemo({ root, out, freshPath = null }) {
         ? { kind: 'image', path: join(out, 'cards', 'closing.png') }
         : { kind: 'file', path: shot.file };
     const output = join(out, 'segments', String(index + 1).padStart(2, '0') + '-' + segment.id + '.mp4');
-    const args = segmentArgs({ input, start, frames: segment.frames, filter, output });
+    const args = segmentArgs({
+      input, frames: segment.frames, filter, images: lowerPng ? [cornerPng, lowerPng] : [cornerPng], output,
+    });
     commands.push(['ffmpeg', ...args]);
     console.log('render ' + segment.id);
     await runProcess('ffmpeg', args);
@@ -95,7 +115,7 @@ export async function renderDemo({ root, out, freshPath = null }) {
   }
   const list = join(out, 'segments', 'concat.txt');
   await writeFile(list, segments.map(file => `file '${file.replace(/'/g, "'\\''")}'`).join('\n') + '\n');
-  const video = join(out, 'motion-transfer-demo.mp4');
+  const video = join(out, 'draft.mp4');
   const concatArgs = ['-y', '-hide_banner', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', '-movflags', '+faststart', video];
   commands.push(['ffmpeg', ...concatArgs]);
   await runProcess('ffmpeg', concatArgs);
@@ -117,7 +137,7 @@ export async function renderDemo({ root, out, freshPath = null }) {
     throw Error('Final video is not 180 seconds (' + probe.duration + 's, ' + probe.frames + ' frames)');
   }
   const srt = buildSrt(timeline);
-  const srtPath = join(out, 'motion-transfer-demo.srt');
+  const srtPath = join(out, 'draft.srt');
   await writeFile(srtPath, srt);
   const provenance = {
     schemaVersion: 1,
@@ -142,6 +162,9 @@ export async function renderDemo({ root, out, freshPath = null }) {
       borrowedInsideTarget: capture.measurements.borrowedInsideTarget,
       freshAcceptance: Boolean(fresh),
       speedUnchanged: true,
+      phaseJournalPresent: facts.phase.present === true,
+      committedRemix: capture.remixAvailable === true,
+      remixSource: capture.remixSource ?? facts.remix?.source ?? null,
     },
     measurements: capture.measurements,
     shots: Object.fromEntries(Object.entries(capture.shots).map(([name, shot]) => [name, {
@@ -156,6 +179,7 @@ export async function renderDemo({ root, out, freshPath = null }) {
     }])),
     claims: {
       componentId: facts.component.id,
+      humanAssistance: facts.component.humanAssistance,
       roadsterParentId: facts.roadsterParentId,
       remix: capture.remixAvailable ? facts.remix : null,
       investigation: facts.investigation,
@@ -170,7 +194,13 @@ export async function renderDemo({ root, out, freshPath = null }) {
       'One Roadster scene is recorded at a time. Pixel shots hide the donor and before cards so the transferred game fills the frame.',
       'The saved neutral-after-left conclusion is the model interpretation. conclusionVerified is false.',
       'No public player counts, phone capture, fidelity chart, or Muse Code session is in the default cut.',
-      capture.remixAvailable ? 'The saved local remix is playback of an existing child. Launch was not required for the fresh-press label.' : 'The saved remix URL was unavailable, so the shot shows the remix form and does not generate.',
+      'docs/fresh-recovery.md records a historical Wonder trial. Its raw campaign files are not in this checkout, so this cut does not show that trial as a fresh acceptance.',
+      facts.phase.quoted
+        ? 'Phase budget figures come from the historical journal read at render time.'
+        : facts.phase.present
+          ? 'A phase ledger is on disk, but it is not the missing historical journal, so this cut does not quote a ceiling or reservation.'
+          : 'The phase budget journal is not in this checkout. The cut does not state a ceiling, reservation, or estimate from it.',
+      capture.remixAvailable ? 'The saved remix is the identity-checked committed evidence file, played locally. Launch was not required for the fresh-press label.' : 'The committed remix could not be played, so the shot shows the remix form and does not generate.',
     ],
   };
   const provenancePath = join(out, 'provenance.json');

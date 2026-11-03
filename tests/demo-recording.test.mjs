@@ -4,12 +4,14 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import test from 'node:test';
 import { parseArgs } from '../demo/cli.mjs';
-import { overlayFilter, probeVideo, runProcess, scrub, segmentArgs, writeCaption } from '../demo/compose.mjs';
+import { SAVED_REMIX_ID, materializeCommittedRemix, remixRecordFromEvidence } from '../demo/committed-remix.mjs';
+import { overlayFilter, probeVideo, runProcess, scrub, segmentArgs, writeCaption, writeSolidPng } from '../demo/compose.mjs';
 import { loadDemoFacts } from '../demo/facts.mjs';
 import { createReadOnlyRoadsterLab } from '../demo/read-only-lab.mjs';
 import { assertCreationDisabled, startRecordingServer } from '../demo/server.mjs';
 import { buildSrt, formatTimestamp } from '../demo/srt.mjs';
 import { VIDEO_FPS, VIDEO_SECONDS, buildTimeline, resolveFreshAcceptance, resultsCopy } from '../demo/story.mjs';
+import { readRoadsterArtifact } from '../roadster/artifact.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const measurements = {
@@ -37,7 +39,16 @@ test('saved demo timeline is three minutes and does not claim a fresh result', a
   assert.equal(facts.laterTrials.passedAcceptance, false);
   assert.equal(facts.investigation.conclusionVerified, false);
   assert.equal(facts.investigation.model, 'muse-spark-1.3');
-  assert.equal(facts.phase.ceiling, 45);
+  assert.equal(facts.phase.present, true);
+  assert.equal(facts.phase.quoted, false);
+  assert.equal(facts.phase.onDiskName, 'motion-transfer-additional-inference-v2');
+  assert.equal(facts.phase.onDiskCeiling, 50);
+  assert.equal(facts.phase.historicalSpendingIncluded, false);
+  assert.equal(facts.phase.ceiling, null);
+  assert.deepEqual(facts.phase.reservations, []);
+  assert.equal(facts.remix?.id, SAVED_REMIX_ID);
+  assert.equal(facts.remix.parentId, facts.roadsterParentId);
+  assert.ok(facts.component.humanAssistance.includes('Mapped live registry and numeric state fields'));
   const timeline = buildTimeline({ facts, measurements, remixAvailable: Boolean(facts.remix), donorDashVisible: true, pakuDashVisible: true });
   assert.equal(timeline.reduce((sum, segment) => sum + segment.seconds, 0), VIDEO_SECONDS);
   assert.equal(timeline.reduce((sum, segment) => sum + segment.frames, 0), VIDEO_SECONDS * VIDEO_FPS);
@@ -46,6 +57,8 @@ test('saved demo timeline is three minutes and does not claim a fresh result', a
   assert.match(text, /-41\.38 m/);
   assert.match(text, /6 m across 8 updates/);
   assert.match(text, /preservation hypothesis/);
+  assert.match(text, /host mapped the boundary/);
+  assert.match(text, /Committed child/);
   assert.doesNotMatch(text, /FRESH ACCEPTANCE|Muse Code|public url|on a phone|external creators|k\/10/i);
   const card = resultsCopy(facts).join('\n');
   assert.match(card, /\$0\.28511425/);
@@ -53,6 +66,8 @@ test('saved demo timeline is three minutes and does not claim a fresh result', a
   assert.match(card, /\$0\.640187/);
   assert.match(card, /10\/13/);
   assert.match(card, /Not an acceptance/);
+  assert.match(card, /not quoted/);
+  assert.doesNotMatch(card, /\$45|\$50|0\.018217438/);
   assert.doesNotMatch(card, /FRESH ACCEPTANCE|Muse Code|public counts:/i);
   const srt = buildSrt(timeline);
   assert.match(srt, /^1\n00:00:00,000 -->/);
@@ -90,6 +105,44 @@ test('fresh acceptance is explicit and fail-closed', async () => {
   }
 });
 
+test('a present phase journal is quoted and a tampered remix is rejected', async () => {
+  const card = resultsCopy({
+    component: {
+      id: 'ab'.repeat(32), cost: '$1', requests: 1, development: 1, regression: 1, acceptance: 1, tickLabel: '1', maxPositionError: 0,
+    },
+    campaign: { completedTasks: 0, attemptedTasks: 1, cost: '$0', noSubmittedCandidate: true },
+    laterTrials: { cost: '$0', peak: '0/13' },
+    phase: {
+      present: true,
+      quoted: true,
+      ceiling: 45,
+      reservations: [{ category: 'recovery', status: 'uncertain', cap: 0.5, estimate: 0.01 }],
+    },
+  }).join('\n');
+  assert.match(card, /Budget ceiling \$45/);
+  assert.match(card, /cap \$0\.50/);
+  assert.match(card, /Not an acceptance/);
+  const directory = await mkdtemp(join(tmpdir(), 'demo-remix-'));
+  try {
+    const remix = await materializeCommittedRemix(root, directory);
+    const artifact = await readRoadsterArtifact(directory, remix.id);
+    assert.equal(artifact.id, SAVED_REMIX_ID);
+    assert.equal(artifact.intent.activation, 'press');
+    assert.equal(artifact.intent.direction, 'opposite');
+    assert.equal(artifact.intent.unitScale, 0.05);
+    assert.match(artifact.summary, /3m backward/i);
+    const evidence = JSON.parse(await readFile(join(root, remix.source), 'utf8'));
+    const tampered = {
+      ...evidence,
+      files: { ...evidence.files, 'notices.txt': evidence.files['notices.txt'] + '\n' },
+    };
+    assert.equal(remixRecordFromEvidence(tampered), null);
+    assert.equal(remixRecordFromEvidence({ ...evidence, id: 'ab'.repeat(32) }), null);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test('recording commands reject speed changes and secret-shaped logs', () => {
   assert.throws(() => segmentArgs({
     input: { kind: 'file', path: 'clip.webm' }, frames: 30, filter: 'setpts=0.5*PTS', output: 'out.mp4',
@@ -107,7 +160,9 @@ test('read-only lab cannot submit and the preview refuses creation', { timeout: 
   assert.equal(lab.status().enabled, false);
   await assert.rejects(() => lab.submit(), /disables model creation/);
   await assert.rejects(() => lab.artifact('a'.repeat(64)));
-  const server = await startRecordingServer(root);
+  const playback = join(directory, 'playback');
+  const remix = await materializeCommittedRemix(root, playback);
+  const server = await startRecordingServer(root, playback);
   try {
     const status = await assertCreationDisabled(server.origin);
     assert.equal(status.remix, 503);
@@ -118,23 +173,34 @@ test('read-only lab cannot submit and the preview refuses creation', { timeout: 
     const job = await saved.json();
     assert.match(job.report.conclusion, /rejects preservation hypothesis/);
     assert.equal(job.report.model, 'muse-spark-1.3');
+    const listed = await fetch(server.origin + '/api/roadster/artifacts/' + remix.id);
+    assert.equal(listed.status, 200);
+    const body = await listed.json();
+    assert.equal(body.id, SAVED_REMIX_ID);
+    assert.equal(body.parentArtifactId, remix.parentId);
+    assert.match(body.summary, /3m backward/i);
+    const missing = await fetch(server.origin + '/api/roadster/artifacts/' + 'ab'.repeat(32));
+    assert.equal(missing.status, 404);
   } finally {
     await server.close();
+    await rm(directory, { recursive: true, force: true });
   }
 });
 
 test('ffmpeg writes a two-second h264 segment with a lower third', { timeout: 60000 }, async () => {
   const directory = await mkdtemp(join(tmpdir(), 'demo-encode-'));
   try {
-    const corner = join(directory, 'corner.txt');
-    const lower = join(directory, 'lower.txt');
-    await writeCaption(corner, ['HACKATHON', 'No new model request']);
-    await writeCaption(lower, ['Same recorded stunt. This landing misses the zone.']);
+    const corner = join(directory, 'corner.png');
+    const lower = join(directory, 'lower.png');
+    await writeCaption(join(directory, 'corner.txt'), ['HACKATHON', 'No new model request']);
+    await writeSolidPng(corner, 8, 8, [188, 233, 129, 255]);
+    await writeSolidPng(lower, 8, 8, [17, 19, 21, 220]);
     const output = join(directory, 'segment.mp4');
     const args = segmentArgs({
       input: { kind: 'lavfi', color: '0x203040', seconds: 2 },
       frames: 60,
-      filter: overlayFilter({ cornerFile: corner, lowerFile: lower, seconds: 2, pad: true }),
+      filter: overlayFilter({ seconds: 2, pad: true, lower: true }),
+      images: [corner, lower],
       output,
     });
     assert.equal(args.includes('libx264'), true);
@@ -154,8 +220,12 @@ test('ffmpeg writes a two-second h264 segment with a lower third', { timeout: 60
 test('recorder source does not load an API key or the live preview script', async () => {
   for (const path of [
     'scripts/record-demo.mjs', 'demo/capture.mjs', 'demo/render.mjs', 'demo/server.mjs', 'demo/facts.mjs',
+    'demo/committed-remix.mjs',
   ]) {
     const source = await readFile(join(root, path), 'utf8');
     assert.doesNotMatch(source, /loadEnvFile|MODEL_API_KEY|scripts\/preview/);
   }
+  const render = await readFile(join(root, 'demo/render.mjs'), 'utf8');
+  assert.match(render, /draft\.mp4/);
+  assert.match(render, /draft\.srt/);
 });

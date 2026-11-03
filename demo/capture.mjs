@@ -2,9 +2,8 @@ import { mkdir, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { chromium } from 'playwright';
 import { ROADSTER_CHALLENGE } from '../roadster/challenge-contract.mjs';
+import { SAVED_REMIX_ID, materializeCommittedRemix } from './committed-remix.mjs';
 import { assertCreationDisabled, startRecordingServer } from './server.mjs';
-
-const SAVED_REMIX_ID = 'f67245c401fc82cfd516d6e333fe67dad2acfd232ca7607baea6a6d05d912fbf';
 const ONE_GAME = `
   .donor-card, article.game-card:not(.transferred) { display: none !important; }
   .games { display: block !important; }
@@ -55,13 +54,17 @@ async function park(page, selector, top) {
   }, { selector, top: top ?? null });
 }
 
-async function holdPointer(page, locator, ms) {
+async function holdPointer(page, locator, ms, sample) {
   await locator.scrollIntoViewIfNeeded();
   const box = await locator.boundingBox();
   if (!box) throw Error('A playback control is not visible');
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
   await page.mouse.down();
-  await page.waitForTimeout(ms);
+  const steps = Math.max(1, Math.ceil(ms / 200));
+  for (let step = 0; step < steps; step += 1) {
+    await page.waitForTimeout(ms / steps);
+    if (sample) await sample();
+  }
   await page.mouse.up();
 }
 
@@ -196,16 +199,23 @@ async function capturePixel(page, tools, destination) {
     await page.waitForTimeout(6000);
   }
   await page.locator('article.transferred').scrollIntoViewIfNeeded();
+  const canvas = page.frameLocator('article.transferred iframe').locator('canvas');
+  if (await canvas.count()) await canvas.click({ timeout: 8000 });
+  await page.waitForFunction(() => /DASH READY|DASH ACTIVE|RECHARGING/.test(document.querySelector('#dash-state')?.textContent ?? ''), null, { timeout: 5000 }).catch(() => {});
   await holdPointer(page, turn, destination === 'jujump' ? 280 : 400);
   await page.waitForTimeout(350);
-  await holdPointer(page, dash, destination === 'jujump' ? 1800 : 2200);
+  let sawDash = false;
+  await holdPointer(page, dash, destination === 'jujump' ? 1800 : 2200, async () => {
+    const text = (await page.locator('#dash-state').innerText()).replace(/\s+/g, ' ').trim();
+    if (/DASH ACTIVE|RECHARGING/.test(text)) sawDash = true;
+  });
   await page.waitForTimeout(destination === 'jujump' ? 12000 : 1200);
   const dashState = (await page.locator('#dash-state').innerText()).replace(/\s+/g, ' ').trim();
   const component = (await page.locator('#shared-component').innerText()).replace(/\s+/g, ' ').trim();
   return {
     urlPath: '/?destination=' + destination,
     dashState,
-    dashVisible: /DASH ACTIVE|RECHARGING/.test(dashState),
+    dashVisible: sawDash || /DASH ACTIVE|RECHARGING/.test(dashState),
     component,
     framing: 'donor and before cards hidden so one transferred game fills the shot',
     marks: { content },
@@ -217,12 +227,17 @@ async function captureInvestigation(page, tools) {
   await page.locator('#evidence-details > summary').click();
   await page.locator('#view-investigation').scrollIntoViewIfNeeded();
   const content = tools.mark();
-  await page.waitForTimeout(2500);
+  await page.waitForTimeout(6000);
   await page.locator('#view-investigation').click();
   await page.waitForFunction(() => document.querySelector('#lab-mode')?.textContent === 'SAVED RECORDING');
   await page.waitForFunction(() => (document.querySelector('#investigation-conclusion')?.textContent ?? '').toLowerCase().includes('rejects preservation hypothesis'));
-  await page.locator('#investigation-hypothesis').scrollIntoViewIfNeeded();
-  await page.waitForTimeout(4500);
+  const hypothesis = page.locator('#investigation-hypothesis');
+  if (await hypothesis.count()) {
+    await hypothesis.scrollIntoViewIfNeeded({ timeout: 5000 }).catch(() => {});
+    await page.waitForTimeout(2000);
+  }
+  await page.locator('#investigation-conclusion').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(2500);
   await scrollToText(page, '#investigation-conclusion', 'rejects preservation hypothesis');
   const rejection = tools.mark();
   await page.waitForTimeout(21000);
@@ -358,7 +373,10 @@ async function readMeasurements(origin, parentId) {
 export async function captureAll({ root, out, headed = false }) {
   await mkdir(join(out, 'clips'), { recursive: true });
   await mkdir(join(out, 'stills'), { recursive: true });
-  const server = await startRecordingServer(root);
+  const playback = join(out, 'playback-artifacts');
+  await mkdir(playback, { recursive: true });
+  const remixArtifact = await materializeCommittedRemix(root, playback);
+  const server = await startRecordingServer(root, playback);
   const shots = {};
   let browser;
   try {
@@ -378,6 +396,7 @@ export async function captureAll({ root, out, headed = false }) {
     shots.original = await recordShot(browser, server.origin, out, 'original', (page, tools) => captureLanding(page, tools, 'original'));
     console.log('capture borrowed');
     shots.borrowed = await recordShot(browser, server.origin, out, 'borrowed', (page, tools) => captureLanding(page, tools, 'borrowed'));
+    if (!shots.original.artifactId) throw Error('Original landing did not report the saved Roadster artifact');
     const measurements = await readMeasurements(server.origin, shots.original.artifactId);
     if (!measurements.ordinaryOutsideTarget || !measurements.borrowedInsideTarget) {
       throw Error('Challenge report does not show a miss and a landing in the zone');
@@ -408,6 +427,7 @@ export async function captureAll({ root, out, headed = false }) {
       webglProbe: { title: probe.title, external: probe.external },
       measurements,
       remixAvailable: remix.available !== false,
+      remixSource: remixArtifact?.source ?? null,
       donorDashVisible: shots.donor.dashed === true,
       shots,
     };

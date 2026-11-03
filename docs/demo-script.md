@@ -4,7 +4,7 @@ Record this from the local preview. The edit is three minutes. Several source cl
 
 This cut uses **saved** playback. It does not show a fresh recovery, a fresh remix generation, a public URL, or a phone. Those fallbacks are at the end.
 
-Snapshot dated November 2, 2026, branch `codex/playable-motion-remixes` at `9a6fe8c`. The root README will be refreshed with current status after other agents finish. The landing numbers below come from `tests/roadster-challenge.test.mjs`, which passed in this pass (one test, no browser, no report file written).
+The automated cut is `node scripts/record-demo.mjs`. It writes ignored `reports/demo/draft.mp4`, `reports/demo/draft.srt`, and `reports/demo/provenance.json`. `capture` and `render` stay separate so a later local acceptance clip can replace the investigation segment without reshooting. This pass does not pass `--fresh-acceptance`.
 
 ## What the viewer is seeing
 
@@ -38,7 +38,7 @@ Useful URLs on that same server:
 | JUJUMP saved transfer | `http://127.0.0.1:4173/?destination=jujump` |
 | Saved local 3 m backward remix | `http://127.0.0.1:4173/roadster/play/f67245c401fc82cfd516d6e333fe67dad2acfd232ca7607baea6a6d05d912fbf` |
 
-The remix URL exists only when this machine’s ignored `reports/lab/` is present. It is a child of committed Roadster id `6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38` (`transfers/roadster/current.json`). Its manifest summary is a press-activation, opposite-direction dash at unit scale 0.05. Do not press `Adapt with Meta` or `Remix with Meta`.
+The playable remix bytes are the committed evidence file named in `docs/demo-recording.md`, not `reports/lab/`. Capture checks that file’s identity, writes a playback copy under `reports/demo/playback-artifacts/`, and opens it on the recording server. It is a child of committed Roadster id `6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38` (`transfers/roadster/current.json`). Its summary is a press-activation, opposite-direction dash at unit scale 0.05. Do not press `Adapt with Meta` or `Remix with Meta`. If the evidence file is missing, record the form and label it `FORM ONLY`.
 
 `npm run dev` on port 4444 is the donor alone. Prefer `/donor/play` on the preview server so the recording stays on one origin.
 
@@ -68,10 +68,10 @@ If clip H 404s, record the remix form at `#remix-heading` without submitting. Ca
 | --- | --- | --- |
 | 0:00–0:12 | Hard cut from clip A’s result line to clip B’s result line. No title card first. | `Same recorded stunt. The second landing adds a dash recovered from another game’s compiled cartridge.` Corner: `UPSTREAM: RDSTR Stunts by sebayaki` and `HACKATHON: green zone`. `SAVED PLAYBACK`. |
 | 0:12–0:32 | Clip C, then the page’s `SAVED RECOVERY` card (`Borrow the dash`), then clip D. | `One saved controller, replayed in a pixel game and in the car.` |
-| 0:32–1:05 | Clip E. Keep the button text `View recorded investigation · no model call` in frame. | `Saved Muse Spark investigation. A human mapped the boundary and the checks. The November 2 campaign was three developer tasks: two completed, and its one recovery task submitted no candidate. Two later development trials did not pass acceptance.` |
+| 0:32–1:05 | Clip E. Keep the button text `View recorded investigation · no model call` in frame, then the saved conclusion. | `Saved Muse Spark investigation. The view button makes no model call. The host mapped the boundary, state, and checks. The neutral-after-left conclusion stays a saved model interpretation.` |
 | 1:05–1:25 | Clip F, full screen on the two coordinates. | `Saved matched inputs. Native landing −49.47 m, outside the zone from −42.3 m to −40.4 m. The same controls plus this dash land at −41.38 m. The dash is 6 m across 8 updates; the landing shift is about 8.09 m because native motion moves too. By-feel and video scores are not in this cut.` |
 | 1:25–1:48 | Clip G. Point at `JUJUMP` and the shared component id prefix if the destination chip is visible. | `Author-built adapter on Kenta Cho’s JUJUMP. Same frozen component. This is not an outside developer’s session.` |
-| 1:48–2:08 | Clip H, or the unsubmitted form. | `Saved local remix: backward, fresh press, 3 m. Playback sends no new model request. Public sharing is still local to this server.` |
+| 1:48–2:08 | Clip H, or the unsubmitted form. | `Saved local remix: backward, fresh press, 3 m. Committed child. Playback sends no new request.` |
 | 2:08–2:38 | Editor card, spoken or on screen, using only the figures in the results block below. | `One behavior, finite traces, saved recovery. The campaign did not accept a new component.` |
 | 2:38–3:00 | Clip I, then a closing card with the local command. | `Hackathon work: recovery harness, saved dash, adapters, green-zone challenge, remix flow, and checks. Dashy Dango, PAKU PAKU, JUJUMP, and RDSTR Stunts are upstream. Run npm run dev:transfer and open http://127.0.0.1:4173.` |
 
@@ -83,16 +83,17 @@ Use these lines and no others. Leave a blank line where a count does not exist.
 
 - Saved component `1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2`. Muse Wonder 1.0 generated it; Muse Spark 1.3 repaired it. Estimated generation cost `$0.28511425` across three historical requests. Finite checks: 12 development, 21 regression, 20 acceptance traces; 6,744 ticks; maximum position error 0 at tolerance 0.25 source pixels. Source: `components/dashy-dango-dash/README.md`.
 - November 2 developer campaign `eb9ac874-30ad-4a0b-9bcc-78f8c25f539a`: 2 of 3 tasks completed, estimated `$0.7299162`, reservations settled. The recovery task submitted no candidate. Source: `benchmark/recordings/README.md`. The root README rounds the same campaign to `$0.7299` and reports two later development trials at `$0.640187`, one reaching 10 of 13 development checks. Neither passed acceptance.
-- Additional-budget journal `reports/motion-transfer-phase/phase-budget.json`: definition ceiling `$45`. One recovery reservation, status `uncertain`, cap `$0.50`, recorded estimate `$0.018217438`, interrupted `2026-11-02T23:13:33.497Z`. The provider charge is not in the file. This is not an acceptance and not a finished ten-trial rate.
+- Phase budget: do not recreate a journal. The missing historical v1 ledger is not quoted. If a different ledger is on disk, the card says it is not quoted and gives no ceiling or reservation. Say that this is not an acceptance and not a finished ten-trial rate.
+- `docs/fresh-recovery.md` describes a historical Wonder trial. Its raw campaign files are not in this checkout, so do not label that prose as a verified fresh acceptance.
 - Public player counts, independent users, a fidelity chart, a Muse Code clean-room rate, and a hosted link: omit. They are not evidenced in this cut.
 
 ## Fallbacks
 
-**Fresh recovery, use only with a new artifact.** If a later run accepts a component and writes that acceptance next to the played bytes, replace 0:32–1:05 with that recording. Caption the trial id, the harness, and `FRESH ACCEPTANCE`. Until that file exists, keep the saved investigation. Do not restage a live model call for the video.
+**Fresh recovery, use only with a new artifact.** If a later run accepts a component and writes that acceptance next to a local recording, render again with `--fresh-acceptance`. The file has to say `"accepted": true` and name the trial, the harness (`in-app` or `muse-code`), the component id, and a local clip. A public URL, phone, user count, or rate field is rejected. Until that file exists, keep the saved investigation. `docs/fresh-recovery.md` is not that file. Do not restage a live model call for the video.
 
 **Fresh remix.** A new `Adapt with Meta` or `Remix with Meta` submission is a paid call. This script does not include one. If a later approved run produces a new child, replace clip H with that child and caption `FRESH REMIX` plus its artifact id. If clip H is missing, show the form and caption `FORM ONLY — NO GENERATION IN THIS TAKE`.
 
-**In-app agent only.** There is no Muse Code session in this tree (`mcp/` and `skills/` are absent). Do not title the investigation shot as Muse Code.
+**In-app agent only.** This cut has no Muse Code session. Do not title the investigation shot as Muse Code.
 
 **Public and phone shots.** Skip them until a public playback URL answers on another network. The closing card stays on `npm run dev:transfer`.
 

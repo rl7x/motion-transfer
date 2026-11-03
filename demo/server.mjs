@@ -2,8 +2,8 @@ import { join } from 'node:path';
 import { createPreviewServer } from '../web/server.mjs';
 import { createReadOnlyRoadsterLab } from './read-only-lab.mjs';
 
-export async function startRecordingServer(root) {
-  const lab = createReadOnlyRoadsterLab(join(root, 'reports/lab/artifacts'));
+export async function startRecordingServer(root, labDirectory = join(root, 'reports/lab/artifacts')) {
+  const lab = createReadOnlyRoadsterLab(labDirectory);
   return createPreviewServer({ lab });
 }
 

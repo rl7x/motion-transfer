@@ -39,6 +39,15 @@ export function landingLines(measurements) {
 }
 
 function phaseLines(phase) {
+  if (!phase?.quoted) {
+    return [
+      phase?.present
+        ? 'A phase ledger is on disk and is not quoted.'
+        : 'Phase budget journal is not in this checkout.',
+      'No ceiling or reservation is stated from it.',
+      'Not an acceptance. Not a finished ten-trial rate.',
+    ];
+  }
   const recovery = phase.reservations.filter(item => item.category === 'recovery');
   const lines = [`Budget ceiling $${phase.ceiling}.`];
   if (recovery.length === 1) {
@@ -137,10 +146,13 @@ export function buildTimeline({ facts, measurements, remixAvailable, donorDashVi
       corner: fresh ? [`FRESH · ${fresh.harness.toUpperCase()}`, 'Explicit substitution'] : ['SAVED INVESTIGATION', 'No new model request'],
       lower: fresh
         ? [`Fresh acceptance ${shortId(fresh.trialId, 8, 4)}.`, `Harness: ${fresh.harness}. Passed explicitly.`]
-        : ['Saved Muse Spark 1.3 run. No new model request.'],
+        : ['Saved Muse Spark 1.3 run. No new model request.', 'The host mapped the boundary, state, and checks.'],
       cues: fresh
         ? [`Fresh acceptance, trial ${fresh.trialId}, ${fresh.harness} harness.`]
-        : ['Saved Muse Spark investigation. The view button makes no model call.'],
+        : [
+          'Saved Muse Spark investigation. The view button makes no model call.',
+          'The host mapped the boundary, state, and checks.',
+        ],
     }),
     segment('investigation-result', 21, investigationClip, {
       window: fresh ? 'content' : 'mark',
@@ -164,9 +176,10 @@ export function buildTimeline({ facts, measurements, remixAvailable, donorDashVi
       cues: ['Author-built adapter on JUJUMP. Same frozen component. This is not an outside developer session.'],
     }),
     segment('remix', 20, remixAvailable ? 'remix' : 'remix-form', {
+      window: 'end',
       corner: remixAvailable ? ['SAVED LOCAL REMIX', 'No new model request'] : ['FORM ONLY', 'No generation'],
       lower: remixAvailable
-        ? ['Saved local remix: backward, fresh press, 3 m.', 'Playback only. Not a public share link.']
+        ? ['Saved local remix: backward, fresh press, 3 m.', 'Committed child. Playback sends no new request.']
         : ['Remix form only. No generation in this take.'],
       cues: remixAvailable
         ? ['Saved local remix: backward, fresh press, 3 m. Playback sends no new model request.']
