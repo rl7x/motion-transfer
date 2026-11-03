@@ -94,6 +94,10 @@ export type GenerationMode = 'local' | 'public-standard' | 'playback-only';
 /** Static playback injects GET payloads here. Missing keys still use the network. */
 export interface MotionDataSource {
   generation?: GenerationMode;
+  publicOrigin?: string | null;
+  basePath?: string;
+  /** Always the saved controller. A missing raw recovery does not become a fresh claim. */
+  recovery?: 'saved';
   resources?: Record<string, unknown>;
 }
 declare global {

@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { sha256 } from '../release/sha.mjs';
-import { createStaticReleaseServer } from '../release/static-server.mjs';
+import { createStaticReleaseServer, RELEASE_CHECK_BASE_PATH } from '../release/static-server.mjs';
 import { runHostedGeneration } from '../release/generation.mjs';
 
 const args = process.argv.slice(2);
@@ -21,7 +21,7 @@ if (flag('--generate')) {
 }
 
 const manifest = JSON.parse(await readFile(join(root, 'manifest.json'), 'utf8'));
-const server = await createStaticReleaseServer({ root, basePath: '/preview/' });
+const server = await createStaticReleaseServer({ root, basePath: RELEASE_CHECK_BASE_PATH });
 try {
   const read = async path => {
     const response = await fetch(server.origin + path);

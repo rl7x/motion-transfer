@@ -1,21 +1,22 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { createStaticReleaseServer } from './static-server.mjs';
+import { sha256 } from './sha.mjs';
+import { createStaticReleaseServer, RELEASE_CHECK_BASE_PATH } from './static-server.mjs';
 
 function escaped(url, origin) {
   if (url.startsWith(origin) || url.startsWith('blob:') || url.startsWith('data:') || url.endsWith('/favicon.ico')) return false;
   return true;
 }
 
-export async function browserCheck(directory, manifest, { basePath = '/preview/' } = {}) {
+export async function browserCheck(directory, manifest, { basePath = RELEASE_CHECK_BASE_PATH } = {}) {
   const { chromium } = await import('playwright');
   const server = await createStaticReleaseServer({ root: directory, basePath });
   const browser = await chromium.launch({ channel: process.env.BROWSER_CHANNEL || 'chrome', headless: true,
     env: { PATH: process.env.PATH ?? '', HOME: process.env.HOME ?? '', TMPDIR: process.env.TMPDIR ?? '' } });
   const external = [];
   try {
-    const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+    const page = await browser.newPage({ viewport: { width: 1200, height: 1000 } });
     page.setDefaultTimeout(60_000);
     await page.route('**/*', route => {
       const url = route.request().url();
@@ -47,12 +48,16 @@ export async function browserCheck(directory, manifest, { basePath = '/preview/'
     assert.equal(shell.generation, 'playback-only');
     assert.equal(shell.enabled, false);
     assert.equal(shell.challenge, manifest.versions.some(version => version.kind === 'roadster-challenge'));
+    await page.waitForSelector('#transfer-game', { timeout: 45_000 });
+    const frameSrc = await page.locator('#transfer-game').evaluate(frame => frame.src);
+    assert.match(frameSrc, new RegExp(basePath.replace(/\/$/, '') + '/versions/[a-f0-9]{64}/frame\\.html'));
     const leaf = manifest.remixChain?.at(-1) ?? manifest.versions.find(version => version.parentArtifactId)?.id;
     if (leaf) {
       await page.goto(server.origin + 'versions/' + leaf + '/index.html');
       await page.reload();
       const parent = page.locator('[data-parent]');
       assert.equal(await parent.getAttribute('href'), '../' + manifest.versions.find(version => version.id === leaf).parentArtifactId + '/index.html');
+      await parent.scrollIntoViewIfNeeded();
       await parent.click();
       await page.waitForURL(new RegExp('/versions/' + manifest.versions.find(version => version.id === leaf).parentArtifactId + '/'));
     }
@@ -82,6 +87,28 @@ export async function browserCheck(directory, manifest, { basePath = '/preview/'
     } catch (error) {
       if (error.code !== 'ENOENT') throw error;
     }
+    const featured = manifest.versions.find(version => version.id === manifest.featuredId);
+    const cold = await browser.newPage();
+    const coldExternal = [];
+    try {
+      await cold.route('**/*', route => {
+        const url = route.request().url();
+        if (escaped(url, server.origin)) { coldExternal.push(url); return route.abort(); }
+        return route.continue();
+      });
+      const coldErrors = [];
+      cold.on('pageerror', error => coldErrors.push(error.message));
+      await cold.goto(server.origin + featured.play);
+      await cold.reload();
+      const downloaded = await cold.evaluate(async (url) => {
+        const response = await fetch(url);
+        if (!response.ok) throw Error('download failed');
+        return [...new Uint8Array(await response.arrayBuffer())];
+      }, new URL(featured.download, server.origin).href);
+      assert.equal(sha256(Buffer.from(downloaded)), manifest.files[featured.download]);
+      assert.deepEqual(coldErrors, []);
+      assert.deepEqual(coldExternal, []);
+    } finally { await cold.close(); }
     assert.deepEqual(external, []);
   } finally {
     await browser.close();

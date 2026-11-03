@@ -1,4 +1,5 @@
 import { useTransfer } from '../transfer-context';
+import { linkHref } from '../links';
 export function ArtifactDetails() {
   const { destination: d, artifact: a } = useTransfer();
   const car = d?.id === 'roadster',
@@ -43,16 +44,18 @@ export function ArtifactDetails() {
             <a
               id="artifact-id"
               title={id}
-              href={car ? '/api/roadster/artifacts/' + id : a ? '/api/artifacts/' + id : d?.report}
+              href={linkHref(
+                car ? '/api/roadster/artifacts/' + id : a ? '/api/artifacts/' + id : d?.report,
+              )}
             >
               {id?.slice(0, 12) ?? '—'}
             </a>
           </p>
           <small>
-            <a id="adapter-source" href={source}>
+            <a id="adapter-source" href={linkHref(source)}>
               Adapter source
             </a>{' '}
-            · <a href="/artifact/component.ts">Frozen component source</a>
+            · <a href={linkHref('/artifact/component.ts')}>Frozen component source</a>
           </small>
         </div>
       </div>

@@ -1,7 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { errorMessage, fetchJson } from './api';
-import { describeShare, type ShareMessage } from './data-source';
+import {
+  appPath,
+  describeShare,
+  logicalPathname,
+  shareAddress,
+  type ShareMessage,
+} from './data-source';
 import type { Ability, Artifact, Destination, DestinationId } from './types';
 
 interface TransferState {
@@ -60,16 +66,15 @@ export function TransferProvider({ children }: { children: ReactNode }) {
         note: `${destination.name}: playing a saved ${artifact?.parentArtifactId ? 'remix' : 'transfer'}. Choosing a destination makes no model request.`,
       }));
       setShareMessage(null);
-      if (navigate)
-        history.pushState(
-          {},
-          '',
+      if (navigate) {
+        const next =
           destination.id === 'roadster'
             ? '/roadster/play/' + artifact?.id
             : artifact?.parentArtifactId
               ? '/play/' + artifact.id
-              : '/?destination=' + destination.id,
-        );
+              : '/?destination=' + destination.id;
+        history.pushState({}, '', appPath(next));
+      }
     },
     [],
   );
@@ -114,8 +119,9 @@ export function TransferProvider({ children }: { children: ReactNode }) {
       let target = state.destinations.find(
         (item) => item.id === new URL(location.href).searchParams.get('destination'),
       );
-      const carId = location.pathname.match(/^\/roadster\/play\/([a-f0-9]{64})$/)?.[1];
-      const id = location.pathname.match(/^\/play\/([a-f0-9]{64})$/)?.[1];
+      const pathname = logicalPathname(location.pathname);
+      const carId = pathname.match(/^\/roadster\/play\/([a-f0-9]{64})$/)?.[1];
+      const id = pathname.match(/^\/play\/([a-f0-9]{64})$/)?.[1];
       if (carId) {
         cache.current.roadster = await roadsterArtifact(carId, signal);
         target = state.destinations.find((item) => item.id === 'roadster');
@@ -209,16 +215,25 @@ export function TransferProvider({ children }: { children: ReactNode }) {
         : artifact
           ? '/play/' + artifact.id
           : '/?destination=' + destination.id;
-    const url = new URL(path, location.origin).href;
+    const address = shareAddress(path);
+    if (address.unconfigured) {
+      setShareMessage({
+        text: 'A public link is not configured.',
+        url: '',
+        copied: false,
+        local: false,
+      });
+      return;
+    }
     let copied = false;
     try {
       if (!navigator.clipboard?.writeText) throw Error('Clipboard unavailable');
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(address.url);
       copied = true;
     } catch {
       /* Leave the address visible when the clipboard is blocked or unavailable. */
     }
-    setShareMessage(describeShare(url, copied));
+    setShareMessage(describeShare(address.url, copied));
   }
   return (
     <TransferContext

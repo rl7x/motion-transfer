@@ -1,5 +1,6 @@
 import { useResource } from '../hooks/use-resource';
 import { useTransfer } from '../transfer-context';
+import { linkHref } from '../links';
 import { JsonDetails } from './shared';
 interface Comparison {
   passed: boolean;
@@ -79,7 +80,9 @@ export function Proof() {
           presentation is separate from the frozen Meta-recovered motion component.
         </p>
         <p>
-          <a href="/roadster/presentation.json">Actual donor presentation observations ↗</a>
+          <a href={linkHref('/roadster/presentation.json')}>
+            Actual donor presentation observations ↗
+          </a>
         </p>
       </details>
       <div id="trace-comparison" className="trace-comparison" aria-live="polite">
@@ -202,8 +205,11 @@ export function Proof() {
           )}
         </div>
         <p>
-          <a href="/evidence/transfer-comparison.json">Download the actual comparison traces ↗</a> ·{' '}
-          <a id="artifact-checks" href={report}>
+          <a href={linkHref('/evidence/transfer-comparison.json')}>
+            Download the actual comparison traces ↗
+          </a>{' '}
+          ·{' '}
+          <a id="artifact-checks" href={linkHref(report)}>
             Current destination report ↗
           </a>
         </p>

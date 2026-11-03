@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTransfer } from '../transfer-context';
 import { readGenerationMode } from '../data-source';
+import { linkHref } from '../links';
 import { useResource } from '../hooks/use-resource';
 import { HoldButton } from './hold-button';
 import { useExpanded, ExpandButton } from './player-expansion';
@@ -152,7 +153,7 @@ export function ChallengePlayer() {
             <iframe
               ref={frame}
               id="transfer-game"
-              src={data.play + '?quality=low#channel=' + channel}
+              src={linkHref(data.play + '?quality=low#channel=' + channel)}
               title="Roadster landing challenge"
               sandbox="allow-scripts"
               allow="autoplay"
@@ -227,7 +228,7 @@ export function ChallengePlayer() {
             Copy playable link ↗
           </button>
           {data && (
-            <a id="challenge-download" href={data.download} download>
+            <a id="challenge-download" href={linkHref(data.download)} download>
               Download playable game ↗
             </a>
           )}
@@ -267,7 +268,7 @@ export function ChallengePlayer() {
           physics are upstream work by sebayaki.
         </p>
         <p>
-          <a href="/donor/play" target="_blank" rel="noreferrer">
+          <a href={linkHref('/donor/play')} target="_blank" rel="noreferrer">
             Play the original donor ↗
           </a>{' '}
           · <a href="#remix-heading">Make your version ↓</a>
@@ -284,8 +285,8 @@ export function ChallengePlayer() {
               The default dash supplies six meters across eight updates. Its net landing shift also
               includes the native movement it replaces.
             </p>
-            <a href={data.report}>Exact traces and checks ↗</a> ·{' '}
-            <a href={data.source}>Component, adapter and notices ↗</a>
+            <a href={linkHref(data.report)}>Exact traces and checks ↗</a> ·{' '}
+            <a href={linkHref(data.source)}>Component, adapter and notices ↗</a>
           </details>
         )}
       </aside>

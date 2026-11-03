@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { errorMessage, fetchJson } from '../api';
 import { modelFailure } from '../data-source';
+import { linkHref } from '../links';
 import { useAgeAcknowledgment } from './age-acknowledgment';
 import { useJob } from '../hooks/use-job';
 import type { InvestigationReport, Job, ServiceStatus } from '../types';
@@ -215,7 +216,9 @@ export function InvestigationPanel({ status }: { status: ServiceStatus | null })
           measured endpoints. This measures orchestration and evidence size; it does not measure
           model round trips, cost savings or reliability.
         </p>
-        <a href="/evidence/experiment-benchmark.json">Download the measured comparison ↗</a>
+        <a href={linkHref('/evidence/experiment-benchmark.json')}>
+          Download the measured comparison ↗
+        </a>
       </details>
       <p id="lab-progress" role="status" aria-live="polite">
         {loadError || (flow.error ? modelFailure(flow.error) : progress)}
@@ -288,7 +291,7 @@ export function InvestigationPanel({ status }: { status: ServiceStatus | null })
       <a
         id="investigation-report"
         hidden={!job}
-        href={path}
+        href={linkHref(path)}
         download={'investigation-' + job?.id + '.json'}
       >
         Download this investigation and measurements ↗

@@ -1,4 +1,5 @@
 import { useResource } from '../hooks/use-resource';
+import { linkHref } from '../links';
 interface Measurements {
   measurements: { traceCount: number; updates: number; maxPositionError: number };
 }
@@ -16,7 +17,7 @@ function RecoveryVerdict() {
 export function Header() {
   return (
     <header>
-      <a className="wordmark" href="/">
+      <a className="wordmark" href={linkHref('/')}>
         MOTION <span>/</span> TRANSFER
       </a>
       <span className="edition">COMPILED → RECOVERED → REUSED</span>
@@ -48,10 +49,10 @@ export function Intro() {
         <h2>Borrow the dash ↠</h2>
         <p>One saved recovery, with its own burst and recharge. Try it in the car below.</p>
         <div className="ability-links">
-          <a href="/donor/play" target="_blank" rel="noreferrer">
+          <a href={linkHref('/donor/play')} target="_blank" rel="noreferrer">
             Play Dashy Dango ↗
           </a>
-          <a href="/component/export" download="recovered-dash.json">
+          <a href={linkHref('/component/export')} download="recovered-dash.json">
             Component source ↗
           </a>
           <a href="#evidence-details">Recovery evidence ↓</a>
@@ -77,9 +78,9 @@ export function RecoveryDetails() {
           </p>
           <RecoveryVerdict />
           <p>
-            <a href="/evidence/recovery-history.json">Generation and repair history</a> ·{' '}
-            <a href="/evidence/evidence.json">Binary and numeric evidence</a> ·{' '}
-            <a href="/evidence/evaluation-acceptance.json">Acceptance results</a>
+            <a href={linkHref('/evidence/recovery-history.json')}>Generation and repair history</a>{' '}
+            · <a href={linkHref('/evidence/evidence.json')}>Binary and numeric evidence</a> ·{' '}
+            <a href={linkHref('/evidence/evaluation-acceptance.json')}>Acceptance results</a>
           </p>
         </div>
         <div>
@@ -121,11 +122,11 @@ export function RecoveryDetails() {
           collision rules. Contact never resets the recovered timers.
         </p>
         <p>
-          <a href="/artifact/adapter.ts">PAKU PAKU adapter</a> ·{' '}
-          <a href="/jujump/adapter.ts">JUJUMP adapter</a> ·{' '}
-          <a href="/roadster/adapter.ts">Roadster adapter</a> ·{' '}
-          <a href="/evidence/contract.json">Recovered contract</a> ·{' '}
-          <a href="/evidence/provenance.json">Component identity</a>
+          <a href={linkHref('/artifact/adapter.ts')}>PAKU PAKU adapter</a> ·{' '}
+          <a href={linkHref('/jujump/adapter.ts')}>JUJUMP adapter</a> ·{' '}
+          <a href={linkHref('/roadster/adapter.ts')}>Roadster adapter</a> ·{' '}
+          <a href={linkHref('/evidence/contract.json')}>Recovered contract</a> ·{' '}
+          <a href={linkHref('/evidence/provenance.json')}>Component identity</a>
         </p>
       </details>
     </details>
@@ -136,9 +137,10 @@ export function Footer() {
     <footer>
       <span>
         Dashy Dango by willGuimont · PAKU PAKU &amp; JUJUMP by Kenta Cho / ABA Games · RDSTR Stunts
-        by sebayaki · <a href="/licenses">PAKU notices</a> ·{' '}
-        <a href="/jujump/licenses">JUJUMP notices</a> ·{' '}
-        <a href="/roadster/notices">Roadster notices</a> · <a href="#privacy-note">Privacy</a>
+        by sebayaki · <a href={linkHref('/licenses')}>PAKU notices</a> ·{' '}
+        <a href={linkHref('/jujump/licenses')}>JUJUMP notices</a> ·{' '}
+        <a href={linkHref('/roadster/notices')}>Roadster notices</a> ·{' '}
+        <a href="#privacy-note">Privacy</a>
       </span>
       <span>Local preview · adults 18 and older · one saved dash, different worlds</span>
     </footer>

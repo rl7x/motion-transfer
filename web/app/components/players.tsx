@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTransfer } from '../transfer-context';
+import { linkHref } from '../links';
 import type { PlayerSnapshot, PlayerWindow } from '../types';
 import { HoldButton } from './hold-button';
 import { useExpanded, ExpandButton } from './player-expansion';
@@ -62,7 +63,7 @@ function DonorPlayer() {
       <iframe
         ref={frame}
         id="donor-game"
-        src={'/donor/play#channel=' + channel}
+        src={linkHref('/donor/play#channel=' + channel)}
         title="Compiled Dashy Dango donor"
         sandbox="allow-scripts"
         allow="autoplay"
@@ -276,7 +277,7 @@ function RecipientPair() {
         <iframe
           ref={before}
           id="original-game"
-          src={destination.before}
+          src={linkHref(destination.before)}
           title={destination.name + ' before transfer'}
           allow="autoplay"
         />
@@ -331,7 +332,7 @@ function RecipientPair() {
           <iframe
             ref={after}
             id="transfer-game"
-            src={afterSrc}
+            src={linkHref(afterSrc)}
             title={destination.name + ' after transfer'}
             sandbox={channel ? 'allow-scripts' : undefined}
             allow="autoplay"

@@ -2,7 +2,9 @@
 
 `reports/release` is a generated static site. It plays the saved Roadster challenge, the saved transfer it was built from, and one intact saved remix chain from `reports/lab/artifacts`. Creation is not included. The directory is gitignored and replaced only after its manifest, files, and browser check agree.
 
-The React shell reads `window.__MOTION_TRANSFER__` from `web/app/data-source.ts`. `generation` is `playback-only`. `resources` is a GET catalog keyed by URL pathname, which is what `fetchJson` consults before using the network. `release/boot.js` sets `basePath` from the page URL and rewrites root-absolute asset URLs on the index document. Version pages do not load that boot script. Their links are relative, so a cold URL such as `versions/<id>/index.html` works on a project subpath.
+The React shell reads `window.__MOTION_TRANSFER__` from `web/app/data-source.ts`. `generation` is `playback-only` and `recovery` is `saved`. `resources` is a GET catalog keyed by logical pathname. `fetchJson` uses that catalog before the network, then prefixes a real request with `basePath`. `release/boot.js` only injects that data, including `basePath` taken from the page URL. It does not patch `history`, `fetch`, or DOM prototypes. `appPath`, `logicalPathname`, and `linkHref` prefix root-absolute routes when a nested prefix is set. With no prefix, or a prefix of `/`, those helpers return the original path.
+
+Version pages keep static metadata. A challenge page mounts `web/app/release-player.tsx` from `assets/release-player.js`. That entry uses React state and removes its window listeners on cleanup. Its frame and script URLs are relative, so `versions/<id>/index.html` works on a project subpath. Non-challenge version pages keep a static frame.
 
 ## Build and check
 
@@ -21,7 +23,15 @@ node scripts/smoke-hosted.mjs
 node --test --test-concurrency=1 tests/release.test.mjs
 ```
 
-`build-release` writes a sibling staging directory, audits it, serves it at `/preview/` on `127.0.0.1`, and renames it onto `reports/release` only after that check passes. `verify-release` repeats the audit and browser check on the published directory. `smoke-hosted` is read-only: it checks the index, the injected catalog, a version page, a parent link, and that the download bytes match the manifest. `POST` is rejected. It does not open `reports/motion-transfer-phase/phase-budget.json`.
+`build-release` writes a sibling staging directory, audits it, serves it at `/motion-transfer/` on `127.0.0.1`, and renames it onto `reports/release` only after that check passes. `verify-release` repeats the audit and browser check on the published directory. `smoke-hosted` is read-only: it checks the index, the injected catalog, a version page, a parent link, and that the download bytes match the manifest. `POST` is rejected. It does not open `reports/motion-transfer-phase/phase-budget.json`.
+
+Optional directories do not run unless named. They do not turn the frontpage into a fresh recovery:
+
+```bash
+node scripts/build-release.mjs --extra-artifacts /path/to/artifacts --challenge /path/to/challenge
+```
+
+`--extra-artifacts` reads another intact Roadster parent chain when that directory exists. `--challenge` replaces the built featured challenge with files from that directory. The directory must name the saved Roadster parent, match its manifest hashes, and record the saved landing result. The injected catalog stays `recovery: saved`. A missing raw Wonder artifact is not read, and the page keeps the saved-recovery label. Omit both flags for the saved parent, the built challenge, and the lab remix chain.
 
 A public origin is optional and must already be known:
 
@@ -50,24 +60,9 @@ Upload the directory as the site root, or as a project subpath, without rewritin
 
 `node scripts/smoke-hosted.mjs --generate` is the opt-in generation gate. Without `RELEASE_GENERATION_HOOK` or `--hook`, it exits 2 and does not open the shared ledger. A hook is an orchestration entry point, not part of this playback tree. This task does not call it.
 
-## React patch for nested routes and share
+## Nested routes and share
 
-Index assets and anchors are prefixed by `release/boot.js`. Two React behaviors still need a patch in `web/app` before a nested public host is correct. Do not apply this from the release build.
-
-`MotionDataSource` needs the runtime fields the boot script already writes:
-
-```ts
-export interface MotionDataSource {
-  generation?: GenerationMode;
-  publicOrigin?: string | null;
-  basePath?: string;
-  resources?: Record<string, unknown>;
-}
-```
-
-Route matching in `web/app/transfer-context.tsx` should strip `basePath` before the existing `/roadster/play/:id` and `/play/:id` tests. `history.pushState` already goes through the boot prefixer on the index page. `share()` does not. It should use `publicOrigin` when that string is set. When it is unset and the hostname is not `localhost`, `127.0.0.1`, `0.0.0.0`, `::1`, or `[::1]`, it should set the share message to “A public link is not configured.” with an empty URL and must not call `describeShare` with `location.origin`. On a local host, the copied URL should include `basePath`.
-
-Version pages already follow those rules without the patch. The patch is for the React shell’s own share control and for opening a React route below a subpath.
+`MotionDataSource` carries `generation`, `publicOrigin`, `basePath`, `recovery`, and `resources`. Route matching strips `basePath` before the `/roadster/play/:id` and `/play/:id` tests. `history.pushState` and root-absolute links go through `appPath` / `linkHref`. `share()` uses `publicOrigin` when that string is set. When it is unset and the hostname is not `localhost`, `127.0.0.1`, `0.0.0.0`, `::1`, or `[::1]`, the share message is “A public link is not configured.” with an empty URL. On a local host, the copied URL includes `basePath`. An unset base path leaves local routes unchanged.
 
 ## Limits
 

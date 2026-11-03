@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { useTransfer } from '../transfer-context';
 import { useJob, useLabStatus } from '../hooks/use-job';
 import { modelFailure, readGenerationMode, stageLabel } from '../data-source';
+import { linkHref } from '../links';
 import { useAgeAcknowledgment } from './age-acknowledgment';
 import { ShareStatus } from './share-status';
 import type { Job, ServiceStatus } from '../types';
@@ -72,14 +73,17 @@ function RoadsterRemix({ status }: { status: ServiceStatus | null }) {
       <p id="roadster-lineage">
         {artifact?.parentArtifactId ? (
           <>
-            <a href={'/roadster/play/' + artifact.parentArtifactId}>Parent version</a> → this
-            checked transfer
+            <a href={linkHref('/roadster/play/' + artifact.parentArtifactId)}>Parent version</a> →
+            this checked transfer
           </>
         ) : (
           'Saved initial Meta transfer. The native simulation is upstream work.'
         )}
       </p>
-      <a id="roadster-source" href={'/api/roadster/artifacts/' + artifact?.id + '/source'}>
+      <a
+        id="roadster-source"
+        href={linkHref('/api/roadster/artifacts/' + artifact?.id + '/source')}
+      >
         Download adapter, verification and source ↗
       </a>
       <form id="roadster-form" onSubmit={submit}>
@@ -200,13 +204,13 @@ function PakuRemix() {
             `Current: ${60 * intent.unitScale}px · ${intent.activation === 'held' ? 'hold to repeat' : 'fresh press'} · ${intent.direction === 'facing' ? 'forward' : 'backward'}`}
         </p>
         <p>
-          <a id="source-download" href={'/api/artifacts/' + artifact?.id + '/source'}>
+          <a id="source-download" href={linkHref('/api/artifacts/' + artifact?.id + '/source')}>
             Download source and report ↗
           </a>
         </p>
         <p id="remix-lineage" hidden={!artifact?.parentArtifactId}>
-          <a href="/">Original transfer</a> →{' '}
-          <a id="parent-link" href={'/play/' + artifact?.parentArtifactId}>
+          <a href={linkHref('/')}>Original transfer</a> →{' '}
+          <a id="parent-link" href={linkHref('/play/' + artifact?.parentArtifactId)}>
             Parent version
           </a>{' '}
           → this remix. Earlier rules stay until a checked change replaces them.

@@ -36,6 +36,7 @@ export async function auditDirectory(root) {
   for (const [path, hash] of Object.entries(body.files)) assert.equal(found.get(path), hash, path);
   const motion = JSON.parse(await readFile(join(root, 'motion-data.json'), 'utf8'));
   assert.equal(motion.generation, 'playback-only');
+  assert.equal(motion.recovery, 'saved');
   assert.equal(motion.publicOrigin, body.publicOrigin);
   assert.equal(motion.resources['/api/lab/status'].enabled, false);
   assert.equal(motion.resources['/api/remixes/status'].enabled, false);

@@ -22,6 +22,8 @@ async function open(root, pathname) {
   return null;
 }
 
+export const RELEASE_CHECK_BASE_PATH = '/motion-transfer/';
+
 export function createStaticReleaseServer({ root, basePath = '/', host = '127.0.0.1', port = 0 }) {
   if (!basePath.startsWith('/') || !basePath.endsWith('/')) throw Error('Base path must start and end with /');
   const server = createServer(async (request, response) => {

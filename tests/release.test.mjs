@@ -12,7 +12,9 @@ import { PHASE_BUDGET_DIRECTORY, runHostedGeneration } from '../release/generati
 import { loadLabRemixChain } from '../release/lab-chain.mjs';
 import { publishRelease } from '../release/publish.mjs';
 import { auditDirectory } from '../release/audit.mjs';
-import { createStaticReleaseServer } from '../release/static-server.mjs';
+import { createStaticReleaseServer, RELEASE_CHECK_BASE_PATH } from '../release/static-server.mjs';
+import { digest } from '../component/build.mjs';
+import { loadSuppliedChallenge } from '../release/supplied.mjs';
 import { createPhaseBudget } from '../campaign/phase-budget.mjs';
 
 const parentId = 'a'.repeat(64);
@@ -21,6 +23,56 @@ const componentId = 'c'.repeat(64);
 const labRoot = '9126d1dd00b794daab3fda1711fd3b7058b4962eed800cc8105fd4b874d6eed3';
 const labMid = '576debe434d97387f068f34e67da65f298788d44c9796b816721b82193f9f87f';
 const labLeaf = 'd0c3a8884def82732dcc12e70269dce8548029552e58087e7eccc6ee1f05d470';
+
+test('release boot injects data and does not patch prototypes', async () => {
+  const boot = await readFile(new URL('../release/boot.js', import.meta.url), 'utf8');
+  assert.equal(/prototype|window\.fetch|history\[/.test(boot), false);
+  assert.match(boot, /__MOTION_TRANSFER__/);
+  assert.match(boot, /basePath/);
+  assert.match(boot, /recovery = 'saved'/);
+});
+
+test('a supplied challenge keeps the saved parent and does not claim a new recovery', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'motion-supplied-challenge-'));
+  try {
+    const evidence = JSON.stringify({
+      scope: 'Supplied saved challenge',
+      ordinaryOutsideTarget: true,
+      borrowedInsideTarget: true,
+      netLandingShiftMeters: 1,
+      maxVerticalDifference: 0,
+      measurement: {
+        baseline: { landing: { position: { x: 1 } } },
+        transferred: { landing: { position: { x: 2 } } },
+        controls: [0, 0],
+      },
+    }, null, 2) + '\n';
+    const files = {
+      'play.html': '<!doctype html><title>supplied</title>\n',
+      'challenge.json': evidence,
+      'adapter.ts': 'export const dash = true;\n',
+      'notices.txt': 'ISC notice\n',
+    };
+    const manifest = {
+      schemaVersion: 1,
+      kind: 'roadster-challenge',
+      parentArtifactId: parentId,
+      componentId,
+      intent: { unitScale: 6, activation: 'held', direction: 'facing' },
+      files: Object.fromEntries(Object.entries(files).map(([name, content]) => [name, digest(content)])),
+    };
+    const id = digest(JSON.stringify(manifest));
+    await writeFile(join(directory, 'manifest.json'), JSON.stringify({ id, ...manifest }, null, 2) + '\n');
+    for (const [name, content] of Object.entries(files)) await writeFile(join(directory, name), content);
+    const version = await loadSuppliedChallenge(directory, { id: parentId, componentId });
+    assert.equal(version.id, id);
+    assert.equal(version.freshRecovery, false);
+    assert.equal(version.origin, 'supplied-challenge');
+    assert.equal(version.parentArtifactId, parentId);
+    assert.equal(JSON.stringify(version).includes('wonder'), false);
+    await assert.rejects(() => loadSuppliedChallenge(directory, { id: 'd'.repeat(64), componentId }), /saved Roadster transfer/);
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
 
 test('a public link is absent until an https origin is configured', () => {
   const missing = shareDecision(null, 'index.html');
@@ -115,7 +167,7 @@ test('a synthetic release publishes exact files, a parent link, and no public UR
     const release = {
       publicOrigin: null, componentId, featuredId: childId, warnings: [], remixChain: [parentId, childId],
       versions: [fixtureVersion(parentId, null, 'Saved root'), fixtureVersion(childId, parentId, 'Saved remix')],
-      shell: { css: 'body{margin:0}', appJs: "const frame=document.createElement('iframe');frame.src='/donor/play.html';document.querySelector('#root').append(frame);" },
+      shell: { css: 'body{margin:0}', appJs: "const base=window.__MOTION_TRANSFER__.basePath.replace(/\\/$/,'');const frame=document.createElement('iframe');frame.src=base+'/donor/play.html';document.querySelector('#root').append(frame);" },
       extras: { 'donor/play.html': '<!doctype html><title>donor</title>' },
     };
     const manifest = await publishRelease(target, release);
@@ -124,9 +176,9 @@ test('a synthetic release publishes exact files, a parent link, and no public UR
     assert.equal(manifest.versions.find(version => version.id === childId).parentArtifactId, parentId);
     const again = await auditDirectory(target);
     assert.equal(again.id, manifest.id);
-    const server = await createStaticReleaseServer({ root: target, basePath: '/preview/' });
+    const server = await createStaticReleaseServer({ root: target, basePath: RELEASE_CHECK_BASE_PATH });
     try {
-      const page = await browser.newPage();
+      const page = await browser.newPage({ viewport: { width: 1200, height: 1000 } });
       const external = [];
       await page.route('**/*', route => {
         const url = route.request().url();
@@ -137,7 +189,7 @@ test('a synthetic release publishes exact files, a parent link, and no public UR
       await page.waitForFunction(() => window.__MOTION_TRANSFER__?.generation === 'playback-only');
       await page.waitForSelector('iframe');
       const src = await page.locator('iframe').evaluate(frame => frame.src);
-      assert.match(src, /\/preview\/donor\/play\.html$/);
+      assert.match(src, /\/motion-transfer\/donor\/play\.html$/);
       const rejected = await fetch(server.origin + 'api/remixes', { method: 'POST', body: '{}' });
       assert.equal(rejected.status, 405);
       const child = manifest.versions.find(version => version.id === childId);
@@ -145,6 +197,7 @@ test('a synthetic release publishes exact files, a parent link, and no public UR
       await page.reload();
       assert.equal(await page.locator('[data-parent]').getAttribute('href'), '../' + parentId + '/index.html');
       assert.equal(await page.locator('[data-share-state="unconfigured"]').count(), 1);
+      await page.locator('[data-parent]').scrollIntoViewIfNeeded();
       await page.locator('[data-parent]').click();
       await page.waitForURL(new RegExp('/versions/' + parentId + '/'));
       const download = await fetch(server.origin + child.download);
