@@ -237,28 +237,29 @@ export const SPRITES = {
 
 export type SpriteName = keyof typeof SPRITES;
 /** One-off or held reactions. */
-export type SpriteMood = 'hop' | 'party' | 'shake' | 'slump';
+export type SpriteMood = 'cheer' | 'victory' | 'droop';
 
-const cache = new Map<SpriteName, { x: number; y: number; w: number; fill: string }[]>();
+interface SpriteRun {
+  x: number;
+  y: number;
+  w: number;
+  fill: string;
+}
+const painted = new Map<SpriteName, SpriteRun[]>();
 
-/** Merge horizontal runs of one colour into single rects. */
-function rects(name: SpriteName) {
-  const hit = cache.get(name);
-  if (hit) return hit;
-  const out: { x: number; y: number; w: number; fill: string }[] = [];
-  SPRITES[name].rows.forEach((row, y) => {
-    let x = 0;
-    while (x < row.length) {
-      const ch = row[x];
-      let w = 1;
-      while (row[x + w] === ch) w++;
-      const fill = SHARED[ch];
-      if (ch !== '.' && fill) out.push({ x, y, w, fill });
-      x += w;
-    }
-  });
-  cache.set(name, out);
-  return out;
+/** One SVG rect per run of a repeated letter, so a sprite stays a few dozen nodes. */
+function spriteRuns(name: SpriteName): SpriteRun[] {
+  let runs = painted.get(name);
+  if (!runs) {
+    runs = SPRITES[name].rows.flatMap((row, y) =>
+      [...row.matchAll(/([^.])\1*/g)].flatMap((run) => {
+        const fill = SHARED[run[1]];
+        return fill ? [{ x: run.index, y, w: run[0].length, fill }] : [];
+      }),
+    );
+    painted.set(name, runs);
+  }
+  return runs;
 }
 
 export function PixelSprite({
@@ -296,13 +297,13 @@ export function PixelSprite({
       aria-label={title}
       aria-hidden={title ? undefined : true}
     >
-      <g className={mood ? 'px-mood-' + mood : undefined}>
-        <g className={still ? undefined : working ? 'px-bob-fast' : 'px-bob'}>
-          {rects(name).map((r, index) => (
+      <g className={mood ? 'sprite-mood-' + mood : undefined}>
+        <g className={still ? undefined : working ? 'sprite-busy' : 'sprite-idle'}>
+          {spriteRuns(name).map((r, index) => (
             <rect key={index} x={r.x} y={r.y} width={r.w} height={1} fill={tint ?? r.fill} />
           ))}
           {!still && !tint && sprite.eyes && sprite.lid ? (
-            <g className="px-blink">
+            <g className="sprite-lids">
               {sprite.eyes.map(([x, y, w, h]) => (
                 <rect key={`${x}:${y}`} x={x} y={y} width={w} height={h} fill={sprite.lid} />
               ))}

@@ -6,7 +6,7 @@ const SPARKS = Array.from({ length: 10 }, (_, index) => {
   return [Math.round(Math.cos(angle) * distance), Math.round(Math.sin(angle) * distance)];
 });
 
-/** A verified publish: the check pops, a ring pulses out and sparks burst. Decorative only. */
+/** A verified publish: a stamped check, a square shockwave and flying pixels. Decorative only. */
 export function Celebrate() {
   return (
     <span className="celebrate" aria-hidden="true">
@@ -15,7 +15,7 @@ export function Celebrate() {
         <span
           key={index}
           className="celebrate__spark"
-          style={{ '--dx': `${dx}px`, '--dy': `${dy}px` } as CSSProperties}
+          style={{ '--burst-x': `${dx}px`, '--burst-y': `${dy}px` } as CSSProperties}
         />
       ))}
       <span className="celebrate__check">✓</span>

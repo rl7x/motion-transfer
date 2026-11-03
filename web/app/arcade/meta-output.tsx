@@ -277,7 +277,7 @@ function AttemptCard({ view, total }: { view: AttemptView; total: number }) {
   return (
     <li className={'attempt' + (view.passed === false ? ' is-failed' : ' is-passed')}>
       <span className="attempt__who">
-        <PixelSprite name="spark" size={40} mood={view.passed === false ? 'slump' : undefined} />
+        <PixelSprite name="spark" size={40} mood={view.passed === false ? 'droop' : undefined} />
       </span>
       <div className="attempt__body">
         <p className="attempt__heading">

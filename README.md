@@ -95,6 +95,54 @@ The left checkpoint goal failed within its bounded generation attempts. There is
 
 The public Vercel URL has passed live creation, playback, download and restart checks. Repository visibility changes, outreach, adoption studies, video and submission remain separate; no outside-user benefit is claimed. Richard handles video. The supplied active plan remains in the extracted Downloads handoff; [the implementation record](docs/live-mechanics-progress.md) resolves its historical paths against this checkout.
 
-## Credits
+## Sources and licenses
+
+Every outside source below allows this use, and each copy keeps its upstream notice. This project's own code is under the [MIT License](LICENSE), which does not cover the third-party work listed here. Licenses were checked on November 3, 2026.
 
 Dashy Dango is upstream work by samX500 and willGuimont. PARALLAXIA, JUJUMP and PAKU PAKU are upstream work by Kenta Cho / ABA Games. The RDSTR Stunts car, renderer, track, stunt physics and audio are upstream work by sebayaki. Recovery tooling, recovered controllers, adapters, host hooks, deterministic experiments, composition and verification are the added project work. Each export retains its upstream notices.
+
+### Games
+
+| Source | Used for | Author | License | Notice in this repository |
+| --- | --- | --- | --- | --- |
+| [Dashy Dango](https://github.com/willGuimont/dashy-dango) at `9b899e8` | Compiled cartridge the dash was recovered from | samX500, willGuimont | ISC | [NOTICE.txt](assets/targets/dashy-dango/NOTICE.txt) |
+| [PARALLAXIA](https://github.com/abagames/agentic-gamedev-games) at `f30b52a` | Live remix game | Kenta Cho / ABA Games | MIT | [LICENSE](assets/recipients/parallaxia/upstream/LICENSE) |
+| [JUJUMP](https://github.com/abagames/crisp-game-lib-games) | Saved transfer | Kenta Cho / ABA Games | MIT | [LICENSE.txt](assets/recipients/jujump/upstream/LICENSE.txt) |
+| [PAKU PAKU](https://github.com/abagames/crisp-game-lib-11-games) | Saved transfer | Kenta Cho / ABA Games | MIT | [LICENSE.txt](assets/recipients/paku-paku/upstream/LICENSE.txt) |
+| [RDSTR Stunts](https://github.com/sebayaki/roadster) at `8486687` | Saved transfer | sebayaki | MIT | [LICENSE](assets/recipients/roadster/upstream/LICENSE) |
+
+The Dashy Dango repository has no `LICENSE` file, so GitHub shows no license for it. The authors declare ISC in the `wapm.toml` at the pinned revision and in the [Wasmer package](https://wasmer.io/willguimont/dashy-dango), and that package's cartridge is byte-identical to the one used here.
+
+### Libraries shipped to players
+
+| Library | Used for | License |
+| --- | --- | --- |
+| [WASM-4](https://github.com/aduros/wasm4) 2.7.1 | Runs the Dashy Dango cartridge | ISC |
+| [crisp-game-lib](https://github.com/abagames/crisp-game-lib) 1.1.1 | JUJUMP and PAKU PAKU runtime | MIT |
+| [sounds-some-sounds](https://github.com/abagames/sounds-some-sounds) 3.0.0 | JUJUMP and PAKU PAKU audio | MIT |
+| [three.js](https://github.com/mrdoob/three.js) 0.186.1 | RDSTR Stunts rendering | MIT |
+| [React and React DOM](https://github.com/facebook/react) 19.3.1 | Web interface | MIT |
+
+### Tools used to build, test and host
+
+These are not shipped to players.
+
+| Tool | Used for | License |
+| --- | --- | --- |
+| [WABT](https://github.com/WebAssembly/wabt) 1.0.39 | Decompiling the cartridge for recovery evidence | Apache-2.0 |
+| [quickjs-emscripten](https://github.com/justjake/quickjs-emscripten) 0.32.0 | Running generated code in the evaluator | MIT |
+| [Playwright](https://github.com/microsoft/playwright) 1.64.1 | Browser verification | Apache-2.0 |
+| [TypeScript](https://github.com/microsoft/TypeScript) 6.0.3 | Type checking and adapter compilation | Apache-2.0 |
+| [esbuild](https://github.com/evanw/esbuild) 0.28.2 | Bundling | MIT |
+| [ESLint](https://github.com/eslint/eslint) 10.14.0, [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint) 8.72.1, [Prettier](https://github.com/prettier/prettier) 3.9.10 | Linting and formatting | MIT |
+| [@vercel/sandbox](https://www.npmjs.com/package/@vercel/sandbox) 3.9.1 | Hosted backend and verifier microVMs | Apache-2.0 |
+
+Every other installed npm package is MIT, ISC, Apache-2.0, BSD or BlueOak-1.0.0, except `caniuse-lite` (CC-BY-4.0). That one comes in through the lint tooling and is not shipped.
+
+### Hosted services
+
+Muse Wonder 1.0 and Muse Spark 1.3 are used through the [Meta Model API](https://dev.meta.ai/products/meta-model-api), and the site runs on [Vercel](https://vercel.com). Both are used under their service terms. They are not open-source components of this repository.
+
+### Design inspiration
+
+The pixel-arcade look was inspired by [moa](https://trymoa.work). Its [repository](https://github.com/petersenmatthew/moa) has no license, so none of its code or assets are used here.

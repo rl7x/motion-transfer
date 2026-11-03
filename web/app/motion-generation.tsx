@@ -73,7 +73,7 @@ function ResultCard({
       <h3>{job.summary ?? 'New version ready'}</h3>
       {last?.message ? (
         <blockquote className="result__quote">
-          <PixelSprite name="spark" size={36} mood="hop" />
+          <PixelSprite name="spark" size={36} mood="cheer" />
           <span>
             “{last.message}” <cite>— Muse Spark</cite>
           </span>

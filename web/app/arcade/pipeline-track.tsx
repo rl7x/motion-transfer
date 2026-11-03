@@ -126,8 +126,8 @@ export function stationsFromEvents(job: TrackJob, experiment: boolean, now: numb
 const seconds = (ms: number) => (ms / 1000).toFixed(1) + ' s';
 
 function moodOf(station: Station, status: string): SpriteMood | undefined {
-  if (station.state === 'failed') return 'slump';
-  if (status === 'ready' && station.id === 'publish') return 'party';
+  if (station.state === 'failed') return 'droop';
+  if (status === 'ready' && station.id === 'publish') return 'victory';
   return undefined;
 }
 

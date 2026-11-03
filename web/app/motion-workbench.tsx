@@ -658,7 +658,7 @@ export function MotionWorkbench() {
             · built on <MetaChip model="wonder" /> <MetaChip /> through the Meta Model API.
           </p>
           <p>
-            Dashy Dango by willGuimont and samX500 · PARALLAXIA and JUJUMP by Kenta Cho / ABA Games
+            Dashy Dango by samX500 and willGuimont · PARALLAXIA and JUJUMP by Kenta Cho / ABA Games
             · RDSTR Stunts by sebayaki. Recovery tooling, adapters, host hooks, experiments,
             composition and verification are this project&apos;s added work.{' '}
             {base && <a href={linkHref(`/parallaxia/artifacts/${base.id}/notices.txt`)}>Notices</a>}
