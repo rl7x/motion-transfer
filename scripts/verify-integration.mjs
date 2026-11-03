@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
+import { savePackageRecording } from '../integration/assets.mjs';
 import { buildJujumpIntegration } from '../integration/jujump.mjs';
 import { loadJujumpAdapter } from '../transfer/jujump.mjs';
 import { verifyJujumpBrowser } from '../evaluator/jujump-browser.mjs';
@@ -36,8 +37,8 @@ try {
   await mkdir(new URL('../reports/', import.meta.url), { recursive: true });
   await writeFile(new URL('../reports/jujump-integration-verification.json', import.meta.url), JSON.stringify(report, null, 2) + '\n');
   if (process.argv.includes('--save')) {
-    await mkdir(new URL('../integration/recordings/', import.meta.url), { recursive: true });
-    await writeFile(new URL('../integration/recordings/jujump-validation.json', import.meta.url), JSON.stringify(report, null, 2) + '\n');
+    const name = await savePackageRecording(new URL('../integration/recordings/', import.meta.url), report);
+    console.log(`Saved package recording ${name} without changing earlier recordings.`);
   }
   console.log(`Standalone integration verified: 3 Node checks, ${browser.results.length} actual-browser checks; ${report.archiveBytes} bytes, ${report.exportedFiles} files. No API calls.`);
   console.log(JSON.stringify(report.elapsedMachineMs));

@@ -1,0 +1,6 @@
+{
+  "walkingSpeed": 2,
+  "dashDistance": 60,
+  "cooldownTicks": 25,
+  "initialCooldownTicks": 10
+}

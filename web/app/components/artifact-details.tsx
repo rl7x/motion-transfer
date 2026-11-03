@@ -1,14 +1,27 @@
+import { readGenerationMode } from '../data-source';
 import { useTransfer } from '../transfer-context';
+import { linkHref } from '../links';
 export function ArtifactDetails() {
   const { destination: d, artifact: a } = useTransfer();
+  const playback = readGenerationMode() === 'playback-only';
   const car = d?.id === 'roadster',
     child = Boolean(a?.parentArtifactId),
     id = a?.id ?? d?.artifactId;
-  const source = car
-    ? `/roadster/artifacts/${id}/adapter.ts`
-    : child
-      ? `/artifacts/${id}/adapter.ts`
-      : d?.source;
+  const versionBase = id ? `/versions/${id}/` : undefined;
+  const source = playback
+    ? versionBase && versionBase + 'adapter.ts'
+    : car
+      ? `/roadster/artifacts/${id}/adapter.ts`
+      : child
+        ? `/artifacts/${id}/adapter.ts`
+        : d?.source;
+  const identity = playback
+    ? versionBase && versionBase + 'source.json'
+    : car
+      ? '/api/roadster/artifacts/' + id
+      : a
+        ? '/api/artifacts/' + id
+        : d?.report;
   return (
     <details className="artifact-details">
       <summary>Current transfer source, identity, and checks</summary>
@@ -40,19 +53,24 @@ export function ArtifactDetails() {
         <div>
           <p className="eyebrow">SAVED VERSION</p>
           <p>
-            <a
-              id="artifact-id"
-              title={id}
-              href={car ? '/api/roadster/artifacts/' + id : a ? '/api/artifacts/' + id : d?.report}
-            >
-              {id?.slice(0, 12) ?? '—'}
-            </a>
+            {typeof identity === 'string' ? (
+              <a id="artifact-id" title={id} href={linkHref(identity)}>
+                {id?.slice(0, 12) ?? '—'}
+              </a>
+            ) : (
+              <span id="artifact-id">{id?.slice(0, 12) ?? '—'}</span>
+            )}
           </p>
           <small>
-            <a id="adapter-source" href={source}>
-              Adapter source
-            </a>{' '}
-            · <a href="/artifact/component.ts">Frozen component source</a>
+            {source ? (
+              <a id="adapter-source" href={linkHref(source)}>
+                Adapter source
+              </a>
+            ) : null}{' '}
+            ·{' '}
+            <a href={linkHref(playback ? '/evidence/component.ts' : '/artifact/component.ts')}>
+              Frozen component source
+            </a>
           </small>
         </div>
       </div>

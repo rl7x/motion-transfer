@@ -1,5 +1,7 @@
+import { readGenerationMode } from '../data-source';
 import { useResource } from '../hooks/use-resource';
 import { useTransfer } from '../transfer-context';
+import { linkHref } from '../links';
 import { JsonDetails } from './shared';
 interface Comparison {
   passed: boolean;
@@ -20,6 +22,7 @@ interface Flight {
 export function TransferExplanation() {
   const { destination, artifact } = useTransfer(),
     car = destination?.id === 'roadster';
+  const playback = readGenerationMode() === 'playback-only';
   return (
     <section className="transfer-explanation" aria-label="What changes with the transfer">
       <div>
@@ -37,7 +40,11 @@ export function TransferExplanation() {
       <div>
         <p className="eyebrow">THE COMPONENT STAYS THE SAME</p>
         <p>Different adapters. One unchanged dash.</p>
-        <a href="#comparison-details">Compare the recorded behavior ↓</a>
+        {playback && destination?.report ? (
+          <a href={linkHref(destination.report)}>Bundled transfer report ↓</a>
+        ) : (
+          <a href="#comparison-details">Compare the recorded behavior ↓</a>
+        )}
       </div>
     </section>
   );
@@ -79,7 +86,9 @@ export function Proof() {
           presentation is separate from the frozen Meta-recovered motion component.
         </p>
         <p>
-          <a href="/roadster/presentation.json">Actual donor presentation observations ↗</a>
+          <a href={linkHref('/roadster/presentation.json')}>
+            Actual donor presentation observations ↗
+          </a>
         </p>
       </details>
       <div id="trace-comparison" className="trace-comparison" aria-live="polite">
@@ -202,8 +211,11 @@ export function Proof() {
           )}
         </div>
         <p>
-          <a href="/evidence/transfer-comparison.json">Download the actual comparison traces ↗</a> ·{' '}
-          <a id="artifact-checks" href={report}>
+          <a href={linkHref('/evidence/transfer-comparison.json')}>
+            Download the actual comparison traces ↗
+          </a>{' '}
+          ·{' '}
+          <a id="artifact-checks" href={linkHref(report)}>
             Current destination report ↗
           </a>
         </p>

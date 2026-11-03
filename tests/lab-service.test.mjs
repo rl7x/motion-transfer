@@ -4,6 +4,7 @@ import { mkdtemp,rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createLabService } from '../lab/service.mjs';
+import { createRecoveryProtocol } from '../agent/recovery-protocol.mjs';
 const request={questionId:'held',idempotencyKey:'lab-test-request'};
 async function fixture(t,options={}){const directory=await mkdtemp(join(tmpdir(),'motion-lab-'));const service=await createLabService({directory,client:{},...options});t.after(async()=>{await service.close();await rm(directory,{recursive:true,force:true});});return{service,directory};}
 async function done(service, id) {
@@ -80,4 +81,41 @@ test('simultaneous submissions cannot both pass admission while the first job is
     release();
     assert.equal((await done(service, submissions[0].value.id)).status, 'ready');
   } finally { release(); }
+});
+
+test('new recovery protocols require a phase reservation before generation and settle actual spending', async t => {
+  const protocol = createRecoveryProtocol(), events = [];
+  const phaseBudget = {
+    reserve: async value => { events.push({ action: 'reserve', ...value }); },
+    settle: async value => { events.push({ action: 'settle', ...value }); },
+  };
+  const { service } = await fixture(t, { recoveryProtocol: protocol, phaseBudget,
+    investigateRun: async options => {
+      assert.equal(events.at(-1).action, 'reserve');
+      assert.equal(options.recoveryProtocol.id, protocol.id);
+      events.push({ action: 'generate' });
+      return { status: 'failed', estimatedCostUsd: 0.02, reservedCostUsd: 0 };
+    } });
+  const job = await service.submit('investigation', { questionId: 'extraction', idempotencyKey: 'new-protocol-run' });
+  const result = await done(service, job.id);
+  assert.equal(result.status, 'failed');
+  assert.equal(result.recoveryProtocol, undefined, 'Public report carries protocol; admission details stay in the durable job');
+  assert.equal(events[0].category, 'recovery');
+  assert.equal(events[0].maxCostUsd, 0.5);
+  assert.deepEqual(events.map(event => event.action), ['reserve', 'generate', 'settle']);
+  assert.equal(events.at(-1).uncertain, false);
+  assert.equal(events.at(-1).estimatedCostUsd, 0.02);
+});
+
+test('phase reservation refusal prevents generation without changing historical lab ceilings', async t => {
+  let generated = 0;
+  const { service } = await fixture(t, { recoveryProtocol: createRecoveryProtocol(),
+    phaseBudget: { reserve: async () => { throw Error('Phase budget is exhausted'); } },
+    investigateRun: async () => { generated++; } });
+  await assert.rejects(service.submit('investigation', { questionId: 'extraction', idempotencyKey: 'blocked-phase-run' }), /Phase budget is exhausted/);
+  assert.equal(generated, 0);
+  assert.equal(service.status().activeRunId, null);
+  assert.equal(service.status().budget.limitUsd, 10);
+  const { service: missing } = await fixture(t, { recoveryProtocol: createRecoveryProtocol() });
+  await assert.rejects(missing.submit('investigation', { questionId: 'extraction', idempotencyKey: 'missing-phase-run' }), /durable phase budget/);
 });

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "kind": "frozen-fidelity-study",
+  "createdAt": "2026-11-03T00:41:35.639Z",
+  "seed": 3717589184,
+  "traceCount": 40,
+  "evaluator": {
+    "evaluator/motion.mjs": "b322d0db366a9facec4ccfbf944fb2e0795b6b778e4eb11d484b6b1ad3427ffa",
+    "evaluator/cases.mjs": "e1460c0af1c2bd6da2d2a29046484d5406e9c1abbc8655888a45f4fa2cbe5bc4",
+    "evaluator/dashy-dango.mjs": "7cb83d242acc738a9ffff2ca600250c367989ee973b3bfd86f1a36cdfe0c5832",
+    "component/build.mjs": "7f04316154f9221b5f94042330235a485f964ba50673d78a4ce8686731540703",
+    "component/run.mjs": "8054e190e9ccf07788196a1fb43bf7b5ed81ad61d84a916970ad933f53caaddb",
+    "component/worker.mjs": "067929e728e8d13f3f76b5ecd408f165a61c7614f6f06ea8cfed963aa0a6f95d",
+    "package-lock.json": "4fee1006cd84f8c1178a75134d802fca282db87889048f8f8375a919ae5c87af",
+    "targets/dashy-dango/cart.wasm": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f"
+  },
+  "candidates": [
+    {
+      "id": "from-contact-sheet",
+      "condition": "contact-sheet",
+      "sourceFile": "from-contact-sheet.ts",
+      "configFile": "from-contact-sheet.config.json",
+      "sourceSha256": "949c05b0a57be10358b696a2d0e37be63e198dc4a954e19cba756d8837cfb66e",
+      "configSha256": "266fa4ba6d1e0400e90ebd329088e04d02af52894691ad93443bf0464c52cfff"
+    },
+    {
+      "id": "saved-recovery",
+      "condition": "saved-recovery",
+      "sourceFile": "saved-recovery.ts",
+      "configFile": "saved-recovery.config.json",
+      "sourceSha256": "7cfd9475696ca744982fb7c00d988aae982840d06b0fa198f111d42bba2d18bc",
+      "configSha256": "b87ded0989a823af2fc61c9748763c4eddd0a121455bc6feaf627d19d14a45c7"
+    }
+  ],
+  "scoring": "position within 0.25 source pixels; exact ownership and output events; no internal timer scoring",
+  "scope": "Finite comparison against the donor, not recovery acceptance or a productivity estimate. Do not repair candidates after observing this suite.",
+  "id": "f8ced9b80f59333d528caa226ae8576643d465293e8b64a33dd9c5fdc783f1c5"
+}

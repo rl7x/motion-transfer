@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "kind": "fidelity-video-comparison",
+  "status": "complete",
+  "chart": "fidelity-comparison.svg",
+  "studyId": "f8ced9b80f59333d528caa226ae8576643d465293e8b64a33dd9c5fdc783f1c5",
+  "seed": 3717589184,
+  "scoring": "position within 0.25 source pixels; exact ownership and output events; no internal timer scoring",
+  "scope": "Finite comparison against the donor, not recovery acceptance or a productivity estimate. Do not repair candidates after observing this suite.",
+  "explanation": "Finite comparison against the donor on 40 traces: position within 0.25 source pixels, exact ownership, and exact output events. Internal timers are not scored. This is not recovery acceptance and not a productivity estimate. No by-feel baseline and no external-developer baseline were measured.",
+  "observedCondition": "contact-sheet",
+  "observedLabel": "Contact sheet + supplied defaults",
+  "parameterSource": "supplied-public-contract",
+  "defaults": {
+    "walkingSpeed": 2,
+    "dashDistance": 60,
+    "cooldownTicks": 25,
+    "initialCooldownTicks": 10
+  },
+  "campaignId": "450cb0fc-6349-4bc2-891c-2ee47998a73c",
+  "model": "muse-spark-1.3",
+  "evaluator": {
+    "evaluator/motion.mjs": "b322d0db366a9facec4ccfbf944fb2e0795b6b778e4eb11d484b6b1ad3427ffa",
+    "evaluator/cases.mjs": "e1460c0af1c2bd6da2d2a29046484d5406e9c1abbc8655888a45f4fa2cbe5bc4",
+    "evaluator/dashy-dango.mjs": "7cb83d242acc738a9ffff2ca600250c367989ee973b3bfd86f1a36cdfe0c5832",
+    "component/build.mjs": "7f04316154f9221b5f94042330235a485f964ba50673d78a4ce8686731540703",
+    "component/run.mjs": "8054e190e9ccf07788196a1fb43bf7b5ed81ad61d84a916970ad933f53caaddb",
+    "component/worker.mjs": "067929e728e8d13f3f76b5ecd408f165a61c7614f6f06ea8cfed963aa0a6f95d",
+    "package-lock.json": "4fee1006cd84f8c1178a75134d802fca282db87889048f8f8375a919ae5c87af",
+    "targets/dashy-dango/cart.wasm": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f"
+  },
+  "costs": {
+    "probeUsd": 0.00597225,
+    "candidateUsd": 0.016962,
+    "totalUsd": 0.022934250000000003
+  },
+  "requests": {
+    "probe": {
+      "id": "resp_6ae92d97afb395332c4145c6",
+      "estimatedCostUsd": 0.00597225,
+      "usage": {
+        "inputTokens": 2323,
+        "outputTokens": 722,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 538
+      },
+      "localization": false,
+      "phaseReservationId": "video:450cb0fc-6349-4bc2-891c-2ee47998a73c:probe"
+    },
+    "candidate": {
+      "id": "resp_6ae92dbf0de1af25e23b4de5",
+      "estimatedCostUsd": 0.016962,
+      "usage": {
+        "inputTokens": 2064,
+        "outputTokens": 3384,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 2242
+      },
+      "inputKind": "image",
+      "phaseReservationId": "video:450cb0fc-6349-4bc2-891c-2ee47998a73c:candidate"
+    }
+  },
+  "candidates": [
+    {
+      "id": "from-contact-sheet",
+      "condition": "contact-sheet",
+      "label": "Contact sheet + supplied defaults",
+      "status": "scored",
+      "passed": 0,
+      "total": 40,
+      "maxPositionError": 271.0249570072505,
+      "provenanceLabel": "Contact-sheet image input plus the supplied public-contract defaults. Those defaults were not recovered from the pixels.",
+      "parameterSource": "supplied-public-contract",
+      "sourceSha256": "949c05b0a57be10358b696a2d0e37be63e198dc4a954e19cba756d8837cfb66e",
+      "configSha256": "266fa4ba6d1e0400e90ebd329088e04d02af52894691ad93443bf0464c52cfff"
+    },
+    {
+      "id": "saved-recovery",
+      "condition": "saved-recovery",
+      "label": "Saved recovery",
+      "status": "scored",
+      "passed": 40,
+      "total": 40,
+      "maxPositionError": 0,
+      "provenanceLabel": "Existing immutable saved recovery, included for comparison.",
+      "parameterSource": "immutable-saved-component",
+      "sourceSha256": "7cfd9475696ca744982fb7c00d988aae982840d06b0fa198f111d42bba2d18bc",
+      "configSha256": "b87ded0989a823af2fc61c9748763c4eddd0a121455bc6feaf627d19d14a45c7"
+    }
+  ],
+  "links": {
+    "studyId": "f8ced9b80f59333d528caa226ae8576643d465293e8b64a33dd9c5fdc783f1c5",
+    "studyFile": "fidelity-study/study.json",
+    "resultsFile": "fidelity-study/results.json",
+    "provenanceFile": "provenance.json",
+    "journalFile": "journal.json",
+    "requestIds": {
+      "probe": "resp_6ae92d97afb395332c4145c6",
+      "candidate": "resp_6ae92dbf0de1af25e23b4de5"
+    }
+  },
+  "metaCalled": false,
+  "baselinesMeasured": {
+    "byFeel": false,
+    "externalDevelopers": false
+  }
+}

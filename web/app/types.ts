@@ -90,8 +90,21 @@ export interface GuidedState {
   trace?: unknown[];
   error?: string;
 }
+export type GenerationMode = 'local' | 'public-standard' | 'playback-only';
+/** Static playback injects GET payloads here. Missing keys still use the network. */
+export interface MotionDataSource {
+  generation?: GenerationMode;
+  publicOrigin?: string | null;
+  basePath?: string;
+  /** `saved` for the default playback copy. `accepted` only after a validated accepted-roadster delivery. */
+  recovery?: 'saved' | 'accepted';
+  /** Root-absolute path of the standalone JUJUMP comparison, when this copy bundles it. */
+  jujumpComparison?: string;
+  resources?: Record<string, unknown>;
+}
 declare global {
   interface Window {
+    __MOTION_TRANSFER__?: MotionDataSource;
     currentDestination?: DestinationId;
     currentArtifact?: Artifact | null;
     currentRoadsterArtifact?: Artifact | null;

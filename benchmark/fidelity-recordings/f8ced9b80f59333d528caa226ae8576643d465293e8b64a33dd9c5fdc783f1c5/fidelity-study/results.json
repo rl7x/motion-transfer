@@ -1,0 +1,1495 @@
+{
+  "schemaVersion": 1,
+  "studyId": "f8ced9b80f59333d528caa226ae8576643d465293e8b64a33dd9c5fdc783f1c5",
+  "status": "complete",
+  "seed": 3717589184,
+  "metaCalled": false,
+  "scoring": "position within 0.25 source pixels; exact ownership and output events; no internal timer scoring",
+  "scope": "Finite comparison against the donor, not recovery acceptance or a productivity estimate. Do not repair candidates after observing this suite.",
+  "results": [
+    {
+      "id": "from-contact-sheet",
+      "condition": "contact-sheet",
+      "sourceFile": "from-contact-sheet.ts",
+      "configFile": "from-contact-sheet.config.json",
+      "sourceSha256": "949c05b0a57be10358b696a2d0e37be63e198dc4a954e19cba756d8837cfb66e",
+      "configSha256": "266fa4ba6d1e0400e90ebd329088e04d02af52894691ad93443bf0464c52cfff",
+      "status": "scored",
+      "passed": 0,
+      "total": 40,
+      "maxPositionError": 271.0249570072505,
+      "evaluation": {
+        "schemaVersion": 1,
+        "suite": "fidelity-comparison",
+        "sourceSha256": "949c05b0a57be10358b696a2d0e37be63e198dc4a954e19cba756d8837cfb66e",
+        "javascriptSha256": "0c80a5f5ef5321ee46fbd62f174d4764f660bfc9b1f5b1e4b4d5323cc90c197e",
+        "passed": false,
+        "positionTolerance": 0.25,
+        "eventTiming": "exact",
+        "positionAccumulation": "closed-loop-f32",
+        "results": [
+          {
+            "name": "acceptance-1",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 137.40874298966742,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 81,
+              "expected": {
+                "position": {
+                  "x": 13.171573638916016,
+                  "y": -2.8284270763397217
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 10.343146324157715,
+                  "y": -5.656854152679443
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-2",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 97.3781747679468,
+            "firstDivergence": {
+              "tick": 14,
+              "buttons": 129,
+              "expected": {
+                "position": {
+                  "x": 8.485280990600586,
+                  "y": 15.985280990600586
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": 8.485280990600586,
+                  "y": 14.485280990600586
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-3",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 136.34263834958853,
+            "firstDivergence": {
+              "tick": 37,
+              "buttons": 1,
+              "expected": {
+                "position": {
+                  "x": 15.985280990600586,
+                  "y": -8.485280990600586
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": 12.727921485900879,
+                  "y": -12.727921485900879
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-4",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 90.90658002449096,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 81,
+              "expected": {
+                "position": {
+                  "x": -14.142133712768555,
+                  "y": -14.142133712768555
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": -16.970561981201172,
+                  "y": -16.970561981201172
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-5",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 107.21375656401632,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 33,
+              "expected": {
+                "position": {
+                  "x": 20,
+                  "y": 0
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 24,
+                  "y": 0
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-6",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 149.88927982732997,
+            "firstDivergence": {
+              "tick": 12,
+              "buttons": 17,
+              "expected": {
+                "position": {
+                  "x": -7.5,
+                  "y": 10
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": -6,
+                  "y": 10
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-7",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 96.33272368383368,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 1,
+              "expected": {
+                "position": {
+                  "x": 0,
+                  "y": -18
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 0,
+                  "y": -24
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-8",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 271.0249570072505,
+            "firstDivergence": {
+              "tick": 24,
+              "buttons": 81,
+              "expected": {
+                "position": {
+                  "x": 20.696699142456055,
+                  "y": -5.303300857543945
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": 21.75735855102539,
+                  "y": -4.242640495300293
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-9",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 136.89905625137922,
+            "firstDivergence": {
+              "tick": 20,
+              "buttons": 49,
+              "expected": {
+                "position": {
+                  "x": 7.5,
+                  "y": 10
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": 0,
+                  "y": 16
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-10",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 116.52028579999877,
+            "firstDivergence": {
+              "tick": 45,
+              "buttons": 161,
+              "expected": {
+                "position": {
+                  "x": -8.897712707519531,
+                  "y": -14.495685577392578
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": -9.958373069763184,
+                  "y": -15.55634593963623
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-11",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 89.10672284763011,
+            "firstDivergence": {
+              "tick": 22,
+              "buttons": 49,
+              "expected": {
+                "position": {
+                  "x": 11.5,
+                  "y": 32
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": 4,
+                  "y": 38
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-12",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 105.34727742040361,
+            "firstDivergence": {
+              "tick": 24,
+              "buttons": 145,
+              "expected": {
+                "position": {
+                  "x": -5.303300857543945,
+                  "y": 5.303300857543945
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": -4.242640495300293,
+                  "y": 4.242640495300293
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-13",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 85.95291524998,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 49,
+              "expected": {
+                "position": {
+                  "x": 0,
+                  "y": 0
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 6,
+                  "y": 0
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-14",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 36.96473990131087,
+            "firstDivergence": {
+              "tick": 23,
+              "buttons": 17,
+              "expected": {
+                "position": {
+                  "x": -1.5,
+                  "y": -14
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": 0,
+                  "y": -14
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-15",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 24.13320359287412,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 161,
+              "expected": {
+                "position": {
+                  "x": 4.242640495300293,
+                  "y": 4.242640495300293
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 7.071067810058594,
+                  "y": 7.071067810058594
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-16",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 112.71593460942633,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 33,
+              "expected": {
+                "position": {
+                  "x": 4.58578634262085,
+                  "y": 13.414213180541992
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 8.585786819458008,
+                  "y": 13.414213180541992
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-17",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 93.50934264481683,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 33,
+              "expected": {
+                "position": {
+                  "x": 14,
+                  "y": 0
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 18,
+                  "y": 0
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-18",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 19.03968625447994,
+            "firstDivergence": {
+              "tick": 17,
+              "buttons": 65,
+              "expected": {
+                "position": {
+                  "x": 22.627412796020508,
+                  "y": 15.127412796020508
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": 22.627412796020508,
+                  "y": 16.627412796020508
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-19",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 124.47522956634675,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 65,
+              "expected": {
+                "position": {
+                  "x": 8.485280990600586,
+                  "y": 0.48528099060058594
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 8.485280990600586,
+                  "y": -3.514719009399414
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-20",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 24.433962773175274,
+            "firstDivergence": {
+              "tick": 20,
+              "buttons": 129,
+              "expected": {
+                "position": {
+                  "x": 0,
+                  "y": -14.5
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": 0,
+                  "y": -16
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-21",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 111.22395745605498,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 33,
+              "expected": {
+                "position": {
+                  "x": 20,
+                  "y": 0
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 24,
+                  "y": 0
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-22",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 107.58497622835057,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 241,
+              "expected": {
+                "position": {
+                  "x": -0.34314560890197754,
+                  "y": 5.656854152679443
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 3.8994951248168945,
+                  "y": 9.899495124816895
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-23",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 46.723906686145945,
+            "firstDivergence": {
+              "tick": 24,
+              "buttons": 65,
+              "expected": {
+                "position": {
+                  "x": 11.31370735168457,
+                  "y": 3.8137073516845703
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": 11.31370735168457,
+                  "y": 5.31370735168457
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-24",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 21.684682900536554,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 65,
+              "expected": {
+                "position": {
+                  "x": 0,
+                  "y": -20
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 0,
+                  "y": -24
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-25",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 90.20146632598475,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 17,
+              "expected": {
+                "position": {
+                  "x": -8,
+                  "y": 12
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": -12,
+                  "y": 12
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-26",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 79.79459853555763,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 33,
+              "expected": {
+                "position": {
+                  "x": 20,
+                  "y": 0
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 24,
+                  "y": 0
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-27",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 45.921999240483004,
+            "firstDivergence": {
+              "tick": 25,
+              "buttons": 81,
+              "expected": {
+                "position": {
+                  "x": -6.818019866943359,
+                  "y": -27.7885799407959
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": -5.757359504699707,
+                  "y": -26.727920532226562
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-28",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 91.84399103516334,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 241,
+              "expected": {
+                "position": {
+                  "x": 0,
+                  "y": 0
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 6,
+                  "y": 0
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-29",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 42.9930868815358,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 193,
+              "expected": {
+                "position": {
+                  "x": 0,
+                  "y": 0
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 6,
+                  "y": 0
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-30",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 14.422205101855958,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 65,
+              "expected": {
+                "position": {
+                  "x": 0,
+                  "y": -20
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 0,
+                  "y": -24
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-31",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 38.6925549829646,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 129,
+              "expected": {
+                "position": {
+                  "x": 0,
+                  "y": 6
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 0,
+                  "y": 10
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-32",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 10.67983325137209,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 33,
+              "expected": {
+                "position": {
+                  "x": 20,
+                  "y": 0
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 24,
+                  "y": 0
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-33",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 12.170361962562573,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 33,
+              "expected": {
+                "position": {
+                  "x": 20,
+                  "y": 0
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 24,
+                  "y": 0
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-34",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 113.02083766541554,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 129,
+              "expected": {
+                "position": {
+                  "x": 0,
+                  "y": 20
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 0,
+                  "y": 24
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-35",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 108.82630341879458,
+            "firstDivergence": {
+              "tick": 41,
+              "buttons": 129,
+              "expected": {
+                "position": {
+                  "x": -26,
+                  "y": -26.5
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": -26,
+                  "y": -28
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-36",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 28.966841743861668,
+            "firstDivergence": {
+              "tick": 12,
+              "buttons": 145,
+              "expected": {
+                "position": {
+                  "x": 1.7677674293518066,
+                  "y": -10.253046035766602
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": 2.82842755317688,
+                  "y": -11.313706398010254
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-37",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 121.53486040720986,
+            "firstDivergence": {
+              "tick": 31,
+              "buttons": 193,
+              "expected": {
+                "position": {
+                  "x": -36.39949417114258,
+                  "y": -9.899494171142578
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": -49.89949417114258,
+                  "y": -9.899494171142578
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-38",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 220.39558158247306,
+            "firstDivergence": {
+              "tick": 29,
+              "buttons": 161,
+              "expected": {
+                "position": {
+                  "x": 21.930713653564453,
+                  "y": -23.324111938476562
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": 20.870054244995117,
+                  "y": -24.3847713470459
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-39",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 107.5795693340318,
+            "firstDivergence": {
+              "tick": 35,
+              "buttons": 161,
+              "expected": {
+                "position": {
+                  "x": -20.696699142456055,
+                  "y": 19.303300857543945
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              },
+              "actual": {
+                "position": {
+                  "x": -21.75735855102539,
+                  "y": 18.24264144897461
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          },
+          {
+            "name": "acceptance-40",
+            "ticks": 150,
+            "passed": false,
+            "maxPositionError": 13.488555132698389,
+            "firstDivergence": {
+              "tick": 10,
+              "buttons": 49,
+              "expected": {
+                "position": {
+                  "x": 0,
+                  "y": 0
+                },
+                "ownsMotion": false,
+                "events": []
+              },
+              "actual": {
+                "position": {
+                  "x": 6,
+                  "y": 0
+                },
+                "ownsMotion": true,
+                "events": [
+                  "dash-start"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "saved-recovery",
+      "condition": "saved-recovery",
+      "sourceFile": "saved-recovery.ts",
+      "configFile": "saved-recovery.config.json",
+      "sourceSha256": "7cfd9475696ca744982fb7c00d988aae982840d06b0fa198f111d42bba2d18bc",
+      "configSha256": "b87ded0989a823af2fc61c9748763c4eddd0a121455bc6feaf627d19d14a45c7",
+      "status": "scored",
+      "passed": 40,
+      "total": 40,
+      "maxPositionError": 0,
+      "evaluation": {
+        "schemaVersion": 1,
+        "suite": "fidelity-comparison",
+        "sourceSha256": "7cfd9475696ca744982fb7c00d988aae982840d06b0fa198f111d42bba2d18bc",
+        "javascriptSha256": "8395ec0eebaea00772dea52dbcb968e53747a3a0d509dc8aaba49a840c767f06",
+        "passed": true,
+        "positionTolerance": 0.25,
+        "eventTiming": "exact",
+        "positionAccumulation": "closed-loop-f32",
+        "results": [
+          {
+            "name": "acceptance-1",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-2",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-3",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-4",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-5",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-6",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-7",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-8",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-9",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-10",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-11",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-12",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-13",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-14",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-15",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-16",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-17",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-18",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-19",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-20",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-21",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-22",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-23",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-24",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-25",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-26",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-27",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-28",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-29",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-30",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-31",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-32",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-33",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-34",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-35",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-36",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-37",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-38",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-39",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          },
+          {
+            "name": "acceptance-40",
+            "ticks": 150,
+            "passed": true,
+            "maxPositionError": 0,
+            "firstDivergence": null
+          }
+        ]
+      }
+    }
+  ]
+}

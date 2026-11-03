@@ -9,6 +9,7 @@ import { benchmarkDefinition } from '../benchmark/definition.mjs';
 import { benchmarkStore } from '../benchmark/store.mjs';
 import { developerBenchmarkAssets } from '../benchmark/assets.mjs';
 import { createPakuBrowser } from '../evaluator/browser-harness.mjs';
+import { reveal } from './helpers/app-navigation.mjs';
 
 async function localFixture(t) {
   const directory = await mkdtemp(join(tmpdir(), 'benchmark-ui-'));
@@ -58,7 +59,8 @@ test('React task results label local fixtures, expose partial failure and fit mo
     page.on('request', request => methods.push(request.method()));
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto(harness.origin + '/?destination=jujump#developer-benchmarks');
-    await page.waitForSelector('#benchmark-tasks');
+    await reveal(page, '#benchmark-tasks');
+    await page.locator('#developer-benchmarks summary').filter({ hasText: 'Setup effort, protocol and measurement limits' }).click();
     await page.waitForFunction(() => document.querySelector('.benchmark-attempt'));
     assert.match(await page.locator('#developer-benchmarks').textContent(), /HUMAN-SCRIPTED LOCAL VERIFICATION/);
     assert.match(await page.locator('#benchmark-summary').textContent(), /1 \/ 2 attempted tasks completed/);

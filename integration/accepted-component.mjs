@@ -43,5 +43,7 @@ export async function loadAcceptedComponent(directory, report) {
     assert.equal(evaluation.javascriptSha256, compiled.javascriptSha256);
     assert.deepEqual(evaluation.results, entry[suite].results);
   }
-  return { source, javascript, contract, provenance, files, timerFields: entry.timerFields, candidateId: entry.candidateId };
+  return { source, javascript, contract, provenance, files, timerFields: entry.timerFields,
+    candidateId: entry.candidateId, sessionId: session.id, frozenCandidateId: recovery.frozenCandidateId,
+    publication: { id, ...publication } };
 }

@@ -5,16 +5,17 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { compileMotion } from '../component/build.mjs';
-import { loadRecoveredMotion } from '../component/load.mjs';
+import { resolveComponentRef, componentIdentity } from '../component/reference.mjs';
 
 const execute = promisify(execFile);
 const worker = fileURLToPath(new URL('worker.mjs', import.meta.url));
 
-export async function compileAdapter(source) {
+export async function compileAdapter(source, { componentRef } = {}) {
   const adapter = await compileMotion(source);
-  const motion = await loadRecoveredMotion();
+  const motion = await resolveComponentRef(componentRef);
   const compiled = await transform(motion.javascript, { format: 'iife', globalName: 'recovered', target: 'es2022' });
-  return { ...adapter, componentCode: compiled.code, componentId: motion.provenance.id, defaults: motion.contract.defaults };
+  return { ...adapter, componentCode: compiled.code, componentId: motion.provenance.id,
+    componentRef: componentIdentity(motion), defaults: motion.contract.defaults };
 }
 
 export async function executeAdapter(compiled, traces, { signal } = {}) {

@@ -1,7 +1,10 @@
 import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
+import { readGenerationMode } from './data-source';
 import { TransferProvider } from './transfer-context';
 import { useLabStatus } from './hooks/use-job';
+import { AgeAcknowledgment, AgeProvider } from './components/age-acknowledgment';
+import { PrivacyNote } from './components/privacy-note';
 import { Header, Intro, RecoveryDetails, Footer } from './components/static-content';
 import { Destinations, Players } from './components/players';
 import { DeveloperTask } from './components/developer-task';
@@ -35,20 +38,30 @@ class AppBoundary extends Component<{ children: ReactNode }, { error: boolean }>
 }
 function Experience() {
   const status = useLabStatus();
+  const playback = readGenerationMode() === 'playback-only';
   return (
     <main>
       <Header />
+      <AgeAcknowledgment />
       <Intro />
-      <Destinations />
       <Players />
-      <TransferExplanation />
-      <DeveloperTask />
-      <DeveloperBenchmarks />
-      <Proof />
-      <InvestigationPanel status={status} />
-      <RecoveryDetails />
       <RemixPanel status={status} />
-      <ArtifactDetails />
+      <Destinations />
+      <details className="evidence-drawer" id="evidence-details">
+        <summary>Explore the recovery, source and verification</summary>
+        <TransferExplanation />
+        {playback ? null : (
+          <>
+            <DeveloperTask />
+            <DeveloperBenchmarks />
+            <Proof />
+            <InvestigationPanel status={status} />
+          </>
+        )}
+        <RecoveryDetails />
+        <ArtifactDetails />
+      </details>
+      <PrivacyNote />
       <Footer />
     </main>
   );
@@ -56,9 +69,11 @@ function Experience() {
 export function App() {
   return (
     <AppBoundary>
-      <TransferProvider>
-        <Experience />
-      </TransferProvider>
+      <AgeProvider>
+        <TransferProvider>
+          <Experience />
+        </TransferProvider>
+      </AgeProvider>
     </AppBoundary>
   );
 }

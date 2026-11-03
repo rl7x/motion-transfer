@@ -57,7 +57,8 @@ export async function saveInvestigationEvidence(directory,session,report={}){
     if(!/^[a-f0-9]{64}$/.test(entry.candidateId)||entry.candidateId!==digest(JSON.stringify({candidate:entry.candidate,timerFields:entry.timerFields})))throw Error('Component publication identity mismatch');
     const parent=join(root,'components');await mkdir(parent,{recursive:true});
     await publishComponent(parent,entry,{schemaVersion:1,status:'accepted',acceptedAttempt:entry.attempt,attempts:recovery.attempts,acceptanceSeed:recovery.acceptanceSeed,
-        evidenceSha256:selection.evidence.sha256,cartridgeSha256:session.identity.cartridgeSha256,model:report.model??'injected-local-fixture',requests:report.requests??[],estimatedCostUsd:report.estimatedCostUsd??0,humanAssistance:selection.evidence.humanAssistance,investigationSessionId:session.id},selection.evidence);
+        evidenceSha256:selection.evidence.sha256,cartridgeSha256:session.identity.cartridgeSha256,model:report.model??'injected-local-fixture',requests:report.requests??[],estimatedCostUsd:report.estimatedCostUsd??0,humanAssistance:selection.evidence.humanAssistance,investigationSessionId:session.id,
+        ...(recovery.protocol?{recoveryProtocol:recovery.protocol}:{})},selection.evidence);
   }
   const path=join(root,'journal.json'),temporary=path+'.'+randomUUID()+'.tmp';
   await writeFile(temporary,JSON.stringify(session,null,2)+'\n',{mode:0o600});await rename(temporary,path);

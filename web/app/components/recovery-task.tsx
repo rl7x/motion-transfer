@@ -1,4 +1,5 @@
 import type { DevelopmentObservation, RecoveryTask } from '../types';
+import { linkHref } from '../links';
 import { JsonDetails } from './shared';
 
 function observation(value: DevelopmentObservation) {
@@ -34,8 +35,8 @@ export function RecoveryTaskView({
         {reconnect ? 'Reconnect to recovery ↗' : 'Recover for JUJUMP ↗'}
       </button>
       <p className="saved-note">
-        Starts a fresh Meta task, up to $0.50. The saved transfers above use the earlier recovered
-        component. No successful result is substituted if this task fails.
+        Starts a fresh Meta task, up to $0.50, after the 18+ confirmation. The saved transfers above
+        use the earlier recovered component. No successful result is substituted if this task fails.
       </p>
       {task && (
         <>
@@ -118,13 +119,15 @@ export function RecoveryTaskView({
           {task.error && <p className="saved-note">Stopped: {task.error}</p>}
           {base && (
             <div className="developer-actions" id="recovery-project-links">
-              <a href={base + '/play'} target="_blank" rel="noopener" id="recovery-play">
+              <a href={linkHref(base + '/play')} target="_blank" rel="noopener" id="recovery-play">
                 Play this checked project ↗
               </a>
-              <a href={base + '/project.zip'} download id="recovery-download">
+              <a href={linkHref(base + '/project.zip')} download id="recovery-download">
                 Download this project ↓
               </a>
-              <a href={base + '/validation.json'}>Standalone verification + actual traces ↗</a>
+              <a href={linkHref(base + '/validation.json')}>
+                Standalone verification + actual traces ↗
+              </a>
               <p className="saved-note">
                 {task.integration?.fileCount} files ·{' '}
                 {((task.integration?.archiveBytes ?? 0) / 1024).toFixed(0)} KB · component{' '}

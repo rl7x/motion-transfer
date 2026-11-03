@@ -1,5 +1,6 @@
 import { useResource } from '../hooks/use-resource';
 import { useTransfer } from '../transfer-context';
+import { linkHref } from '../links';
 interface DeveloperCase {
   componentId: string;
   package: {
@@ -81,7 +82,7 @@ export function DeveloperTask() {
             scrolling stay with JUJUMP.
           </p>
           <a
-            href="/?destination=jujump#developer-task"
+            href={linkHref('/?destination=jujump#developer-task')}
             id="developer-select"
             onClick={(event) => {
               event.preventDefault();
@@ -121,7 +122,7 @@ export function DeveloperTask() {
             className="download-project"
             id="developer-download"
             hidden={!data}
-            href={data?.package.download}
+            href={linkHref(data?.package.download)}
             download="jujump-dash.zip"
           >
             Download working integration ↓
@@ -129,13 +130,13 @@ export function DeveloperTask() {
           <a
             id="developer-preview"
             hidden={!data}
-            href={data?.package.play}
+            href={linkHref(data?.package.play)}
             target="_blank"
             rel="noopener"
           >
             Open the standalone example ↗
           </a>
-          <a href="/integrations/jujump/README.md">Read the integration guide ↗</a>
+          <a href={linkHref('/integrations/jujump/README.md')}>Read the integration guide ↗</a>
         </div>
       </div>
       <div id="developer-measurements" className="developer-measurements" aria-live="polite">
@@ -165,7 +166,8 @@ export function DeveloperTask() {
           <>
             Saved local verification of this exact ZIP: {data.verification.nodeChecks} Node checks
             and {data.verification.browserChecks} browser scenarios passed after extraction into a
-            fresh folder. <a href={data.verification.report}>Inspect the standalone run ↗</a>
+            fresh folder.{' '}
+            <a href={linkHref(data.verification.report)}>Inspect the standalone run ↗</a>
           </>
         ) : (
           'No standalone verification recording matches this exact export yet. Its included checks can be run locally.'
@@ -192,8 +194,9 @@ export function DeveloperTask() {
           independent recovery. Modified files need new verification.
         </p>
         <p>
-          <a href="/api/developer-task">Case measurements and evidence references ↗</a> ·{' '}
-          <a href="/integrations/jujump/evidence/recovery-history.json">
+          <a href={linkHref('/api/developer-task')}>Case measurements and evidence references ↗</a>{' '}
+          ·{' '}
+          <a href={linkHref('/integrations/jujump/evidence/recovery-history.json')}>
             Full recovery and failure history ↗
           </a>
         </p>

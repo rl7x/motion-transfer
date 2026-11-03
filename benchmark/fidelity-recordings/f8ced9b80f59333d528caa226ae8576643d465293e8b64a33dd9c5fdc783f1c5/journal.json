@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "definition": {
+    "schemaVersion": 1,
+    "id": "450cb0fc-6349-4bc2-891c-2ee47998a73c",
+    "model": "muse-spark-1.3",
+    "probeMaxUsd": 0.4,
+    "candidateMaxUsd": 1.5,
+    "probeInstructionSha256": "5e19079dc31431f109280f602b14f28be45e92c15270bc0c1be8ecff0ede3127",
+    "candidateInstructionSha256": "25e5db22312b7bc350e64b0a8197274769aaf3d8b709d1d5f2069bbfa3b1b2af",
+    "defaults": {
+      "walkingSpeed": 2,
+      "dashDistance": 60,
+      "cooldownTicks": 25,
+      "initialCooldownTicks": 10
+    },
+    "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+    "probeSha256": "5f0b434dd7d06c82d5adfae6a6bb747bf0007cd4864029495fb3e123ceeeca58",
+    "candidateSha256": "98edda047198b8004f7244af8dc35f68edd83fa806663806c1c1f783c0d455dd",
+    "contactSha256": "626c57771d11e228a55080e84fd789d459bd4147d704cd92408c5c763b20993b",
+    "providerRetries": false,
+    "probeFrames": [
+      {
+        "frame": 12,
+        "playerBox": {
+          "x": 74,
+          "y": 77,
+          "width": 10,
+          "height": 7
+        }
+      },
+      {
+        "frame": 13,
+        "playerBox": {
+          "x": 74,
+          "y": 77,
+          "width": 10,
+          "height": 7
+        }
+      },
+      {
+        "frame": 14,
+        "playerBox": {
+          "x": 68,
+          "y": 76,
+          "width": 16,
+          "height": 8
+        }
+      },
+      {
+        "frame": 15,
+        "playerBox": null
+      },
+      {
+        "frame": 16,
+        "playerBox": {
+          "x": 72,
+          "y": 77,
+          "width": 12,
+          "height": 7
+        }
+      },
+      {
+        "frame": 17,
+        "playerBox": null
+      },
+      {
+        "frame": 18,
+        "playerBox": {
+          "x": 57,
+          "y": 77,
+          "width": 27,
+          "height": 7
+        }
+      },
+      {
+        "frame": 19,
+        "playerBox": null
+      },
+      {
+        "frame": 20,
+        "playerBox": null
+      },
+      {
+        "frame": 21,
+        "playerBox": null
+      }
+    ],
+    "sha256": "83de29a8acbb5d7716209d38b2f0d5d5694edd237bb9fdbcae1d8fe7458f8a5d"
+  },
+  "status": "complete",
+  "attempts": {
+    "probe": {
+      "status": "complete",
+      "phaseReservationId": "video:450cb0fc-6349-4bc2-891c-2ee47998a73c:probe",
+      "startedAt": "2026-11-03T00:40:46.807Z",
+      "publicResponse": {
+        "id": "resp_6ae92d97afb395332c4145c6",
+        "status": "completed",
+        "model": "muse-spark-1.3",
+        "messages": [
+          {
+            "text": "Reading the visible frame counters and locating the player sprite to report a tight box.",
+            "refused": false
+          }
+        ],
+        "calls": [
+          {
+            "name": "report_sampling",
+            "arguments": "{\"inputSummary\":\"R lamp held, snake grows left from center while enemy enters right.\",\"sampledFrames\":[12,13,14,15,16,17,18,19,20,21],\"spriteBox\":{\"height\":7,\"width\":37,\"x\":31,\"y\":68},\"spriteSeen\":true}"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 2323,
+        "outputTokens": 722,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 538
+      },
+      "estimatedCostUsd": 0.00597225,
+      "inputTokens": 956,
+      "localization": false
+    },
+    "candidate": {
+      "status": "complete",
+      "phaseReservationId": "video:450cb0fc-6349-4bc2-891c-2ee47998a73c:candidate",
+      "inputKind": "image",
+      "startedAt": "2026-11-03T00:40:55.905Z",
+      "publicResponse": {
+        "id": "resp_6ae92dbf0de1af25e23b4de5",
+        "status": "completed",
+        "model": "muse-spark-1.3",
+        "messages": [
+          {
+            "text": "Your dash trail points to a multi-tick dash — building the motion component to match.",
+            "refused": false
+          }
+        ],
+        "calls": [
+          {
+            "name": "submit_motion_candidate",
+            "arguments": "{\"config\":{\"cooldownTicks\":25,\"dashDistance\":60,\"initialCooldownTicks\":10,\"walkingSpeed\":2},\"source\":\"export function init(config: any): any {\\n  const c = config as { walkingSpeed: number; dashDistance: number; cooldownTicks: number; initialCooldownTicks: number };\\n  return {\\n    cooldown: c.initialCooldownTicks,\\n    dashLeft: 0,\\n    dashTotal: 0,\\n    dashDx: 0,\\n    dashDy: 0,\\n    faceX: 1,\\n    faceY: 0\\n  };\\n}\\nexport function step(state: any, input: any, config: any): any {\\n  const c = config as { walkingSpeed: number; dashDistance: number; cooldownTicks: number; initialCooldownTicks: number };\\n  const DASH_TICKS = 10;\\n  const s = state as { cooldown: number; dashLeft: number; dashTotal: number; dashDx: number; dashDy: number; faceX: number; faceY: number };\\n  const buttons: number = (input as { buttons: number; sourceBodyWidth: number }).buttons | 0;\\n  const left = (buttons & 16) !== 0;\\n  const right = (buttons & 32) !== 0;\\n  const up = (buttons & 64) !== 0;\\n  const down = (buttons & 128) !== 0;\\n  const dashPressed = (buttons & 1) !== 0;\\n  let ix = (right ? 1 : 0) - (left ? 1 : 0);\\n  let iy = (down ? 1 : 0) - (up ? 1 : 0);\\n  // update facing from held dirs (prefer horizontal if both? keep last combined normalized dir)\\n  if (ix !== 0 || iy !== 0) {\\n    s.faceX = ix;\\n    s.faceY = iy;\\n  }\\n  const events: string[] = [];\\n  // currently dashing\\n  if (s.dashLeft > 0) {\\n    const per = c.dashDistance / s.dashTotal;\\n    const dx = s.dashDx * per;\\n    const dy = s.dashDy * per;\\n    s.dashLeft -= 1;\\n    if (s.cooldown > 0) s.cooldown -= 1;\\n    let ownsMotion = true;\\n    if (s.dashLeft <= 0) {\\n      s.dashLeft = 0;\\n      s.cooldown = c.cooldownTicks;\\n      events.push(\\\"dash-end\\\");\\n    }\\n    return { state: s, output: { ownsMotion, displacement: { x: dx, y: dy }, events } };\\n  }\\n  // not dashing: tick cooldown\\n  if (s.cooldown > 0) s.cooldown -= 1;\\n  // try start dash\\n  if (dashPressed && s.cooldown <= 0) {\\n    let dx = ix;\\n    let dy = iy;\\n    if (dx === 0 && dy === 0) {\\n      dx = s.faceX;\\n      dy = s.faceY;\\n      if (dx === 0 && dy === 0) { dx = 1; dy = 0; }\\n    }\\n    const len = Math.sqrt(dx * dx + dy * dy);\\n    const nx = dx / len;\\n    const ny = dy / len;\\n    s.dashTotal = DASH_TICKS;\\n    s.dashLeft = DASH_TICKS - 1;\\n    s.dashDx = nx;\\n    s.dashDy = ny;\\n    const per = c.dashDistance / DASH_TICKS;\\n    events.push(\\\"dash-start\\\");\\n    if (s.dashLeft <= 0) {\\n      s.cooldown = c.cooldownTicks;\\n      events.push(\\\"dash-end\\\");\\n    }\\n    return { state: s, output: { ownsMotion: true, displacement: { x: nx * per, y: ny * per }, events } };\\n  }\\n  // walk\\n  let wx = 0;\\n  let wy = 0;\\n  if (ix !== 0 || iy !== 0) {\\n    if (ix !== 0 && iy !== 0) {\\n      const inv = 1 / Math.sqrt(2);\\n      wx = ix * inv * c.walkingSpeed;\\n      wy = iy * inv * c.walkingSpeed;\\n    } else {\\n      wx = ix * c.walkingSpeed;\\n      wy = iy * c.walkingSpeed;\\n    }\\n  }\\n  return { state: s, output: { ownsMotion: false, displacement: { x: wx, y: wy }, events } };\\n}\",\"summary\":\"Walk 2px/tick with normalized diagonals; dash 60px over 10 ticks (6px/tick orthogonal) in held/facing dir, dash-start/end events, ownsMotion true only during dash, cooldowns 10 initial / 25 after.\"}"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 2064,
+        "outputTokens": 3384,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 2242
+      },
+      "estimatedCostUsd": 0.016962,
+      "inputTokens": 2207,
+      "submission": {
+        "summary": "Walk 2px/tick with normalized diagonals; dash 60px over 10 ticks (6px/tick orthogonal) in held/facing dir, dash-start/end events, ownsMotion true only during dash, cooldowns 10 initial / 25 after.",
+        "config": {
+          "cooldownTicks": 25,
+          "dashDistance": 60,
+          "initialCooldownTicks": 10,
+          "walkingSpeed": 2
+        },
+        "sourceSha256": "949c05b0a57be10358b696a2d0e37be63e198dc4a954e19cba756d8837cfb66e"
+      },
+      "rejection": null,
+      "compileError": null,
+      "studyId": "f8ced9b80f59333d528caa226ae8576643d465293e8b64a33dd9c5fdc783f1c5",
+      "comparison": {
+        "observedCondition": "contact-sheet",
+        "parameterSource": "supplied-public-contract",
+        "defaults": {
+          "walkingSpeed": 2,
+          "dashDistance": 60,
+          "cooldownTicks": 25,
+          "initialCooldownTicks": 10
+        },
+        "savedRecovery": {
+          "id": "saved-recovery",
+          "condition": "saved-recovery"
+        }
+      }
+    }
+  },
+  "updatedAt": "2026-11-03T00:41:35.642Z",
+  "summary": {
+    "probe": "complete",
+    "candidate": "complete",
+    "localization": false,
+    "inputKind": "image",
+    "estimatedCostUsd": 0.022934250000000003,
+    "studyId": "f8ced9b80f59333d528caa226ae8576643d465293e8b64a33dd9c5fdc783f1c5",
+    "providerRetries": false
+  },
+  "integritySha256": "633e3fcf24db12c383d3c3505289903d672ef45fb3a8c6c1981fc26368fcd0c2"
+}

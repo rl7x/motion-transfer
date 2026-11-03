@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "kind": "fidelity-recording",
+  "studyId": "f8ced9b80f59333d528caa226ae8576643d465293e8b64a33dd9c5fdc783f1c5",
+  "originalDirectory": "reports/motion-transfer-phase/video-001",
+  "excluded": [
+    "phase ledger",
+    "credentials",
+    "private reasoning"
+  ],
+  "files": [
+    {
+      "path": "journal.json",
+      "original": "reports/motion-transfer-phase/video-001/journal.json",
+      "bytes": 9016,
+      "sha256": "a4e60b3ee512b36ec71dcbde2ff9f3459aa3772c3c95442e7393c17f5a2f9c08"
+    },
+    {
+      "path": "provenance.json",
+      "original": "reports/motion-transfer-phase/video-001/provenance.json",
+      "bytes": 938,
+      "sha256": "e2c2452adce2b6f11236fa762f2d2c8444821e40b126e843ec53b3b5e9633f3c"
+    },
+    {
+      "path": "fidelity-comparison.svg",
+      "original": "reports/motion-transfer-phase/video-001/fidelity-comparison.svg",
+      "bytes": 3124,
+      "sha256": "05d6b2b877a292dde42a96269be3f6d9c426464e784431a4c5b9b266e3dad899"
+    },
+    {
+      "path": "fidelity-comparison.json",
+      "original": "reports/motion-transfer-phase/video-001/fidelity-comparison.json",
+      "bytes": 4501,
+      "sha256": "7e40c57d93a622b0dcc344795f6b6ef8991ac80871391c3c8d64e2f55366888d"
+    },
+    {
+      "path": "fidelity-study/study.json",
+      "original": "reports/motion-transfer-phase/video-001/fidelity-study/study.json",
+      "bytes": 2018,
+      "sha256": "741558f481daa626891bd1fcd558517c97cfc7619c2c4319b230072b85a1d541"
+    },
+    {
+      "path": "fidelity-study/results.json",
+      "original": "reports/motion-transfer-phase/video-001/fidelity-study/results.json",
+      "bytes": 41358,
+      "sha256": "8b11f0806e5f48994a99825106180d77a8f70a5194a609ccd8f18b35e743ea0d"
+    },
+    {
+      "path": "fidelity-study/from-contact-sheet.ts",
+      "original": "reports/motion-transfer-phase/video-001/fidelity-study/from-contact-sheet.ts",
+      "bytes": 2870,
+      "sha256": "949c05b0a57be10358b696a2d0e37be63e198dc4a954e19cba756d8837cfb66e"
+    },
+    {
+      "path": "fidelity-study/from-contact-sheet.config.json",
+      "original": "reports/motion-transfer-phase/video-001/fidelity-study/from-contact-sheet.config.json",
+      "bytes": 99,
+      "sha256": "266fa4ba6d1e0400e90ebd329088e04d02af52894691ad93443bf0464c52cfff"
+    },
+    {
+      "path": "fidelity-study/saved-recovery.ts",
+      "original": "reports/motion-transfer-phase/video-001/fidelity-study/saved-recovery.ts",
+      "bytes": 2177,
+      "sha256": "7cfd9475696ca744982fb7c00d988aae982840d06b0fa198f111d42bba2d18bc"
+    },
+    {
+      "path": "fidelity-study/saved-recovery.config.json",
+      "original": "reports/motion-transfer-phase/video-001/fidelity-study/saved-recovery.config.json",
+      "bytes": 99,
+      "sha256": "b87ded0989a823af2fc61c9748763c4eddd0a121455bc6feaf627d19d14a45c7"
+    },
+    {
+      "path": "media/manifest.json",
+      "original": "reports/motion-transfer-phase/video-001/media/manifest.json",
+      "bytes": 10751,
+      "sha256": "a942021c0b5123281638febc448db2bbcf6d630cf744ebef0e8b09df8fff5ed9"
+    },
+    {
+      "path": "media/probe.mp4",
+      "original": "reports/motion-transfer-phase/video-001/media/probe.mp4",
+      "bytes": 16061,
+      "sha256": "5f0b434dd7d06c82d5adfae6a6bb747bf0007cd4864029495fb3e123ceeeca58"
+    },
+    {
+      "path": "media/candidate.mp4",
+      "original": "reports/motion-transfer-phase/video-001/media/candidate.mp4",
+      "bytes": 29859,
+      "sha256": "98edda047198b8004f7244af8dc35f68edd83fa806663806c1c1f783c0d455dd"
+    },
+    {
+      "path": "media/contact-sheet.png",
+      "original": "reports/motion-transfer-phase/video-001/media/contact-sheet.png",
+      "bytes": 18349,
+      "sha256": "626c57771d11e228a55080e84fd789d459bd4147d704cd92408c5c763b20993b"
+    }
+  ]
+}

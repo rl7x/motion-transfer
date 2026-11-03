@@ -1,120 +1,25 @@
 # Motion Transfer implementation checklist
 
-The next phase turns the existing recovery and transfer work into a playable
-experience: borrow a move, remix it, and share the result. This checklist follows
-the November 2 revision of the Motion Transfer hackathon plan. It records the
-implementation order and completion evidence; unchecked items are future work.
+The summary a new developer should read is the root README. This page only separates what is present from what is still pending. It assigns no score. Ledger rows stay in [recovery-evidence-status.md](recovery-evidence-status.md).
 
-## Foundation supplied by the recovery handoff
+Publication, deployment, outreach, a public video, and independent-use sessions are pending by direction. Paid commands require the existing `$50` ledger. No further paid call is planned. Do not reset the ledger.
 
-- Investigations select inspected code and executed evidence, develop candidates,
-  freeze them, and run separate acceptance.
-- Stage-specific tools and a remaining-request reserve move recovery toward
-  candidate development. Development feedback retains measured first divergences
-  and preceding frames.
-- A newly accepted component receives a JUJUMP delivery only after recipient and
-  independent final-ZIP verification. Artifact identities bind the candidate,
-  component, task, and archive.
-- The UI shows development failures and exposes play/download links only for a
-  checked project. Saved recordings remain viewable without inference.
-- The measured campaign and later recovery attempts retain their actual failed
-  outcomes. The best later candidate passed 10 of 13 development checks; neither
-  later trial passed acceptance. The final scheduling fix has local validation,
-  not a subsequent successful live recovery.
+## Present
 
-See [recovery delivery](recovery-handoff.md), [developer measurements](developer-benchmark.md),
-and [the recorded campaign](../benchmark/recordings/README.md).
+- Accepted local playback: `npm run build:release -- --accepted-roadster transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c`, then `npm run serve:release -- --root reports/release-accepted --port 4174 --base-path /motion-transfer/`. Loopback only. Component `54465741…`, 8 mapping and 8 browser checks, 13 development and 20 acceptance checks, same component as the JUJUMP pin. Source and evidence links are in the bundle. The WebGL2-absent comparison link was tested.
+- `npm run dev:transfer` remains the saved library, labeled **SAVED RECOVERY**, controller `1bc4250c…`.
+- Wonder publication pin, commit `14ff60d`. Accepted Roadster delivery and pin, commits `cdd0ded` and `7096529`. Portable release and loopback serve, commit `5065a7c`. Capture inputs, commits `49b6b4a` and `eaff839`.
+- Fidelity study recorded in `1429e62` and scored once: contact-sheet plus supplied defaults 0/40, saved controller 40/40, one attempt, cost `$0.02293425`. Not a from-video score.
+- Fixed remix set, commit `5db79cc`: 6 supported matches and 2 correct negatives, no retries, `$0.06688125`, older saved component.
+- Muse echo, commit `982994a`: 13 unpaid checks on pin `1.3.0-R3057.1`. Paid Muse stays closed.
+- Creator page, commit `0251bb0`: `npm run build:creator` writes `web/dist/creator/index.html`. Six browser tests passed on a fixture API. `hosting:serve` does not enable generation by itself.
+- Donor ISC notice: [targets/dashy-dango/README.md](../targets/dashy-dango/README.md).
 
-## Implementation order
+## Pending
 
-### 1. Prepare the release inputs
+- Public repository, deploy, outreach, public video, and independent use.
+- Hosted creation. The coordinator still refuses the operator generation switch, and the worker diagnostic is unfinished. Do not treat hosting as verified.
+- A ten-trial campaign, an accepted Contributor development delivery, and a Muse Code recovery. None of those results exist.
+- Binding nothing further is required for the local accepted page. The car pin and the JUJUMP pin already share `54465741…`.
 
-- [ ] Verify and record the proposed ISC distribution basis for the exact donor
-  artifact; include the applicable notices in published packages.
-- [ ] Confirm the release contains the intended source, evidence, and notices.
-- [ ] Make repository visibility and hosting changes as explicit release actions.
-
-Start with [donor provenance](../targets/dashy-dango/README.md). The new plan's
-licensing conclusion has not been applied to that record in this preparation PR.
-
-### 2. Deliver the selected accepted component
-
-- [ ] Pass an explicit validated component through Roadster compilation,
-  conformance checks, browser builds, and export instead of loading only the
-  saved default.
-- [ ] Keep historical saved versions identifiable and usable.
-- [ ] Check two component identities and reject mixed source, verification, or
-  export identities.
-
-Primary paths: `transfer/adapter.mjs`, `evaluator/roadster.mjs`,
-`roadster/build.mjs`, `roadster/artifact.mjs`, and `integration/recovery.mjs`.
-Until this is complete, a fresh JUJUMP recovery and a saved Roadster transfer are
-separate demonstrations.
-
-### 3. Build the playable challenge and publish playback
-
-- [ ] Sweep the native kickflip challenge to find a measured launch that lands
-  short without the dash and succeeds with matching inputs plus the dash.
-- [ ] Build the play/borrow/remix/share flow in TypeScript and React under
-  `web/app/`, with one active 3D player and a pixel-game alternative.
-- [ ] Export the exact verified players and downloads to static hosting.
-- [ ] Check a cold browser on another device and network.
-
-Keep pinned engines and verified bundles separate from application source. The
-existing frontend build depends on Node routes; a static release needs its own
-complete asset set. Preserve keyboard/touch controls, focus, reduced motion,
-and request cleanup.
-
-### 4. Run the new recovery protocol and expose the workbench
-
-- [ ] Define and test recorded model, reasoning, development-attempt, request,
-  time, and spending limits for a new campaign.
-- [ ] Add the proposed Contributor model configuration only with matching
-  accounting and tool-protocol validation.
-- [ ] Obtain an accepted development delivery before starting the frozen
-  ten-trial measurement; retain every outcome.
-- [ ] Expose the existing typed tools over MCP with the same server-side
-  evidence, freeze, and acceptance gates.
-- [ ] Verify the isolated Muse Code configuration and report its trials
-  separately from the in-app campaign.
-
-The existing campaign and spending journals remain historical records. A new
-protocol does not rewrite their outcomes. Recovery scripts that call Meta are
-paid experiments, not routine verification commands.
-
-### 5. Enable hosted remix creation
-
-- [ ] Configure public-origin admission, durable jobs, bounded creation, and
-  isolated candidate verification.
-- [ ] Publish a child only after checks pass; preserve its parent and inherited
-  intent, and mirror the accepted player to static hosting.
-- [ ] Verify reconnect, restart, parent/child links, and independent downloads.
-- [ ] Reserve generation capacity for judges and record the public-data policy.
-
-The initial creative scope remains distance, direction, activation, and
-follow-up inheritance. The once-per-flight rule is stretch work in the revised
-plan. A static playable gallery alone does not establish live creation.
-
-### 6. Collect useful evidence and record the demo
-
-- [ ] Provide integration instructions and a probe that detects broken adapter
-  behavior.
-- [ ] Observe developers integrating the component into their own games and
-  creators making and sharing variants without coaching.
-- [ ] Run the fidelity comparison with a fair baseline and report its limits.
-- [ ] Record the native stunt outcome, actual Meta work, a remix, and independent
-  use in a three-minute video with upstream attribution.
-
-Keep actual counts and outcomes separate from targets. Prioritize public
-playback, a usable remix, and external integration evidence when applying cuts.
-
-## Validation
-
-Follow [the frontend checks](../web/README.md), the relevant runtime and
-integration checks, and the [benchmark protocol](developer-benchmark.md).
-Run free checks before paid campaigns, and verify the exact deliverable after
-changes to the host, component, adapter, or packaging.
-
-This preparation establishes a reviewable starting point. It does not change
-model budgets, run paid experiments, contact testers, make the repository
-public, or deploy the new experience.
+`record:demo` remains available for a local draft. It is not the submission video.

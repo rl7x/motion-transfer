@@ -6,6 +6,7 @@ import {join} from 'node:path';
 import {createCartridgeTools} from '../agent/tools.mjs';
 import {createLabService} from '../lab/service.mjs';
 import {createPakuBrowser} from '../evaluator/browser-harness.mjs';
+import {reveal} from './helpers/app-navigation.mjs';
 
 test('desktop and mobile investigation views expose actual branches, edits, images, evidence and source exports',async()=>{
   const tools=createCartridgeTools(),directory=await mkdtemp(join(tmpdir(),'session-ui-'));let lab,harness,calls=0;
@@ -25,7 +26,7 @@ test('desktop and mobile investigation views expose actual branches, edits, imag
     const report={status:'completed',model:'injected-offline-fixture',startedAt:new Date().toISOString(),finishedAt:new Date().toISOString(),estimatedCostUsd:0,reservedCostUsd:0,requests:[],session:tools.sessionState,toolCalls:[{name:'session_advance',experimentId:'exp-001',ok:true,args:{hypothesis:'Actual offline test observations.'},result:advanced},{name:'checkpoint_state',ok:true,args:{},result:checkpoint},{name:'compare_branches',experimentId:'exp-002',ok:true,args:{hypothesis:comparison.hypothesis},result:comparison}],conclusion:'Offline protocol fixture; model claims are not independently verified.',conclusionVerified:false};
     lab=await createLabService({directory,client:{},investigateRun:async()=>{calls++;return report;}});harness=await createPakuBrowser({lab});
     const {page,errors}=await harness.page();await page.setViewportSize({width:1280,height:900});await page.goto(harness.origin+'/?destination=paku-paku');
-    await page.waitForFunction(()=>!document.querySelector('#investigation-submit').disabled);assert.equal(calls,0);
+    await reveal(page,'#investigation-submit');await page.waitForFunction(()=>!document.querySelector('#investigation-submit').disabled);assert.equal(calls,0);
     await page.locator('#investigation-submit').click();await page.waitForFunction(()=>!document.querySelector('#investigation-workspace').hidden);
     assert.equal(await page.locator('.branch-card').count(),3);assert.match(await page.locator('#investigation-edits').innerText(),/40/);
     assert.match(await page.locator('#investigation-comparisons').innerText(),/First measured motion/);

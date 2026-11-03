@@ -1,141 +1,108 @@
-# Meta Global AI Developer Hackathon
+# Motion Transfer
 
-**Event:** [Meta Global AI Developer Hackathon](https://cerebralvalley.ai/e/meta-ai-developer-hackathon/)
+Borrow a dash from a compiled game, play it on a 3D backflip, and keep the accepted result.
 
-**Project submission deadline:** November 4, 2026, at 9:00 p.m. ET
+A July 2023 study for the Video Game History Foundation and the Software Preservation Network found that 87% of classic games released in the United States from 1960 through 2009 were not in release (n = 1,500, ±2.5% at 95% confidence; [87% Missing](https://gamehistory.org/87percent/)). Ars Technica, on May 6, 2020, reported that the volunteer whole-program decompilation of Super Mario 64 took about two years ([Beyond emulation](https://arstechnica.com/gaming/2020/05/beyond-emulation-the-massive-effort-to-reverse-engineer-n64-source-code/)). Motion Transfer recovers one dash from [Dashy Dango](targets/dashy-dango/README.md) and checks that controller on finite traces. That is not a whole-program decompilation. Sources are in [docs/problem-statement.md](docs/problem-statement.md). The project is aimed at **Push the Frontier**.
 
-## Idea
-My core idea is to do some component extraction and transfer between programs. I will start with some games first. I picked dashy dango cause i was thinking of a matcha parfait i had in kyoto, and dango came to mind.
+The repository stays private for now. Publication, deployment, outreach, a public video, and independent-use counts are pending. There is no public play URL.
 
-The [Motion Transfer implementation checklist](docs/motion-transfer-implementation.md) tracks the next phase: a playable challenge, public remixes, fresh recovery measurements, and integrations by other developers.
+## Play the accepted release
 
-## Try the extraction and transfer experience
-
-```sh
-npm install
-npm run dev:transfer
-```
-
-Open `http://127.0.0.1:4173`. Play the compiled **Dashy Dango** donor and give its saved recovered dash to **RDSTR Stunts**, **PAKU PAKU**, or **JUJUMP**. The default Roadster experience adds a horizontal air dash to an existing 3D stunt game, using the exact same frozen controller as both pixel games. The page shows donor, recipient before, and recipient after side by side. **Watch the ability move** runs a short comparison using actual recorded native inputs without a model request. All players expand and support touch controls.
-
-The frontend is React with strict TypeScript. See [the frontend guide](web/README.md) for component ownership, request reconnection and `typecheck`, `lint`, formatting, build and browser-test commands. The existing Node backend and verified game runtimes remain separate from the application UI.
-
-**Use it in your project** opens the developer task: recover a mechanic from a compiled reference and integrate it into a platformer while keeping native physics. **Download working integration** exports a self-contained JUJUMP project with the exact frozen component, editable adapter, before/after players, source, notices, recovery failures and verification reports. Extract it, run `npm test`, then `npm start` with Node.js 22+. No dependency installation, key, donor cartridge or investigation backend is required. The standalone example can execute a matched open-air comparison and export the actual before/after traces. See [the developer handoff and its measurement limits](docs/developer-handoff.md).
-
-**Measured developer tasks** records fresh recovery and two predefined adapter-editing workflows, including inherited changes, actual verification failures, setup disclosures and API cost. Run `npm run benchmark:verify` before `npm run benchmark:developer`; see [the fixed tasks, spending limits and interruption behavior](docs/developer-benchmark.md). These are self-run measurements, with no claimed productivity baseline or independent adoption.
-
-The [November 2 campaign](benchmark/recordings/README.md) completed **2 of 3 tasks** for an estimated **$0.7299**, with no unsettled reservations. Roadster's requested edit and both PAKU child edits passed their recipient checks. Three fresh Meta recovery trials inspected code and executed experiments but submitted no candidate; new development, acceptance and export remain incomplete. All outcomes and two repairs between trials are preserved. Campaign-time local validation passed **194 tests**, TypeScript, lint, formatting and the frontend build; the report UI was also checked at 390px and 320px without inference.
-
-**Recover for JUJUMP** starts a fresh Meta-led investigation through evidence selection, candidate development and separate frozen acceptance. Only a newly accepted candidate that also passes recipient checks and independent final-ZIP verification receives its own play/download links. The UI shows actual donor-versus-candidate development failures. Two later development trials cost **$0.640187**: one reached **0/13 → 9/13 → 10/13** development checks; the other selected evidence too late to submit a candidate. Neither passed acceptance or published a project. Both complete failed recordings and all earlier outcomes remain available without inference. The final scheduling fix reserves requests for development and has local validation only. See [the recovery task, measured spending and limitations](docs/recovery-handoff.md).
-
-```sh
-npm run export:jujump
-npm run verify:integration
-```
-
-The first command writes `reports/exports/jujump-dash.zip`. The second extracts the ZIP into a fresh temporary folder, runs its Node checks and all seven existing JUJUMP browser scenarios on an independent static server. It records package identity, actual machine timings and traces in `reports/jujump-integration-verification.json`; `-- --save` refreshes the checked-in recording after a successful run. Saved verification is displayed only when its package and ZIP hashes match. Human effort and time savings have not been measured. This handoff reuses the saved recovery and makes no model request.
-
-Use **Investigate with Meta** to let Muse Spark inspect code, continue a running cartridge, branch a replay checkpoint and compare a typed memory intervention against an unchanged control. The page shows hypotheses, branch identities, edits, actual movement/timer consequences, evidence-linked findings and selected framebuffer PNGs. The extraction workflow lets the model choose inspected functions, submit a new component, receive development divergence feedback, freeze it and run separate acceptance. See [the investigation toolset and its limits](docs/investigation-tools.md). Motion values and address hints use a disclosed human-mapped registry; this is not a claim that the model discovered its layout. New candidates do not replace the saved ability.
-
-The [programmatic workbench](docs/programmatic-experiments.md) lets Meta submit one complete controlled experiment or a short isolated JS/TS program for sweeps and conditional follow-ups. The host restores checkpoints and creates both branches. **View local experiment program · no model** shows actual human-scripted measurements without inference. `npm run tools:experiment-smoke` reproduces it and compares the existing six-call workflow with two complete-workflow calls and one program call. Model round-trip and cost improvements are not inferred from that local comparison.
-
-**View Meta experiment program · incomplete** preserves the single live programmatic trial: Meta chose a real position intervention and later read its evidence, but omitted function-body inspection. Completion was rejected. Its failed program's completed experiment survived the return-size limit. The run cost $0.14972375 with no unsettled reservation and was not retried; it does not claim a new recovery.
-
-The Roadster form lets Meta generate a new adapter for distance, direction and held/fresh-press activation. Eight mapping cases and eight real-browser checks gate each playable child. Source, reports, parent lineage and local links are retained. The [Roadster integration policy](transfers/roadster/README.md) explains the 60/240 Hz bridge, meters conversion, collision behavior, attribution and finite scope.
-
-**View local control experiment · no model** shows a human-scripted timer intervention with actual comparison traces, writer analysis and framebuffer images. **View recorded branch exploration · incomplete** preserves the new live Meta run, including its rejected completion check. Both load without inference; their origins and limitations remain visible.
-
-New investigations and Roadster generation share a persistent **$10 estimated development ceiling**: up to $0.50 per investigation and $0.05 per adapter, no automatic retries, and no further inference when billing is uncertain. The existing PAKU remix budget stays at $0.10 separately. See [the lab API and accounting](lab/README.md). Loading or playing any saved destination makes no model request.
-
-Choosing a destination loads a saved checked integration and makes no model call. The page distinguishes those saved results from fresh Meta remix generation. Real trace comparisons show the compiled donor, standalone component, and both recipient adapters using matching dash displacement and event timing. Recovery evidence, supported scope, human assistance, adapter authorship, sources, and policies are available in expandable sections.
-
-Keyboard and touch controls work in each view. Donor: arrows and X. Roadster: Run stunt drives the assisted run, then X dashes in the air; native driving, rotation and lift controls remain. Pixel recipients: tap/Space to turn or jump, and D to dash after transfer. PAKU PAKU retains live child remixes, inherited edits, lineage, downloads, and local playable links. JUJUMP currently supports the saved transfer only. Historical PAKU parents and children remain usable after host re-verification when their verified adapter/component/recipient identities agree.
-
-```sh
-npm run verify:motion
-npm run verify:transfer
-npm run verify:jujump
-npm run verify:roadster
-npm run compare:transfers
-npm test
-```
-
-These checks use no paid API. `verify:roadster` checks the saved Meta adapter against eight mapping cases and eight browser checks and writes `reports/roadster-verification.json`. Comparison inputs are controlled free-space fixtures; platform/ghost collisions, ordinary play, death/restart, and replay are checked separately. See [the JUJUMP integration policy](transfers/jujump/README.md) and [live remix scope](remix/README.md). Public hosting remains to be built; resolve the donor's documented redistribution status before publishing its cartridge.
-
-## Run Dashy Dango
+Node.js 22 or newer. These commands build and serve the accepted Roadster pin locally. They do not call Meta.
 
 ```sh
 npm install
-npm run dev
+npm run build:release -- --accepted-roadster transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c
+npm run serve:release -- --root reports/release-accepted --port 4174 --base-path /motion-transfer/
 ```
 
-Open the local URL printed in the terminal (normally `http://localhost:4444`) and click the game to focus it. Press X to start, use arrow keys to move, and X to dash. The pinned cartridge and its provenance are in [targets/dashy-dango](targets/dashy-dango/README.md).
+Open `http://127.0.0.1:4174/motion-transfer/`. The server binds `127.0.0.1` only. `serve:release` rejects `--host`. This address is local review, not a public site.
 
-## Replay recorded inputs
+The page is one 3D backflip. The label is **ACCEPTED RECOVERY**. **Borrow dash** uses controller `544657417fe9752f91b0b72a451cd9cb8d2650839824be35881e52f81f223858`, the same component as the pinned JUJUMP publication. The Roadster pin passed 8 mapping checks and 8 browser checks. That component passed 13 development checks and 20 acceptance checks. The ordinary landing misses the green zone. The same controls plus the dash reach it. Borrowing and replaying make no model request.
+
+Source, report, notices, and the download are files in the bundle. With WebGL2 removed, the page still offers the JUJUMP comparison, and that check passed. A human mapped the motion boundary, timer fields, and checks.
+
+`npm run dev:transfer` is a different page. It opens `http://127.0.0.1:4173` on the older saved library and labels it **SAVED RECOVERY**, controller `1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2`. PAKU PAKU and JUJUMP on that server are the before/after views of that saved controller. They are not the accepted release.
+
+## What was measured
+
+These figures are outcomes of single runs. They are not a reliability rate. There is no ten-trial campaign and no Muse Code j/3 count. No independent user count is recorded.
+
+| Result | Outcome |
+| --- | --- |
+| Accepted Roadster adapter | Muse Spark 1.3, `$0.008666`. 8 mapping and 8 browser checks on component `54465741…`. |
+| Wonder donor trial | Muse Wonder 1.0, `$1.689036`. One donor acceptance. The campaign journal still has zero accepted deliveries. The pins above are the later publication of that component. |
+| Contact-sheet comparison | One attempt. Contact sheet plus the supplied public-contract defaults: 0/40. Saved controller: 40/40. This is not a from-video score. Generation cost `$0.02293425`. Study `f8ced9b80f59333d528caa226ae8576643d465293e8b64a33dd9c5fdc783f1c5`. |
+| Fixed remix set | 6 supported prompts matched and 2 negatives behaved as specified. No retries. Cost `$0.06688125`. Those children use the older saved controller, not `54465741…`. |
+| Contributor development | Trial 004 timed out. Its `$0.50` cap is retained in full as a second bounded-unknown reservation. No Contributor trial has an accepted development delivery. |
+| Muse Code echo | Commit `982994a` pins build `1.3.0-R3057.1`. Thirteen unpaid echo checks passed. Paid Muse stays closed. |
+
+A rough ledger snapshot from November 2, 2026: about `$1.99700237` known, about `$0.905351648` still reserved, ceiling `$50`. The public category, `$15`, is unused. Do not reset the ledger or invent a new allowance. Row-level history is in [docs/recovery-evidence-status.md](docs/recovery-evidence-status.md).
+
+Experiments were authorized inside that ceiling. No further paid call is planned. Commands that spend still require the existing `reports/motion-transfer-phase/phase-budget.json` and do not create a replacement.
+
+## Commands
+
+Free commands make no Meta call.
 
 ```sh
-npm run replay
 npm test
-```
-
-The replay command runs the recorded start/move/dash sequence three times and checks that every frame matches. It saves observations to `reports/dashy-dango-replay.json`. See [runtime/README.md](runtime/README.md) for the API, trace format, and supported scope. Use Node.js 22 or newer.
-
-## Investigate with Meta
-
-Copy `.env.example` to `.env` and set `MODEL_API_KEY` locally. Then run:
-
-```sh
-npm run investigate
-```
-
-The model can inspect the pinned bytecode, follow direct function calls, and choose controlled replay experiments with typed memory watches. The default run has a $0.50 estimated generation budget, with token-count preflight before each request. Reports contain experiments, observations, token usage, and a conclusion for review. See [agent/README.md](agent/README.md) for details.
-
-To check the tools locally without API calls:
-
-```sh
-npm run tools:smoke
-npm run tools:session-smoke
-```
-
-This indexes the cartridge's functions, inspects the `update` export, and compares movement traces with read-only memory observations. It writes `reports/cartridge-tools-smoke.json`.
-
-## Recover a motion component
-
-```sh
-npm run recover:motion -- --prepare-only
-npm run recover:motion
-```
-
-The first command prepares binary and numeric trace evidence locally. The second asks Meta to generate a standalone controller, then checks it against independent donor rollouts. It has a $0.30 estimated budget and at most two synthesis calls. Passing candidates are exported with source, contract, evaluations, and provenance. See [component/README.md](component/README.md).
-
-The first [recovered dash component](components/dashy-dango-dash/README.md) is saved with its source and evaluation history. Verify it locally without API calls:
-
-```sh
+npm run typecheck
+npm run lint
+npm run format:check
+npm run build:frontend
+npm run test:frontend
 npm run verify:motion
+npm run verify:challenge
+npm run build:creator
+npm run score:video-comparison -- --campaign reports/motion-transfer-phase/video-001
 ```
 
-## Play the first transfer
+`npm test` is `node --test --test-concurrency=1 tests/*.test.mjs`. `build:creator` writes `web/dist/creator/index.html`. `score:video-comparison` only scores an existing frozen study. It does not call Meta.
 
-```sh
-npm run dev:transfer
-```
+| Script | Use | Paid |
+| --- | --- | --- |
+| `build:release` | Static tree. Pass `--accepted-roadster <pin>` for the accepted bundle. Without that flag the tree is the saved library. | No |
+| `serve:release` | `--root <directory> [--port 4173] [--base-path /]`. Loopback only. | No |
+| `verify:release`, `smoke:hosted` | Audit or read-only smoke of an existing tree. | No |
+| `dev:transfer` | Saved-library preview at `http://127.0.0.1:4173`. | No |
+| `export:jujump`, `verify:integration` | Saved-controller JUJUMP package. Not the accepted pin. | No |
+| `probe:integration` | One adapter against the saved controller. | No |
+| `record:demo` | Existing local draft recorder. The submission video is being made separately. | No |
+| `recover:muse-code` | Unpaid echo preflight. `--paid` stays refused. | No |
+| `hosting:serve` | `node hosting/serve.mjs`. Needs `HOSTING_PUBLIC_HOSTS` and `HOSTING_PUBLIC_ORIGINS`. Creation stays off unless a later operator switch is set, and this build exits if that switch is present. | No |
+| `hosting:broker`, `hosting:image`, `hosting:coordinator-image` | Local broker and image builds. Worker diagnosis is still open. | No |
+| `transfer:accepted-roadster` | One new adapter for an accepted component. `--campaign`, `--out`, and `--phase-ledger` are required. | Yes, existing ledger |
+| `video:candidate`, `remix:campaign`, `recover:campaign` | Campaign commands. Each requires the existing ledger. | Yes, existing ledger |
+| `benchmark:developer`, `investigate`, `recover:motion` | Older paid entry points. `recover:motion --prepare-only` is local. | Yes, except prepare-only |
 
-Open `http://127.0.0.1:4173` to play Kenta Cho's **PAKU PAKU** beside a version using the recovered Dashy Dango dash. Tap or press Space to turn; hold D to dash in the transferred version. Both use the same normalized 60 Hz clock. The original recipient source stays pinned unchanged.
+`hosting:serve` does not turn on public generation by itself. Hosted creation is not claimed verified. The provider budget and the worker check are still being finished. See [docs/hosting.md](docs/hosting.md).
 
-Muse Spark generated the adapter in one request for an estimated $0.014. The frozen component supplies the motion and timers; the human-built host supplies controls and collision hooks. The [saved transfer](transfers/paku-paku/README.md) includes the model submission, evidence, conformance and browser results, and a receipt binding those results to the code. The preview makes no model requests.
+Current validation: **339 of 340 tests passed**, with no skips. The remaining failure is the Docker worker publication check. TypeScript, lint, formatting, and both frontend builds passed. See [the validation checkpoint](docs/local-validation.md).
 
-```sh
-npm run verify:transfer
-```
+## Where things stand
 
-This rechecks the saved adapter and real browser integration without API calls. It needs Chrome, or an installed Playwright Chromium with `BROWSER_CHANNEL=chromium`.
+| | State | Detail |
+| --- | --- | --- |
+| Accepted local playback | Working on loopback | This page |
+| Saved library preview | Separate, labeled saved | `npm run dev:transfer` |
+| Wonder JUJUMP pin | Same component as the car pin | [docs/fresh-recovery.md](docs/fresh-recovery.md) |
+| Contact-sheet score | 0/40 versus saved 40/40, one attempt | [docs/fidelity-media.md](docs/fidelity-media.md) |
+| Fixed remix set | 8 outcomes, older component | [docs/remix-results.md](docs/remix-results.md) |
+| Muse Code echo | 13 unpaid checks. Paid path closed | [docs/muse-code.md](docs/muse-code.md) |
+| Hosted creation | Not verified | [docs/hosting.md](docs/hosting.md) |
+| Public repo, deploy, outreach, public video, independent use | Pending | [docs/submission-readiness.md](docs/submission-readiness.md) |
 
-## Remix a playable child
+## Limitations
 
-The preview includes a natural-language remix form. With `MODEL_API_KEY` in the server's `.env`, request a shorter/longer dash, backward dashing, or fresh-press activation. Meta writes a new adapter around the unchanged recovered component. The server compiles it, checks the complete inherited mapping, and runs the emitted game in Chrome before saving it. Unsupported or failed requests leave the parent playable.
+- One dash, finite traces, human-mapped boundary. Host hooks are human-written.
+- The accepted car and the saved library are different controllers. Do not describe the saved preview as the accepted release.
+- The contact-sheet candidate is one attempt with the supplied defaults. It is not evidence that a model recovered the dash from video.
+- The echo preflight does not recover a mechanic. A new cartridge still needs the human-mapped boundary.
+- No outside developer session and no public player count.
 
-An accepted child has a content-addressed `/play/<id>` URL, parent lineage, downloadable source/report, and an isolated player. Remix that child to keep its earlier changes. Games and cost reservations persist in ignored `reports/remixes/` across local server restarts. The first live backward/fresh-press remix cost an estimated **$0.0058745**, passed 12 mapping cases and six browser checks, and was played through the actual form and buttons.
+## Credits
 
-Generation is serialized, capped at **$0.03 per request** and **$0.10 total** in the persistent local journal, and never automatically retried. Running the preview does not itself call Meta. Local playable links need this server to be available; public hosting is still to be built. See [remix/README.md](remix/README.md) for the supported scope and API.
+Dashy Dango is upstream work by samX500 and willGuimont. PAKU PAKU and JUJUMP are upstream work by Kenta Cho / ABA Games. The RDSTR Stunts car, renderer, track, stunt physics, and audio are upstream work by sebayaki. The recovery harness, controllers, adapters, green zone, remix flow, and checks are the hackathon work. The donor name came from a matcha parfait in Kyoto.
 
-To generate a new candidate deliberately, see [transfer/README.md](transfer/README.md). Generation is capped at an estimated $0.05; conformance alone does not publish a candidate to the preview.
+Longer notes: [developer handoff](docs/developer-handoff.md) · [implementation checklist](docs/motion-transfer-implementation.md) · [submission readiness](docs/submission-readiness.md) · [recovery evidence](docs/recovery-evidence-status.md).

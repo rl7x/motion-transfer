@@ -7,6 +7,8 @@ import { digest } from '../component/build.mjs';
 import assert from 'node:assert/strict';
 import { writeMemoryValue,compareMemoryValues,validateMemoryEdit } from './memory.mjs';
 import {framebufferPng} from './png.mjs';
+import { recoveryPolicy, validateRecoveryProtocol } from '../agent/recovery-protocol.mjs';
+import { legacySessionIdentity } from './session-compatibility.mjs';
 
 export const MOTION_ASSISTANCE='Motion fields come from a HUMAN-MAPPED read-only registry, not agent-discovered variable names. Memory addresses are absolute runtime addresses; static instruction offsets are not addresses.';
 
@@ -21,14 +23,20 @@ export function observeRuntime(runtime,watches=[]){
 
 // One session owns its live instances. Replaying a journal always instantiates
 // a new module instance, restoring private globals and empty host storage too.
-export async function createInvestigationSession(bytes,saved){
+export async function createInvestigationSession(bytes,saved,{recoveryProtocol}={}){
   const runtime=await createReplayRuntime(bytes),id=saved?.id??randomUUID();
   const branches=new Map([['main',{id:'main',runtime,actions:[],experimental:false}]]);
   const hostSources=await Promise.all(['replay.mjs','memory.mjs','investigation-session.mjs'].map(name=>readFile(new URL(name,import.meta.url),'utf8')));
-  const identity={...runtime.provenance,hostSha256:digest(hostSources.join('\n'))};
+  const implementationHostSha256=digest(hostSources.join('\n'));
+  const identity=legacySessionIdentity({...runtime.provenance,hostSha256:implementationHostSha256},saved,recoveryProtocol);
   const checkpoints=new Map(),observations=new Map(),comparisons=[],staticEvidence=[],annotations=[],captures=[],findings=[];
   const recovery=structuredClone(saved?.recovery??{selections:[],attempts:[]});
-  if(!Array.isArray(recovery.selections)||recovery.selections.length>3||!Array.isArray(recovery.attempts)||recovery.attempts.length>3)throw Error('Invalid component development journal');
+  const protocol = recoveryProtocol ? validateRecoveryProtocol(recoveryProtocol)
+    : recovery.protocol ? validateRecoveryProtocol(recovery.protocol) : null;
+  if (saved && (recovery.protocol?.id ?? null) !== (protocol?.id ?? null)) throw Error('Recovery session protocol cannot change on restore');
+  if (protocol) Object.defineProperty(recovery, 'protocol', { value: protocol, enumerable: true, writable: false, configurable: false });
+  const policy = recoveryPolicy(protocol);
+  if(!Array.isArray(recovery.selections)||recovery.selections.length>policy.maxSelections||!Array.isArray(recovery.attempts)||recovery.attempts.length>policy.maxDevelopmentAttempts)throw Error('Invalid component development journal');
   const fingerprint=runtime=>{const {frame,memoryHash,framebufferHash,storage}=runtime.observe();return{frame,memoryHash,framebufferHash,storage,faulted:runtime.faulted};};
   function verify(runtime,expected){assert.deepEqual(fingerprint(runtime),expected,'Replay restoration hash mismatch');}
   const branch=id=>{const value=branches.get(id);if(!value)throw Error('Unknown investigation branch: '+id);return value;};
@@ -60,7 +68,7 @@ export async function createInvestigationSession(bytes,saved){
     observations.set(observationId,{id:observationId,branchId:value.id,actionCount:value.actions.length,verification:fingerprint(value.runtime),result});
     return result;
   }
-  function snapshot(){return structuredClone({schemaVersion:1,id,identity,branches:[...branches.values()].map(({runtime,...value})=>({...value,verification:fingerprint(runtime)})),checkpoints:[...checkpoints.values()],observations:[...observations.values()],comparisons,staticEvidence,annotations,captures,findings,recovery});}
+  function snapshot(){return structuredClone({schemaVersion:1,id,identity,...(identity.hostSha256!==implementationHostSha256?{restorationCompatibility:{historicalHostSha256:identity.hostSha256,implementationHostSha256,reason:'protocol-only host extension; replay and every checkpoint fingerprint remain verified'}}:{}),branches:[...branches.values()].map(({runtime,...value})=>({...value,verification:fingerprint(runtime)})),checkpoints:[...checkpoints.values()],observations:[...observations.values()],comparisons,staticEvidence,annotations,captures,findings,recovery});}
   const evidenceIds=()=>new Set([...staticEvidence.map(item=>item.id),...observations.keys(),...checkpoints.keys(),...comparisons.map(item=>item.comparisonId),...annotations.map(item=>item.id),...captures.map(item=>item.evidenceId),...findings.map(item=>item.id)]);
   if(saved){
     if(saved.schemaVersion!==1||typeof id!=='string'||!Array.isArray(saved.branches)||!saved.branches.length||saved.branches.length>6||saved.checkpoints?.length>16||saved.observations?.length>128)throw Error('Invalid investigation session journal');

@@ -1,9 +1,11 @@
+import { readGenerationMode, readJujumpComparison, readRecovery } from '../data-source';
 import { useResource } from '../hooks/use-resource';
-import { GuidedDemo } from './guided-demo';
+import { linkHref } from '../links';
+import { useTransfer } from '../transfer-context';
 interface Measurements {
   measurements: { traceCount: number; updates: number; maxPositionError: number };
 }
-function RecoveryVerdict() {
+function LiveRecoveryVerdict() {
   const { data, error } = useResource<Measurements>('/api/developer-task');
   const m = data?.measurements;
   return (
@@ -14,10 +16,20 @@ function RecoveryVerdict() {
     </p>
   );
 }
+function RecoveryVerdict() {
+  if (readGenerationMode() === 'playback-only') {
+    return (
+      <p id="recovery-verdict">
+        Playback uses the bundled source, report, and notices for this component.
+      </p>
+    );
+  }
+  return <LiveRecoveryVerdict />;
+}
 export function Header() {
   return (
     <header>
-      <a className="wordmark" href="/">
+      <a className="wordmark" href={linkHref('/')}>
         MOTION <span>/</span> TRANSFER
       </a>
       <span className="edition">COMPILED → RECOVERED → REUSED</span>
@@ -25,64 +37,62 @@ export function Header() {
   );
 }
 export function Intro() {
+  const playback = readGenerationMode() === 'playback-only';
+  const accepted = readRecovery() === 'accepted';
+  const comparison = readJujumpComparison();
   return (
     <section className="intro">
       <div>
-        <p className="eyebrow">SOFTWARE HAS ABILITIES WORTH KEEPING.</p>
+        <p className="eyebrow">BORROW A MOVE. MAKE A GAME.</p>
         <h1>
-          Extract an ability from
+          One game&apos;s move.
           <br />
-          compiled software.
-          <br />
-          <em>Give it a new home.</em>
+          <em>Your next barrage dodge.</em>
         </h1>
         <p>
-          What if a Roadster could dash in mid-air?
-          <br />
-          Give it the same ability recovered from a compiled game.
+          Fly a 60 Hz Japanese arcade bullet-hell shooter. Borrow a dash from another game. Make a
+          version you can play and keep.
         </p>
-        <GuidedDemo />
       </div>
-      <aside className="ability-card" aria-label="Recovered ability">
+      <aside className="ability-card compact-ability" aria-label="Recovered ability">
         <div className="ability-heading">
           <span className="ability-icon" aria-hidden="true">
             ↠
           </span>
-          <span className="pill">SAVED RECOVERY</span>
+          <span className="pill">{accepted ? 'ACCEPTED RECOVERY' : 'SAVED RECOVERY'}</span>
         </div>
         <p className="eyebrow">EXTRACTED FROM DASHY DANGO</p>
-        <h2>Dash</h2>
+        <h2>Borrow the dash ↠</h2>
         <p>
-          A burst of movement with its own direction,
-          <br />
-          duration, and recharge.
-        </p>
-        <div className="ability-rules">
-          <span>
-            <strong>~0.13s</strong> burst of movement
-          </span>
-          <span>
-            <strong>~0.42s</strong> to recharge
-          </span>
-        </div>
-        <p className="ability-origin">
-          Recovered by Meta models. Reused as a standalone component.
+          {accepted
+            ? 'One accepted recovery, with its own burst and recharge. Try it in PARALLAXIA below.'
+            : 'One saved recovery, with its own burst and recharge. Try it in PARALLAXIA below.'}
         </p>
         <div className="ability-links">
-          <a href="#developer-task">Use it in your project ↓</a>
-          <a href="/component/export" download="recovered-dash.json">
+          <a href={linkHref('/donor/play')} target="_blank" rel="noreferrer">
+            Play Dashy Dango ↗
+          </a>
+          <a
+            href={linkHref(playback ? '/evidence/component.ts' : '/component/export')}
+            download={playback ? 'component.ts' : 'recovered-dash.json'}
+          >
             Component source ↗
           </a>
-          <a href="#recovery-details">Recovery evidence ↓</a>
+          <a href="#evidence-details">Recovery evidence ↓</a>
+          {comparison ? (
+            <a id="jujump-comparison" href={linkHref(comparison)} target="_blank" rel="noreferrer">
+              JUJUMP comparison ↗
+            </a>
+          ) : null}
         </div>
-        <p className="saved-note">
-          This is a saved recovery. Choosing a destination makes no model request.
-        </p>
       </aside>
     </section>
   );
 }
 export function RecoveryDetails() {
+  const playback = readGenerationMode() === 'playback-only';
+  const { artifact, destination } = useTransfer();
+  const version = artifact?.id;
   return (
     <details className="recovery-details" id="recovery-details">
       <summary>
@@ -99,9 +109,9 @@ export function RecoveryDetails() {
           </p>
           <RecoveryVerdict />
           <p>
-            <a href="/evidence/recovery-history.json">Generation and repair history</a> ·{' '}
-            <a href="/evidence/evidence.json">Binary and numeric evidence</a> ·{' '}
-            <a href="/evidence/evaluation-acceptance.json">Acceptance results</a>
+            <a href={linkHref('/evidence/recovery-history.json')}>Generation and repair history</a>{' '}
+            · <a href={linkHref('/evidence/evidence.json')}>Binary and numeric evidence</a> ·{' '}
+            <a href={linkHref('/evidence/evaluation-acceptance.json')}>Acceptance results</a>
           </p>
         </div>
         <div>
@@ -129,40 +139,77 @@ export function RecoveryDetails() {
           registry.
         </p>
         <p>
-          PAKU PAKU's and Roadster's adapters were generated by Meta; their host hooks were written
-          by hand. JUJUMP's separate adapter and host hooks were written by hand. All call the exact
-          same frozen component on every logical update. No new recovery runs when you choose a
-          destination. RDSTR Stunts' simulation, models, effects and audio are upstream work by
-          sebayaki; our transfer is an added feature.
+          PAKU PAKU&apos;s and PARALLAXIA&apos;s adapters were generated by Meta; their host hooks
+          were written by hand. JUJUMP&apos;s separate adapter and host hooks were written by hand.
+          All call the exact same frozen component on every logical update. No new recovery runs
+          when you choose a destination. PARALLAXIA&apos;s simulation, sprites, effects and Web
+          Audio synth are upstream work by Kenta Cho (ABA Games); our transfer is an added feature.
         </p>
         <p>
           PAKU PAKU preserves its dot-then-ghost collision order, with swept player hitboxes and no
           collision segment across wraparound. JUJUMP keeps gravity active and sweeps dash movement
-          through the original upward platform-overlap resolution. Roadster bridges 60 Hz component
-          updates to four native 240 Hz substeps and sweeps flight motion through the recipient's
-          collision rules. Contact never resets the recovered timers.
+          through the original upward platform-overlap resolution. PARALLAXIA steps the 60 Hz
+          component in lockstep with the 60 Hz space-shooter simulation and phase-dashes across
+          enemy bullet curtains while preserving grazing and vertical movement. Contact never resets
+          the recovered timers.
         </p>
         <p>
-          <a href="/artifact/adapter.ts">PAKU PAKU adapter</a> ·{' '}
-          <a href="/jujump/adapter.ts">JUJUMP adapter</a> ·{' '}
-          <a href="/roadster/adapter.ts">Roadster adapter</a> ·{' '}
-          <a href="/evidence/contract.json">Recovered contract</a> ·{' '}
-          <a href="/evidence/provenance.json">Component identity</a>
+          {playback ? (
+            <>
+              {destination?.source ? (
+                <a href={linkHref(destination.source)}>PARALLAXIA adapter</a>
+              ) : null}
+              {version ? (
+                <>
+                  {' '}
+                  · <a href={linkHref('/versions/' + version + '/notices.txt')}>Notices</a>
+                </>
+              ) : null}{' '}
+              · <a href={linkHref('/evidence/contract.json')}>Recovered contract</a> ·{' '}
+              <a href={linkHref('/evidence/provenance.json')}>Component identity</a> ·{' '}
+              <a href={linkHref('/evidence/component.ts')}>Component source</a>
+            </>
+          ) : (
+            <>
+              <a href={linkHref('/artifact/adapter.ts')}>PAKU PAKU adapter</a> ·{' '}
+              <a href={linkHref('/jujump/adapter.ts')}>JUJUMP adapter</a> ·{' '}
+              <a href={linkHref('/roadster/adapter.ts')}>PARALLAXIA adapter</a> ·{' '}
+              <a href={linkHref('/evidence/contract.json')}>Recovered contract</a> ·{' '}
+              <a href={linkHref('/evidence/provenance.json')}>Component identity</a>
+            </>
+          )}
         </p>
       </details>
     </details>
   );
 }
 export function Footer() {
+  const playback = readGenerationMode() === 'playback-only';
+  const { artifact } = useTransfer();
   return (
     <footer>
       <span>
-        Dashy Dango by willGuimont · PAKU PAKU &amp; JUJUMP by Kenta Cho / ABA Games · RDSTR Stunts
-        by sebayaki · <a href="/licenses">PAKU notices</a> ·{' '}
-        <a href="/jujump/licenses">JUJUMP notices</a> ·{' '}
-        <a href="/roadster/notices">Roadster notices</a>
+        Dashy Dango by willGuimont · PARALLAXIA, PAKU PAKU &amp; JUJUMP by Kenta Cho / ABA Games ·{' '}
+        {playback ? (
+          <>
+            <a href={linkHref('/NOTICE.txt')}>Donor notice</a> ·{' '}
+            {artifact ? (
+              <a href={linkHref('/versions/' + artifact.id + '/notices.txt')}>PARALLAXIA notices</a>
+            ) : (
+              'PARALLAXIA notices'
+            )}{' '}
+            ·{' '}
+          </>
+        ) : (
+          <>
+            <a href={linkHref('/licenses')}>PAKU notices</a> ·{' '}
+            <a href={linkHref('/jujump/licenses')}>JUJUMP notices</a> ·{' '}
+            <a href={linkHref('/roadster/notices')}>PARALLAXIA notices</a> ·{' '}
+          </>
+        )}
+        <a href="#privacy-note">Privacy</a>
       </span>
-      <span>Local preview · one recovered dash, different worlds</span>
+      <span>Local preview · adults 18 and older · one saved dash, different worlds</span>
     </footer>
   );
 }

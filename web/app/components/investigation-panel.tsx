@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { errorMessage, fetchJson } from '../api';
+import { modelFailure } from '../data-source';
+import { linkHref } from '../links';
+import { useAgeAcknowledgment } from './age-acknowledgment';
 import { useJob } from '../hooks/use-job';
 import type { InvestigationReport, Job, ServiceStatus } from '../types';
 import { InvestigationView } from './investigation-view';
@@ -42,6 +45,7 @@ export function InvestigationPanel({ status }: { status: ServiceStatus | null })
   const { data: recoveryRecordings } = useResource<{ id: string; title: string }[]>(
     '/api/investigations/recordings',
   );
+  const { allow } = useAgeAcknowledgment();
   const flow = useJob<Request, InvestigationReport>({
     storageKey: 'motion-transfer-investigation',
     submitPath: '/api/investigations',
@@ -117,6 +121,10 @@ export function InvestigationPanel({ status }: { status: ServiceStatus | null })
         }
         reconnect={flow.reconnect && flow.pending?.request.questionId === 'extraction'}
         recover={() => {
+          const continuing = Boolean(
+            flow.reconnect && flow.pending?.request.questionId === 'extraction',
+          );
+          if (!allow(continuing)) return;
           setSaved(null);
           setQuestion('extraction');
           void flow.submit({ questionId: 'extraction', idempotencyKey: crypto.randomUUID() });
@@ -163,6 +171,7 @@ export function InvestigationPanel({ status }: { status: ServiceStatus | null })
         className="lab-form"
         onSubmit={(event) => {
           event.preventDefault();
+          if (!allow(flow.reconnect || Boolean(flow.pending?.id))) return;
           setSaved(null);
           void flow.submit({ questionId: question, idempotencyKey: crypto.randomUUID() });
         }}
@@ -207,10 +216,12 @@ export function InvestigationPanel({ status }: { status: ServiceStatus | null })
           measured endpoints. This measures orchestration and evidence size; it does not measure
           model round trips, cost savings or reliability.
         </p>
-        <a href="/evidence/experiment-benchmark.json">Download the measured comparison ↗</a>
+        <a href={linkHref('/evidence/experiment-benchmark.json')}>
+          Download the measured comparison ↗
+        </a>
       </details>
       <p id="lab-progress" role="status" aria-live="polite">
-        {loadError || flow.error || progress}
+        {loadError || (flow.error ? modelFailure(flow.error) : progress)}
         {saved?.note}
       </p>
       <InvestigationView report={report} />
@@ -280,7 +291,7 @@ export function InvestigationPanel({ status }: { status: ServiceStatus | null })
       <a
         id="investigation-report"
         hidden={!job}
-        href={path}
+        href={linkHref(path)}
         download={'investigation-' + job?.id + '.json'}
       >
         Download this investigation and measurements ↗

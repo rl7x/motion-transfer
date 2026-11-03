@@ -1,0 +1,401 @@
+{
+  "schemaVersion": 1,
+  "kind": "remix-independent-checks",
+  "campaignId": "c1655c4c-221d-487f-b05f-c1d667c05b39",
+  "sourceDirectory": "reports/motion-transfer-phase/remix-001",
+  "journalStatus": "complete",
+  "journalIntegrity": true,
+  "definitionSha256": "ea1d57a3109940146edebb89f827c4857400b3644554212deaf3a39d351635e6",
+  "promptsFrozen": true,
+  "uncertain": false,
+  "interrupted": false,
+  "prompts": 8,
+  "completed": 8,
+  "matched": 6,
+  "expectedNegatives": 2,
+  "storedSummaryCostUsd": 0.06688124999999999,
+  "attemptCostMicroUsd": 6688125,
+  "attemptCostUsd": 0.06688125,
+  "durationMs": 175317,
+  "providerRetries": false,
+  "maxCallUsd": 0.05,
+  "model": "muse-spark-1.3",
+  "base": {
+    "id": "6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38",
+    "path": "transfers/roadster/versions/6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38",
+    "intent": {
+      "activation": "held",
+      "direction": "facing",
+      "unitScale": 0.1
+    },
+    "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2"
+  },
+  "parentChain": [
+    {
+      "role": "base",
+      "id": "6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38",
+      "parentArtifactId": null,
+      "intent": {
+        "activation": "held",
+        "direction": "facing",
+        "unitScale": 0.1
+      },
+      "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2"
+    },
+    {
+      "role": "backward-fresh-press",
+      "id": "4704a93ba3eb977448fd15a6393034cd3623cba9fdd28e050a5d3406ce437d0c",
+      "parentArtifactId": "6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38",
+      "intent": {
+        "activation": "press",
+        "direction": "opposite",
+        "unitScale": 0.1
+      },
+      "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2"
+    },
+    {
+      "role": "three-meter-followup",
+      "id": "beb299c5dbc82b3f40e460680727f278425dfed889d4698a0a24f6b796af5383",
+      "parentArtifactId": "4704a93ba3eb977448fd15a6393034cd3623cba9fdd28e050a5d3406ce437d0c",
+      "intent": {
+        "activation": "press",
+        "direction": "opposite",
+        "unitScale": 0.05
+      },
+      "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2"
+    }
+  ],
+  "unpublished": [],
+  "artifactDirectories": [
+    "329e0778f19eca92d459f26f17d2beec2e83530d833a332097b546ef901fc01c",
+    "3c158d2532751b4b6d4b190e662290d8f876acc32483106d7f1c1f8ac1e80369",
+    "4704a93ba3eb977448fd15a6393034cd3623cba9fdd28e050a5d3406ce437d0c",
+    "62d85e9a22935b87c34011a89648f89c94210805953cb3ca6b20bbbb486e6b77",
+    "6ad240e07ce5cd0af4be0788548c52ceb8f8b8a9251d719ae02b218a4ea33ebe",
+    "beb299c5dbc82b3f40e460680727f278425dfed889d4698a0a24f6b796af5383"
+  ],
+  "rows": [
+    {
+      "id": "half-distance",
+      "kind": "supported",
+      "prompt": "Make the air dash half as long. Keep the forward direction and held activation.",
+      "storedOutcome": "matched",
+      "storedStatus": "complete",
+      "expectedIntent": {
+        "activation": "held",
+        "direction": "facing",
+        "unitScale": 0.05
+      },
+      "observedIntent": {
+        "activation": "held",
+        "direction": "facing",
+        "unitScale": 0.05
+      },
+      "parentArtifactId": "6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38",
+      "childId": "6ad240e07ce5cd0af4be0788548c52ceb8f8b8a9251d719ae02b218a4ea33ebe",
+      "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+      "estimatedCostUsd": 0.00800975,
+      "durationMs": 22080,
+      "error": null,
+      "reportStatus": "verified",
+      "reservedCostUsd": 0,
+      "requestStatuses": [
+        "completed"
+      ],
+      "checks": {
+        "artifactIntegrity": true,
+        "fullIntent": true,
+        "parentBinding": true,
+        "componentBinding": true,
+        "verificationPassed": true,
+        "noticesPresent": true,
+        "journalFileHashes": true,
+        "followupParent": null,
+        "parentIsBase": true
+      },
+      "mismatches": [],
+      "noticesSha256": "5dd7dca96e3e864fb37554a033b5c15fcddadd935f1abec0f5825fc4cebd2f13",
+      "frameSha256": "4911a97ea6d55549ad69e1c77b6fc24dbcd2b69ce320784633c08a6c78f94005",
+      "framePath": "published/artifacts/6ad240e07ce5cd0af4be0788548c52ceb8f8b8a9251d719ae02b218a4ea33ebe/frame.html"
+    },
+    {
+      "id": "backward",
+      "kind": "supported",
+      "prompt": "Make the air dash go backward. Keep its current distance and held activation.",
+      "storedOutcome": "matched",
+      "storedStatus": "complete",
+      "expectedIntent": {
+        "activation": "held",
+        "direction": "opposite",
+        "unitScale": 0.1
+      },
+      "observedIntent": {
+        "activation": "held",
+        "direction": "opposite",
+        "unitScale": 0.1
+      },
+      "parentArtifactId": "6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38",
+      "childId": "329e0778f19eca92d459f26f17d2beec2e83530d833a332097b546ef901fc01c",
+      "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+      "estimatedCostUsd": 0.0084675,
+      "durationMs": 23368,
+      "error": null,
+      "reportStatus": "verified",
+      "reservedCostUsd": 0,
+      "requestStatuses": [
+        "completed"
+      ],
+      "checks": {
+        "artifactIntegrity": true,
+        "fullIntent": true,
+        "parentBinding": true,
+        "componentBinding": true,
+        "verificationPassed": true,
+        "noticesPresent": true,
+        "journalFileHashes": true,
+        "followupParent": null,
+        "parentIsBase": true
+      },
+      "mismatches": [],
+      "noticesSha256": "5dd7dca96e3e864fb37554a033b5c15fcddadd935f1abec0f5825fc4cebd2f13",
+      "frameSha256": "a9612bad53cdfa641d4fd5ea525e8bebaabc74969e76ae2761e7e93ed53bbed0",
+      "framePath": "published/artifacts/329e0778f19eca92d459f26f17d2beec2e83530d833a332097b546ef901fc01c/frame.html"
+    },
+    {
+      "id": "fresh-press",
+      "kind": "supported",
+      "prompt": "Make the air dash require a fresh press. Keep its current distance and forward direction.",
+      "storedOutcome": "matched",
+      "storedStatus": "complete",
+      "expectedIntent": {
+        "activation": "press",
+        "direction": "facing",
+        "unitScale": 0.1
+      },
+      "observedIntent": {
+        "activation": "press",
+        "direction": "facing",
+        "unitScale": 0.1
+      },
+      "parentArtifactId": "6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38",
+      "childId": "3c158d2532751b4b6d4b190e662290d8f876acc32483106d7f1c1f8ac1e80369",
+      "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+      "estimatedCostUsd": 0.0089715,
+      "durationMs": 26211,
+      "error": null,
+      "reportStatus": "verified",
+      "reservedCostUsd": 0,
+      "requestStatuses": [
+        "completed"
+      ],
+      "checks": {
+        "artifactIntegrity": true,
+        "fullIntent": true,
+        "parentBinding": true,
+        "componentBinding": true,
+        "verificationPassed": true,
+        "noticesPresent": true,
+        "journalFileHashes": true,
+        "followupParent": null,
+        "parentIsBase": true
+      },
+      "mismatches": [],
+      "noticesSha256": "5dd7dca96e3e864fb37554a033b5c15fcddadd935f1abec0f5825fc4cebd2f13",
+      "frameSha256": "28bb0c1cf6f63af0ac2ec232d75c482e515b3baeeb3a3875fb1830bd45c1fb73",
+      "framePath": "published/artifacts/3c158d2532751b4b6d4b190e662290d8f876acc32483106d7f1c1f8ac1e80369/frame.html"
+    },
+    {
+      "id": "backward-fresh-press",
+      "kind": "supported",
+      "prompt": "Make the air dash go backward and require a fresh press. Keep its current distance.",
+      "storedOutcome": "matched",
+      "storedStatus": "complete",
+      "expectedIntent": {
+        "activation": "press",
+        "direction": "opposite",
+        "unitScale": 0.1
+      },
+      "observedIntent": {
+        "activation": "press",
+        "direction": "opposite",
+        "unitScale": 0.1
+      },
+      "parentArtifactId": "6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38",
+      "childId": "4704a93ba3eb977448fd15a6393034cd3623cba9fdd28e050a5d3406ce437d0c",
+      "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+      "estimatedCostUsd": 0.00813,
+      "durationMs": 27832,
+      "error": null,
+      "reportStatus": "verified",
+      "reservedCostUsd": 0,
+      "requestStatuses": [
+        "completed"
+      ],
+      "checks": {
+        "artifactIntegrity": true,
+        "fullIntent": true,
+        "parentBinding": true,
+        "componentBinding": true,
+        "verificationPassed": true,
+        "noticesPresent": true,
+        "journalFileHashes": true,
+        "followupParent": null,
+        "parentIsBase": true
+      },
+      "mismatches": [],
+      "noticesSha256": "5dd7dca96e3e864fb37554a033b5c15fcddadd935f1abec0f5825fc4cebd2f13",
+      "frameSha256": "1812b0abb74518df0c9d0c67a2c4586d52f16844fe3076d9e38778505e716c50",
+      "framePath": "published/artifacts/4704a93ba3eb977448fd15a6393034cd3623cba9fdd28e050a5d3406ce437d0c/frame.html"
+    },
+    {
+      "id": "three-meter-followup",
+      "kind": "supported",
+      "prompt": "Change only the distance to exactly 3 meters. Keep the backward direction and the fresh-press activation from this parent.",
+      "storedOutcome": "matched",
+      "storedStatus": "complete",
+      "expectedIntent": {
+        "activation": "press",
+        "direction": "opposite",
+        "unitScale": 0.05
+      },
+      "observedIntent": {
+        "activation": "press",
+        "direction": "opposite",
+        "unitScale": 0.05
+      },
+      "parentArtifactId": "4704a93ba3eb977448fd15a6393034cd3623cba9fdd28e050a5d3406ce437d0c",
+      "childId": "beb299c5dbc82b3f40e460680727f278425dfed889d4698a0a24f6b796af5383",
+      "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+      "estimatedCostUsd": 0.00778125,
+      "durationMs": 24078,
+      "error": null,
+      "reportStatus": "verified",
+      "reservedCostUsd": 0,
+      "requestStatuses": [
+        "completed"
+      ],
+      "checks": {
+        "artifactIntegrity": true,
+        "fullIntent": true,
+        "parentBinding": true,
+        "componentBinding": true,
+        "verificationPassed": true,
+        "noticesPresent": true,
+        "journalFileHashes": true,
+        "followupParent": true
+      },
+      "mismatches": [],
+      "noticesSha256": "5dd7dca96e3e864fb37554a033b5c15fcddadd935f1abec0f5825fc4cebd2f13",
+      "frameSha256": "66ad7f8dc8943fc9cfea5f12e57abe07d98e2bc4e41697f9d25a177634895104",
+      "framePath": "published/artifacts/beb299c5dbc82b3f40e460680727f278425dfed889d4698a0a24f6b796af5383/frame.html"
+    },
+    {
+      "id": "nine-meter",
+      "kind": "supported",
+      "prompt": "Make the air dash travel exactly 9 meters. Keep the forward direction and held activation.",
+      "storedOutcome": "matched",
+      "storedStatus": "complete",
+      "expectedIntent": {
+        "activation": "held",
+        "direction": "facing",
+        "unitScale": 0.15
+      },
+      "observedIntent": {
+        "activation": "held",
+        "direction": "facing",
+        "unitScale": 0.15
+      },
+      "parentArtifactId": "6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38",
+      "childId": "62d85e9a22935b87c34011a89648f89c94210805953cb3ca6b20bbbb486e6b77",
+      "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+      "estimatedCostUsd": 0.008161,
+      "durationMs": 28058,
+      "error": null,
+      "reportStatus": "verified",
+      "reservedCostUsd": 0,
+      "requestStatuses": [
+        "completed"
+      ],
+      "checks": {
+        "artifactIntegrity": true,
+        "fullIntent": true,
+        "parentBinding": true,
+        "componentBinding": true,
+        "verificationPassed": true,
+        "noticesPresent": true,
+        "journalFileHashes": true,
+        "followupParent": null,
+        "parentIsBase": true
+      },
+      "mismatches": [],
+      "noticesSha256": "5dd7dca96e3e864fb37554a033b5c15fcddadd935f1abec0f5825fc4cebd2f13",
+      "frameSha256": "793daf3580b8bbfd260341bd9ec838915682592e519dbfcc223cf66b493eddd1",
+      "framePath": "published/artifacts/62d85e9a22935b87c34011a89648f89c94210805953cb3ca6b20bbbb486e6b77/frame.html"
+    },
+    {
+      "id": "flight",
+      "kind": "unsupported",
+      "prompt": "Give me one air dash, and restore it when I land.",
+      "storedOutcome": "expected-unsupported",
+      "storedStatus": "complete",
+      "expectedIntent": null,
+      "observedIntent": null,
+      "parentArtifactId": "6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38",
+      "childId": null,
+      "componentId": null,
+      "estimatedCostUsd": 0.0082525,
+      "durationMs": 12226,
+      "error": "Unsupported request: Request for one air dash restored on landing is unsupported. Dash duration/cooldown live inside the frozen core (time-based cooldownTicks/initialCooldownTicks) and the adapter must not implement its own duration/cooldown or change recipient physics. Limiting to single use per flight with landing reset would require adapter-side gating beyond held/fresh-press activation, which would silently approximate and alter behavior. Supported: held/press activation, facing/opposite dir",
+      "reportStatus": "unsupported",
+      "reservedCostUsd": 0,
+      "requestStatuses": [
+        "completed"
+      ],
+      "checks": {
+        "noChild": true,
+        "unchangedParentIntent": true,
+        "emptySource": true,
+        "expectedNegative": true,
+        "artifactIntegrity": null,
+        "fullIntent": null,
+        "parentBinding": true,
+        "componentBinding": null,
+        "followupParent": null
+      },
+      "mismatches": []
+    },
+    {
+      "id": "noop",
+      "kind": "noop",
+      "prompt": "Keep the dash exactly the same.",
+      "storedOutcome": "expected-noop",
+      "storedStatus": "complete",
+      "expectedIntent": null,
+      "observedIntent": null,
+      "parentArtifactId": "6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38",
+      "childId": null,
+      "componentId": null,
+      "estimatedCostUsd": 0.00910775,
+      "durationMs": 11464,
+      "error": "The proposed mapping does not change the parent",
+      "reportStatus": "failed",
+      "reservedCostUsd": 0,
+      "requestStatuses": [
+        "completed"
+      ],
+      "checks": {
+        "noChild": true,
+        "unchangedParentIntent": true,
+        "emptySource": false,
+        "expectedNegative": true,
+        "artifactIntegrity": null,
+        "fullIntent": null,
+        "parentBinding": true,
+        "componentBinding": null,
+        "followupParent": null
+      },
+      "mismatches": []
+    }
+  ],
+  "mismatchCount": 0
+}

@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import { createLabService } from '../lab/service.mjs';
 import { createPakuBrowser } from '../evaluator/browser-harness.mjs';
 import { acceptedRecoveryFixture } from './helpers/recovery-fixture.mjs';
+import { reveal } from './helpers/app-navigation.mjs';
 
 test('the saved Meta attempt shows its real contrast and incomplete recovery without a paid request', async () => {
   const harness = await createPakuBrowser();
@@ -13,6 +14,7 @@ test('the saved Meta attempt shows its real contrast and incomplete recovery wit
     const { page, errors } = await harness.page(), posts = [];
     page.on('request', request => { if (request.method() === 'POST') posts.push(request.url()); });
     await page.goto(harness.origin + '/?destination=jujump');
+    await reveal(page, '.recorded-recovery');
     await page.locator('.recorded-recovery').filter({ hasText: 'Meta recovery attempt' }).click();
     await page.waitForFunction(() => document.querySelector('#recovery-task-status')?.textContent.includes('RECOVERY INCOMPLETE'));
     assert.equal(await page.locator('#lab-mode').textContent(), 'SAVED RECORDING');
@@ -46,12 +48,14 @@ test('the developer task publishes only the new checked project and reconnects w
   try {
     const { page, errors } = await harness.page();
     await page.goto(harness.origin + '/?destination=jujump');
+    await reveal(page, '#recover-project');
     await page.waitForFunction(() => !document.querySelector('#recover-project').disabled);
     assert.equal(modelRuns, 0); assert.equal(await page.locator('#recovery-download').count(), 0);
     await page.locator('#recover-project').click();
     await page.waitForFunction(() => document.querySelector('#recovery-task-status')?.textContent.includes('LOCAL VERIFICATION'));
     assert.equal(await page.locator('#recovery-download').count(), 0);
     await page.reload();
+    await reveal(page, '#recover-project');
     await page.waitForFunction(() => document.querySelector('#recovery-task-status')?.textContent.includes('LOCAL VERIFICATION'));
     release();
     await page.waitForFunction(() => document.querySelector('#recovery-task-status')?.textContent.includes('CHECKED PROJECT READY'), {}, { timeout: 60000 });
@@ -86,6 +90,7 @@ test('accepted recovery with a failed recipient check exposes no project downloa
   const harness = await createPakuBrowser({ lab });
   try {
     const { page } = await harness.page(); await page.goto(harness.origin + '/?destination=jujump');
+    await reveal(page, '#recover-project');
     await page.waitForFunction(() => !document.querySelector('#recover-project').disabled);
     await page.locator('#recover-project').click();
     await page.waitForFunction(() => document.querySelector('#recovery-task-status')?.textContent.includes('INTEGRATION NOT VERIFIED'));

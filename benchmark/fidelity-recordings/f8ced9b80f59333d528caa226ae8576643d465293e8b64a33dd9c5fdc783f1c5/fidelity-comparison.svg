@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500" role="img">
+  <title>Fidelity comparison</title>
+  <desc>Finite comparison against the donor on 40 traces: position within 0.25 source pixels, exact ownership, and exact output events. Internal timers are not scored. This is not recovery acceptance and not a productivity estimate. No by-feel baseline and no external-developer baseline were measured.</desc>
+  <rect width="800" height="500" fill="#ffffff"/>
+  <text x="32" y="42" font-family="sans-serif" font-size="22" fill="#12141a">Fidelity comparison</text>
+  <text x="32" y="70" font-family="sans-serif" font-size="15" fill="#12141a">Contact sheet + supplied defaults versus Saved recovery</text>
+  <text x="32" y="96" font-family="sans-serif" font-size="13" fill="#34363c">Supplied public-contract defaults. Not recovered from the pixels.</text>
+  <text x="32" y="116" font-family="sans-serif" font-size="13" fill="#34363c">walkingSpeed 2, dashDistance 60, cooldownTicks 25, initialCooldownTicks 10.</text>
+  <text x="32" y="140" font-family="sans-serif" font-size="12" fill="#34363c">Frozen seed 3717589184. Study f8ced9b80f59333d528caa226ae8576643d465293e8b64a33dd9c5fdc783f1c5.</text>
+  <g data-candidate="from-contact-sheet" data-condition="contact-sheet" data-status="scored" data-passed="0" data-total="40" data-max-position-error="271.0249570072505">
+    <text x="32" y="172" font-family="sans-serif" font-size="16" fill="#12141a">Contact sheet + supplied defaults</text>
+    <rect x="32" y="184" width="520" height="28" fill="#e8eaed"/>
+    <rect x="32" y="184" width="0" height="28" fill="#1f6feb"/>
+    <text x="564" y="204" font-family="sans-serif" font-size="16" fill="#12141a">0/40</text>
+    <text x="32" y="236" font-family="sans-serif" font-size="13" fill="#34363c">0/40 passed. Maximum position error 271.0249570072505 source pixels.</text>
+  </g>
+  <g data-candidate="saved-recovery" data-condition="saved-recovery" data-status="scored" data-passed="40" data-total="40" data-max-position-error="0">
+    <text x="32" y="292" font-family="sans-serif" font-size="16" fill="#12141a">Saved recovery</text>
+    <rect x="32" y="304" width="520" height="28" fill="#e8eaed"/>
+    <rect x="32" y="304" width="520" height="28" fill="#1a7f37"/>
+    <text x="564" y="324" font-family="sans-serif" font-size="16" fill="#12141a">40/40</text>
+    <text x="32" y="356" font-family="sans-serif" font-size="13" fill="#34363c">40/40 passed. Maximum position error 0 source pixels.</text>
+  </g>
+  <text x="32" y="430" font-family="sans-serif" font-size="12" fill="#34363c">position within 0.25 source pixels; exact ownership and output events; no internal timer scoring</text>
+  <text x="32" y="452" font-family="sans-serif" font-size="12" fill="#34363c">Internal timers are not scored. No by-feel baseline and no external-developer baseline were measured.</text>
+  <text x="32" y="474" font-family="sans-serif" font-size="12" fill="#34363c">Finite donor comparison only. Not recovery acceptance and not a productivity estimate.</text>
+</svg>

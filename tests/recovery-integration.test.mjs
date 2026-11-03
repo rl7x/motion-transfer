@@ -13,7 +13,7 @@ test('a newly frozen candidate passes recipient and final ZIP checks without usi
   const directory = await mkdtemp(join(tmpdir(), 'new-recovery-integration-'));
   const publications = createIntegrationPublication(directory);
   try {
-    const report = await acceptedRecoveryFixture(directory), stages = [];
+    const report = await acceptedRecoveryFixture(directory, { failedAttempt: true }), stages = [];
     const component = await loadAcceptedComponent(directory, report);
     const saved = JSON.parse(await readFile(new URL('../components/dashy-dango-dash/provenance.json', import.meta.url)));
     assert.notEqual(component.provenance.id, saved.id);
@@ -22,6 +22,9 @@ test('a newly frozen candidate passes recipient and final ZIP checks without usi
     assert.deepEqual(stages, ['integrating', 'checking-export']);
     assert.equal(result.project.manifest.componentId, component.provenance.id);
     assert.equal(result.project.files['component/component.ts'], component.source);
+    assert.deepEqual(result.project.caseStudy, JSON.parse(result.project.files['case-study.json']));
+    assert.equal(result.project.caseStudy.recovery.attempts.length, 2);
+    assert.equal(Object.hasOwn(result.project.caseStudy.recovery.attempts[0], 'acceptancePassed'), false);
     assert.equal(result.verification.nodeChecks.count, 3); assert.equal(result.verification.browser.results.length, 7);
     assert.match(result.project.files['index.html'], /newly accepted candidate/);
     const publication = await publications.publish(result), loaded = await publications.read(publication.id);

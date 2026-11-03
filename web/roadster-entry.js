@@ -58,6 +58,7 @@ window.addEventListener('message',event=>{
 app.start();start(false);
 if(testing)window.__game.realtime(false);
 window.roadsterReady=true;
+export { app, port, release, start, renderBatch };
 setInterval(()=>{
   const state=window.roadsterSnapshot(),motion=state.motion;
   document.querySelector('#transfer-meter').textContent=config.transferred?(motion?.output?.ownsMotion?'RECOVERED DASH ACTIVE':motion?.state?.core?.cooldown>0?'DASH RECHARGING':'X · AIR DASH'):'ORIGINAL SIMULATION · NO DASH';

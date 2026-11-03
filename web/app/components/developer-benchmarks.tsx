@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useResource } from '../hooks/use-resource';
+import { linkHref } from '../links';
 import { JsonDetails } from './shared';
 
 interface Evaluation {
@@ -193,20 +194,22 @@ function CampaignResult({ index }: { index: CampaignIndex }) {
             {attempt.jobId && <p>Job {attempt.jobId}</p>}
             {attempt.jobRef && (
               <p>
-                <a href={base + '/report'} download>
+                <a href={linkHref(base + '/report')} download>
                   Full task report and investigation evidence ↓
                 </a>
               </p>
             )}
             {attempt.artifactRef && (
               <p className="evidence-links">
-                <a href={base + '/source'} download>
+                <a href={linkHref(base + '/source')} download>
                   Source and artifact ↓
                 </a>{' '}
-                <a href={base + '/verification'}>Actual verification ↗</a>{' '}
+                <a href={linkHref(base + '/verification')}>Actual verification ↗</a>{' '}
                 {attempt.stage !== 'recovery' && measurements?.passed && (
                   <a
-                    href={'/developer-benchmarks/' + index.id + '/' + attempt.id + '/play.html'}
+                    href={linkHref(
+                      '/developer-benchmarks/' + index.id + '/' + attempt.id + '/play.html',
+                    )}
                     target="_blank"
                     rel="noopener"
                   >
@@ -216,13 +219,16 @@ function CampaignResult({ index }: { index: CampaignIndex }) {
                 {attempt.stage === 'recovery' && measurements?.passed && (
                   <>
                     <a
-                      href={'/recovery-projects/' + attempt.artifactId + '/play'}
+                      href={linkHref('/recovery-projects/' + attempt.artifactId + '/play')}
                       target="_blank"
                       rel="noopener"
                     >
                       Play checked project ↗
                     </a>{' '}
-                    <a href={'/recovery-projects/' + attempt.artifactId + '/project.zip'} download>
+                    <a
+                      href={linkHref('/recovery-projects/' + attempt.artifactId + '/project.zip')}
+                      download
+                    >
                       Download project ↓
                     </a>
                   </>
@@ -260,7 +266,7 @@ function CampaignResult({ index }: { index: CampaignIndex }) {
         <p>Definition {campaign?.definition.sha256}</p>
       </details>
       {campaign?.error && <p role="alert">Stopped: {campaign.error}</p>}
-      <a href={path} download={'developer-benchmark-' + index.id + '.json'}>
+      <a href={linkHref(path)} download={'developer-benchmark-' + index.id + '.json'}>
         Download this task report ↓
       </a>
     </article>

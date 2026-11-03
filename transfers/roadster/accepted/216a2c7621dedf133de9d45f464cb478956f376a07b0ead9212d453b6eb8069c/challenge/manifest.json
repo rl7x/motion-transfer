@@ -1,0 +1,26 @@
+{
+  "id": "6aa98fb93cd2e921fbf15966c4fcc0517f947e436994b0e12dc816977ce7ed64",
+  "schemaVersion": 1,
+  "kind": "roadster-challenge",
+  "parentArtifactId": "216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c",
+  "componentId": "544657417fe9752f91b0b72a451cd9cb8d2650839824be35881e52f81f223858",
+  "componentRef": {
+    "id": "544657417fe9752f91b0b72a451cd9cb8d2650839824be35881e52f81f223858",
+    "kind": "accepted",
+    "candidateId": "accf3a817133ddc94b9d2c00de1a87f18aab34c6bb7d8b3f9ae66b4cedc18c0f",
+    "sessionId": "fa8e3d4a-8578-4098-8042-f29e607c9267",
+    "publicationId": "e387f441c204d07edff7f3e9850c7ab953fff3bba13274c582be57e194b770c6"
+  },
+  "intent": {
+    "activation": "held",
+    "direction": "facing",
+    "unitScale": 0.1
+  },
+  "files": {
+    "play.html": "a11163e11c2cd0045088bca365d8caf85539e294d48d7dddf501bd41c404c92b",
+    "challenge.json": "ab7bcd6d5563bcf51001094db6f93593312db1de563b6c919a1840b7e7b2bceb",
+    "adapter.ts": "b4006055192956d8caf63e94b348ec5e98a8e0c6e015edf89cee9cf6cf2d26b7",
+    "component.json": "716dfc8ca172414bd660e5ff35154b7a5a279e8222ff861cc87aa930ffaf3a6a",
+    "notices.txt": "5dd7dca96e3e864fb37554a033b5c15fcddadd935f1abec0f5825fc4cebd2f13"
+  }
+}

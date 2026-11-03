@@ -1,5 +1,6 @@
 import { managedExperiments, hasFollowup } from './investigation-completion.mjs';
 import { recoveryCitationRequirements } from './recovery-evidence.mjs';
+import { recoveryPolicy, reportRecoveryProtocol } from './recovery-protocol.mjs';
 
 export const RECOVERY_INSTRUCTIONS = `Recover a new standalone motion component from the registered compiled donor.
 You have the binary and restricted tools, not original source, a saved implementation, files, shell,
@@ -25,6 +26,12 @@ Freeze an exact development-passed candidate, then call separate acceptance. No 
 Acceptance covers finite donor cases; the host runs recipient/export checks after your conclusion.
 Never claim acceptance or integration that did not run. End with actual experiment IDs and remaining uncertainties.
 No automatic retries or budget extensions. All listed tools are directly callable; no namespace search is needed.`;
+
+export function recoveryInstructions(protocol) {
+  const policy = recoveryPolicy(protocol);
+  return protocol ? RECOVERY_INSTRUCTIONS.replace('Three behavioral development attempts', `${policy.maxDevelopmentAttempts} behavioral development attempts`)
+    : RECOVERY_INSTRUCTIONS;
+}
 
 /** Public milestones describe evidence presence, never the truth of a hypothesis. */
 export function recoveryProgress(report) {
@@ -56,6 +63,7 @@ export function recoveryStep(report) {
   const recovery = report.session?.recovery;
   const latest = recovery?.attempts?.at(-1);
   const selection = recovery?.selections?.at(-1);
+  const policy = recoveryPolicy(reportRecoveryProtocol(report));
   if (recovery?.acceptanceStarted) return { stage: 'conclude', minimumRequests: 1,
     action: recovery.acceptedAttempt ? 'Conclude with actual experiment IDs and the accepted candidate identity. Recipient checks have not run yet.'
       : 'Acceptance failed. Conclude honestly; this frozen candidate cannot be repaired or replaced in this run.' };
@@ -63,8 +71,8 @@ export function recoveryStep(report) {
     action: `Call accept_component with candidateId ${recovery.frozenCandidateId}.` };
   if (latest?.development?.passed) return { stage: 'freeze', minimumRequests: 3,
     action: `Development passed. Call freeze_component with candidateId ${latest.candidateId}.` };
-  if ((recovery?.attempts?.length ?? 0) >= 3) return { stage: 'conclude', minimumRequests: 1,
-    action: 'All three development attempts failed. Conclude with the remaining failures; no accepted component exists.' };
+  if ((recovery?.attempts?.length ?? 0) >= policy.maxDevelopmentAttempts) return { stage: 'conclude', minimumRequests: 1,
+    action: `All ${policy.maxDevelopmentAttempts} development attempts failed. Conclude with the remaining failures; no accepted component exists.` };
   if (selection) return { stage: 'develop', minimumRequests: 4,
     action: latest ? `Revise the candidate from its actual first divergences and submit_component_candidate using ${selection.id}. Preserve supported rules; do not restart discovery.`
       : `Write standalone source now and call submit_component_candidate using ${selection.id}. Test your best evidence-backed implementation; development will expose mistakes. Do not spend the remaining budget re-enumerating tools or the binary.` };
@@ -79,12 +87,14 @@ export function recoveryGuidance(report, { remainingRequests } = {}) {
   const step = recoveryStep(report);
   const citations = recoveryCitationRequirements(report, report.session?.recovery?.selections?.at(-1)?.id);
   const missing = progress.milestones.filter(item => !item.complete).map(item => item.label);
+  const policy = recoveryPolicy(reportRecoveryProtocol(report));
+  const remainingAttempts = Math.max(0, policy.maxDevelopmentAttempts - (report.session?.recovery?.attempts?.length ?? 0));
   return '\nRecovery task progress (evidence presence, not verified interpretation): ' + JSON.stringify(progress)
     + '\nUnfinished milestones: ' + (missing.join('; ') || 'none; conclude with the actual experiment citations') + '.'
     + `\nCurrent stage: ${step.stage}. Next action: ${step.action}`
     + (citations ? '\nSelected evidence citation requirements: ' + JSON.stringify(citations) : '')
-    + (remainingRequests === undefined ? '' : `\n${remainingRequests} generation requests remain, including this one. At least ${step.minimumRequests} are needed from this stage, excluding further investigation and repairs. Allow two additional requests for development revisions when possible.`)
-    + (step.stage === 'select' && remainingRequests <= 7 ? '\nThe remaining requests are reserved for evidence selection, three development evaluations, freezing, acceptance and conclusion. Select your actual evidence now; no further browsing tools are offered at this stage.' : '')
+    + (remainingRequests === undefined ? '' : `\n${remainingRequests} generation requests remain, including this one. At least ${step.minimumRequests} are needed from this stage, excluding further investigation and repairs. Allow ${Math.max(0, remainingAttempts - 1)} additional requests for development revisions when possible.`)
+    + (step.stage === 'select' && remainingRequests <= policy.developmentRequestReserve ? `\nThe remaining requests are reserved for evidence selection, ${policy.maxDevelopmentAttempts} development evaluations, freezing, acceptance and conclusion. Select your actual evidence now; no further browsing tools are offered at this stage.` : '')
     + '\nChoose scientific hypotheses, code and interventions yourself. Do not repeat satisfied milestones without a reason.'
     + ' Recover the full declared donor motion boundary in both axes, including ordinary movement, for every button direction. The recipient adapter projects that motion into the platformer later; do not remove donor behavior to fit the recipient.'
     + ' Candidate source needs named ES module exports init and step, with step returning {state,output}. Evidence citations must include a selected binary:func ID AND a selected controlled experiment ID.'

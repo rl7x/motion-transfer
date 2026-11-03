@@ -1,6 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { errorMessage, fetchJson } from './api';
+import {
+  appPath,
+  describeShare,
+  logicalPathname,
+  shareAddress,
+  type ShareMessage,
+} from './data-source';
 import type { Ability, Artifact, Destination, DestinationId } from './types';
 
 interface TransferState {
@@ -16,6 +23,7 @@ interface TransferController extends TransferState {
   selectDestination(id: DestinationId): Promise<void>;
   openRoadsterArtifact(id: string): Promise<void>;
   savedRoadsterId?: string;
+  shareMessage: ShareMessage | null;
   share(): Promise<void>;
 }
 const TransferContext = createContext<TransferController | null>(null);
@@ -45,6 +53,7 @@ export function TransferProvider({ children }: { children: ReactNode }) {
   });
   const cache = useRef<{ paku?: Artifact; roadster?: Artifact }>({});
   const version = useRef(0);
+  const [shareMessage, setShareMessage] = useState<ShareMessage | null>(null);
   const choose = useCallback(
     (destination: Destination, artifact: Artifact | null, navigate = false) => {
       version.current++;
@@ -56,16 +65,16 @@ export function TransferProvider({ children }: { children: ReactNode }) {
         error: null,
         note: `${destination.name}: playing a saved ${artifact?.parentArtifactId ? 'remix' : 'transfer'}. Choosing a destination makes no model request.`,
       }));
-      if (navigate)
-        history.pushState(
-          {},
-          '',
+      setShareMessage(null);
+      if (navigate) {
+        const next =
           destination.id === 'roadster'
             ? '/roadster/play/' + artifact?.id
             : artifact?.parentArtifactId
               ? '/play/' + artifact.id
-              : '/?destination=' + destination.id,
-        );
+              : '/?destination=' + destination.id;
+        history.pushState({}, '', appPath(next));
+      }
     },
     [],
   );
@@ -110,8 +119,9 @@ export function TransferProvider({ children }: { children: ReactNode }) {
       let target = state.destinations.find(
         (item) => item.id === new URL(location.href).searchParams.get('destination'),
       );
-      const carId = location.pathname.match(/^\/roadster\/play\/([a-f0-9]{64})$/)?.[1];
-      const id = location.pathname.match(/^\/play\/([a-f0-9]{64})$/)?.[1];
+      const pathname = logicalPathname(location.pathname);
+      const carId = pathname.match(/^\/roadster\/play\/([a-f0-9]{64})$/)?.[1];
+      const id = pathname.match(/^\/play\/([a-f0-9]{64})$/)?.[1];
       if (carId) {
         cache.current.roadster = await roadsterArtifact(carId, signal);
         target = state.destinations.find((item) => item.id === 'roadster');
@@ -205,20 +215,36 @@ export function TransferProvider({ children }: { children: ReactNode }) {
         : artifact
           ? '/play/' + artifact.id
           : '/?destination=' + destination.id;
-    const url = new URL(path, location.origin).href;
-    try {
-      await navigator.clipboard.writeText(url);
-      setState((current) => ({
-        ...current,
-        note: 'Playable link copied. This local server must be available.',
-      }));
-    } catch {
-      setState((current) => ({ ...current, note: url }));
+    const address = shareAddress(path);
+    if (address.unconfigured) {
+      setShareMessage({
+        text: 'A public link is not configured.',
+        url: '',
+        copied: false,
+        local: false,
+      });
+      return;
     }
+    let copied = false;
+    try {
+      if (!navigator.clipboard?.writeText) throw Error('Clipboard unavailable');
+      await navigator.clipboard.writeText(address.url);
+      copied = true;
+    } catch {
+      /* Leave the address visible when the clipboard is blocked or unavailable. */
+    }
+    setShareMessage(describeShare(address.url, copied));
   }
   return (
     <TransferContext
-      value={{ ...state, selectDestination, openRoadsterArtifact, savedRoadsterId, share }}
+      value={{
+        ...state,
+        selectDestination,
+        openRoadsterArtifact,
+        savedRoadsterId,
+        shareMessage,
+        share,
+      }}
     >
       {children}
     </TransferContext>

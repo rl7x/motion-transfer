@@ -1,6 +1,7 @@
 export const PRICES = {
   'muse-wonder-1.0': { input: 4, cached: 0.20, output: 20 },
   'muse-spark-1.3': { input: 1.25, cached: 0.15, output: 4.25 },
+  'muse-spark-1.3-contributor': { input: 0.10, cached: 0.002, output: 0.20 },
 };
 
 export function readUsage(usage) {

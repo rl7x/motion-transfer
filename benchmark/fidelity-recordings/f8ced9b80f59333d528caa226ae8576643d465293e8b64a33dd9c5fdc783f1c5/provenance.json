@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "studyId": "f8ced9b80f59333d528caa226ae8576643d465293e8b64a33dd9c5fdc783f1c5",
+  "scoring": "frozen-only",
+  "repairs": false,
+  "candidates": [
+    {
+      "id": "from-contact-sheet",
+      "condition": "contact-sheet",
+      "parameterSource": "supplied-public-contract",
+      "defaults": {
+        "walkingSpeed": 2,
+        "dashDistance": 60,
+        "cooldownTicks": 25,
+        "initialCooldownTicks": 10
+      },
+      "label": "Contact-sheet image input plus the supplied public-contract defaults. Those defaults were not recovered from the pixels."
+    },
+    {
+      "id": "saved-recovery",
+      "condition": "saved-recovery",
+      "parameterSource": "immutable-saved-component",
+      "sourceFile": "components/dashy-dango-dash/component.ts",
+      "configFile": "components/dashy-dango-dash/contract.json",
+      "label": "Existing immutable saved recovery, included for comparison."
+    }
+  ]
+}

@@ -9,12 +9,26 @@ import { experienceAssets } from './experience-assets.mjs';
 import { loadSavedRoadster } from '../roadster/saved.mjs';
 import { buildFrontend } from './build.mjs';
 import { developerBenchmarkAssets } from '../benchmark/assets.mjs';
+import { buildParallaxiaChallenge } from '../parallaxia/challenge.mjs';
+import { buildParallaxiaFrame } from '../parallaxia/build.mjs';
 
 export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapter, remixes, lab, allowUnverified = false, benchmarks = developerBenchmarkAssets() } = {}) {
   if (adapter === undefined) adapter = await loadPakuTransfer({ optional: true });
   const recipient = await loadPakuPaku();
   const recovered = await loadRecoveredMotion();
   const roadster=await loadSavedRoadster({optional:true});
+  const challenges=new Map();
+  const challengeFor=id=>{
+    if(!challenges.has(id)){
+      if(challenges.size>=24)challenges.delete(challenges.keys().next().value);
+      challenges.set(id,(async()=>{
+        const parent=id===roadster?.id?roadster:await lab?.artifact(id);
+        if(!parent)throw Error('Roadster artifact not found');
+        return buildParallaxiaChallenge({parent});
+      })().catch(error=>{challenges.delete(id);throw error;}));
+    }
+    return challenges.get(id);
+  };
   const assets = new Map([
     ['/assets/app.js', ['text/javascript', await buildFrontend()]],
     ['/assets/runtime.js', ['text/javascript', clockedPakuRuntime(recipient.runtime)]],
@@ -100,11 +114,32 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
       } else json(200, file === 'validation.json' ? artifact.verification : file === 'receipt.json' ? artifact.receipt : artifact.project.caseStudy);
       return;
     }
+    const challengePath=path.match(/^\/(?:api\/roadster\/challenge|roadster\/challenge)\/([a-f0-9]{64})(?:\/(play\.html|download\.html|challenge\.json|source\.json))?$/);
+    if(challengePath){
+      const [,parentId,file]=challengePath,challenge=await challengeFor(parentId);
+      if(file==='play.html'||file==='download.html'){
+        response.setHeader('Content-Security-Policy','sandbox allow-scripts');
+        if(file==='download.html')response.setHeader('Content-Disposition',`attachment; filename="motion-transfer-${challenge.id.slice(0,12)}.html"`);
+        send(200,'text/html',challenge.files['play.html']);return;
+      }
+      if(file==='challenge.json'){send(200,'application/json',challenge.files[file]);return;}
+      if(file==='source.json'){response.setHeader('Content-Disposition',`attachment; filename="motion-transfer-${challenge.id.slice(0,12)}.json"`);json(200,challenge);return;}
+      const verification=challenge.verification;
+      json(200,{id:challenge.id,parentArtifactId:parentId,componentId:challenge.componentId,target:challenge.challenge.target,
+        play:`/roadster/challenge/${parentId}/play.html`,download:`/roadster/challenge/${parentId}/download.html`,
+        source:`/roadster/challenge/${parentId}/source.json`,report:`/roadster/challenge/${parentId}/challenge.json`,
+        measurements:{baselineLandingX:verification.measurement.baseline.landing.position.x,transferredLandingX:verification.measurement.transferred.landing.position.x,
+          netLandingShiftMeters:verification.netLandingShiftMeters,maxVerticalDifference:verification.maxVerticalDifference,durationSeconds:verification.measurement.controls.length/60},
+        ordinaryOutsideTarget:verification.ordinaryOutsideTarget,borrowedInsideTarget:verification.borrowedInsideTarget});return;
+    }
     const carArtifact=path.match(/^\/(api\/roadster\/artifacts|roadster\/artifacts)\/([a-f0-9]{64})(?:\/(source|play\.html|adapter\.ts|report\.json))?$/);
     if(carArtifact){
       const id=carArtifact[2],file=carArtifact[3],artifact=id===roadster?.id?roadster:await lab?.artifact(id);
       if(!artifact){json(404,{error:'Roadster artifact not found'});return;}
-      if(file==='play.html'){response.setHeader('Content-Security-Policy','sandbox allow-scripts');send(200,'text/html',artifact.files['frame.html']);return;}
+      if(file==='play.html'){
+        const frame=await buildParallaxiaFrame({source:artifact.files['adapter.ts'],intent:artifact.intent,componentRef:artifact.component});
+        response.setHeader('Content-Security-Policy','sandbox allow-scripts');send(200,'text/html',frame.html);return;
+      }
       if(file==='adapter.ts'){send(200,'text/plain',artifact.files['adapter.ts']);return;}
       if(file==='report.json'){send(200,'application/json',artifact.files['verification.json']);return;}
       if(file==='source'){response.setHeader('Content-Disposition',`attachment; filename="roadster-transfer-${id.slice(0,12)}.json"`);json(200,artifact);return;}
