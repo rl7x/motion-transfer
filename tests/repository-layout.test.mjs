@@ -26,7 +26,11 @@ test('repository resolution accepts current paths and refuses paths outside the 
   for (const path of ['src/agent/target.mjs', 'assets/targets/dashy-dango/cart.wasm', 'reports/phase/phase-budget.json', 'web/app/main.tsx']) {
     assert.equal(repositoryPath(path), path);
   }
-  for (const path of ['../outside', 'agent/../../outside', '/outside', 'agent\\outside']) {
+  for (const path of [
+    '../outside', 'agent/../../outside', '/outside', 'agent\\outside',
+    'file:///outside', 'https://example.com/outside', '%2e%2e/outside',
+    'agent/%2e%2e/%2e%2e/%2e%2e/outside',
+  ]) {
     assert.throws(() => repositoryUrl(path), /repository-relative/);
   }
 });

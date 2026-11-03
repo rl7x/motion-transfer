@@ -1,5 +1,21 @@
 # Local validation
 
+## Repository reorganization and pre-merge review
+
+On November 3, 2026, `npm test` for the repository reorganization at `ffb97a1` completed with **364 passed, 0 failed, 1 skipped** (365 tests, 444.87 seconds). The skip remains the unpaid echo preflight because the pinned Muse binary is unavailable. The suite includes both Docker image builds and restricted-worker isolation. `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run build:frontend` and `npm run replay` also passed.
+
+All 430 original pinned assets and integration templates retain their exact raw bytes and Git blob identities. The JUJUMP export retained its package identity and ZIP hash. The PAKU adapter was reverified against the moved host without a model request; its previous versions remain preserved. The baseline PARALLAXIA release build and verification passed, including standalone replay and a nested base path.
+
+The pre-merge review found that URL schemes and encoded parent segments could bypass the new repository path resolver's lexical checks. The resolver now checks that the normalized URL stays under the checkout root. The added cases reproduced the bug before the fix. This command then passed **18/18 tests**, covering the resolver, recovery protocols, saved PAKU, PARALLAXIA identity, version navigation and release packaging:
+
+```sh
+node --test --test-concurrency=1 tests/repository-layout.test.mjs tests/recovery-protocol.test.mjs tests/saved-paku-transfer.test.mjs tests/parallaxia-identity.test.mjs tests/parallaxia-history.test.mjs tests/parallaxia-release.test.mjs
+```
+
+Manual Chrome checks used the restarted `npm run dev:transfer` preview: baseline and saved-remix PARALLAXIA loaded, both JUJUMP and PAKU PAKU comparison frames played, and RDSTR Stunts completed a backflip with a perfect landing. The saved remix ZIP passed `unzip -t`, and the baseline HTML download matched the served player exactly. No new paid generation was submitted. Full-suite logs and release outputs remain in gitignored `reports/repository-reorganization/`.
+
+The full suite was not repeated after the URL containment fix; the 18 focused tests passed with that fix. The checkpoints below remain historical records and are superseded by this section.
+
 ## Live mechanics checkpoint on this Mac
 
 On November 3, 2026, `npm test` at `bf7cd147fa59de535bbca44312b0b9f31fafdecc` on `feat/parallaxia-live-mechanics` completed with **355 passed, 0 failed, 1 skipped** (356 tests, one suite). Node `v22.23.1`. Started 15:51:41Z, finished 16:09:48Z, elapsed 1,087.02 seconds; exit 0.

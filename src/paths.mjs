@@ -24,5 +24,8 @@ export function repositoryPath(logicalPath) {
 }
 
 export function repositoryUrl(logicalPath) {
-  return new URL(repositoryPath(logicalPath), new URL('../', import.meta.url));
+  const root = new URL('../', import.meta.url);
+  const resolved = new URL(repositoryPath(logicalPath), root);
+  if (!resolved.href.startsWith(root.href)) throw Error('Expected a repository-relative input path');
+  return resolved;
 }
