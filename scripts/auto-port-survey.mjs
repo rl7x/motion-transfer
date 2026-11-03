@@ -5,8 +5,9 @@ import { DRIVERS, EXCLUDED } from '../src/auto-port/drivers.mjs';
 import { VERIFY, snapshot } from '../src/auto-port/verify.mjs';
 
 // Baseline for every frozen driver on the unmodified games. Makes no model request.
-const rows = [];
+const only = process.argv[2];
 for (const [id, driver] of Object.entries(DRIVERS)) {
+  if (only && id !== only) continue;
   const directory = fileURLToPath(repositoryUrl(`assets/auto-port/games/${id}`));
   const row = { id };
   try {
@@ -36,7 +37,6 @@ for (const [id, driver] of Object.entries(DRIVERS)) {
       return `${file}:${run.status}`;
     }).join(' ');
   } catch (error) { row.error = String(error?.stack ?? error).slice(0, 300); }
-  rows.push(row);
+  console.log(JSON.stringify(row));
 }
-for (const row of rows) console.log(JSON.stringify(row));
-console.log(JSON.stringify({ excluded: Object.keys(EXCLUDED) }));
+if (!only) console.log(JSON.stringify({ excluded: Object.keys(EXCLUDED) }));

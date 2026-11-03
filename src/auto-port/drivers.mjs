@@ -50,7 +50,7 @@ const headRush = {
   id: 'head-rush', status: 'eligible', core: 'core.js', tests: ['tests/rules.cjs'], dashKey: 'KeyC', field: 200,
   load: dir => ({ game: cjs(dir, 'core.js'), bots: cjs(dir, 'bots.js') }),
   session({ game, bots }, seed) {
-    const state = game.create(seed), policy = bots.simple.greedy();
+    const state = game.create(seed), policy = bots.simple.mash(seed);
     return { state, act: () => policy(state) || {}, step: input => game.step(state, input), heading: {} };
   },
   ready: state => state.phase === 'play' && Boolean(state.player),
@@ -74,7 +74,7 @@ const zigSaber = {
   id: 'zig-saber', status: 'eligible', core: 'core.js', tests: ['tests/rules.cjs'], dashKey: 'KeyC', field: 240,
   load: dir => ({ game: cjs(dir, 'core.js'), bots: cjs(dir, 'bots.js') }),
   session({ game, bots }, seed) {
-    const state = game.newGame({}), policy = bots.human(seed);
+    const state = game.newGame({}), policy = bots.simple.mash(seed + 5);
     return { state, act: () => state.phase === 'play' && Boolean(policy(state)), step: input => game.step(state, input), heading: false };
   },
   ready: state => state.phase === 'play',
