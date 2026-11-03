@@ -13,7 +13,7 @@ export function injectRuntime(html) {
   return html.replace('</head>', tag + '</head>');
 }
 
-export function serveGame(directory, runtime) {
+export function serveGame(directory, runtime, page) {
   const server = createServer(async (request, response) => {
     const path = normalize(decodeURIComponent(new URL(request.url, 'http://game').pathname));
     try {
@@ -22,7 +22,8 @@ export function serveGame(directory, runtime) {
       const file = path === '/' ? 'index.html' : path.slice(1);
       if (file.split('/').includes('..')) return response.writeHead(403).end();
       const bytes = await readFile(join(directory, file));
-      const body = extname(file) === '.html' ? injectRuntime(bytes.toString('utf8')) : bytes;
+      const html = extname(file) === '.html' ? bytes.toString('utf8') : null;
+      const body = html === null ? bytes : injectRuntime(page ? html.replace(page[0], page[1]) : html);
       response.writeHead(200, { 'Content-Type': TYPES[extname(file)] ?? 'application/octet-stream' }).end(body);
     } catch { response.writeHead(404).end(); }
   });
@@ -31,7 +32,7 @@ export function serveGame(directory, runtime) {
 
 /** The patched game must load in a real page, start from real input and fire the dash. */
 export async function runPortInBrowser({ directory, runtime, driver }) {
-  const server = await serveGame(directory, runtime);
+  const server = await serveGame(directory, runtime, driver.page);
   const browser = await chromium.launch({ channel: process.env.BROWSER_CHANNEL || (process.platform === 'linux' ? 'chromium' : 'chrome'), headless: true });
   try {
     const page = await browser.newPage({ viewport: { width: 960, height: 720 } });
@@ -45,10 +46,11 @@ export async function runPortInBrowser({ directory, runtime, driver }) {
     await page.goto(server.origin, { waitUntil: 'load' });
     await page.waitForTimeout(600);
     const calls = () => page.evaluate(() => globalThis.MotionDash.calls);
-    for (let round = 0; round < 8 && (await calls()) === 0; round += 1) {
-      await page.mouse.click(480, 360);
-      for (const key of ['Enter', 'Space', 'KeyZ']) { await page.keyboard.press(key); await page.waitForTimeout(120); }
-      await page.waitForTimeout(600);
+    // One input at a time: in a one-button game every press is also a move.
+    const inputs = [() => page.mouse.click(480, 360), () => page.keyboard.press('Enter'), () => page.keyboard.press('Space'), () => page.keyboard.press('KeyZ')];
+    for (let index = 0; index < inputs.length * 4 && (await calls()) === 0; index += 1) {
+      await inputs[index % inputs.length]();
+      await page.waitForTimeout(700);
     }
     if ((await calls()) === 0) throw Error('The running page never reached MotionDash.update after start input');
     for (let round = 0; round < 6; round += 1) {

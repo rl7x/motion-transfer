@@ -10,12 +10,9 @@ import { parseJob } from '../src/hosting/protocol.mjs';
 import { ACCEPTED_COMPONENT_ID } from '../src/hosting/component-pin.mjs';
 import { loadPinnedComponent } from '../src/hosting/component-load.mjs';
 import { repositoryUrl } from '../src/paths.mjs';
+import { REFERENCE_PORTS } from './fixtures/auto-port-references.mjs';
 
-// A hand-written port of one game, used only to prove the verifier. Spark never sees it.
-const reference = [
-  { anchor: '    L.x += L.vx * dt;', replacement: '    const dash = MotionDash.update(g, { left: dx < 0, right: dx > 0, up: dy < 0, down: dy > 0 });\n    L.x += L.vx * dt;\n    if (dash.owns) L.x += dash.dx * 0.5;' },
-  { anchor: '    L.y += L.vy * dt;', replacement: '    L.y += L.vy * dt;\n    if (dash.owns) L.y += dash.dy * 0.5;' },
-];
+const reference = REFERENCE_PORTS.skyhaul.patches;
 const failed = report => report.checks.filter(check => !check.passed).map(check => check.name);
 
 test('every upstream game is pinned by hash, and each is driven or excluded with a reason', async () => {
@@ -57,13 +54,15 @@ test('the runtime is injected ahead of the first game script', () => {
   assert.match(injectRuntime('<head><script src="a.js"></script></head>'), /__motion-dash\.js"><\/script><script src="a\.js"/);
 });
 
-test('a correct port passes every check, including the real browser game', { timeout: 180_000 }, async () => {
+test('every driver passes a correct hand-written port, so a failure is not the measuring stick', { timeout: 420_000 }, async () => {
   const component = await loadPinnedComponent(ACCEPTED_COMPONENT_ID);
-  const report = await verifyPort({ gameId: 'skyhaul', patches: reference, unitsPerSourcePixel: 0.5, component, browser: runPortInBrowser });
-  assert.deepEqual(failed(report), []);
-  assert.equal(report.passed, true);
-  assert.equal(report.checks.length, 7);
-  assert.ok(Math.abs(report.measurements.measured - 30) <= 3.2, String(report.measurements.measured));
+  assert.deepEqual(Object.keys(REFERENCE_PORTS).sort(), Object.keys(DRIVERS).sort());
+  for (const [gameId, port] of Object.entries(REFERENCE_PORTS)) {
+    const report = await verifyPort({ gameId, patches: port.patches, unitsPerSourcePixel: port.scale, component, browser: runPortInBrowser });
+    assert.deepEqual(failed(report), [], gameId);
+    assert.equal(report.checks.length, 7);
+    assert.ok(Math.abs(report.measurements.measured - report.measurements.expected) < report.measurements.expected * 0.05, gameId);
+  }
 });
 
 test('broken ports fail the check built to catch them', { timeout: 180_000 }, async () => {

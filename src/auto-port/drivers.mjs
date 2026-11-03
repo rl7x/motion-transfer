@@ -23,7 +23,7 @@ const skyhaul = {
 };
 
 const undertow = {
-  id: 'undertow', status: 'eligible', core: 'core.js', tests: ['tests/core.test.cjs'], dashKey: 'KeyC', field: 320,
+  id: 'undertow', status: 'eligible', core: 'core.js', tests: ['tests/core.test.cjs'], dashKey: 'KeyC', field: 256,
   load: dir => ({ game: cjs(dir, 'core.js'), bots: cjs(dir, 'bots.js') }),
   session({ game, bots }, seed) {
     const state = game.newGame(seed), bot = bots.oracleBot({ seed, gather: 2, race: true, ferry: false, name: 'o2' });
@@ -35,7 +35,7 @@ const undertow = {
 };
 
 const wreckfall = {
-  id: 'wreckfall', status: 'eligible', core: 'core.js', tests: ['tests/core.test.cjs'], dashKey: 'KeyC', field: 320,
+  id: 'wreckfall', status: 'eligible', core: 'core.js', tests: ['tests/core.test.cjs'], dashKey: 'KeyC', field: 224,
   load: dir => ({ game: cjs(dir, 'core.js'), bots: cjs(dir, 'bots.js') }),
   session({ game, bots }, seed) {
     const state = game.createGame(seed), bot = bots.nearestBot();
@@ -47,7 +47,7 @@ const wreckfall = {
 };
 
 const headRush = {
-  id: 'head-rush', status: 'eligible', core: 'core.js', tests: ['tests/rules.cjs'], dashKey: 'KeyC', field: 200,
+  id: 'head-rush', status: 'eligible', core: 'core.js', tests: ['tests/rules.cjs'], dashKey: 'KeyC', field: 700,
   load: dir => ({ game: cjs(dir, 'core.js'), bots: cjs(dir, 'bots.js') }),
   session({ game, bots }, seed) {
     const state = game.create(seed), policy = bots.simple.mash(seed);
@@ -55,15 +55,18 @@ const headRush = {
   },
   ready: state => state.phase === 'play' && Boolean(state.player),
   position: state => ({ x: state.player.s, y: state.player.r }),
-  distance: (_, a, b) => Math.abs(a.x - b.x),
+  distance({ game }, a, b) {
+    const lap = 4 * game.G.hw[a.y] + 4 * game.G.hh[a.y], gap = Math.abs(a.x - b.x);
+    return Math.min(gap, lap - gap);
+  },
 };
 
 const pileup = {
-  id: 'pileup', status: 'eligible', core: 'core.js', tests: ['tests/rules.cjs'], dashKey: 'KeyC', field: 200,
+  id: 'pileup', status: 'eligible', core: 'core.js', tests: ['tests/rules.cjs'], dashKey: 'KeyC', field: 5040,
   load: dir => ({ game: cjs(dir, 'core.js'), adapter: cjs(dir, 'tests/adapter.cjs') }),
   session({ game, adapter }, seed) {
     const state = game.create(seed), policy = adapter.policies.human.make(seed);
-    return { state, act: () => policy(state), step: input => game.step(state, input), idle: {}, heading: {} };
+    return { state, act: () => policy(state), step: input => game.step(state, input), idle: {}, heading: { d: 2 } };
   },
   ready: state => state.phase === 'play' && Boolean(state.p),
   position: state => ({ x: state.p.x, y: state.p.y }),
@@ -71,7 +74,7 @@ const pileup = {
 };
 
 const zigSaber = {
-  id: 'zig-saber', status: 'eligible', core: 'core.js', tests: ['tests/rules.cjs'], dashKey: 'KeyC', field: 240,
+  id: 'zig-saber', status: 'eligible', core: 'core.js', tests: ['tests/rules.cjs'], dashKey: 'KeyC', field: 224,
   load: dir => ({ game: cjs(dir, 'core.js'), bots: cjs(dir, 'bots.js') }),
   session({ game, bots }, seed) {
     const state = game.newGame({}), policy = bots.simple.mash(seed + 5);
@@ -83,7 +86,9 @@ const zigSaber = {
 };
 
 const blinkScope = {
-  id: 'blink-scope', status: 'eligible', core: 'game-core.js', tests: ['tests/core.test.mjs'], dashKey: 'KeyC', field: 400,
+  id: 'blink-scope', status: 'eligible', core: 'game-core.js', tests: ['tests/core.test.mjs'], dashKey: 'KeyC', field: 560,
+  // The shipped page loads a generated bundle, so the browser check runs the source modules instead.
+  page: ['<script src="./game.js"></script>', '<script type="module" src="./main.js"></script>'],
   load: async dir => ({ game: await esm(dir, 'game-core.js'), bots: await esm(dir, 'demo-bot.js') }),
   session({ game, bots }, seed) {
     const state = game.createGame(seed), policy = bots.makePilot(game.makeRng(seed * 7919 + 13));
