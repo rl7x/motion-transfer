@@ -21,7 +21,11 @@ RUN npm ci \
     && chmod -R a+rX /ms-playwright
 
 COPY . .
-RUN chmod -R a+rX /app
-
+USER root
+RUN bin=$(sed -n "s/^exec '\\([^']*\\)'.*/\\1/p" /opt/google/chrome/chrome) \
+    && test -x "$bin" \
+    && printf '%s\n' '#!/bin/sh' "exec '$bin' --no-sandbox --disable-dev-shm-usage \"\$@\" --use-gl=angle --use-angle=swiftshader-webgl --enable-unsafe-swiftshader" > /opt/google/chrome/chrome \
+    && chmod 755 /opt/google/chrome/chrome \
+    && chmod -R a+rX /app
 USER 10001:10001
 ENTRYPOINT ["node", "/app/hosting/worker.mjs"]

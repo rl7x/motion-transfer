@@ -100,9 +100,14 @@ export function admitProductionRequest({ policy, headers = {}, remoteAddress: pe
   }
   if (method === 'POST') return deny(403, 'Only bounded remix jobs are accepted');
   if (!['GET', 'HEAD'].includes(method)) return deny(405, 'Method not allowed');
-  if (pathname === '/health' || pathname === '/privacy' || pathname === '/api/remixes/status') return { ok: true, route: 'status' };
+  if (pathname === '/' || pathname === '/index.html' || pathname === '/health' || pathname === '/privacy' || pathname === '/api/remixes/status' || pathname === '/api/catalog') return { ok: true, route: 'status' };
+  if (pathname.startsWith('/creator/')) {
+    if (pathname.includes('..') || pathname.includes('\\') || pathname.includes('\0')) return deny(404, 'Not found');
+    return { ok: true, route: 'creator' };
+  }
   if (/^\/api\/remixes\/[0-9a-f-]{36}$/i.test(pathname)) return { ok: true, route: 'job' };
-  if (/^\/artifacts\/[a-f0-9]{64}(?:\/play\.html)?$/.test(pathname)) return { ok: true, route: 'artifact' };
+  if (/^\/parents\/[a-f0-9]{64}(?:\/download)?$/.test(pathname)) return { ok: true, route: 'parent' };
+  if (/^\/artifacts\/[a-f0-9]{64}(?:\/(?:play\.html|adapter\.js|download))?$/.test(pathname)) return { ok: true, route: 'artifact' };
   return deny(404, 'Not found');
 }
 

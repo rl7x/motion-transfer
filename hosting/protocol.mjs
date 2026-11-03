@@ -6,6 +6,7 @@ const OPERATIONS = new Set([
 const VERIFY = new Set(['verify-native', 'verify-browser']);
 const PROBES = new Set(['probe-egress', 'probe-env', 'probe-write', 'probe-spin', 'probe-memory']);
 const FORBIDDEN = ['command', 'argv', 'args', 'shell', 'entrypoint', 'image', 'env', 'privileged', 'network', 'mounts'];
+const hexId = /^[a-f0-9]{64}$/;
 
 function intentOk(intent) {
   if (!intent || typeof intent !== 'object' || Array.isArray(intent)) return false;
@@ -21,14 +22,15 @@ export function parseJob(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw Error('Invalid worker job');
   for (const key of FORBIDDEN) if (Object.hasOwn(value, key)) throw Error('Arbitrary command is not a hosting operation');
   if (!OPERATIONS.has(value.operation)) throw Error('Unknown hosting operation');
-  const allowed = VERIFY.has(value.operation) ? ['operation', 'source', 'intent'] : ['operation'];
+  const allowed = VERIFY.has(value.operation) ? ['operation', 'source', 'intent', 'componentId'] : ['operation'];
   for (const key of Object.keys(value)) if (!allowed.includes(key)) throw Error('Worker job has an unexpected field');
   if (PROBES.has(value.operation)) return { operation: value.operation };
   if (typeof value.source !== 'string' || !value.source.trim() || Buffer.byteLength(value.source) > SOURCE_LIMIT) {
     throw Error('Adapter source must contain 1–16 KB');
   }
   if (!intentOk(value.intent)) throw Error('Unsupported Roadster mapping');
-  return { operation: value.operation, source: value.source, intent: {
+  if (!hexId.test(value.componentId)) throw Error('Worker job component id is invalid');
+  return { operation: value.operation, source: value.source, componentId: value.componentId, intent: {
     unitScale: value.intent.unitScale, activation: value.intent.activation, direction: value.intent.direction,
   } };
 }

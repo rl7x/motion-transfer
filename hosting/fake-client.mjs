@@ -12,14 +12,16 @@ export function createFakeMetaClient({
   }
   return {
     calls,
-    async countInputTokens(request) {
+    async countInputTokens(request, signal) {
+      if (signal?.aborted) throw signal.reason ?? Error('The operation was aborted');
       check(request);
-      calls.push({ method: 'countInputTokens', model: request.model });
+      calls.push({ method: 'countInputTokens', model: request.model, request });
       return inputTokens;
     },
-    async respond(request) {
+    async respond(request, signal) {
+      if (signal?.aborted) throw signal.reason ?? Error('The operation was aborted');
       check(request);
-      calls.push({ method: 'respond', model: request.model });
+      calls.push({ method: 'respond', model: request.model, request });
       return {
         id: 'fake-response', status: 'completed',
         usage: {

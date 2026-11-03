@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { spawn } from 'node:child_process';
-import { chmod, mkdir, readdir, readFile, rm } from 'node:fs/promises';
+import { constants } from 'node:fs';
+import { chmod, mkdir, open, readdir, rm } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -14,6 +15,11 @@ import { parseJob } from './protocol.mjs';
 const execute = promisify(execFile);
 const digest = value => createHash('sha256').update(value).digest('hex');
 const ALLOWED_OUTPUT = new Set(['result.json', 'frame.html']);
+const OUTPUT_FLAGS = constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK;
+
+function unsafeOutput(entry) {
+  return entry.isSymbolicLink() || entry.isFIFO() || entry.isSocket() || entry.isBlockDevice() || entry.isCharacterDevice() || entry.isDirectory();
+}
 
 function scrub(text) {
   let value = String(text ?? '');
@@ -85,17 +91,61 @@ function runContainer({ args, stdin, timeoutMs, name }) {
   });
 }
 
-async function readOutput(directory, stdoutText, result) {
-  const names = (await readdir(directory)).filter(name => name !== '.' && name !== '..');
-  for (const name of names) if (!ALLOWED_OUTPUT.has(name)) throw Error('Worker wrote an unexpected output file');
-  const receipt = await readFile(join(directory, 'result.json'), 'utf8');
-  if (receipt !== stdoutText) throw Error('Worker result did not match its output file');
+async function readRegularFile(directory, name, limit) {
+  if (typeof constants.O_NOFOLLOW !== 'number' || typeof constants.O_NONBLOCK !== 'number') {
+    throw Error('Worker output cannot be read without O_NOFOLLOW');
+  }
+  let handle;
+  try { handle = await open(join(directory, name), OUTPUT_FLAGS); }
+  catch (error) {
+    if (error.code === 'ENOENT') return null;
+    if (['ELOOP', 'ENXIO', 'EAGAIN', 'ENOTDIR', 'EWOULDBLOCK'].includes(error.code)) throw Error('Worker output is not a regular file');
+    throw error;
+  }
+  try {
+    const stat = await handle.stat();
+    if (!stat.isFile()) throw Error('Worker output is not a regular file');
+    if (!Number.isSafeInteger(stat.size) || stat.size < 0 || stat.size > limit) {
+      throw Error(name === 'frame.html' ? 'Verified frame exceeds the output limit' : 'Worker result exceeds the output limit');
+    }
+    const buffer = Buffer.alloc(stat.size);
+    let offset = 0;
+    while (offset < buffer.length) {
+      const { bytesRead } = await handle.read(buffer, offset, buffer.length - offset, offset);
+      if (bytesRead === 0) throw Error('Worker output ended early');
+      offset += bytesRead;
+    }
+    return buffer;
+  } finally {
+    await handle.close();
+  }
+}
+
+export async function readOutput(directory, stdoutText, result) {
+  const entries = (await readdir(directory, { withFileTypes: true })).filter(entry => entry.name !== '.' && entry.name !== '..');
+  for (const entry of entries) {
+    if (unsafeOutput(entry)) throw Error('Worker output is not a regular file');
+    if (!ALLOWED_OUTPUT.has(entry.name) || !entry.isFile()) throw Error('Worker wrote an unexpected output file');
+  }
+  const receipt = await readRegularFile(directory, 'result.json', Math.min(STDOUT_LIMIT, Buffer.byteLength(stdoutText)));
+  if (!receipt || receipt.toString('utf8') !== stdoutText) throw Error('Worker result did not match its output file');
   if (!result.frame) return null;
-  if (!names.includes('frame.html')) throw Error('Verified frame was not written');
-  const frame = await readFile(join(directory, 'frame.html'));
-  if (frame.length > FRAME_LIMIT || frame.length !== result.frame.bytes) throw Error('Verified frame exceeds the output limit');
+  if (!entries.some(entry => entry.name === 'frame.html')) throw Error('Verified frame was not written');
+  if (!Number.isSafeInteger(result.frame.bytes) || result.frame.bytes < 0 || result.frame.bytes > FRAME_LIMIT) {
+    throw Error('Verified frame exceeds the output limit');
+  }
+  const frame = await readRegularFile(directory, 'frame.html', result.frame.bytes);
+  if (!frame || frame.length !== result.frame.bytes) throw Error('Verified frame exceeds the output limit');
   if (digest(frame) !== result.frame.sha256) throw Error('Verified frame hash mismatch');
   return frame;
+}
+
+export async function discardOutput(outputDir) {
+  if (!outputDir) return;
+  try { await chmod(outputDir, 0o700); }
+  catch { /* The worker may have replaced the directory. Cleanup still must not change the result. */ }
+  try { await rm(outputDir, { recursive: true, force: true }); }
+  catch { /* A mode 000 entry must not replace the structured worker result. rm does not follow symlinks. */ }
 }
 
 export async function dockerRun(image, job) {
@@ -129,11 +179,12 @@ export async function dockerRun(image, job) {
     const ok = completed;
     return {
       ok, terminated, exitCode: inspected?.exitCode ?? run.code, oomKilled: inspected?.oomKilled === true,
-      envNames: inspected?.envNames ?? [], result, frame, error: ok ? null : scrub(result?.error || run.stderr || terminated || 'worker failed'),
+      envNames: inspected?.envNames ?? [], result, frame,
+      error: ok ? null : scrub((typeof result?.error === 'string' ? result.error.trim() : '') || run.stderr.toString('utf8').trim() || terminated || 'worker failed'),
     };
   } finally {
     await execute('docker', ['rm', '-f', name], { timeout: 10_000 }).catch(() => {});
-    if (outputDir) await rm(outputDir, { recursive: true, force: true });
+    await discardOutput(outputDir);
   }
 }
 

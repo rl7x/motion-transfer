@@ -31,7 +31,11 @@ export async function publishArtifact({ directory, parentId, files }) {
     throw error;
   }
   const urls = { receipt: `/artifacts/${id}` };
-  if (buffers.some(file => file.name === 'play.html')) urls.play = `/artifacts/${id}/play.html`;
+  if (buffers.some(file => file.name === 'play.html')) {
+    urls.play = `/artifacts/${id}/play.html`;
+    urls.download = `/artifacts/${id}/download`;
+  }
+  if (buffers.some(file => file.name === 'adapter.js')) urls.adapter = `/artifacts/${id}/adapter.js`;
   for (const url of Object.values(urls)) {
     if (url.includes('localhost') || url.includes('127.0.0.1') || /^https?:/i.test(url)) throw Error('Artifact URL must be a path');
   }

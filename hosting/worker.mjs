@@ -77,10 +77,19 @@ async function probeWrite() {
   return { ok: true, operation: 'probe-write', writes, escaped, ...facts() };
 }
 
-async function verifyNative(job) {
+async function boundComponent(job) {
+  const { loadPinnedComponent } = await import('./component-load.mjs');
+  const component = await loadPinnedComponent(job.componentId);
+  if (component.provenance.id !== job.componentId) throw Error('Verifier component identity changed');
+  return component;
+}
+
+export async function verifyNative(job) {
   if (secretNames().length) throw Error('Worker refuses to run with credentials in the environment');
+  const component = await boundComponent(job);
   const { evaluateRoadsterAdapter } = await import('../evaluator/roadster.mjs');
-  const report = await evaluateRoadsterAdapter(job.source, job.intent);
+  const report = await evaluateRoadsterAdapter(job.source, job.intent, { componentRef: component });
+  if (report.componentId !== job.componentId) throw Error('Verifier component identity changed');
   const checks = summarizeChecks(report.results);
   const result = {
     ok: true, operation: 'verify-native', passed: report.passed === true, gate: report.gate,
@@ -89,8 +98,8 @@ async function verifyNative(job) {
   };
   if (result.passed) {
     const { compileAdapter } = await import('../transfer/adapter.mjs');
-    const compiled = await compileAdapter(job.source);
-    if (compiled.javascriptSha256 !== report.javascriptSha256 || compiled.componentId !== report.componentId) {
+    const compiled = await compileAdapter(job.source, { componentRef: component });
+    if (compiled.javascriptSha256 !== report.javascriptSha256 || compiled.componentId !== job.componentId) {
       throw Error('Compiled adapter hash changed');
     }
     if (Buffer.byteLength(compiled.javascript) > 32 * 1024) throw Error('Compiled adapter exceeds the output limit');
@@ -101,9 +110,11 @@ async function verifyNative(job) {
 
 async function verifyBrowser(job) {
   if (secretNames().length) throw Error('Worker refuses to run with credentials in the environment');
+  const component = await boundComponent(job);
   const { verifyRoadsterBrowser } = await import('../evaluator/roadster-browser.mjs');
   const { buildRoadsterFrame } = await import('../roadster/build.mjs');
-  const report = await verifyRoadsterBrowser(job.source, job.intent);
+  const report = await verifyRoadsterBrowser(job.source, job.intent, { componentRef: component });
+  if (report.componentId !== job.componentId) throw Error('Verifier component identity changed');
   const checks = summarizeChecks(report.results);
   const result = {
     ok: true, operation: 'verify-browser', passed: report.passed === true, gate: report.gate,
@@ -111,7 +122,8 @@ async function verifyBrowser(job) {
     intent: job.intent, checks, results: checks, frame: null, ...facts(),
   };
   if (result.passed) {
-    const built = await buildRoadsterFrame({ source: job.source, intent: job.intent });
+    const built = await buildRoadsterFrame({ source: job.source, intent: job.intent, componentRef: component });
+    if (built.environment?.componentId !== job.componentId) throw Error('Verifier component identity changed');
     const hash = digest(built.html);
     if (hash !== report.frameSha256) throw Error('Frame hash changed after browser verification');
     const bytes = Buffer.byteLength(built.html);

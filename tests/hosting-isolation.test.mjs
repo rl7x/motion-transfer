@@ -23,6 +23,8 @@ function docker(args, timeout) {
 }
 
 test('restricted worker containers enforce isolation and verify in-process only inside the worker', { timeout: 900_000 }, async t => {
+  try { await execute('docker', ['info'], { timeout: 20_000 }); }
+  catch { t.skip('docker daemon is not available; isolation was not executed'); return; }
   const beforeLedger = await ledgerHash();
   const marker = 'hosting-marker-do-not-leak';
   const previousMarker = process.env.HOSTING_SECRET_MARKER;
@@ -92,28 +94,37 @@ test('restricted worker containers enforce isolation and verify in-process only 
   const manifest = JSON.parse(await readFile(join(root, 'transfers/roadster/versions', current.id, 'manifest.json'), 'utf8'));
   const source = await readFile(join(root, 'transfers/roadster/versions', current.id, 'adapter.ts'), 'utf8');
   const provenance = JSON.parse(await readFile(join(root, 'components/dashy-dango-dash/provenance.json'), 'utf8'));
-  const native = await broker.submit({ operation: 'verify-native', source, intent: manifest.intent });
+  const native = await broker.submit({
+    operation: 'verify-native', source, intent: manifest.intent, componentId: provenance.id,
+  });
   assert.equal(native.ok, true, native.error);
   assert.equal(native.result.passed, true);
   assert.equal(native.result.executedIn, 'worker');
   assert.equal(native.result.uid, 10001);
   assert.equal(native.result.componentId, provenance.id);
   const broken = await broker.submit({
-    operation: 'verify-native', intent: manifest.intent,
+    operation: 'verify-native', intent: manifest.intent, componentId: provenance.id,
     source: 'export function init(){return {}}; export function step(){return {}};',
   });
   assert.equal(broken.result?.passed === true, false);
 
   const directory = await mkdtemp(join(tmpdir(), 'motion-hosting-coord-'));
+  const ledgerDirectory = await mkdtemp(join(tmpdir(), 'motion-hosting-ledger-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
+  t.after(() => rm(ledgerDirectory, { recursive: true, force: true }));
+  await createPhaseBudget(ledgerDirectory);
   const client = createFakeMetaClient({ source, intent: manifest.intent, summary: 'Saved held dash, verified in the worker.' });
-  const coordinator = await createCoordinator({ directory, broker, client });
+  const coordinator = await createCoordinator({ directory, broker, client, ledgerDirectory, localVerification: true });
   t.after(() => coordinator.close());
   const parentId = current.id;
   const parentBytes = Buffer.from('saved-parent');
+  const componentJs = await readFile(new URL('../components/dashy-dango-dash/component.js', import.meta.url), 'utf8');
+  const contract = JSON.parse(await readFile(new URL('../components/dashy-dango-dash/contract.json', import.meta.url), 'utf8'));
   await coordinator.putParent({
     id: parentId, bytes: parentBytes,
     intent: { ...manifest.intent, unitScale: manifest.intent.unitScale === 0.1 ? 0.2 : 0.1 },
+    source, component: { id: provenance.id, javascript: componentJs, contract },
+    recipient: { name: 'RDSTR Stunts', revision: manifest.recipientRevision },
   });
   const submitted = await coordinator.submit({
     prompt: 'Make the dash half as long.', parentArtifactId: parentId, idempotencyKey: randomUUID(),
@@ -124,7 +135,16 @@ test('restricted worker containers enforce isolation and verify in-process only 
   assert.equal(ready.publicReservedUsd, 0);
   assert.equal(ready.urls.play.startsWith('/artifacts/'), true);
   assert.equal(ready.urls.play.includes('localhost'), false);
+  assert.deepEqual(ready.parentChain, [parentId, ready.artifactId]);
+  assert.equal(ready.urls.parent, `/parents/${parentId}`);
+  assert.equal(ready.urls.download, `/artifacts/${ready.artifactId}/download`);
   assert.deepEqual(await coordinator.parentBytes(parentId), parentBytes);
+  const receipt = JSON.parse((await coordinator.artifactFile(ready.artifactId, 'receipt.json')).toString('utf8'));
+  assert.equal(receipt.passed, true);
+  assert.equal(receipt.model, 'muse-spark-1.3');
+  assert.deepEqual(receipt.parentChain, [parentId]);
+  const adapter = await coordinator.artifactFile(ready.artifactId, 'adapter.js');
+  assert.ok(adapter.length > 20);
   const play = await coordinator.artifactFile(ready.artifactId, 'play.html');
   assert.ok(play.length > 1000);
   assert.equal(ready.urls.play.includes('127.0.0.1'), false);

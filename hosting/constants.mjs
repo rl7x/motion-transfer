@@ -28,3 +28,7 @@ export const WORKER_GID = 10001;
 export const SHARED_PHASE_DIRECTORY = fileURLToPath(new URL('../reports/motion-transfer-phase/', import.meta.url));
 
 export const SHARED_LEDGER_CONFIRMATION = 'charge-shared-public-reserve';
+
+/** Operator confirmation for a later hosted-generation process. This build does not turn it on. */
+export const HOSTING_GENERATION_CONFIRMATION = 'enable-hosted-standard-generation';
+export const PROVIDER_DEADLINE_MS = 180_000;
