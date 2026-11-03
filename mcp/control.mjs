@@ -5,7 +5,7 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { tokenCost } from '../agent/accounting.mjs';
 
-export const PINNED_MUSE_VERSION = '1.3.0-R3401.1';
+export const PINNED_MUSE_VERSION = '1.3.0-R3057.1';
 export const MAX_MCP_IMAGE_BYTES = 65_536;
 export const MAX_JSON_LINE_BYTES = 262_144;
 const MODEL_GENERATION = /^model\.(?:[a-z0-9]+\.)?response$/;
@@ -17,7 +17,7 @@ export function defaultMuseBinary() {
 
 export const PINNED_MUSE_BINARY = defaultMuseBinary();
 
-/** Exact build token. A longer id such as 1.3.0-R3401.10 does not match. */
+/** Exact build token. A longer id such as 1.3.0-R3057.10 does not match. */
 export function isPinnedMuseVersion(text, version = PINNED_MUSE_VERSION) {
   if (typeof text !== 'string') return false;
   const escaped = version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

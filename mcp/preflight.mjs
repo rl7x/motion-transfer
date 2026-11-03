@@ -7,7 +7,7 @@ import { createServer } from 'node:net';
 import { createPhaseBudget } from '../campaign/phase-budget.mjs';
 import { createRecoveryProtocol } from '../agent/recovery-protocol.mjs';
 import {
-  PINNED_MUSE_VERSION, appendJsonLine, defaultMuseBinary, eventToolViolations, isPinnedMuseVersion,
+  MAX_JSON_LINE_BYTES, PINNED_MUSE_VERSION, appendJsonLine, defaultMuseBinary, eventToolViolations, isPinnedMuseVersion,
   museChildEnv, museExecArgs, musePreflightAvailability, museSettingsDocument, museSpendControl, trustedTurnBefore,
 } from './control.mjs';
 import { cleanRoomTask } from './host.mjs';
@@ -56,7 +56,8 @@ function spawnMuse(binary, args, env, onEvent, sandboxPath) {
   const profile = `(version 1)\n(allow default)\n(deny file-read* file-write* (subpath ${JSON.stringify(deny)}))\n`;
   return new Promise((resolve, reject) => {
     const child = spawn(sandboxPath, ['-p', profile, binary, ...args], { env, stdio: ['ignore', 'pipe', 'pipe'] });
-    let stdout = '', stderr = '', rest = '', overflow = false, settled = false;
+    let stdout = '', stderr = '', rest = '', overflow = false, settled = false, exposedDefaultConfig = false;
+    let stdoutTail = '', stderrTail = '';
     const events = [];
     const finish = (value, failed) => {
       if (settled) return;
@@ -64,14 +65,28 @@ function spawnMuse(binary, args, env, onEvent, sandboxPath) {
       if (failed) reject(value);
       else resolve(value);
     };
+    const watch = (tail, text) => {
+      const window = tail + text;
+      if (window.includes(deny)) exposedDefaultConfig = true;
+      return window.slice(-deny.length);
+    };
+    const capture = (current, text) => {
+      if (Buffer.byteLength(current) >= MAX_JSON_LINE_BYTES) return current;
+      const next = current + text;
+      if (Buffer.byteLength(next) <= MAX_JSON_LINE_BYTES) return next;
+      return Buffer.from(next).subarray(0, MAX_JSON_LINE_BYTES).toString('utf8');
+    };
     child.on('error', error => finish(error, true));
     child.stdout.on('data', chunk => {
-      stdout += chunk.toString('utf8');
+      const text = chunk.toString('utf8');
+      stdoutTail = watch(stdoutTail, text);
+      stdout = capture(stdout, text);
       rest = appendJsonLine(rest, chunk, {
         onLine(line) {
           if (!line.trim()) return;
           try {
             const event = JSON.parse(line);
+            if (events.length >= 1024) { overflow = true; return; }
             events.push(event);
             onEvent?.(event, events);
           } catch { /* non-JSON stdout stays out of the event list */ }
@@ -79,9 +94,36 @@ function spawnMuse(binary, args, env, onEvent, sandboxPath) {
         onOverflow() { overflow = true; },
       });
     });
-    child.stderr.on('data', chunk => { stderr += chunk.toString('utf8'); });
-    child.on('close', code => finish({ code, stdout, stderr, events, overflow }, false));
+    child.stderr.on('data', chunk => {
+      const text = chunk.toString('utf8');
+      stderrTail = watch(stderrTail, text);
+      stderr = capture(stderr, text);
+    });
+    child.on('close', code => finish({ code, stdout, stderr, events, overflow, exposedDefaultConfig }, false));
   });
+}
+
+async function defaultAuthStamp() {
+  try { return (await stat(join(homedir(), '.config', 'muse', 'auth.json'))).mtimeMs; }
+  catch (error) {
+    if (error.code === 'ENOENT') return null;
+    throw Error('Preflight could not compare default Muse auth metadata');
+  }
+}
+
+async function readPhaseLedger(phaseLedger) {
+  const path = join(phaseLedger, 'phase-budget.json');
+  try { await stat(path); }
+  catch (error) {
+    if (error.code === 'ENOENT') return { present: false, uncertain: null, overrun: null, remainingUsd: null, reservations: null };
+    throw error;
+  }
+  const phaseBudget = await createPhaseBudget(phaseLedger);
+  const status = await phaseBudget.status();
+  return {
+    present: true, uncertain: status.uncertain, overrun: status.overrun,
+    remainingUsd: status.remainingUsd, reservations: status.reservations,
+  };
 }
 
 async function assertVersion(binary, env, sandboxPath) {
@@ -108,22 +150,14 @@ export async function runEchoPreflight({
   });
   await mkdir(probeEnv.XDG_CONFIG_HOME, { recursive: true });
   const version = await assertVersion(binary, probeEnv, support.sandboxPath);
-  const realAuth = join(homedir(), '.config', 'muse', 'auth.json');
-  let authBefore = null;
-  if (realAuth) {
-    try { authBefore = (await stat(realAuth)).mtimeMs; } catch (error) { if (error.code !== 'ENOENT') throw error; }
-  }
+  const authBefore = await defaultAuthStamp();
   const good = await runCase({ binary, sandboxPath: support.sandboxPath, root: join(out, 'good'), task, mode: 'server' });
   const crashed = await runCase({ binary, sandboxPath: support.sandboxPath, root: join(out, 'required'), task, mode: 'crash' });
   const dropped = await runCase({ binary, sandboxPath: support.sandboxPath, root: join(out, 'both-keys'), task, mode: 'both' });
   const legacy = await runCase({ binary, sandboxPath: support.sandboxPath, root: join(out, 'legacy-key'), task, mode: 'legacy' });
-  let authAfter = null;
-  if (realAuth) {
-    try { authAfter = (await stat(realAuth)).mtimeMs; } catch (error) { if (error.code !== 'ENOENT') throw error; }
-  }
+  const authAfter = await defaultAuthStamp();
   if (authBefore !== authAfter) throw Error('Preflight changed the default Muse auth file');
-  const phaseBudget = await createPhaseBudget(phaseLedger);
-  const phase = await phaseBudget.status();
+  const phase = await readPhaseLedger(phaseLedger);
   const control = museSpendControl();
   const limitations = [
     'Echo preflight does not call Meta and is not a recovery. accepted is false and there is no j/3 rate.',
@@ -140,10 +174,11 @@ export async function runEchoPreflight({
     'Bundled reminder tasks can still appear with --no-foreign-personal-context. They are not shell or web tools.',
     'HOME is preserved and is never reassigned. CODEX_HOME and provider credentials are not forwarded. sandbox-exec denies the default Muse config directory.',
   ];
+  if (!phase.present) limitations.push('The phase ledger is absent. This preflight did not create a replacement journal and did not reserve spend.');
   if (good.events.some(event => JSON.stringify(event).includes('provider does not support base instructions'))) {
     limitations.push('Echo completed with exit 0 while a model task failed: provider does not support base instructions. Exit status is not acceptance.');
   }
-  if (phase.uncertain || phase.overrun) {
+  if (phase.present && (phase.uncertain || phase.overrun)) {
     limitations.push('The shared phase ledger is uncertain or overrun. This preflight did not settle, reset, or reserve against it. A later reserve would be refused.');
   }
   const checks = {
@@ -161,14 +196,17 @@ export async function runEchoPreflight({
     paidSpendRefused: control.enforceable === false,
     paidTurnOrderingRefused: control.turnOrdering === false,
     defaultAuthUnchanged: authBefore === authAfter,
-    defaultConfigPathHidden: [good, crashed, dropped, legacy].every(item => !`${item.stdout}\n${item.stderr}`.includes(join(homedir(), '.config', 'muse'))),
+    defaultConfigPathHidden: [good, crashed, dropped, legacy].every(item => item.exposedDefaultConfig !== true),
   };
   const failed = Object.entries(checks).filter(([key, value]) => key !== 'trustedGenerations' && key !== 'usageEvents' && value === false);
   if (good.generations < 1) failed.push(['trustedGenerations', false]);
   const result = {
     schemaVersion: 1, kind: 'muse-code-preflight', paidRun: false, accepted: false, recoveryRate: null,
     binary: { path: binary, version: PINNED_MUSE_VERSION }, checks, limitations,
-    phaseLedger: { uncertain: phase.uncertain, overrun: phase.overrun, remainingUsd: phase.remainingUsd, reservations: phase.reservations },
+    phaseLedger: {
+      present: phase.present, uncertain: phase.uncertain, overrun: phase.overrun,
+      remainingUsd: phase.remainingUsd, reservations: phase.reservations,
+    },
   };
   await mkdir(out, { recursive: true });
   await writeFile(join(out, 'preflight.json'), JSON.stringify(result, null, 2) + '\n');
@@ -230,6 +268,7 @@ async function runCase({ binary, sandboxPath, root, task, mode }) {
   try { generations = trustedTurnBefore(seen, seen.length) + 1; } catch { generations = 0; }
   return {
     code: result.code, stdout: result.stdout, stderr: result.stderr, events: seen, started, markerStarted, generations, usageEvents,
+    exposedDefaultConfig: result.exposedDefaultConfig,
     violations: eventToolViolations(seen),
     workspaceOnlyTask: workspaceFiles.length === 1 && workspaceFiles[0] === join(workspace, 'TASK.md'),
   };

@@ -68,7 +68,15 @@ export async function serveMotionMcp({ input = process.stdin, journalDir = proce
       send({ jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Parse error' } });
       return;
     }
-    if (message.method === 'notifications/initialized' || message.id === undefined) return;
+    if (!message || typeof message !== 'object' || Array.isArray(message)) {
+      send({ jsonrpc: '2.0', id: null, error: { code: -32600, message: 'Invalid Request' } });
+      return;
+    }
+    if (message.method === 'notifications/initialized' || !Object.hasOwn(message, 'id')) return;
+    if (typeof message.method !== 'string') {
+      send({ jsonrpc: '2.0', id: message.id ?? null, error: { code: -32600, message: 'Invalid Request' } });
+      return;
+    }
     try {
       if (message.method === 'initialize') {
         send({ jsonrpc: '2.0', id: message.id, result: {
@@ -84,7 +92,22 @@ export async function serveMotionMcp({ input = process.stdin, journalDir = proce
         return;
       }
       if (message.method === 'tools/call') {
-        const args = typeof message.params?.arguments === 'string' ? JSON.parse(message.params.arguments) : message.params?.arguments ?? {};
+        const params = message.params;
+        if (!params || typeof params !== 'object' || Array.isArray(params) || typeof params.name !== 'string' || params.name.length === 0) {
+          send({ jsonrpc: '2.0', id: message.id, error: { code: -32602, message: 'Invalid params' } });
+          return;
+        }
+        let args;
+        try {
+          args = typeof params.arguments === 'string' ? JSON.parse(params.arguments) : params.arguments ?? {};
+        } catch {
+          send({ jsonrpc: '2.0', id: message.id, error: { code: -32602, message: 'Invalid params' } });
+          return;
+        }
+        if (!args || typeof args !== 'object' || Array.isArray(args)) {
+          send({ jsonrpc: '2.0', id: message.id, error: { code: -32602, message: 'Invalid params' } });
+          return;
+        }
         await waitForTurn(authority);
         const current = await ensureHost();
         const outcome = await current.call(message.params?.name, args);

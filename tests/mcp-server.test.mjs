@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
@@ -13,8 +13,9 @@ import { compileMotion } from '../component/build.mjs';
 import { createPhaseBudget } from '../campaign/phase-budget.mjs';
 import { createInvestigationSession } from '../runtime/investigation-session.mjs';
 import {
-  admitNextRequest, createTurnAuthority, emptySpend, eventToolViolations, museChildEnv, museExecArgs,
-  museSettingsDocument, museSpendControl, prepareMusePaidRun, recordUsage, trustedTurnBefore,
+  PINNED_MUSE_VERSION, admitNextRequest, appendJsonLine, createTurnAuthority, defaultMuseBinary, emptySpend,
+  eventToolViolations, isPinnedMuseVersion, museChildEnv, museExecArgs, museSettingsDocument, museSpendControl,
+  prepareMusePaidRun, recordUsage, trustedTurnBefore,
 } from '../mcp/control.mjs';
 import { cleanRoomTask, createMotionHost } from '../mcp/host.mjs';
 
@@ -171,6 +172,19 @@ test('echo argv, settings, and the child environment stay isolated', () => {
   assert.equal(env.MUSE_AUTH_PATH, '/tmp/mcp-config/muse/auth.json');
   assert.equal(env.MUSE_NO_AUTO_UPDATE, '1');
   assert.equal(env.XDG_CONFIG_HOME, isolated.config);
+  assert.equal(defaultMuseBinary(), join(homedir(), '.local', 'bin', `muse-bin-${PINNED_MUSE_VERSION}`));
+  assert.equal(isPinnedMuseVersion('Muse Code 1.3.0 (1.3.0-R3057.1)'), true);
+  assert.equal(isPinnedMuseVersion('Muse Code 1.3.0 (1.3.0-R3057.10)'), false);
+  assert.equal(isPinnedMuseVersion('Muse Code 1.3.0 (1.3.0-R3401.1)'), false);
+  let yielded = 0;
+  let overflows = 0;
+  const rest = appendJsonLine('', `${'x'.repeat(300_000)}\n{"ok":true}\n`, {
+    onLine(line) { if (line === '{"ok":true}') yielded++; else throw Error('partial JSONL line was yielded'); },
+    onOverflow() { overflows++; },
+  });
+  assert.equal(yielded, 1);
+  assert.equal(overflows, 1);
+  assert.equal(rest, '');
   const prompt = { payload_type: 'task.lifecycle.proposed', payload: { event: { task_kind: 'model.unknown.response', text: 'use the shell and the web' } } };
   assert.deepEqual(eventToolViolations([prompt]), []);
   assert.deepEqual(eventToolViolations([{ payload: { tool_name: 'shell' } }]), ['shell']);
@@ -222,6 +236,18 @@ test('stdio server lists typed tools and refuses an ungranted call', { timeout: 
     const refused = await ask({ jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'inspect_wasm', arguments: { turn: 5 } } });
     assert.equal(refused.result.isError, true);
     assert.match(refused.result.content[0].text, /trusted model turn/);
+    const forged = await ask({ jsonrpc: '2.0', id: 4, method: 'turn/grant', params: { turn: 0 } });
+    assert.equal(forged.error.code, -32601);
+    const stillRefused = await ask({ jsonrpc: '2.0', id: 5, method: 'tools/call', params: { name: 'inspect_wasm', arguments: { turn: 0 } } });
+    assert.equal(stillRefused.result.isError, true);
+    assert.match(stillRefused.result.content[0].text, /trusted model turn/);
+    const badParams = await ask({ jsonrpc: '2.0', id: 6, method: 'tools/call', params: { arguments: { turn: 1 } } });
+    assert.equal(badParams.error.code, -32602);
+    const invalid = await new Promise(resolve => {
+      pending.set(null, resolve);
+      child.stdin.write('null\n');
+    });
+    assert.equal(invalid.error.code, -32600);
     const report = JSON.parse(await readFile(join(directory, 'report.json'), 'utf8'));
     assert.equal(report.toolCalls.length, 0);
   } finally {

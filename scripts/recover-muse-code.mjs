@@ -1,7 +1,6 @@
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { pathToFileURL } from 'node:url';
-import { createPhaseBudget } from '../campaign/phase-budget.mjs';
 import { createRecoveryProtocol } from '../agent/recovery-protocol.mjs';
 import { prepareMusePaidRun } from '../mcp/control.mjs';
 import { runEchoPreflight } from '../mcp/preflight.mjs';
@@ -15,14 +14,16 @@ export async function main(args = process.argv.slice(2)) {
     console.log('node scripts/recover-muse-code.mjs [--preflight] --out <directory> --phase-ledger <directory> [--muse-binary <path>]');
     console.log('node scripts/recover-muse-code.mjs --paid --phase-ledger <directory>');
     console.log('The default action is an unpaid echo preflight. It does not grant a Muse session a trusted turn, and it does not make tools/call operational.');
-    console.log('--paid refuses before any Muse process or ledger reservation.');
-    console.log('Preflight fails if the pinned Muse binary or macOS sandbox-exec is unavailable.');
+    console.log('--paid refuses before any Muse process and before creating or reserving a phase ledger.');
+    console.log('Preflight fails clearly if the pinned Muse binary or macOS sandbox-exec is unavailable. A missing phase ledger is not created.');
     return 0;
   }
   if (values.paid) {
     if (!values['phase-ledger']) throw Error('--phase-ledger is required');
-    const phaseBudget = await createPhaseBudget(resolve(values['phase-ledger']));
-    await prepareMusePaidRun({ phaseBudget, protocol: createRecoveryProtocol() });
+    await prepareMusePaidRun({
+      phaseBudget: { async reserve() { throw Error('Paid Muse run refused before a ledger reservation'); } },
+      protocol: createRecoveryProtocol(),
+    });
     throw Error('Paid Muse run refused');
   }
   if (!values.out || !values['phase-ledger']) throw Error('--out and --phase-ledger are required');
