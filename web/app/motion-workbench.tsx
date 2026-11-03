@@ -15,6 +15,7 @@ import { AgeAcknowledgment, AgeProvider } from './components/age-acknowledgment'
 import { Afterimage, useDashPulse } from './arcade/afterimage';
 import { DestinationPicker, type Destination } from './arcade/destination-picker';
 import { DonorPlayer } from './arcade/donor-player';
+import { SavedGamePlayer, type SavedGame } from './arcade/saved-game-player';
 import { GameCabinet } from './arcade/game-cabinet';
 import { Hero, TopBar } from './arcade/hero';
 import { shortTitle, worldUnits, type DashIntent } from './arcade/intent';
@@ -81,6 +82,7 @@ export function MotionWorkbench() {
   const frame = useRef<HTMLIFrameElement>(null);
   const [componentPulse, dashComponent] = useDashPulse();
   const [donorOpen, setDonorOpen] = useState(false);
+  const [gameOpen, setGameOpen] = useState<string | null>(null);
   const catalog = useCatalog(base?.componentId ?? null, catalogRevision);
   const send = useCallback(
     (type: string, extra: Record<string, unknown> = {}) => {
@@ -171,25 +173,46 @@ export function MotionWorkbench() {
     return n ? `v${n} · ${shortTitle(version?.prompt ?? version?.summary)}` : 'Saved version';
   };
   const currentId = active?.id ?? base?.id ?? '';
-  const destinations: Destination[] = base
+  const jujumpPage = readJujumpComparison() ?? '/accepted/jujump/index.html';
+  const jujumpFolder = jujumpPage.replace(/index\.html$/, '');
+  type SavedEntry = SavedGame & Omit<Destination, 'id' | 'name'>;
+  const savedGames: SavedEntry[] = base
     ? [
-        {
-          id: 'parallaxia',
-          name: 'PARALLAXIA',
-          genre: 'Bullet-hell shooter · ABA Games',
-          status: 'live' as const,
-          sprite: 'ship' as const,
-          href: null,
-          note: 'Live Meta remixes, the dash-end combo and checkpoint experiments.',
-        },
         {
           id: 'jujump',
           name: 'JUJUMP',
           genre: 'One-button platformer · ABA Games',
-          status: 'saved' as const,
-          sprite: 'jumper' as const,
-          href: readJujumpComparison() ?? '/accepted/jujump/index.html',
-          note: 'Same accepted component. Compare the original and borrowed dash side by side.',
+          sprite: 'jumper',
+          status: 'saved',
+          note: 'Same accepted component. Play the original and the borrowed dash side by side.',
+          credit: 'by Kenta Cho / ABA Games',
+          aspect: 1,
+          frames: [
+            {
+              kind: 'before',
+              title: 'JUJUMP',
+              src: jujumpFolder + 'original.html?mode=original',
+              sameOrigin: true,
+              controls: [{ action: 'jump', label: 'Start / jump', kbd: 'Space' }],
+            },
+            {
+              kind: 'after',
+              title: 'JUJUMP + dash',
+              src: jujumpFolder + 'transferred.html?mode=transfer',
+              sameOrigin: true,
+              controls: [
+                { action: 'jump', label: 'Start / jump', kbd: 'Space' },
+                { action: 'dash', label: 'Hold to dash', kbd: 'D' },
+              ],
+            },
+          ],
+          keeps: 'Gravity, weakening air jumps, platform landing and scrolling.',
+          carries:
+            'The same 8-tick burst and 25-tick recharge, now across the air while gravity keeps pulling.',
+          help: 'Click a game to focus it. Space starts and jumps; hold D to dash in the right-hand game.',
+          idleLabel: 'PRESS SPACE TO START',
+          readyLabel: 'DASH READY · HOLD D',
+          extra: { label: 'Standalone developer project ↗', href: jujumpPage },
         },
         ...(base.historicalRoadster
           ? [
@@ -197,10 +220,29 @@ export function MotionWorkbench() {
                 id: 'roadster',
                 name: 'RDSTR Stunts',
                 genre: '3D stunt driving · sebayaki',
-                status: 'historical' as const,
                 sprite: 'car' as const,
-                href: base.historicalRoadster,
+                status: 'historical' as const,
                 note: 'An earlier saved transfer, kept with its original artifact bytes.',
+                credit: 'by sebayaki',
+                aspect: 1.5,
+                frames: [
+                  {
+                    kind: 'after' as const,
+                    title: 'RDSTR Stunts + air dash',
+                    src: base.historicalRoadster,
+                    sameOrigin: false,
+                    controls: [
+                      { action: 'run' as const, label: 'Run the stunt' },
+                      { action: 'dash' as const, label: 'Air dash', kbd: 'X' },
+                      { action: 'restart' as const, label: 'Restart' },
+                    ],
+                  },
+                ],
+                keeps: 'Native driving, gravity, rotation, terrain and collision rules.',
+                carries: 'The same burst and recharge, mapped to horizontal driving world units.',
+                help: 'Hold ↑ in the game to drive, or press Run the stunt for autopilot. Once airborne, hold X or Air dash.',
+                idleLabel: 'LAUNCH OFF THE RAMP · THEN HOLD X',
+                readyLabel: 'AIRBORNE · HOLD X TO DASH',
               },
             ]
           : []),
@@ -210,15 +252,61 @@ export function MotionWorkbench() {
                 id: 'paku-paku',
                 name: 'PAKU PAKU',
                 genre: 'Dot-eating maze · ABA Games',
-                status: 'historical' as const,
                 sprite: 'dots' as const,
-                href: '/?destination=paku-paku',
+                status: 'historical' as const,
                 note: 'The first saved transfer of the recovered dash.',
+                credit: 'by Kenta Cho / ABA Games',
+                aspect: 2,
+                frames: [
+                  {
+                    kind: 'before' as const,
+                    title: 'PAKU PAKU',
+                    src: '/play?mode=original',
+                    sameOrigin: true,
+                    controls: [{ action: 'jump' as const, label: 'Start / turn', kbd: 'Space' }],
+                  },
+                  {
+                    kind: 'after' as const,
+                    title: 'PAKU PAKU + dash',
+                    src: '/play?mode=transfer',
+                    sameOrigin: true,
+                    controls: [
+                      { action: 'jump' as const, label: 'Start / turn', kbd: 'Space' },
+                      { action: 'dash' as const, label: 'Hold to dash', kbd: 'D' },
+                    ],
+                  },
+                ],
+                keeps: 'Turning, pellets, ghosts, power cookies and wraparound.',
+                carries: 'A quick burst in your direction, with the donor’s duration and recharge.',
+                help: 'Click a game to focus it. Space starts and turns; hold D to dash in the right-hand game.',
+                idleLabel: 'PRESS SPACE TO START',
+                readyLabel: 'DASH READY · HOLD D',
               },
             ]
           : []),
       ]
     : [];
+  const destinations: Destination[] = base
+    ? [
+        {
+          id: 'parallaxia',
+          name: 'PARALLAXIA',
+          genre: 'Bullet-hell shooter · ABA Games',
+          status: 'live',
+          sprite: 'ship',
+          note: 'Live Meta remixes, the dash-end combo and checkpoint experiments.',
+        },
+        ...savedGames.map(({ id, name, genre, status, sprite, note }) => ({
+          id,
+          name,
+          genre,
+          status,
+          sprite,
+          note,
+        })),
+      ]
+    : [];
+  const openGame = savedGames.find((game) => game.id === gameOpen) ?? null;
   const badge = practice
     ? 'PRACTICE · SHIELD ON · BASELINE REUSE'
     : active
@@ -464,7 +552,11 @@ export function MotionWorkbench() {
               <p role="status">{error || 'Loading the verified integration…'}</p>
             </article>
           )}
-          <DestinationPicker destinations={destinations} onPlayLive={() => scrollToId('stage')} />
+          <DestinationPicker
+            destinations={destinations}
+            onPlayLive={() => scrollToId('stage')}
+            onOpen={setGameOpen}
+          />
         </section>
         {error && base && (
           <p role="alert" className="workbench-alert">
@@ -536,6 +628,16 @@ export function MotionWorkbench() {
                     scrollToId('motion-creation', 'motion-prompt');
                   }
             }
+          />
+        )}
+        {openGame && (
+          <SavedGamePlayer
+            game={openGame}
+            onClose={() => setGameOpen(null)}
+            onTryLive={() => {
+              setGameOpen(null);
+              scrollToId('motion-creation', 'motion-prompt');
+            }}
           />
         )}
         {donorOpen && (

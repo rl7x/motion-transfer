@@ -2596,6 +2596,102 @@ html:has(.arcade) body {
   margin: 14px 0 0;
 }
 
+/* Saved transfers: before and after, played in place */
+.arcade .donor-dialog.game-dialog {
+  width: min(1080px, calc(100% - 24px));
+}
+.arcade .game-dialog__frames {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 16px;
+}
+.arcade .game-frame {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+  padding: 14px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+.arcade .game-frame--after {
+  border-color: rgba(198, 244, 50, 0.5);
+}
+.arcade .game-frame .game-frame__tag {
+  margin: 0;
+  font: 700 11px var(--mono);
+  letter-spacing: 0.12em;
+  color: var(--mute);
+}
+.arcade .game-frame--after .game-frame__tag {
+  color: var(--lime);
+}
+.arcade .game-frame h3 {
+  margin: 0;
+  font: 800 20px/1.1 var(--display);
+}
+.arcade .game-frame__screen {
+  width: min(100%, calc(50vh * var(--aspect)));
+  margin: 0 auto;
+  padding: 8px;
+  background: #05050a;
+  border: 1px solid #22264a;
+  border-radius: 12px;
+  transition: box-shadow 160ms steps(3, end);
+}
+.arcade .game-frame__screen.is-dashing {
+  box-shadow:
+    0 0 0 2px var(--lime),
+    0 0 36px rgba(198, 244, 50, 0.3);
+}
+.arcade .game-frame__screen iframe {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--aspect);
+  border: 0;
+  border-radius: 6px;
+  background: #101010;
+}
+.arcade .game-frame .dash-meter {
+  margin: 0 auto;
+}
+.arcade .game-frame .game-frame__none {
+  margin: 0;
+  padding: 12px;
+  font: 600 12px/1.4 var(--mono);
+  text-align: center;
+  color: var(--faint);
+  border: 1px dashed var(--line-2);
+  border-radius: 12px;
+}
+.arcade .key--wide {
+  font-size: 14px;
+}
+.arcade .game-dialog__notes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 12px;
+  margin: 16px 0 0;
+}
+.arcade .game-dialog__notes div {
+  padding: 12px 14px;
+  background: var(--panel-2);
+  border-radius: 12px;
+}
+.arcade .game-dialog__notes dt {
+  font: 700 11px var(--mono);
+  letter-spacing: 0.1em;
+  color: var(--mute);
+}
+.arcade .game-dialog__notes dd {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
 /* Game cabinet */
 .arcade .cabinet {
   position: relative;

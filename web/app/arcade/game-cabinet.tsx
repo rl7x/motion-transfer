@@ -39,9 +39,11 @@ export function readDash(motion: MotionSample | null | undefined): DashReading {
 export function DashMeter({
   reading,
   idleLabel = 'WAITING FOR THE FIRST UPDATE',
+  readyLabel = 'DASH READY · PRESS X',
 }: {
   reading: DashReading;
   idleLabel?: string;
+  readyLabel?: string;
 }) {
   const recharging = !reading.active && (reading.cooldown ?? 0) > 0;
   const ready = reading.known && !reading.active && !recharging;
@@ -63,7 +65,7 @@ export function DashMeter({
       ? 'DASH ACTIVE'
       : recharging
         ? `RECHARGING · ${((reading.cooldown ?? 0) / 60).toFixed(2)}s`
-        : 'DASH READY · PRESS X';
+        : readyLabel;
   return (
     <div
       className={

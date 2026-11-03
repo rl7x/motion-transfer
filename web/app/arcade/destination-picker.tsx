@@ -1,4 +1,3 @@
-import { linkHref } from '../links';
 import { PixelSprite } from './pixel-sprite';
 import type { SpriteName } from './pixel-sprite';
 
@@ -8,7 +7,6 @@ export interface Destination {
   genre: string;
   status: 'live' | 'saved' | 'historical';
   sprite: SpriteName;
-  href: string | null;
   note: string;
 }
 
@@ -22,9 +20,12 @@ const STATUS_LABEL: Record<Destination['status'], string> = {
 export function DestinationPicker({
   destinations,
   onPlayLive,
+  onOpen,
 }: {
   destinations: Destination[];
   onPlayLive(): void;
+  /** Open a saved transfer in the in-page player. */
+  onOpen(id: string): void;
 }) {
   return (
     <aside className="dest-picker" aria-labelledby="destinations-title">
@@ -57,20 +58,19 @@ export function DestinationPicker({
                 >
                   {body}
                 </button>
-              ) : destination.href ? (
-                <a
+              ) : (
+                <button
+                  type="button"
                   className="cartridge"
-                  href={linkHref(destination.href)}
-                  target="_blank"
-                  rel="noreferrer"
                   aria-describedby={`destination-${destination.id}-note`}
+                  onClick={() => onOpen(destination.id)}
                 >
                   {body}
                   <span className="cartridge__open" aria-hidden="true">
-                    ↗
+                    ▶
                   </span>
-                </a>
-              ) : null}
+                </button>
+              )}
               <p className="cartridge__note" id={`destination-${destination.id}-note`}>
                 {destination.note}
               </p>
@@ -79,8 +79,8 @@ export function DestinationPicker({
         })}
       </ul>
       <p className="dest-picker__foot">
-        Live Meta remixes run on PARALLAXIA. The other cartridges open saved, verified transfers of
-        the same recovered component.
+        Live Meta remixes run on PARALLAXIA. The other cartridges play saved, verified transfers of
+        the same recovered component, before and after, right here.
       </p>
     </aside>
   );
