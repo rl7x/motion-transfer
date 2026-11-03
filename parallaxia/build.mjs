@@ -5,6 +5,7 @@ import { loadParallaxia } from '../recipients/parallaxia/load.mjs';
 import { resolveComponentRef, componentIdentity } from '../component/reference.mjs';
 import { PARALLAXIA_SOURCE, parallaxiaHooks } from './sim.mjs';
 import { ROADSTER_INTENT, validateRoadsterIntent } from '../roadster/port.mjs';
+import { parallaxiaDescriptor } from './recipient.mjs';
 import { digest } from '../component/build.mjs';
 
 const cache = new Map();
@@ -14,8 +15,10 @@ export async function buildParallaxiaFrame({
   intent = ROADSTER_INTENT,
   componentRef,
   challenge,
+  collisionPolicy = challenge ? 'practice-shield' : 'native',
 } = {}) {
   validateRoadsterIntent(intent);
+  if (!['native', 'practice-shield'].includes(collisionPolicy)) throw Error('Unsupported collision policy');
   const recipient = await loadParallaxia();
   const component = await resolveComponentRef(componentRef);
   const donorNotice = await readFile(
@@ -34,6 +37,8 @@ export async function buildParallaxiaFrame({
     'parallaxia/sim.mjs',
     'parallaxia/challenge-contract.mjs',
     'roadster/port.mjs',
+    'parallaxia/port.mjs',
+    'parallaxia/recipient.mjs',
     'web/parallaxia-entry.js',
     'transfer/adapter.mjs',
     'transfer/worker.mjs',
@@ -53,6 +58,9 @@ export async function buildParallaxiaFrame({
     );
   }
   const environment = {
+    recipient: await parallaxiaDescriptor(),
+    collisionPolicy,
+    addedDashInvulnerability: false,
     componentId: component.provenance.id,
     componentRef: componentIdentity(component),
     donorNoticeSha256: digest(donorNotice),
@@ -94,6 +102,7 @@ export async function buildParallaxiaFrame({
       intent,
       componentId: component.provenance.id,
       transferred: Boolean(source),
+      collisionPolicy,
       ...(challenge ? { challenge } : {}),
     })};`,
   };

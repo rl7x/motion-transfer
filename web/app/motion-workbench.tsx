@@ -1,0 +1,166 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { fetchJson, errorMessage } from './api';
+import { linkHref } from './links';
+import { HoldButton } from './components/hold-button';
+import { Header } from './components/static-content';
+import { AgeAcknowledgment, AgeProvider } from './components/age-acknowledgment';
+
+interface Baseline {
+  id: string;
+  componentId: string;
+  play: string;
+  practice: string;
+  download: string;
+  report: string;
+  recipient: { name: string; unitMapping: string };
+}
+
+export function MotionWorkbench() {
+  const [base, setBase] = useState<Baseline | null>(null);
+  const [error, setError] = useState('');
+  const [practice, setPractice] = useState(false);
+  const [channel] = useState(() => crypto.randomUUID());
+  const frame = useRef<HTMLIFrameElement>(null);
+  const [status, setStatus] = useState('Loading the verified integration…');
+  const send = useCallback(
+    (type: string, extra: Record<string, unknown> = {}) => {
+      frame.current?.contentWindow?.postMessage({ channel, type, ...extra }, '*');
+    },
+    [channel],
+  );
+  useEffect(() => {
+    const controller = new AbortController();
+    void fetchJson<Baseline>('/api/parallaxia/base', { signal: controller.signal })
+      .then(setBase)
+      .catch((failure: unknown) => {
+        if (!controller.signal.aborted) setError(errorMessage(failure));
+      });
+    return () => controller.abort();
+  }, []);
+  useEffect(() => {
+    const receive = (event: MessageEvent) => {
+      if (event.source !== frame.current?.contentWindow || event.data?.channel !== channel) return;
+      if (event.data.type === 'motion-status') {
+        setStatus(
+          event.data.motion?.output?.ownsMotion
+            ? 'Recovered dash active'
+            : 'Native flight · X to dash',
+        );
+      }
+      if (event.data.type === 'challenge-status')
+        setStatus('Practice shield · ' + String(event.data.state?.phase ?? 'ready'));
+    };
+    window.addEventListener('message', receive);
+    return () => window.removeEventListener('message', receive);
+  }, [channel]);
+  return (
+    <AgeProvider>
+      <main className="motion-workbench">
+        <Header />
+        <AgeAcknowledgment />
+        <section className="destination-section">
+          <p className="eyebrow">BORROW A MOVE · MAKE IT PLAYABLE</p>
+          <h1>Dashy Dango → PARALLAXIA</h1>
+          <p>
+            Reuse the accepted eight-update dash with its 25-tick recharge. PARALLAXIA keeps its
+            native movement, enemy rules and collisions.
+          </p>
+          <p className="pill">VERIFIED REUSE · NO MODEL REQUEST</p>
+          <p>
+            Component <code>{base?.componentId ?? 'Loading…'}</code>
+          </p>
+          <p>{base?.recipient.unitMapping}</p>
+        </section>
+        <section className="games" aria-label="PARALLAXIA movement workbench">
+          <article className="game-card transferred">
+            <h2>
+              {practice ? 'Practice challenge · shield enabled' : 'PARALLAXIA · native collisions'}
+            </h2>
+            {base ? (
+              <iframe
+                ref={frame}
+                id="parallaxia-game"
+                title="PARALLAXIA with accepted recovered dash"
+                src={linkHref((practice ? base.practice : base.play) + '#channel=' + channel)}
+                sandbox="allow-scripts"
+                allow="autoplay"
+              />
+            ) : (
+              <p role="status">{error || status}</p>
+            )}
+            <div className="toolbar">
+              <button
+                onClick={() =>
+                  send(practice ? 'challenge-command' : 'roadster-restart', { action: 'start' })
+                }
+              >
+                Restart
+              </button>
+              {!practice &&
+                [
+                  ['left', '←'],
+                  ['right', '→'],
+                  ['up', '↑'],
+                  ['down', '↓'],
+                  ['shot', 'Shoot'],
+                ].map(([control, label]) => (
+                  <HoldButton
+                    key={control}
+                    aria-label={'Ship ' + control}
+                    onHold={(pressed) => send('parallaxia-input', { control, pressed })}
+                  >
+                    {label}
+                  </HoldButton>
+                ))}
+              <HoldButton onHold={(pressed) => send('dash', { pressed })}>
+                Dash <kbd>X</kbd>
+              </HoldButton>
+              {practice && (
+                <button onClick={() => send('challenge-command', { action: 'borrow' })}>
+                  Borrow dash
+                </button>
+              )}
+              <button onClick={() => setPractice((value) => !value)}>
+                {practice ? 'Play with native collisions' : 'Open shielded practice'}
+              </button>
+            </div>
+            <p role="status">{status}</p>
+            <p>
+              Focus the game. Arrows/WASD move; Space/Z shoots; X dashes. Native mode adds no
+              invulnerability. Practice measures position with a shield, not survival.
+            </p>
+            {base && (
+              <p>
+                <a href={linkHref(base.download)} download>
+                  Download this exact game
+                </a>{' '}
+                · <a href={linkHref(base.report)}>Recipient verification</a>
+              </p>
+            )}
+          </article>
+        </section>
+        <section className="destination-section" id="motion-creation">
+          <h2>Adapt the dash</h2>
+          <p>Supported changes: distance, direction, and held or fresh-press activation.</p>
+          <p>
+            Live generation is being connected to the isolated recipient verifier. The saved
+            integration above makes no model call.
+          </p>
+        </section>
+        <p>
+          <a href="/accepted/jujump/index.html">Same accepted component in JUJUMP</a> ·{' '}
+          <a href="/?destination=roadster">Historical Roadster</a> ·{' '}
+          <a href="/donor/play">Compiled donor</a>
+        </p>
+        <footer>
+          Dashy Dango by willGuimont · PARALLAXIA and JUJUMP by Kenta Cho / ABA Games.{' '}
+          {base && (
+            <a href={linkHref(`/parallaxia/artifacts/${base.id}/notices.txt`)}>
+              Licenses and notices
+            </a>
+          )}
+        </footer>
+      </main>
+    </AgeProvider>
+  );
+}

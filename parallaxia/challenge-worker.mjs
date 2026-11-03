@@ -1,6 +1,6 @@
 import vm from 'node:vm';
 import { loadParallaxiaSim } from './sim.mjs';
-import { createRoadsterPort } from '../roadster/port.mjs';
+import { createParallaxiaPort } from '../parallaxia/port.mjs';
 import {
   PARALLAXIA_CHALLENGE,
   createParallaxiaChallengeControls,
@@ -49,7 +49,7 @@ try {
   });
 
   globalThis.parallaxiaChallengeShield = true;
-  globalThis.roadsterPort = createRoadsterPort({});
+  globalThis.roadsterPort = createParallaxiaPort({});
   const nativeSim = createSim({
     seed: PARALLAXIA_CHALLENGE.seed,
     mode: PARALLAXIA_CHALLENGE.mode,
@@ -62,7 +62,7 @@ try {
   }
   const nativeLanding = landingEvent(nativeSim);
 
-  const port = createRoadsterPort({
+  const port = createParallaxiaPort({
     component,
     adapter,
     defaults: request.defaults,

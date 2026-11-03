@@ -6,11 +6,13 @@ import { createFx, fxStep } from '@/render/fx.js';
 import { createAudioBus } from '@/audio/bus.js';
 import { createWebAudioAdapter } from '@/audio/webaudio.js';
 import { bossTuneAt, cueFor, loopForMusic } from '@/audio/music.js';
-import { createRoadsterPort } from '../roadster/port.mjs';
+import { createParallaxiaPort } from '../parallaxia/port.mjs';
 import { createParallaxiaChallengeControls } from '../parallaxia/challenge-contract.mjs';
 import * as component from 'roadster-core';
 import * as candidate from 'roadster-adapter';
 import config from 'roadster-config';
+
+globalThis.parallaxiaChallengeShield = config.collisionPolicy === 'practice-shield';
 
 const testing = new URLSearchParams(location.search).get('test') === '1';
 const presentationEnabled =
@@ -66,7 +68,7 @@ function decayAfterimages() {
   }));
 }
 
-const port = createRoadsterPort({
+const port = createParallaxiaPort({
   component,
   adapter: config.transferred ? candidate : null,
   defaults: config.defaults,
@@ -325,6 +327,10 @@ const channel = location.hash.match(/(?:#|&)channel=([a-zA-Z0-9-]+)/)?.[1];
 window.addEventListener('message', (event) => {
   if (event.source !== parent || !channel || event.data?.channel !== channel) return;
   const { type, pressed } = event.data;
+  if (type === 'parallaxia-input') {
+    const bit = { left: INPUT.LEFT, right: INPUT.RIGHT, up: INPUT.UP, down: INPUT.DOWN, shot: INPUT.SHOT }[event.data.control];
+    if (bit !== undefined) keyboardBits = pressed ? keyboardBits | bit : keyboardBits & ~bit;
+  }
   if (type === 'dash') {
     dash = Boolean(pressed);
     port.setDash(dash);

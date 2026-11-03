@@ -104,15 +104,13 @@ export function patchParallaxiaPlayer(source) {
   ship.x = Math.max(-limitX, Math.min(limitX, ship.x + dx));
   ship.y = Math.max(-limitY, Math.min(limitY, ship.y + vy));
   ship.dashing = dashStep !== null && dashStep !== undefined;
-  if (ship.dashing) {
-    ship.px = ship.x;
-  }`,
+`,
     'updateShip dash hook',
   );
   out = replaceOnce(
     out,
     '  if (sim.phase !== "play" || shipInvincible(ship)) return;',
-    `  if (sim.phase !== "play" || shipInvincible(ship) || ship.dashing) return;
+    `  if (sim.phase !== "play" || shipInvincible(ship)) return;
   if (globalThis.parallaxiaChallengeShield) {
     sim.events.push({ type: "hit", x: ship.x, y: ship.y });
     return;
@@ -185,14 +183,15 @@ export function parallaxiaHooks() {
   };
 }
 
-let cachedSimModule = null;
+const simModules = new Map();
 
-export async function loadParallaxiaSim() {
-  if (cachedSimModule) return cachedSimModule;
+export async function loadParallaxiaSim({ native = false } = {}) {
+  if (simModules.has(native)) return simModules.get(native);
   await loadParallaxia();
   const entry = `
     export { createSim, stepSim, FPS, FRAME_MS, capabilities, observe, hashState } from './sim/sim.js';
     export { INPUT } from './sim/input.js';
+    export { missShip, updateShip } from './sim/player.js';
     export { FIELD, VIEW, SHIP, MODES } from './sim/constants.js';
   `;
   const virtual = {
@@ -215,9 +214,10 @@ export async function loadParallaxiaSim() {
     write: false,
     format: 'esm',
     target: 'es2022',
-    plugins: [virtual, parallaxiaHooks()],
+    plugins: native ? [virtual] : [virtual, parallaxiaHooks()],
   });
   const code = result.outputFiles[0].text;
-  cachedSimModule = await import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`);
-  return cachedSimModule;
+  const module = await import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`);
+  simModules.set(native, module);
+  return module;
 }

@@ -128,7 +128,7 @@ export function ChallengePlayer() {
             ? 'Dash borrowed. Launch, then choose when to phase-dash.'
             : 'Launch the original wave. Then borrow a move from Dashy Dango.';
   return (
-    <section className="challenge-section games" aria-label="PARALLAXIA barrage challenge">
+    <section className="challenge-section games" aria-label="RDSTR Stunts barrage challenge">
       <article ref={card} className="game-card challenge-card transferred">
         <div className="card-heading">
           <div>
@@ -154,7 +154,7 @@ export function ChallengePlayer() {
               ref={frame}
               id="transfer-game"
               src={linkHref(data.play + '?quality=low#channel=' + channel)}
-              title="PARALLAXIA barrage challenge"
+              title="RDSTR Stunts barrage challenge"
               sandbox="allow-scripts"
               allow="autoplay"
             />
@@ -237,7 +237,7 @@ export function ChallengePlayer() {
         {readGenerationMode() !== 'playback-only' && (
           <p id="audience-notice" className="saved-note">
             The download is a playable game for adults 18 and older. It makes no model request.
-            Opened on its own, a PARALLAXIA file shows that notice.
+            Opened on its own, a RDSTR Stunts file shows that notice.
           </p>
         )}
         <p className="saved-note" id="guided-progress">
@@ -262,13 +262,13 @@ export function ChallengePlayer() {
       </article>
       <aside className="challenge-context">
         <p className="eyebrow">THE MOVE COMES FROM ANOTHER GAME</p>
-        <h3>Dashy Dango → PARALLAXIA</h3>
+        <h3>Dashy Dango → RDSTR Stunts</h3>
         <p>
           A dash recovered from compiled WASM-4 bytecode becomes a 60-pixel horizontal phase-dash in
           Kenta Cho&apos;s bullet-hell shooter.
         </p>
         <p>
-          The green safe zone is our challenge. PARALLAXIA&apos;s ship, raster renderer, enemy
+          The green safe zone is our challenge. RDSTR Stunts&apos;s ship, raster renderer, enemy
           formations, barrages and NES chiptune synth are upstream work by Kenta Cho (ABA Games).
         </p>
         <p>

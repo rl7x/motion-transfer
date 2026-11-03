@@ -13,6 +13,7 @@ import { Proof, TransferExplanation } from './components/proof';
 import { InvestigationPanel } from './components/investigation-panel';
 import { RemixPanel } from './components/remix-panel';
 import { ArtifactDetails } from './components/artifact-details';
+import { MotionWorkbench } from './motion-workbench';
 
 class AppBoundary extends Component<{ children: ReactNode }, { error: boolean }> {
   state = { error: false };
@@ -67,6 +68,12 @@ function Experience() {
   );
 }
 export function App() {
+  if (
+    !window.__MOTION_TRANSFER__ &&
+    (new URL(location.href).searchParams.get('destination') === 'parallaxia' ||
+      (location.pathname === '/' && !location.search))
+  )
+    return <MotionWorkbench />;
   return (
     <AppBoundary>
       <AgeProvider>

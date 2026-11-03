@@ -74,7 +74,7 @@ export async function measureParallaxiaChallenge({
     sourceSha256: adapter.sourceSha256,
     controlsSha256: digest(JSON.stringify(output.controls)),
     scope:
-      'Human-authored PARALLAXIA barrage challenge. Matched recorded native 60 Hz pilot inputs, with one extra phase-dash in the transferred run; native simulation and collisions stay active.',
+      'Human-authored PARALLAXIA barrage challenge. Matched recorded native 60 Hz pilot inputs, with one extra phase-dash in the transferred run; practice shield prevents life loss; the goal measures final horizontal position, not survival.',
   };
 }
 
@@ -110,6 +110,7 @@ export async function buildParallaxiaChallenge({ parent, componentRef = parent?.
   );
   const challenge = {
     ...PARALLAXIA_CHALLENGE,
+    collisionPolicy: 'practice-shield',
     target,
     controls: measurement.controls,
     controlsSha256: measurement.controlsSha256,
@@ -124,6 +125,8 @@ export async function buildParallaxiaChallenge({ parent, componentRef = parent?.
   const verification = {
     schemaVersion: 1,
     passed: true,
+    collisionPolicy: 'practice-shield',
+    addedDashInvulnerability: false,
     kind: 'matched-native-challenge',
     componentId: component.provenance.id,
     componentRef: componentIdentity(component),
@@ -133,7 +136,7 @@ export async function buildParallaxiaChallenge({ parent, componentRef = parent?.
     controlsSha256: measurement.controlsSha256,
     conformance,
     maxVerticalDifference,
-    netLandingShiftMeters:
+    netLandingShiftWorldUnits:
       measurement.transferred.landing.position.x - measurement.baseline.landing.position.x,
     ordinaryOutsideTarget: !measurement.baseline.inTarget,
     borrowedInsideTarget: measurement.transferred.inTarget,
@@ -154,7 +157,7 @@ export async function buildParallaxiaChallenge({ parent, componentRef = parent?.
   };
   const manifest = {
     schemaVersion: 1,
-    kind: 'roadster-challenge',
+    kind: 'parallaxia-practice-challenge',
     parentArtifactId: parent.id,
     componentId: component.provenance.id,
     componentRef: componentIdentity(component),

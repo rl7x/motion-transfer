@@ -1673,3 +1673,24 @@ body.player-expanded::before {
 .benchmark-attempt {
   margin: 1rem 0;
 }
+
+.motion-workbench code {
+  overflow-wrap: anywhere;
+}
+.motion-workbench .games {
+  display: block;
+  max-width: 900px;
+  margin: 24px auto;
+}
+.motion-workbench .game-card {
+  min-width: 0;
+}
+.motion-workbench iframe {
+  width: 100%;
+  height: min(70vh, 720px);
+  border: 0;
+  background: #000008;
+}
+.motion-workbench .toolbar {
+  flex-wrap: wrap;
+}

@@ -9,14 +9,17 @@ import { experienceAssets } from './experience-assets.mjs';
 import { loadSavedRoadster } from '../roadster/saved.mjs';
 import { buildFrontend } from './build.mjs';
 import { developerBenchmarkAssets } from '../benchmark/assets.mjs';
+import { buildRoadsterChallenge } from '../roadster/challenge.mjs';
 import { buildParallaxiaChallenge } from '../parallaxia/challenge.mjs';
-import { buildParallaxiaFrame } from '../parallaxia/build.mjs';
+import { loadParallaxiaBaseline } from '../parallaxia/artifact.mjs';
+import { acceptedJujumpComparison } from '../release/accepted.mjs';
 
 export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapter, remixes, lab, allowUnverified = false, benchmarks = developerBenchmarkAssets() } = {}) {
   if (adapter === undefined) adapter = await loadPakuTransfer({ optional: true });
   const recipient = await loadPakuPaku();
   const recovered = await loadRecoveredMotion();
   const roadster=await loadSavedRoadster({optional:true});
+  const parallaxia=await loadParallaxiaBaseline();
   const challenges=new Map();
   const challengeFor=id=>{
     if(!challenges.has(id)){
@@ -24,11 +27,12 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
       challenges.set(id,(async()=>{
         const parent=id===roadster?.id?roadster:await lab?.artifact(id);
         if(!parent)throw Error('Roadster artifact not found');
-        return buildParallaxiaChallenge({parent});
+        return buildRoadsterChallenge({parent});
       })().catch(error=>{challenges.delete(id);throw error;}));
     }
     return challenges.get(id);
   };
+  const parallaxiaChallenge = await buildParallaxiaChallenge({parent:parallaxia});
   const assets = new Map([
     ['/assets/app.js', ['text/javascript', await buildFrontend()]],
     ['/assets/runtime.js', ['text/javascript', clockedPakuRuntime(recipient.runtime)]],
@@ -47,6 +51,11 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
     ['/licenses', ['text/plain', recipient.licenses.join('\n\n----------------\n\n')]],
     ['/api/recipient', ['application/json', JSON.stringify(recipient.manifest)]],
   ]);
+  const acceptedJujump=await acceptedJujumpComparison(parallaxia.componentId);
+  for(const [path,bytes] of Object.entries(acceptedJujump.extras)){
+    const ext=path.split('.').at(-1),type=({html:'text/html',js:'text/javascript',mjs:'text/javascript',css:'text/css',json:'application/json'})[ext]??'text/plain';
+    assets.set('/accepted/'+path,[type,bytes]);
+  }
   for(const [path,asset] of await experienceAssets({allowUnverified,adapter,roadster}))assets.set(path,asset);
   for (const [path, file, type] of [
     ['/', 'index.html', 'text/html'], ['/style.css', 'style.css', 'text/css'],
@@ -72,6 +81,18 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
     if (![`${host}:${port}`, `localhost:${port}`].includes(request.headers.host)) { json(403, {error:'Unrecognized preview host'}); return; }
     const url = new URL(request.url, 'http://localhost');
     const path = url.pathname;
+    if(path==='/api/parallaxia/base'){json(200,{id:parallaxia.id,componentId:parallaxia.componentId,componentRef:parallaxia.componentRef,intent:parallaxia.intent,recipient:parallaxia.recipient,provenance:parallaxia.provenance,play:`/parallaxia/artifacts/${parallaxia.id}/play.html`,report:`/parallaxia/artifacts/${parallaxia.id}/report.json`,download:`/parallaxia/artifacts/${parallaxia.id}/download.html`,practice:`/parallaxia/challenge/${parallaxia.id}/play.html`});return;}
+    const parallaxiaPath=path.match(/^\/parallaxia\/(artifacts|challenge)\/([a-f0-9]{64})\/(play\.html|download\.html|adapter\.ts|report\.json|notices\.txt)$/);
+    if(parallaxiaPath){
+      const [,kind,id,file]=parallaxiaPath;
+      if(id!==parallaxia.id){json(404,{error:'PARALLAXIA artifact not found'});return;}
+      const artifact=kind==='challenge'?parallaxiaChallenge:parallaxia;
+      const name=file==='play.html'||file==='download.html'?(kind==='challenge'?'play.html':'frame.html'):file==='report.json'?(kind==='challenge'?'challenge.json':'verification.json'):file;
+      if(!artifact.files[name]){json(404,{error:'File not found'});return;}
+      if(file.endsWith('.html'))response.setHeader('Content-Security-Policy','sandbox allow-scripts');
+      if(file==='download.html')response.setHeader('Content-Disposition',`attachment; filename="parallaxia-${artifact.id.slice(0,12)}.html"`);
+      send(200,file.endsWith('.html')?'text/html':file.endsWith('.json')?'application/json':'text/plain',artifact.files[name]);return;
+    }
     const labKind=path==='/api/investigations'?'investigation':path==='/api/roadster/transfers'?'roadster':null;
     if(labKind&&request.method==='POST'){
       if(!lab){json(503,{error:'Live investigation is unavailable'});return;}
@@ -137,7 +158,7 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
       const id=carArtifact[2],file=carArtifact[3],artifact=id===roadster?.id?roadster:await lab?.artifact(id);
       if(!artifact){json(404,{error:'Roadster artifact not found'});return;}
       if(file==='play.html'){
-        const frame=await buildParallaxiaFrame({source:artifact.files['adapter.ts'],intent:artifact.intent,componentRef:artifact.component});
+        const frame={html:artifact.files['frame.html']};
         response.setHeader('Content-Security-Policy','sandbox allow-scripts');send(200,'text/html',frame.html);return;
       }
       if(file==='adapter.ts'){send(200,'text/plain',artifact.files['adapter.ts']);return;}

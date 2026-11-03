@@ -7,7 +7,7 @@ const testing = new URLSearchParams(location.search).get('test') === '1';
 const channel = location.hash.match(/(?:#|&)channel=([a-zA-Z0-9-]+)/)?.[1];
 const target = challenge.target;
 
-globalThis.parallaxiaChallengeShield = true;
+globalThis.parallaxiaChallengeShield = config.collisionPolicy === 'practice-shield';
 globalThis.parallaxiaChallengeTarget = { ...target, phase: 'ready' };
 globalThis.parallaxiaChallengeStep = (sim) => {
   if (sim.frame >= 540 && sim.frame <= 720 && sim.frame % 6 === 0) {

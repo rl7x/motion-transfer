@@ -5,7 +5,7 @@ import { loadJujumpTransfer, JUJUMP_POLICY } from '../transfer/jujump.mjs';
 import { hookedJujumpSource, jujumpObservationSource } from '../runtime/jujump-browser.mjs';
 import { buildDonorFrame } from './donor-frame.mjs';
 import { loadSavedRoadster } from '../roadster/saved.mjs';
-import { buildParallaxiaFrame } from '../parallaxia/build.mjs';
+import { buildRoadsterFrame } from '../roadster/build.mjs';
 import { savedInvestigations } from '../lab/saved.mjs';
 import { integrationAssets } from '../integration/assets.mjs';
 
@@ -35,16 +35,16 @@ export async function experienceAssets({allowUnverified=false,adapter,roadster}=
   assets.set('/jujump/licenses',['text/plain',recipient.licenses.join('\n\n----------------\n\n')]);
   const destinations=[];
   if(roadster){
-    const transferFrame=await buildParallaxiaFrame({source:roadster.files['adapter.ts'],intent:roadster.intent,componentRef:roadster.component});
-    assets.set('/roadster/play',['text/html',(await buildParallaxiaFrame()).html]);
+    const transferFrame={html:roadster.files['frame.html']};
+    assets.set('/roadster/play',['text/html',(await buildRoadsterFrame()).html]);
     assets.set('/roadster/play-transfer',['text/html',transferFrame.html]);
     assets.set('/roadster/adapter.ts',['text/plain',roadster.files['adapter.ts']]);
     assets.set('/roadster/report.json',['application/json',roadster.files['verification.json']]);
     assets.set('/roadster/presentation.json',['application/json',await readFile(new URL('../transfers/roadster/presentation-evidence.json',import.meta.url),'utf8')]);
     assets.set('/roadster/notices',['text/plain',roadster.files['notices.txt']]);
     json('/api/roadster/base',{id:roadster.id,componentId:roadster.componentId,intent:roadster.intent,summary:roadster.summary,parentArtifactId:roadster.parentArtifactId});
-    destinations.push({id:'roadster',name:'PARALLAXIA',kind:'An 8-way arcade bullet-hell shooter',componentId:component.provenance.id,before:'/roadster/play?mode=original&quality=low',after:'/roadster/play?mode=transfer&quality=low',artifactId:roadster.id,aspect:1.5,
-      keeps:'Its 60 Hz 2D space-shooter simulation, enemy waves, lock-on lasers, grazing multiplier, and NES chiptune synth.',carries:'The same eight-update burst and recharge, now a six-unit horizontal phase-dash across enemy bullet curtains with pixel-art ship afterimages.',control:'Fly the Sector 1 barrage with the assisted pilot, then hold X to phase-dash into the safe zone. Arrow keys, WASD, and Space/Z remain available inside the game.',action:'Run wave',dashKey:'X',liveEdits:['distance','activation','direction'],report:'/roadster/report.json',source:'/roadster/adapter.ts',author:'Meta-generated adapter; human-built host, presentation and verification; upstream game by Kenta Cho (ABA Games)'});
+    destinations.push({id:'roadster',name:'RDSTR Stunts',kind:'A historical driving transfer',componentId:component.provenance.id,before:'/roadster/play?mode=original&quality=low',after:'/roadster/play?mode=transfer&quality=low',artifactId:roadster.id,aspect:1.5,
+      keeps:'Native driving, gravity, rotation, terrain and collision rules.',carries:'The same eight-update burst and recharge, mapped to horizontal driving world units.',control:'Run the stunt, then hold X for the recovered air dash.',action:'Run wave',dashKey:'X',liveEdits:['distance','activation','direction'],report:'/roadster/report.json',source:'/roadster/adapter.ts',author:'Meta-generated adapter; human-built host, presentation and verification; upstream attribution retained in the pinned notices'});
   }
   if(adapter?.receipt)destinations.push({id:'paku-paku',name:'PAKU PAKU',kind:'A one-dimensional maze',componentId:component.provenance.id,
     before:'/play?mode=original',after:'/play?mode=transfer',artifactId:adapter.receipt.id,aspect:2,
