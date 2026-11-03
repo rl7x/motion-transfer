@@ -1,5 +1,6 @@
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { captureAccepted } from '../demo/capture-accepted.mjs';
 import { captureAll } from '../demo/capture.mjs';
 import { parseArgs } from '../demo/cli.mjs';
 import { renderDemo } from '../demo/render.mjs';
@@ -10,10 +11,11 @@ export async function main(argv = process.argv.slice(2)) {
   const args = parseArgs(argv);
   const out = resolve(root, args.out);
   if (args.mode === 'capture' || args.mode === 'all') {
-    await captureAll({ root, out, headed: args.headed });
+    if (args.accepted) await captureAccepted({ root, out, headed: args.headed });
+    else await captureAll({ root, out, headed: args.headed });
   }
   if (args.mode === 'render' || args.mode === 'all') {
-    const rendered = await renderDemo({ root, out, freshPath: args.fresh });
+    const rendered = await renderDemo({ root, out, freshPath: args.fresh, accepted: args.accepted });
     console.log(rendered.video);
     console.log(rendered.srt);
     console.log(rendered.provenance);
