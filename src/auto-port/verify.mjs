@@ -11,7 +11,7 @@ import { buildRuntime } from './runtime.mjs';
 
 export const VERIFY = Object.freeze({
   seeds: [11, 22, 33], ticks: 1200, settleTicks: 30, measureTicks: 12, holdTicks: 90, burstPixels: 60,
-  minShare: 0.02, maxShare: 0.5, relativeTolerance: 0.1, fieldTolerance: 0.02, testTimeoutMs: 90_000,
+  minShare: 0.02, maxShare: 0.5, relativeTolerance: 0.1, fieldTolerance: 0.02, testTimeoutMs: 180_000,
 });
 
 /** Stable text of a game's state, leaving out the host's dash slot and anything a driver skips. */

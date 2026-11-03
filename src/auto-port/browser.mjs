@@ -32,7 +32,7 @@ export function serveGame(directory, runtime) {
 /** The patched game must load in a real page, start from real input and fire the dash. */
 export async function runPortInBrowser({ directory, runtime, driver }) {
   const server = await serveGame(directory, runtime);
-  const browser = await chromium.launch({ channel: process.env.BROWSER_CHANNEL || 'chrome', headless: true });
+  const browser = await chromium.launch({ channel: process.env.BROWSER_CHANNEL || (process.platform === 'linux' ? 'chromium' : 'chrome'), headless: true });
   try {
     const page = await browser.newPage({ viewport: { width: 960, height: 720 } });
     const errors = [], external = [];

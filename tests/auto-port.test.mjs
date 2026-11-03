@@ -6,6 +6,7 @@ import { DRIVERS, EXCLUDED } from '../src/auto-port/drivers.mjs';
 import { runPortInBrowser, injectRuntime } from '../src/auto-port/browser.mjs';
 import { applyPatches, gatePatches } from '../src/auto-port/patches.mjs';
 import { snapshot, verifyPort } from '../src/auto-port/verify.mjs';
+import { parseJob } from '../src/hosting/protocol.mjs';
 import { ACCEPTED_COMPONENT_ID } from '../src/hosting/component-pin.mjs';
 import { loadPinnedComponent } from '../src/hosting/component-load.mjs';
 import { repositoryUrl } from '../src/paths.mjs';
@@ -36,6 +37,15 @@ test('patches apply only through unique anchors and cannot add new capabilities'
     assert.throws(() => gatePatches([{ anchor: 'a', replacement: `a;${banned}` }]), /forbidden capability/, banned);
   }
   assert.doesNotThrow(() => gatePatches([{ anchor: 'Math.random()', replacement: 'Math.random() + MotionDash.calls' }]));
+});
+
+test('the worker accepts only a typed port job', () => {
+  const job = { operation: 'auto-port-verify', gameId: 'skyhaul', patches: reference, unitsPerSourcePixel: 0.5, componentId: ACCEPTED_COMPONENT_ID };
+  assert.deepEqual(parseJob(job), job);
+  assert.throws(() => parseJob({ ...job, command: 'sh' }), /Arbitrary command/);
+  assert.throws(() => parseJob({ ...job, extra: 1 }), /unexpected field/);
+  assert.throws(() => parseJob({ ...job, gameId: '../etc' }), /Unknown auto-port game/);
+  assert.throws(() => parseJob({ ...job, patches: Array(9).fill(reference[0]) }), /Invalid auto-port patches/);
 });
 
 test('state snapshots ignore the host dash slot and keep everything the game owns', () => {

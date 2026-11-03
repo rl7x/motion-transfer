@@ -22,6 +22,7 @@ export const PROFILES = Object.freeze({
   memory: { memory: '96m', cpus: '0.50', pids: 16, timeoutMs: 20_000, tmp: '16m', output: 'tmpfs' },
   'verify-native': { memory: '1g', cpus: '1', pids: 64, timeoutMs: 120_000, tmp: '128m', output: 'bind' },
   'verify-browser': { memory: '2g', cpus: '2', pids: 256, timeoutMs: 240_000, tmp: '256m', shm: '256m', output: 'bind' },
+  'auto-port-verify': { memory: '2g', cpus: '2', pids: 256, timeoutMs: 420_000, tmp: '256m', shm: '256m', output: 'tmpfs' },
 });
 
 export function profileFor(operation) {
@@ -30,6 +31,7 @@ export function profileFor(operation) {
   if (['verify-checkpoint','verify-experiment'].includes(operation)) return PROFILES['verify-native'];
   if (operation === 'verify-native') return PROFILES['verify-native'];
   if (operation === 'verify-browser') return PROFILES['verify-browser'];
+  if (operation === 'auto-port-verify') return PROFILES['auto-port-verify'];
   if (operation.startsWith('probe-')) return PROFILES.probe;
   throw Error('Unknown hosting operation');
 }

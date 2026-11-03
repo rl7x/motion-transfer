@@ -149,6 +149,16 @@ async function dispatch(job) {
     const {verifyCheckpointJob} = await import('./experiment.mjs');
     return {ok:true,passed:true,operation:job.operation,recipientId:'parallaxia',componentId:job.componentId,sourceSha256:digest(job.source),...await verifyCheckpointJob(job,component),...facts()};
   }
+  if (job.operation === 'auto-port-verify') {
+    if (secretNames().length) throw Error('Worker refuses credentials');
+    const component = await boundComponent(job);
+    const { verifyPort } = await import('../auto-port/verify.mjs');
+    const { runPortInBrowser } = await import('../auto-port/browser.mjs');
+    // Generated game code runs in this process, and only the final result may reach stdout.
+    for (const method of ['log', 'info', 'warn', 'error', 'debug']) console[method] = () => {};
+    const report = await verifyPort({ ...job, component, browser: runPortInBrowser });
+    return { ok: true, operation: job.operation, componentId: job.componentId, ...report, ...facts() };
+  }
   if (job.operation === 'probe-egress') return probeEgress();
   if (job.operation === 'probe-env') {
     const present = secretNames();
