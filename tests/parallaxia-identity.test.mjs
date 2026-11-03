@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { chromium } from 'playwright';
 import { createPreviewServer } from '../web/server.mjs';
-import { loadSavedRoadster } from '../roadster/saved.mjs';
-import { loadParallaxiaBaseline, readParallaxiaArtifact, PARALLAXIA_STORE } from '../parallaxia/artifact.mjs';
-import { ACCEPTED_COMPONENT_ID } from '../hosting/component-pin.mjs';
-import { digest } from '../component/build.mjs';
+import { loadSavedRoadster } from '../src/roadster/saved.mjs';
+import { loadParallaxiaBaseline, readParallaxiaArtifact, PARALLAXIA_STORE } from '../src/parallaxia/artifact.mjs';
+import { ACCEPTED_COMPONENT_ID } from '../src/hosting/component-pin.mjs';
+import { digest } from '../src/component/build.mjs';
 
 test('PARALLAXIA has independent accepted-component evidence, native collisions and immutable routes', async () => {
   const server = await createPreviewServer();

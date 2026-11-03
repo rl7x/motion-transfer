@@ -5,8 +5,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { PINNED_MUSE_BINARY, musePreflightAvailability } from '../mcp/control.mjs';
-import { runEchoPreflight } from '../mcp/preflight.mjs';
+import { PINNED_MUSE_BINARY, musePreflightAvailability } from '../src/mcp/control.mjs';
+import { runEchoPreflight } from '../src/mcp/preflight.mjs';
 
 const scriptPath = fileURLToPath(new URL('../scripts/recover-muse-code.mjs', import.meta.url));
 const echoSupport = await musePreflightAvailability({ binary: PINNED_MUSE_BINARY });

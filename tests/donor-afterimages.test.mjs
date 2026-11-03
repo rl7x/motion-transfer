@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFile} from 'node:fs/promises';
-import {createReplayRuntime} from '../runtime/replay.mjs';
-import {loadTarget} from '../agent/target.mjs';
-import {observeDonorMotion} from '../runtime/donor-observation.mjs';
+import {createReplayRuntime} from '../src/runtime/replay.mjs';
+import {loadTarget} from '../src/agent/target.mjs';
+import {observeDonorMotion} from '../src/runtime/donor-observation.mjs';
 
 test('the actual donor moves immediately and leaves five updates of afterimages',async()=>{
-  const saved=JSON.parse(await readFile(new URL('../transfers/roadster/presentation-evidence.json',import.meta.url),'utf8'));
+  const saved=JSON.parse(await readFile(new URL('../assets/transfers/roadster/presentation-evidence.json',import.meta.url),'utf8'));
   const target=await loadTarget();assert.equal(saved.cartridgeSha256,target.sha256);
   const runtime=await createReplayRuntime(target.bytes);runtime.step(1);for(let i=0;i<10;i++)runtime.step(0);
   const samples=[];

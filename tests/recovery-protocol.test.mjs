@@ -1,17 +1,17 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createRecoveryProtocol, validateRecoveryProtocol, recoveryPolicy, assertRecoveryProtocolSources,
-  snapshotRecoveryProtocol, RECOVERY_REQUIREMENTS } from '../agent/recovery-protocol.mjs';
-import { investigate } from '../agent/investigate.mjs';
-import { createInvestigationSession } from '../runtime/investigation-session.mjs';
-import { createComponentWorkbench } from '../agent/component-workbench.mjs';
-import { createToolDiscovery } from '../agent/tool-discovery.mjs';
-import { createJournalToolExecutor } from '../agent/journal-tools.mjs';
-import { requestInvestigationTurn } from '../agent/investigation-request.mjs';
-import { recoveryStep } from '../agent/recovery-progress.mjs';
-import { compileMotion } from '../component/build.mjs';
-import { loadTarget } from '../agent/target.mjs';
-import { PRICES, tokenCost } from '../agent/accounting.mjs';
+  snapshotRecoveryProtocol, RECOVERY_REQUIREMENTS } from '../src/agent/recovery-protocol.mjs';
+import { investigate } from '../src/agent/investigate.mjs';
+import { createInvestigationSession } from '../src/runtime/investigation-session.mjs';
+import { createComponentWorkbench } from '../src/agent/component-workbench.mjs';
+import { createToolDiscovery } from '../src/agent/tool-discovery.mjs';
+import { createJournalToolExecutor } from '../src/agent/journal-tools.mjs';
+import { requestInvestigationTurn } from '../src/agent/investigation-request.mjs';
+import { recoveryStep } from '../src/agent/recovery-progress.mjs';
+import { compileMotion } from '../src/component/build.mjs';
+import { loadTarget } from '../src/agent/target.mjs';
+import { PRICES, tokenCost } from '../src/agent/accounting.mjs';
 
 const source = 'export function init(){return {cooldown:0,remaining:0}};export function step(state){return {state,output:{ownsMotion:false,displacement:{x:0,y:0},events:[]}}}';
 const usage = { input_tokens: 1000, output_tokens: 100, input_tokens_details: { cached_tokens: 0 }, output_tokens_details: { reasoning_tokens: 0 } };

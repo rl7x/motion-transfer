@@ -1,9 +1,9 @@
 import { fileURLToPath } from 'node:url';
 import { mkdir } from 'node:fs/promises';
 import { dirname } from 'node:path';
-import { collectRelease } from '../release/collect.mjs';
-import { publishRelease } from '../release/publish.mjs';
-import { browserCheck } from '../release/browser-check.mjs';
+import { collectRelease } from '../src/release/collect.mjs';
+import { publishRelease } from '../src/release/publish.mjs';
+import { browserCheck } from '../src/release/browser-check.mjs';
 
 const recipient=option('recipient')??'roadster';
 const acceptedRoadster = option('accepted-roadster');
@@ -27,7 +27,7 @@ const release = await collectRelease({
 });
 await mkdir(dirname(output), { recursive: true });
 const manifest = await publishRelease(output, release, {
-  verify: async (directory, audited) => recipient==='parallaxia' ? (await import('../release/parallaxia-browser-check.mjs')).browserCheckParallaxia(directory,audited) : browserCheck(directory, audited),
+  verify: async (directory, audited) => recipient==='parallaxia' ? (await import('../src/release/parallaxia-browser-check.mjs')).browserCheckParallaxia(directory,audited) : browserCheck(directory, audited),
 });
 console.log(JSON.stringify({
   id: manifest.id, output, publicOrigin: manifest.publicOrigin, recovery: release.recovery,

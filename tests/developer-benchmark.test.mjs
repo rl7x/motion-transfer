@@ -4,10 +4,10 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { randomUUID } from 'node:crypto';
-import { benchmarkDefinition, stageDefinition } from '../benchmark/definition.mjs';
-import { benchmarkStore } from '../benchmark/store.mjs';
-import { campaignMetrics, measureTaskAttempt } from '../benchmark/metrics.mjs';
-import { runDeveloperBenchmark } from '../benchmark/runner.mjs';
+import { benchmarkDefinition, stageDefinition } from '../src/benchmark/definition.mjs';
+import { benchmarkStore } from '../src/benchmark/store.mjs';
+import { campaignMetrics, measureTaskAttempt } from '../src/benchmark/metrics.mjs';
+import { runDeveloperBenchmark } from '../src/benchmark/runner.mjs';
 
 const componentId = 'a'.repeat(64), protocol = { sha256: 'b'.repeat(64), commit: 'local-fixture' };
 const snapshot = { componentId, roadsterParentId: 'c'.repeat(64), pakuParentId: 'd'.repeat(64) };

@@ -6,10 +6,10 @@ import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import test from 'node:test';
-import { verifySavedMotion } from '../evaluator/saved-motion.mjs';
+import { verifySavedMotion } from '../src/evaluator/saved-motion.mjs';
 
 const execute = promisify(execFile);
-const directory = fileURLToPath(new URL('../components/dashy-dango-dash/', import.meta.url));
+const directory = fileURLToPath(new URL('../assets/components/dashy-dango-dash/', import.meta.url));
 
 test('saved Meta component reproduces all frozen suites with matching source and evidence hashes', async () => {
   const report = await verifySavedMotion();

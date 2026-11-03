@@ -1,14 +1,14 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
-import { evidenceHistory } from '../agent/evidence.mjs';
-import { createToolDiscovery, discoveryReplay } from '../agent/tool-discovery.mjs';
-import { requestInvestigationTurn } from '../agent/investigation-request.mjs';
-import { PRICES } from '../agent/accounting.mjs';
-import { experimentFeedback } from '../agent/experiment-feedback.mjs';
-import { inputDiagnostics, recoverySelectionHelp } from '../agent/input-diagnostics.mjs';
+import { evidenceHistory } from '../src/agent/evidence.mjs';
+import { createToolDiscovery, discoveryReplay } from '../src/agent/tool-discovery.mjs';
+import { requestInvestigationTurn } from '../src/agent/investigation-request.mjs';
+import { PRICES } from '../src/agent/accounting.mjs';
+import { experimentFeedback } from '../src/agent/experiment-feedback.mjs';
+import { inputDiagnostics, recoverySelectionHelp } from '../src/agent/input-diagnostics.mjs';
 
-const recorded = async () => JSON.parse(await readFile(new URL('../lab/recordings/benchmark-recovery-one.json', import.meta.url)));
+const recorded = async () => JSON.parse(await readFile(new URL('../assets/lab/recordings/benchmark-recovery-one.json', import.meta.url)));
 test('recorded context-limit failure compacts actual experiments once and keeps errors and identities', async () => {
   const { report } = await recorded(), original = JSON.stringify(report);
   const history = evidenceHistory(report, { includeDiscovery: false });
@@ -57,7 +57,7 @@ test('recovery preflight drops stale deferred context before generation without 
 });
 
 test('the second recorded failure compacts duplicate metadata while preserving code, evidence and selection', async () => {
-  const { report } = JSON.parse(await readFile(new URL('../lab/recordings/benchmark-recovery-two.json', import.meta.url)));
+  const { report } = JSON.parse(await readFile(new URL('../assets/lab/recordings/benchmark-recovery-two.json', import.meta.url)));
   const before = JSON.stringify(report);
   const history = evidenceHistory(report, { includeDiscovery: false });
   assert.ok(Buffer.byteLength(JSON.stringify(history)) < 28000);
@@ -74,7 +74,7 @@ test('the second recorded failure compacts duplicate metadata while preserving c
 });
 
 test('actual malformed SDK and direct requests receive structural feedback without repaired inputs or answers', async () => {
-  const { report } = JSON.parse(await readFile(new URL('../lab/recordings/benchmark-recovery-two.json', import.meta.url)));
+  const { report } = JSON.parse(await readFile(new URL('../assets/lab/recordings/benchmark-recovery-two.json', import.meta.url)));
   const program = report.toolCalls.find(call => call.name === 'run_experiment_program');
   const result = experimentFeedback(program.name, program.result, report.session);
   assert.equal(result.status, 'failed'); assert.equal(result.inputFeedback.path, 'tool.steps[0]');
@@ -90,7 +90,7 @@ test('actual malformed SDK and direct requests receive structural feedback witho
 });
 
 test('the final recorded program preserves its array-shape diagnostics without another inference attempt', async () => {
-  const { report } = JSON.parse(await readFile(new URL('../lab/recordings/benchmark-recovery-three.json', import.meta.url)));
+  const { report } = JSON.parse(await readFile(new URL('../assets/lab/recordings/benchmark-recovery-three.json', import.meta.url)));
   const program = report.toolCalls.find(call => call.name === 'run_experiment_program');
   const result = experimentFeedback(program.name, program.result, report.session);
   assert.equal(result.status, 'failed'); assert.equal(result.inputFeedback.path, 'tool.steps');

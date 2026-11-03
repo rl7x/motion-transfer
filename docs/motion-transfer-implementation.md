@@ -6,14 +6,14 @@ Publication, deployment, outreach, a public video, and independent-use sessions 
 
 ## Present
 
-- Accepted local playback: `npm run build:release -- --accepted-roadster transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c`, then `npm run serve:release -- --root reports/release-accepted --port 4174 --base-path /motion-transfer/`. Loopback only. Component `54465741…`, 8 mapping and 8 browser checks, 13 development and 20 acceptance checks, same component as the JUJUMP pin. Source and evidence links are in the bundle. The WebGL2-absent comparison link was tested.
+- Accepted local playback: `npm run build:release -- --accepted-roadster assets/transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c`, then `npm run serve:release -- --root reports/release-accepted --port 4174 --base-path /motion-transfer/`. Loopback only. Component `54465741…`, 8 mapping and 8 browser checks, 13 development and 20 acceptance checks, same component as the JUJUMP pin. Source and evidence links are in the bundle. The WebGL2-absent comparison link was tested.
 - `npm run dev:transfer` remains the saved library, labeled **SAVED RECOVERY**, controller `1bc4250c…`.
 - Wonder publication pin, commit `14ff60d`. Accepted Roadster delivery and pin, commits `cdd0ded` and `7096529`. Portable release and loopback serve, commit `5065a7c`. Capture inputs, commits `49b6b4a` and `eaff839`.
 - Fidelity study recorded in `1429e62` and scored once: contact-sheet plus supplied defaults 0/40, saved controller 40/40, one attempt, cost `$0.02293425`. Not a from-video score.
 - Fixed remix set, commit `5db79cc`: 6 supported matches and 2 correct negatives, no retries, `$0.06688125`, older saved component.
 - Muse echo, commit `982994a`: 13 unpaid checks on pin `1.3.0-R3057.1`. Paid Muse stays closed.
 - Creator page, commit `0251bb0`: `npm run build:creator` writes `web/dist/creator/index.html`. Six browser tests passed on a fixture API. `hosting:serve` does not enable generation by itself.
-- Donor ISC notice: [targets/dashy-dango/README.md](../targets/dashy-dango/README.md).
+- Donor ISC notice: [assets/targets/dashy-dango/README.md](../assets/targets/dashy-dango/README.md).
 
 ## Pending
 

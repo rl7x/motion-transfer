@@ -5,13 +5,13 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { acceptedRecoveryFixture } from './helpers/recovery-fixture.mjs';
 import { roadsterAdapterFixture } from './helpers/roadster-adapter.mjs';
-import { loadAcceptedComponent } from '../integration/accepted-component.mjs';
-import { compileAdapter } from '../transfer/adapter.mjs';
-import { evaluateRoadsterAdapter } from '../evaluator/roadster.mjs';
-import { buildRoadsterFrame } from '../roadster/build.mjs';
-import { generateRoadsterTransfer } from '../agent/transfer-roadster.mjs';
-import { loadSavedRoadster, validateRoadsterArtifact } from '../roadster/saved.mjs';
-import { ROADSTER_INTENT } from '../roadster/port.mjs';
+import { loadAcceptedComponent } from '../src/integration/accepted-component.mjs';
+import { compileAdapter } from '../src/transfer/adapter.mjs';
+import { evaluateRoadsterAdapter } from '../src/evaluator/roadster.mjs';
+import { buildRoadsterFrame } from '../src/roadster/build.mjs';
+import { generateRoadsterTransfer } from '../src/agent/transfer-roadster.mjs';
+import { loadSavedRoadster, validateRoadsterArtifact } from '../src/roadster/saved.mjs';
+import { ROADSTER_INTENT } from '../src/roadster/port.mjs';
 
 test('Roadster compilation, evaluation, frame and portable export use the exact accepted component', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'roadster-component-'));
@@ -61,14 +61,14 @@ test('Roadster compilation, evaluation, frame and portable export use the exact 
 });
 
 test('immutable saved playback stays readable while a new publication must match the current host', async () => {
-  const before = await readFile(new URL('../transfers/roadster/current.json', import.meta.url), 'utf8');
+  const before = await readFile(new URL('../assets/transfers/roadster/current.json', import.meta.url), 'utf8');
   const saved = await loadSavedRoadster();
   await validateRoadsterArtifact(saved);
   await assert.rejects(validateRoadsterArtifact(saved, { currentEnvironment: true }), /stale/);
   const broken = structuredClone(saved);
   broken.files['frame.html'] += '\n<!-- modified -->';
   await assert.rejects(validateRoadsterArtifact(broken));
-  assert.equal(await readFile(new URL('../transfers/roadster/current.json', import.meta.url), 'utf8'), before);
+  assert.equal(await readFile(new URL('../assets/transfers/roadster/current.json', import.meta.url), 'utf8'), before);
 });
 
 test('Roadster unsupported explanations and no-op requests preserve their parent', async () => {

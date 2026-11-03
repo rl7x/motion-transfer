@@ -3,15 +3,15 @@ import test from 'node:test';
 import { mkdtemp,readFile,writeFile,rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { collectRelease } from '../release/collect.mjs';
-import { publishRelease } from '../release/publish.mjs';
-import { auditDirectory } from '../release/audit.mjs';
+import { collectRelease } from '../src/release/collect.mjs';
+import { publishRelease } from '../src/release/publish.mjs';
+import { auditDirectory } from '../src/release/audit.mjs';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
-import { readTaskManifest } from '../benchmark/live-mechanics.mjs';
-import { loadSavedRoadster } from '../roadster/saved.mjs';
-import { digest } from '../component/build.mjs';
+import { readTaskManifest } from '../src/benchmark/live-mechanics.mjs';
+import { loadSavedRoadster } from '../src/roadster/saved.mjs';
+import { digest } from '../src/component/build.mjs';
 
 test('the task manifest freezes nine positive tasks and one infeasible case within existing quotas',async()=>{
  const {manifest}=await readTaskManifest();

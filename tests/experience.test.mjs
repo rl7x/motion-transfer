@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createPakuBrowser } from '../evaluator/browser-harness.mjs';
+import { createPakuBrowser } from '../src/evaluator/browser-harness.mjs';
 import { prepareVisitor, reveal } from './helpers/app-navigation.mjs';
 
 test('visitors can play the compiled donor and move one frozen ability between both working destinations',async()=>{

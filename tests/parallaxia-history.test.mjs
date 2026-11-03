@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { chromium } from 'playwright';
 import { createPreviewServer } from '../web/server.mjs';
-import { ACCEPTED_COMPONENT_ID } from '../hosting/component-pin.mjs';
+import { ACCEPTED_COMPONENT_ID } from '../src/hosting/component-pin.mjs';
 
 test('the version picker reopens exact older candidates, preserves failed comparisons and refreshes after publication without inference', async () => {
   const server=await createPreviewServer();let browser;

@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import wabtFactory from 'wabt';
-import { createReplayRuntime } from '../runtime/replay.mjs';
-import { validateMemoryWatches } from '../runtime/memory.mjs';
-import { replayTrace } from '../runtime/trace.mjs';
-import { runCartridgeTool } from '../agent/tools.mjs';
+import { createReplayRuntime } from '../src/runtime/replay.mjs';
+import { validateMemoryWatches } from '../src/runtime/memory.mjs';
+import { replayTrace } from '../src/runtime/trace.mjs';
+import { runCartridgeTool } from '../src/agent/tools.mjs';
 
 const wabt = await wabtFactory();
 const module = wabt.parseWat('memory-probe.wat', `(module
@@ -73,7 +73,7 @@ test('watch validation bounds addresses, types, names, counts, and total observa
 });
 
 test('isolated donor experiments return requested watches alongside replay evidence', async () => {
-  const trace = JSON.parse(await readFile(new URL('../experiments/dashy-dango/start-move-dash.json', import.meta.url), 'utf8'));
+  const trace = JSON.parse(await readFile(new URL('../assets/experiments/dashy-dango/start-move-dash.json', import.meta.url), 'utf8'));
   const watches = [watch('gamepadRegister', 0x16, 'u8')];
   const { result, evidence } = await runCartridgeTool('run_original', {
     hypothesis: 'The documented gamepad register reflects each held input mask.', watches, steps: trace.steps,

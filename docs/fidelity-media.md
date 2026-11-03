@@ -2,7 +2,7 @@
 
 These commands prepare the from-video fidelity condition and the frozen Roadster remix campaign. They do not deploy, publish, or score a candidate against held-out traces.
 
-Rendering is local. `ffmpeg` must be on `PATH`. The pinned Dashy Dango cartridge is replayed through `runtime/replay.mjs`, and each stored picture is the actual framebuffer from `framebufferPng` plus a banner. The banner is a four-digit logical frame counter and lamps for X, Z, left, right, up, and down. Probe frames are repeated 8 times at 8 fps, so each logical tick stays on screen for one second and the eight-tick dash is visible. The candidate clip repeats each tick 4 times at 8 fps. A numbered contact sheet of those still frames is written beside the videos and is labeled image input.
+Rendering is local. `ffmpeg` must be on `PATH`. The pinned Dashy Dango cartridge is replayed through `src/runtime/replay.mjs`, and each stored picture is the actual framebuffer from `framebufferPng` plus a banner. The banner is a four-digit logical frame counter and lamps for X, Z, left, right, up, and down. Probe frames are repeated 8 times at 8 fps, so each logical tick stays on screen for one second and the eight-tick dash is visible. The candidate clip repeats each tick 4 times at 8 fps. A numbered contact sheet of those still frames is written beside the videos and is labeled image input.
 
 ```sh
 node scripts/fidelity-media.mjs --out reports/fidelity-media
@@ -22,9 +22,9 @@ The candidate prompt discloses the `init`/`step` ABI, `sourceBodyWidth` 8, the g
 
 If the probe's public answer misses the frame counter or the player sprite, the candidate request uses the contact sheet. That request is explicitly image input. Its fidelity condition is `contact-sheet` plus the same supplied public-contract defaults. A localized probe uses condition `video` plus those supplied defaults. `provenance.json` records that label beside the study. A config that changes the supplied defaults is retained and rejected with no second call.
 
-Accepted source is frozen in one study with the existing immutable saved recovery (`components/dashy-dango-dash/component.ts` and `contract.json`) before the study seed is written. The saved candidate's condition is `saved-recovery`. It is the existing component, included for comparison. The saved source is read only while freezing that study, after the provider response, and is never copied into the provider prompt. This command does not score the study and does not repair either candidate from held-out output.
+Accepted source is frozen in one study with the existing immutable saved recovery (`assets/components/dashy-dango-dash/component.ts` and `contract.json`) before the study seed is written. The saved candidate's condition is `saved-recovery`. It is the existing component, included for comparison. The saved source is read only while freezing that study, after the provider response, and is never copied into the provider prompt. This command does not score the study and does not repair either candidate from held-out output.
 
-Score a finished campaign with `node scripts/score-video-comparison.mjs --campaign <directory>`. That command calls `scoreFidelityStudy` once on the frozen pair, reuses a complete `results.json` without rewriting it, and writes `fidelity-comparison.svg` plus `fidelity-comparison.json`. It does not call Meta, repair source, or change the seed. The scored contact-sheet comparison is pinned under `benchmark/fidelity-recordings/`, and `docs/fidelity-results.md` states its 0/40 and 40/40 counts.
+Score a finished campaign with `node scripts/score-video-comparison.mjs --campaign <directory>`. That command calls `scoreFidelityStudy` once on the frozen pair, reuses a complete `results.json` without rewriting it, and writes `fidelity-comparison.svg` plus `fidelity-comparison.json`. It does not call Meta, repair source, or change the seed. The scored contact-sheet comparison is pinned under `assets/benchmark/fidelity-recordings/`, and `docs/fidelity-results.md` states its 0/40 and 40/40 counts.
 
 ## Fixed remix campaign
 

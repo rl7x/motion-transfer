@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { transform } from 'esbuild';
-import { loadTarget } from '../agent/target.mjs';
+import { loadTarget } from '../src/agent/target.mjs';
 
 const require = createRequire(import.meta.url);
 const escapeScript = source => source.replace(/<\/script/gi, '<\\/script');
@@ -14,7 +14,7 @@ export async function buildDonorFrame() {
   if (metadata.version !== '2.7.1') throw Error('Donor player requires pinned WASM-4 2.7.1');
   const runtime = await readFile(join(root, 'assets/runtime/slim/wasm4.js'), 'utf8');
   const css = await readFile(join(root, 'assets/runtime/slim/wasm4.css'), 'utf8');
-  const observer = await transform(await readFile(new URL('../runtime/donor-observation.mjs', import.meta.url), 'utf8'),
+  const observer = await transform(await readFile(new URL('../src/runtime/donor-observation.mjs', import.meta.url), 'utf8'),
     {format:'iife',globalName:'donorObserver',target:'es2022'});
   const cart = require('wasm4/lib/utils/z85').encode(target.bytes);
   const bridge = `

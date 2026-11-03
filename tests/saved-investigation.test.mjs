@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {savedInvestigations} from '../lab/saved.mjs';
+import {savedInvestigations} from '../src/lab/saved.mjs';
 
 test('the recorded Meta investigation retains contrasting actual motion observations',async()=>{
   const [record]=await savedInvestigations(),report=record.job.report;

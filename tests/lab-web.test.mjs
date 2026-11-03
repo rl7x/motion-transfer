@@ -3,10 +3,10 @@ import test from 'node:test';
 import {mkdtemp,rm} from 'node:fs/promises';
 import {join} from 'node:path';
 import {tmpdir} from 'node:os';
-import {createLabService} from '../lab/service.mjs';
-import {createPakuBrowser} from '../evaluator/browser-harness.mjs';
+import {createLabService} from '../src/lab/service.mjs';
+import {createPakuBrowser} from '../src/evaluator/browser-harness.mjs';
 import {prepareVisitor,reveal} from './helpers/app-navigation.mjs';
-import {loadSavedRoadster} from '../roadster/saved.mjs';
+import {loadSavedRoadster} from '../src/roadster/saved.mjs';
 
 test('the investigation form shows actual public tool events and a qualified conclusion',async()=>{
   const directory=await mkdtemp(join(tmpdir(),'motion-lab-ui-'));let calls=0;

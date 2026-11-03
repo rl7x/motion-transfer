@@ -5,20 +5,20 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { createPhaseBudget } from '../campaign/phase-budget.mjs';
+import { createPhaseBudget } from '../src/campaign/phase-budget.mjs';
 import { createHostedTestBudget } from './helpers/hosting-budget.mjs';
-import { createCoordinator } from '../hosting/coordinator.mjs';
-import { loadPinnedComponent } from '../hosting/component-load.mjs';
+import { createCoordinator } from '../src/hosting/coordinator.mjs';
+import { loadPinnedComponent } from '../src/hosting/component-load.mjs';
 import {
   ACCEPTED_ARTIFACT_ID, ACCEPTED_COMPONENT_ID, SAVED_ARTIFACT_ID, SAVED_COMPONENT_ID,
-} from '../hosting/component-pin.mjs';
-import { createFakeMetaClient } from '../hosting/fake-client.mjs';
-import { seedVerifiedParent } from '../hosting/seed-parent.mjs';
-import { verifyNative } from '../hosting/worker.mjs';
+} from '../src/hosting/component-pin.mjs';
+import { createFakeMetaClient } from '../src/hosting/fake-client.mjs';
+import { seedVerifiedParent } from '../src/hosting/seed-parent.mjs';
+import { verifyNative } from '../src/hosting/worker.mjs';
 
 const repo = fileURLToPath(new URL('..', import.meta.url));
-const savedDir = join(repo, 'transfers/roadster/versions', SAVED_ARTIFACT_ID);
-const acceptedDir = join(repo, 'transfers/roadster/accepted', ACCEPTED_ARTIFACT_ID, 'published/artifacts', ACCEPTED_ARTIFACT_ID);
+const savedDir = join(repo, 'assets/transfers/roadster/versions', SAVED_ARTIFACT_ID);
+const acceptedDir = join(repo, 'assets/transfers/roadster/accepted', ACCEPTED_ARTIFACT_ID, 'published/artifacts', ACCEPTED_ARTIFACT_ID);
 const workerJavaScript = 'export {}\n';
 
 async function temp(t) {
@@ -91,7 +91,7 @@ test('seeding reads the real pins and rejects mismatched frame evidence', async 
   assert.equal(saved.id, SAVED_ARTIFACT_ID);
   assert.equal(saved.componentId, SAVED_COMPONENT_ID);
   const savedComponent = JSON.parse(await readFile(join(dataDirectory, 'parents', `${saved.id}.component.json`), 'utf8'));
-  assert.equal(savedComponent.javascript, await readFile(join(repo, 'components/dashy-dango-dash/component.js'), 'utf8'));
+  assert.equal(savedComponent.javascript, await readFile(join(repo, 'assets/components/dashy-dango-dash/component.js'), 'utf8'));
 
   const acceptedData = await temp(t);
   const accepted = await seedVerifiedParent({ dataDirectory: acceptedData, artifactDirectory: acceptedDir });

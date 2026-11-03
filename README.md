@@ -6,6 +6,21 @@ The React workbench supports real Standard Meta generation, inherited mapping ed
 
 The accepted component is `544657417fe9752f91b0b72a451cd9cb8d2650839824be35881e52f81f223858`. It supplies eight active updates and 25 inactive recharge ticks. Human-written hooks connect its outputs to each licensed upstream game. PARALLAXIA itself was not reverse engineered here. Meta generates adapters and the bounded host rule; the native shooter supplies its own enemies, shots, movement and collision rules.
 
+## Repository guide
+
+| Folder | Contents |
+| --- | --- |
+| [`web/`](web/) | TypeScript and React workbench, browser entrypoints and local preview server |
+| [`src/`](src/) | Agent orchestration, deterministic runtimes, evaluators, recipient integration and hosting |
+| [`assets/`](assets/) | Pinned upstream games, recovered components, saved transfers and verification evidence |
+| [`scripts/`](scripts/) | Command-line entrypoints used by the npm commands |
+| [`tests/`](tests/) | Unit, browser, artifact-integrity and container-isolation checks |
+| [`docs/`](docs/) | Architecture, measured results, setup and limitations |
+| [`skills/`](skills/) | Repository-local motion-transfer skill |
+| [`.github/`](.github/) | GitHub workflows |
+
+Start with the [backend architecture](docs/backend-architecture.md) and [measured results](docs/live-mechanics-results.md). Saved game players bundle their engines into standalone HTML; `.gitattributes` identifies these build artifacts and upstream sources so GitHub's language statistics describe the application code.
+
 ## Play without inference
 
 Node.js 22 or newer. This builds an explicitly labeled baseline reuse copy; it makes no provider request.
@@ -66,7 +81,7 @@ Historical evidence stays separate:
 - [Fixed Roadster remix set](docs/remix-results.md): six supported matches and two expected negatives on saved component `1bc4250c…`; this is a different campaign and component.
 - [Muse Code](docs/muse-code.md): unpaid echo checks only; no new recovery campaign was run.
 
-The accepted Roadster release remains available with `npm run build:release -- --accepted-roadster transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c`. Historical preview views use `/?destination=roadster`, `/?destination=jujump` and `/?destination=paku-paku`. The new default workbench and `/accepted/jujump/` use the accepted component.
+The accepted Roadster release remains available with `npm run build:release -- --accepted-roadster assets/transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c`. Historical preview views use `/?destination=roadster`, `/?destination=jujump` and `/?destination=paku-paku`. The new default workbench and `/accepted/jujump/` use the accepted component.
 
 ## Remaining scope
 

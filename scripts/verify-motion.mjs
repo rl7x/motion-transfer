@@ -1,5 +1,5 @@
 import { mkdir, writeFile, rename } from 'node:fs/promises';
-import { verifySavedMotion } from '../evaluator/saved-motion.mjs';
+import { verifySavedMotion } from '../src/evaluator/saved-motion.mjs';
 
 const directory = new URL('../reports/', import.meta.url);
 const output = new URL('recovered-motion-verification.json', directory);

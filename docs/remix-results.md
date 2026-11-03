@@ -1,6 +1,6 @@
 # Fixed remix set
 
-Campaign `c1655c4c-221d-487f-b05f-c1d667c05b39` finished with status `complete`. The source run is `reports/motion-transfer-phase/remix-001`. The tracked copy is `benchmark/remix-recordings/c1655c4c-221d-487f-b05f-c1d667c05b39/`. This is one fixed request set on `muse-spark-1.3`: six supported prompts and two negatives. It is not a rate of adoption, reliability, or productivity.
+Campaign `c1655c4c-221d-487f-b05f-c1d667c05b39` finished with status `complete`. The source run is `reports/motion-transfer-phase/remix-001`. The tracked copy is `assets/benchmark/remix-recordings/c1655c4c-221d-487f-b05f-c1d667c05b39/`. This is one fixed request set on `muse-spark-1.3`: six supported prompts and two negatives. It is not a rate of adoption, reliability, or productivity.
 
 The journal integrity hash matches the campaign body. The definition hash is `ea1d57a3109940146edebb89f827c4857400b3644554212deaf3a39d351635e6`, and its prompts match `REMIX_PROMPTS`. Provider retries are false. Each attempt records `maxCostUsd` 0.05. All eight requests have status `completed` and `reservedCostUsd` 0. No attempt is `interrupted` or `blocked`.
 
@@ -21,7 +21,7 @@ Stored outcomes were kept. Independent checks found 0 mismatches. There is no `u
 
 ## Parent chain
 
-The base parent is `6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38` at `transfers/roadster/versions/6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38`. `readRoadsterArtifact` accepted it. Its intent is held, facing, 0.1. Its component is `1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2`.
+The base parent is `6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38` at `assets/transfers/roadster/versions/6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38`. `readRoadsterArtifact` accepted it. Its intent is held, facing, 0.1. Its component is `1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2`.
 
 Five supported prompts bind that base id. `backward-fresh-press` published `4704a93ba3eb977448fd15a6393034cd3623cba9fdd28e050a5d3406ce437d0c` with parent `6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38`. `three-meter-followup` published `beb299c5dbc82b3f40e460680727f278425dfed889d4698a0a24f6b796af5383` with parent `4704a93ba3eb977448fd15a6393034cd3623cba9fdd28e050a5d3406ce437d0c`. The follow-up's parent adapter SHA-256 matches that published parent. Every matched child uses the same component id.
 

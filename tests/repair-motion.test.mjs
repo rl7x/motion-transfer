@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { applyMotionPatch, repairMotion } from '../agent/repair-motion.mjs';
-import { RECOVERY_LIMITS } from '../agent/recover-motion.mjs';
+import { applyMotionPatch, repairMotion } from '../src/agent/repair-motion.mjs';
+import { RECOVERY_LIMITS } from '../src/agent/recover-motion.mjs';
 
 const candidate = {
   source: '// faulty marker\nexport const init=()=>({}); export const step=(state)=>({state,output:{ownsMotion:false,displacement:{x:0,y:0},events:[]}});',

@@ -5,17 +5,17 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
-import { sha256 } from '../release/sha.mjs';
-import { zipEntryHashes, zipStored } from '../release/zip.mjs';
-import { normalizePublicOrigin, shareDecision } from '../release/share.mjs';
-import { PHASE_BUDGET_DIRECTORY, runHostedGeneration } from '../release/generation.mjs';
-import { loadLabRemixChain } from '../release/lab-chain.mjs';
-import { publishRelease } from '../release/publish.mjs';
-import { auditDirectory } from '../release/audit.mjs';
-import { createStaticReleaseServer, RELEASE_CHECK_BASE_PATH } from '../release/static-server.mjs';
-import { digest } from '../component/build.mjs';
-import { loadSuppliedChallenge } from '../release/supplied.mjs';
-import { createPhaseBudget } from '../campaign/phase-budget.mjs';
+import { sha256 } from '../src/release/sha.mjs';
+import { zipEntryHashes, zipStored } from '../src/release/zip.mjs';
+import { normalizePublicOrigin, shareDecision } from '../src/release/share.mjs';
+import { PHASE_BUDGET_DIRECTORY, runHostedGeneration } from '../src/release/generation.mjs';
+import { loadLabRemixChain } from '../src/release/lab-chain.mjs';
+import { publishRelease } from '../src/release/publish.mjs';
+import { auditDirectory } from '../src/release/audit.mjs';
+import { createStaticReleaseServer, RELEASE_CHECK_BASE_PATH } from '../src/release/static-server.mjs';
+import { digest } from '../src/component/build.mjs';
+import { loadSuppliedChallenge } from '../src/release/supplied.mjs';
+import { createPhaseBudget } from '../src/campaign/phase-budget.mjs';
 
 const parentId = 'a'.repeat(64);
 const childId = 'b'.repeat(64);
@@ -25,7 +25,7 @@ const labMid = '576debe434d97387f068f34e67da65f298788d44c9796b816721b82193f9f87f
 const labLeaf = 'd0c3a8884def82732dcc12e70269dce8548029552e58087e7eccc6ee1f05d470';
 
 test('release boot injects data and does not patch prototypes', async () => {
-  const boot = await readFile(new URL('../release/boot.js', import.meta.url), 'utf8');
+  const boot = await readFile(new URL('../src/release/boot.js', import.meta.url), 'utf8');
   assert.equal(/prototype|window\.fetch|history\[/.test(boot), false);
   assert.match(boot, /__MOTION_TRANSFER__/);
   assert.match(boot, /basePath/);

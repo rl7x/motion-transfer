@@ -1,7 +1,7 @@
 import { loadEnvFile } from 'node:process';
 import { resolve } from 'node:path';
 import { createPreviewServer } from '../web/server.mjs';
-import { createLocalParallaxia, localMetaClient } from '../hosting/local-parallaxia.mjs';
+import { createLocalParallaxia, localMetaClient } from '../src/hosting/local-parallaxia.mjs';
 
 try { loadEnvFile(resolve('.env')); } catch (error) { if (error.code !== 'ENOENT') throw Error('Could not load .env'); }
 const local = await createLocalParallaxia({ client: localMetaClient() });

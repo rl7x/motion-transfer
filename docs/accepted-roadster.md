@@ -10,7 +10,7 @@ node scripts/transfer-accepted-roadster.mjs \
   [--env-file <path>]
 ```
 
-The paid run is recorded. Its tracked copy is `transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c/`. That tree matches the delivery directory: `journal.json`, `delivery.json`, `challenge/`, and `published/artifacts/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c/`. It does not include the phase ledger. `transfers/roadster/current.json` and `transfers/roadster/versions/` are unchanged.
+The paid run is recorded. Its tracked copy is `assets/transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c/`. That tree matches the delivery directory: `journal.json`, `delivery.json`, `challenge/`, and `published/artifacts/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c/`. It does not include the phase ledger. `assets/transfers/roadster/current.json` and `assets/transfers/roadster/versions/` are unchanged.
 
 `delivery.json` status is `delivered`, `liveMeta` true, `fixture` false, and `injected` false. Estimated cost is `$0.008666`. Artifact `216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c`. Challenge `6aa98fb93cd2e921fbf15966c4fcc0517f947e436994b0e12dc816977ce7ed64`. The adapter verification passed 8 conformance checks and 8 browser checks. The ordinary landing is outside the marked zone and the borrowed dash lands inside it. Donor and recipient notices are the same bytes in the artifact and the challenge. The receipt does not store a git commit. It was recorded at `2026-11-03T01:01:37.635Z`. The delivery command is in commit `cdd0dedab2dacbd64a4203eebf07659dd615c5cd`.
 

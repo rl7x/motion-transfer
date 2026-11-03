@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
-import { freezeFidelityStudy, resolveCandidatePaths, scoreFidelityStudy } from '../benchmark/fidelity.mjs';
+import { freezeFidelityStudy, resolveCandidatePaths, scoreFidelityStudy } from '../src/benchmark/fidelity.mjs';
 
 try {
   const { values } = parseArgs({ options: { freeze: { type: 'string' }, out: { type: 'string' }, score: { type: 'string' }, help: { type: 'boolean' } } });

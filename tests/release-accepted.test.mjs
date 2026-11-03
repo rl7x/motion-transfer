@@ -5,20 +5,20 @@ import { cp, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { digest } from '../component/build.mjs';
-import { loadRecoveredMotion } from '../component/load.mjs';
+import { digest } from '../src/component/build.mjs';
+import { loadRecoveredMotion } from '../src/component/load.mjs';
 import {
   ACCEPTED_JUJUMP_PUBLICATION, acceptedComponentFromArtifact, acceptedJujumpComparison,
   assertAcceptedIdentities, assertLiveDelivery, loadAcceptedRoadsterRelease,
-} from '../release/accepted.mjs';
+} from '../src/release/accepted.mjs';
 
 const repoRoot = fileURLToPath(new URL('..', import.meta.url));
 const deliveryDirectory = fileURLToPath(new URL('../reports/motion-transfer-phase/fresh-roadster-001/', import.meta.url));
-const pinnedDelivery = fileURLToPath(new URL('../transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c/', import.meta.url));
+const pinnedDelivery = fileURLToPath(new URL('../assets/transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c/', import.meta.url));
 const acceptedComponentId = '544657417fe9752f91b0b72a451cd9cb8d2650839824be35881e52f81f223858';
 
 test('accepted release loader does not import the saved component', async () => {
-  const source = await readFile(new URL('../release/accepted.mjs', import.meta.url), 'utf8');
+  const source = await readFile(new URL('../src/release/accepted.mjs', import.meta.url), 'utf8');
   assert.equal(source.includes('loadRecoveredMotion'), false);
   assert.equal(source.includes('loadSavedRoadster'), false);
   assert.equal(source.includes('buildRoadsterChallenge'), false);

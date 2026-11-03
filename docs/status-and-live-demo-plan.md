@@ -55,10 +55,10 @@ The highest-return work is to finish PARALLAXIA's evidence/release binding, publ
 
 ## PARALLAXIA findings that affect the claims
 
-1. **The verified challenge outcome is position.** `web/parallaxia-challenge-entry.js` enables `parallaxiaChallengeShield`; `parallaxia/sim.mjs` then records hits without applying the ordinary loss-of-life behavior. Both comparison runs are shielded. The pass/fail condition checks final horizontal position. Describe this as an assisted movement challenge; a claim that the dash is necessary to survive needs a separate unshielded check.
+1. **The verified challenge outcome is position.** `web/parallaxia-challenge-entry.js` enables `parallaxiaChallengeShield`; `src/parallaxia/sim.mjs` then records hits without applying the ordinary loss-of-life behavior. Both comparison runs are shielded. The pass/fail condition checks final horizontal position. Describe this as an assisted movement challenge; a claim that the dash is necessary to survive needs a separate unshielded check.
 2. **Phasing is a host policy.** The integration also suppresses `missShip` while dashing. The recovered component supplies movement timing and displacement. Bullet immunity is not recovered donor combat behavior.
 3. **Some displayed evidence still belongs to Roadster.** `web/experience-assets.mjs` serves new PARALLAXIA frames while exposing the saved Roadster artifact ID, report, presentation evidence, and notices on several existing routes. `web/server.mjs` likewise rebuilds a PARALLAXIA frame behind a Roadster artifact URL. Preserve the old pins and give the new delivery its own identity, matching verification and notices.
-4. **Static release selection remains Roadster-specific.** `release/collect.mjs`, `release/accepted.mjs`, and `release/materialize.mjs` still collect and describe Roadster. The existing accepted build at port 4174 is a Roadster build. Rebuilding the shared frontend alone would not complete a PARALLAXIA release.
+4. **Static release selection remains Roadster-specific.** `src/release/collect.mjs`, `src/release/accepted.mjs`, and `src/release/materialize.mjs` still collect and describe Roadster. The existing accepted build at port 4174 is a Roadster build. Rebuilding the shared frontend alone would not complete a PARALLAXIA release.
 
 None of these findings requires rewriting the historical artifacts or ledger. The current PARALLAXIA tests verify upstream file hashes, movement comparison, component execution, and a standalone browser frame; they do not establish unshielded survival or a complete recipient-specific public release.
 
@@ -97,7 +97,7 @@ Each assisted run lasts approximately 12.8 seconds. The script allocates full ru
 ### Presenter setup
 
 - Use the current local preview at `http://127.0.0.1:4173/` after starting `npm run dev:transfer`. Opening and playing do not start a model request; the adaptation submission controls can. This assessment used a temporary preview without a model client.
-- Open separate tabs for the PARALLAXIA challenge, `/donor/play`, and `/?destination=jujump`. Keep the recorded investigation and [saved component history](../components/dashy-dango-dash/README.md) ready before the timer starts.
+- Open separate tabs for the PARALLAXIA challenge, `/donor/play`, and `/?destination=jujump`. Keep the recorded investigation and [saved component history](../assets/components/dashy-dango-dash/README.md) ready before the timer starts.
 - The local preview currently says **SAVED RECOVERY**, component `1bc4250c…`. Keep that label. The accepted Roadster/JUJUMP release on port 4174 uses a different component, `54465741…`.
 - Rehearse one manual dash around the recorded demonstration's trigger, tick 636, approximately 10.6 seconds into the assisted run. A held button can retrigger after recharge; a single short press makes the intended example clearer.
 - Keep the green target and result line visible. The current evidence supports reaching that target; it does not establish that the unmodified ship would die.

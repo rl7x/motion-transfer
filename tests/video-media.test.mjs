@@ -5,11 +5,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import { promisify } from 'node:util';
-import { BUTTONS } from '../runtime/replay.mjs';
-import { DONOR_SHA256 } from '../runtime/donor-observation.mjs';
+import { BUTTONS } from '../src/runtime/replay.mjs';
+import { DONOR_SHA256 } from '../src/runtime/donor-observation.mjs';
 import {
   buildContactSheet, captureClip, decodeRgbPng, lampLit, readCounter, renderFidelityMedia,
-} from '../campaign/video-media.mjs';
+} from '../src/campaign/video-media.mjs';
 import { main } from '../scripts/fidelity-media.mjs';
 
 const exec = promisify(execFile);

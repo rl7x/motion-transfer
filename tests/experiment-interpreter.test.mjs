@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {executeExperimentProgram,INTERPRETER_LIMITS} from '../experiment/interpreter.mjs';
+import {executeExperimentProgram,INTERPRETER_LIMITS} from '../src/experiment/interpreter.mjs';
 
 test('the isolated interpreter supports typed loops and decisions on capability results',async()=>{
   const values=[];

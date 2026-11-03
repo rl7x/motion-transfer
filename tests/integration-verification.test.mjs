@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import { pathToFileURL } from 'node:url';
-import { integrationAssets, packageRecordingName, readPackageVerification, savePackageRecording } from '../integration/assets.mjs';
+import { integrationAssets, packageRecordingName, readPackageVerification, savePackageRecording } from '../src/integration/assets.mjs';
 
 const LEGACY_SHA = '777e93f1ec31d6af946491570b7470fc570a01c8ee533ac9483e044abdd5b90e';
 const LEGACY_PACKAGE = '9005034bd2a0fa44e543f8609b9c3bb3d864ba4de4049f5bcc705b55478eb863';
@@ -97,7 +97,7 @@ test('saving a package recording does not overwrite an earlier recording', async
 });
 
 test('the current export uses its package recording and leaves the legacy file unchanged', async () => {
-  const legacyUrl = new URL('../integration/recordings/jujump-validation.json', import.meta.url);
+  const legacyUrl = new URL('../assets/integration/recordings/jujump-validation.json', import.meta.url);
   const before = await readFile(legacyUrl);
   assert.equal(createHash('sha256').update(before).digest('hex'), LEGACY_SHA);
   assert.equal(JSON.parse(before).packageId, LEGACY_PACKAGE);
@@ -115,7 +115,7 @@ test('the current export uses its package recording and leaves the legacy file u
   assert.equal(saved.nodeChecks.count, 3);
   assert.equal(saved.browser.results.length, 7);
   assert.notEqual(saved.packageId, LEGACY_PACKAGE);
-  const keyed = await readFile(new URL(`../integration/recordings/${packageRecordingName(saved.packageId)}`, import.meta.url));
+  const keyed = await readFile(new URL(`../assets/integration/recordings/${packageRecordingName(saved.packageId)}`, import.meta.url));
   assert.equal(JSON.parse(keyed).packageId, saved.packageId);
   assert.equal(JSON.parse(keyed).zipSha256, saved.zipSha256);
   const after = await readFile(legacyUrl);

@@ -4,9 +4,9 @@ import { loadEnvFile } from 'node:process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { chromium } from 'playwright';
-import { createLocalParallaxia, localMetaClient } from '../hosting/local-parallaxia.mjs';
+import { createLocalParallaxia, localMetaClient } from '../src/hosting/local-parallaxia.mjs';
 import { createPreviewServer } from '../web/server.mjs';
-import { digest } from '../component/build.mjs';
+import { digest } from '../src/component/build.mjs';
 
 if (!process.argv.includes('--allow-paid')) throw Error('This validation makes two paid Standard Meta composition requests. Pass --allow-paid after ledger reconciliation.');
 try { loadEnvFile(resolve('.env')); } catch (error) { if (error.code !== 'ENOENT') throw error; }

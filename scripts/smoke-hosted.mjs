@@ -1,9 +1,9 @@
 import { fileURLToPath } from 'node:url';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { sha256 } from '../release/sha.mjs';
-import { createStaticReleaseServer, RELEASE_CHECK_BASE_PATH } from '../release/static-server.mjs';
-import { runHostedGeneration } from '../release/generation.mjs';
+import { sha256 } from '../src/release/sha.mjs';
+import { createStaticReleaseServer, RELEASE_CHECK_BASE_PATH } from '../src/release/static-server.mjs';
+import { runHostedGeneration } from '../src/release/generation.mjs';
 
 const args = process.argv.slice(2);
 const flag = name => args.includes(name);

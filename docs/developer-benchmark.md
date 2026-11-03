@@ -58,7 +58,7 @@ blocks all further tasks, including across runner restarts.
 
 Each campaign has a hash-bound definition, journal and content-addressed evidence.
 Terminal service reports and delivered artifacts are retained. Publish selected
-campaign directories under `benchmark/recordings/` without changing their bytes.
+campaign directories under `assets/benchmark/recordings/` without changing their bytes.
 The read-only `/api/developer-benchmarks` endpoints and React panel expose recorded
 outcomes, source, verification and verified playable artifacts without inference.
 

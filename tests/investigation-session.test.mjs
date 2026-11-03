@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {createCartridgeTools} from '../agent/tools.mjs';
+import {createCartridgeTools} from '../src/agent/tools.mjs';
 
 const advance=(buttons,frames=1)=>({branchId:'main',hypothesis:'Observe an actual input transition.',watches:[],steps:[{buttons,frames,checkpoint:'observed'}]});
 test('an isolated investigation worker preserves live cartridge state between commands',async()=>{

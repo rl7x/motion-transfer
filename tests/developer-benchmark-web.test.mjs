@@ -4,11 +4,11 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { randomUUID } from 'node:crypto';
-import { digest } from '../component/build.mjs';
-import { benchmarkDefinition } from '../benchmark/definition.mjs';
-import { benchmarkStore } from '../benchmark/store.mjs';
-import { developerBenchmarkAssets } from '../benchmark/assets.mjs';
-import { createPakuBrowser } from '../evaluator/browser-harness.mjs';
+import { digest } from '../src/component/build.mjs';
+import { benchmarkDefinition } from '../src/benchmark/definition.mjs';
+import { benchmarkStore } from '../src/benchmark/store.mjs';
+import { developerBenchmarkAssets } from '../src/benchmark/assets.mjs';
+import { createPakuBrowser } from '../src/evaluator/browser-harness.mjs';
 import { reveal } from './helpers/app-navigation.mjs';
 
 async function localFixture(t) {

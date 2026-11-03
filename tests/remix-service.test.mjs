@@ -4,10 +4,10 @@ import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
-import { createRemixService } from '../remix/service.mjs';
+import { createRemixService } from '../src/remix/service.mjs';
 import { createPreviewServer } from '../web/server.mjs';
-import { digest } from '../component/build.mjs';
-import { REMIX_BROWSER_CHECKS } from '../evaluator/remix-browser.mjs';
+import { digest } from '../src/component/build.mjs';
+import { REMIX_BROWSER_CHECKS } from '../src/evaluator/remix-browser.mjs';
 import { remixFixture } from './helpers/remix-fixture.mjs';
 
 const browserFixture=async(compiled,intent,html)=>({schemaVersion:1,gate:'remix-browser',passed:true,
@@ -37,7 +37,7 @@ test('remix jobs persist idempotency, child lineage, budget and immutable bytes 
   const generate=generatorFixture(parent=>{calls++;parents.push(parent);});
   try{
     service=await createRemixService({directory,client:{},generate,verifyBrowser:browserFixture});
-    const versions=await readdir(new URL('../transfers/paku-paku/versions/',import.meta.url));
+    const versions=await readdir(new URL('../assets/transfers/paku-paku/versions/',import.meta.url));
     const historical=versions.find(id=>id!==service.status().baseArtifactId);
     assert.ok(historical);assert.equal((await service.artifact(historical)).id,historical);
     const request={parentArtifactId:historical,prompt:'Test-only backward press remix',idempotencyKey:randomUUID()};

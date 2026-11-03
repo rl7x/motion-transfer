@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFile} from 'node:fs/promises';
-import {createCartridgeTools} from '../agent/tools.mjs';
-import {investigate} from '../agent/investigate.mjs';
+import {createCartridgeTools} from '../src/agent/tools.mjs';
+import {investigate} from '../src/agent/investigate.mjs';
 
-const recording=async()=>JSON.parse(await readFile(new URL('../lab/recordings/programmatic-investigation.json',import.meta.url),'utf8'));
+const recording=async()=>JSON.parse(await readFile(new URL('../assets/lab/recordings/programmatic-investigation.json',import.meta.url),'utf8'));
 test('the recorded rejected artifact citation now resolves to real experiment evidence without rerunning it',async()=>{
   const {report}=await recording(),rejected=report.toolCalls.find(call=>call.name==='record_finding'&&!call.ok),tools=createCartridgeTools();
   try{

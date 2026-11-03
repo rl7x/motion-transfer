@@ -3,8 +3,8 @@ import { parseArgs } from 'node:util';
 import { mkdir, writeFile, rename } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
-import { transferPaku, prepareTransferEvidence } from '../agent/transfer-paku.mjs';
-import { compileAdapter } from '../transfer/adapter.mjs';
+import { transferPaku, prepareTransferEvidence } from '../src/agent/transfer-paku.mjs';
+import { compileAdapter } from '../src/transfer/adapter.mjs';
 
 async function main() {
   const { values } = parseArgs({ options: { out: { type: 'string' }, 'prepare-only': { type: 'boolean' }, help: { type: 'boolean' } } });

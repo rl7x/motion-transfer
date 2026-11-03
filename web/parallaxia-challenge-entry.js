@@ -1,6 +1,6 @@
 import config from 'roadster-config';
 import { port, release, start, renderBatch, getSim, stepWithInput } from './parallaxia-entry.js';
-import { landingInTarget } from '../parallaxia/challenge-contract.mjs';
+import { landingInTarget } from '../src/parallaxia/challenge-contract.mjs';
 
 const challenge = config.challenge;
 const testing = new URLSearchParams(location.search).get('test') === '1';

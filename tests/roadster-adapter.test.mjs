@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {evaluateRoadsterAdapter} from '../evaluator/roadster.mjs';
+import {evaluateRoadsterAdapter} from '../src/evaluator/roadster.mjs';
 import {roadsterAdapterFixture} from './helpers/roadster-adapter.mjs';
 test('roadster conformance checks airborne gating, inherited mapping and component delegation',async()=>{
   for(const intent of [{unitScale:.1,activation:'held',direction:'facing'},{unitScale:.05,activation:'press',direction:'opposite'}]){

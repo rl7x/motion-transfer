@@ -4,10 +4,10 @@ import { mkdtemp, rm, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { acceptedRecoveryFixture } from './helpers/recovery-fixture.mjs';
-import { loadAcceptedComponent } from '../integration/accepted-component.mjs';
-import { finishRecoveryIntegration, assertJujumpCompatibility } from '../integration/recovery.mjs';
-import { createIntegrationPublication } from '../integration/publication.mjs';
-import { recoveryTask } from '../lab/recovery-task.mjs';
+import { loadAcceptedComponent } from '../src/integration/accepted-component.mjs';
+import { finishRecoveryIntegration, assertJujumpCompatibility } from '../src/integration/recovery.mjs';
+import { createIntegrationPublication } from '../src/integration/publication.mjs';
+import { recoveryTask } from '../src/lab/recovery-task.mjs';
 
 test('a newly frozen candidate passes recipient and final ZIP checks without using the saved component identity', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'new-recovery-integration-'));
@@ -15,7 +15,7 @@ test('a newly frozen candidate passes recipient and final ZIP checks without usi
   try {
     const report = await acceptedRecoveryFixture(directory, { failedAttempt: true }), stages = [];
     const component = await loadAcceptedComponent(directory, report);
-    const saved = JSON.parse(await readFile(new URL('../components/dashy-dango-dash/provenance.json', import.meta.url)));
+    const saved = JSON.parse(await readFile(new URL('../assets/components/dashy-dango-dash/provenance.json', import.meta.url)));
     assert.notEqual(component.provenance.id, saved.id);
     assert.throws(() => assertJujumpCompatibility({ ...component, timerFields: { cooldown: 'other', remaining: 'remaining' } }), /canonical timer/);
     const result = await finishRecoveryIntegration({ directory, report, onStage: async stage => stages.push(stage) });

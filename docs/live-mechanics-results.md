@@ -1,6 +1,6 @@
 # PARALLAXIA live mechanics: measured results
 
-Measured November 3, 2026 on `feat/parallaxia-live-mechanics`, code commit `bf7cd147fa59de535bbca44312b0b9f31fafdecc`. The ten-task definition was frozen before any campaign request in [the manifest](../benchmark/live-mechanics-tasks.json), SHA-256 `12cec5a9dc87845f67ca1585a2d95a7db842a08bf2adfc60c8be33d3ecb93a77`.
+Measured November 3, 2026 on `feat/parallaxia-live-mechanics`, code commit `bf7cd147fa59de535bbca44312b0b9f31fafdecc`. The ten-task definition was frozen before any campaign request in [the manifest](../src/benchmark/live-mechanics-tasks.json), SHA-256 `12cec5a9dc87845f67ca1585a2d95a7db842a08bf2adfc60c8be33d3ecb93a77`.
 
 **Eight of nine positive tasks passed; the one deliberately infeasible task was correctly unsuccessful.** This selected, tool-driven set is neither a human study nor a general reliability estimate. The left goal remains a failed positive task. No failed task was removed or rerun for a better headline.
 

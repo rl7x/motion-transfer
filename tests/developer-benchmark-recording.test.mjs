@@ -3,9 +3,9 @@ import test from 'node:test';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { benchmarkStore } from '../benchmark/store.mjs';
-import { measureTaskAttempt } from '../benchmark/metrics.mjs';
-import { developerBenchmarkAssets } from '../benchmark/assets.mjs';
+import { benchmarkStore } from '../src/benchmark/store.mjs';
+import { measureTaskAttempt } from '../src/benchmark/metrics.mjs';
+import { developerBenchmarkAssets } from '../src/benchmark/assets.mjs';
 
 test('published campaign preserves the actual two successes and three failed recoveries without inference', async t => {
   const directory = await mkdtemp(join(tmpdir(), 'saved-developer-campaign-'));

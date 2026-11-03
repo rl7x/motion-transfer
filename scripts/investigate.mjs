@@ -3,7 +3,7 @@ import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { randomUUID } from 'node:crypto';
-import { investigate, DEFAULT_QUESTION } from '../agent/investigate.mjs';
+import { investigate, DEFAULT_QUESTION } from '../src/agent/investigate.mjs';
 
 async function main() {
   const { values, positionals } = parseArgs({

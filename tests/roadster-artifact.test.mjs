@@ -3,8 +3,8 @@ import test from 'node:test';
 import {mkdtemp,rm,writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {tmpdir} from 'node:os';
-import {createLabStore} from '../lab/store.mjs';
-import {digest} from '../component/build.mjs';
+import {createLabStore} from '../src/lab/store.mjs';
+import {digest} from '../src/component/build.mjs';
 
 test('reading and exporting a Roadster artifact preserves its historical manifest identity',async()=>{
   const directory=await mkdtemp(join(tmpdir(),'roadster-export-')),store=await createLabStore(directory);

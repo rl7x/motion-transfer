@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {createToolDiscovery} from '../agent/tool-discovery.mjs';
-import {investigate} from '../agent/investigate.mjs';
+import {createToolDiscovery} from '../src/agent/tool-discovery.mjs';
+import {investigate} from '../src/agent/investigate.mjs';
 
 const usage={input_tokens:1000,output_tokens:100,input_tokens_details:{cached_tokens:0},output_tokens_details:{reasoning_tokens:0}};
 const tool=(id,name,args,namespace)=>({type:'function_call',call_id:id,status:'completed',name,arguments:JSON.stringify(args),...(namespace?{namespace}:{})});

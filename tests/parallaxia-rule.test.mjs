@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { readRuleSource } from '../parallaxia/rule.mjs';
-import { evaluateParallaxiaAdapter } from '../evaluator/parallaxia.mjs';
-import { verifyParallaxiaBrowser } from '../evaluator/parallaxia-browser.mjs';
-import { loadPinnedComponent } from '../hosting/component-load.mjs';
-import { ACCEPTED_COMPONENT_ID } from '../hosting/component-pin.mjs';
+import { readRuleSource } from '../src/parallaxia/rule.mjs';
+import { evaluateParallaxiaAdapter } from '../src/evaluator/parallaxia.mjs';
+import { verifyParallaxiaBrowser } from '../src/evaluator/parallaxia-browser.mjs';
+import { loadPinnedComponent } from '../src/hosting/component-load.mjs';
+import { ACCEPTED_COMPONENT_ID } from '../src/hosting/component-pin.mjs';
 import { roadsterAdapterFixture } from './helpers/roadster-adapter.mjs';
 const ruleSource='export default {"event":"dash-end","action":"native-shot","delayTicks":1};';
 const intent={unitScale:0.1,activation:'held',direction:'facing'};
@@ -30,8 +30,8 @@ test('composition keeps component timing, schedules once, honors native limits a
 
 test('a pending next-tick shot survives browser checkpoint reconstruction without duplication',async()=>{
  const {createServer}=await import('node:http'),{chromium}=await import('playwright'),vm=await import('node:vm');
- const {buildParallaxiaFrame}=await import('../parallaxia/build.mjs'),{compileAdapter}=await import('../transfer/adapter.mjs');
- const {reconstructCheckpoint}=await import('../parallaxia/experiment.mjs'),{digest}=await import('../component/build.mjs');
+ const {buildParallaxiaFrame}=await import('../src/parallaxia/build.mjs'),{compileAdapter}=await import('../src/transfer/adapter.mjs');
+ const {reconstructCheckpoint}=await import('../src/parallaxia/experiment.mjs'),{digest}=await import('../src/component/build.mjs');
  const reference=await loadPinnedComponent(ACCEPTED_COMPONENT_ID),source=roadsterAdapterFixture(intent);
  const built=await buildParallaxiaFrame({source,intent,componentRef:reference,ruleSource});
  const server=createServer((req,res)=>{res.writeHead(200,{'Content-Type':'text/html','Content-Security-Policy':'sandbox allow-scripts'});res.end(built.html);});await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));let browser;

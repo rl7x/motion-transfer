@@ -1,5 +1,5 @@
-import { auditDirectory } from '../release/audit.mjs';
-import { createStaticReleaseServer } from '../release/static-server.mjs';
+import { auditDirectory } from '../src/release/audit.mjs';
+import { createStaticReleaseServer } from '../src/release/static-server.mjs';
 
 const HELP = `Usage: node scripts/serve-release.mjs --root <directory> [--port 4173] [--base-path /]
 

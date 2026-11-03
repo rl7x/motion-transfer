@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { compileAdapter, executeAdapter, validateAdapterOutput } from '../transfer/adapter.mjs';
-import { evaluatePakuAdapter } from '../evaluator/paku-adapter.mjs';
+import { compileAdapter, executeAdapter, validateAdapterOutput } from '../src/transfer/adapter.mjs';
+import { evaluatePakuAdapter } from '../src/evaluator/paku-adapter.mjs';
 
 test('transfer checks reject an adapter that bypasses the recovered component', async () => {
   const source = 'export const init=()=>({}); export const step=state=>({state,output:{displacement:3.75,ownsMotion:true,events:[],sweep:[]}});';

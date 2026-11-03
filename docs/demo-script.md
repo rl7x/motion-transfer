@@ -10,7 +10,7 @@ The automated cut is `node scripts/record-demo.mjs`. It writes ignored `reports/
 
 | On screen | Who made it |
 | --- | --- |
-| Dashy Dango, the WASM-4 cartridge | Upstream, samX500 and willGuimont. Notice: `targets/dashy-dango/NOTICE.txt`. |
+| Dashy Dango, the WASM-4 cartridge | Upstream, samX500 and willGuimont. Notice: `assets/targets/dashy-dango/NOTICE.txt`. |
 | PAKU PAKU and JUJUMP | Upstream, Kenta Cho / ABA Games. MIT pins in `recipients/`. |
 | RDSTR Stunts car, renderer, track, stunt physics, audio | Upstream, sebayaki. The kickflip “TOO SHORT” card belongs to that game’s other stunt. This demo uses the backflip green zone, challenge id `backflip-landing-v1`. |
 | Saved dash controller, adapters, green-zone challenge, remix form, investigation journal, checks | Hackathon work in this repository. |
@@ -38,7 +38,7 @@ Useful URLs on that same server:
 | JUJUMP saved transfer | `http://127.0.0.1:4173/?destination=jujump` |
 | Saved local 3 m backward remix | `http://127.0.0.1:4173/roadster/play/f67245c401fc82cfd516d6e333fe67dad2acfd232ca7607baea6a6d05d912fbf` |
 
-The playable remix bytes are the committed evidence file named in `docs/demo-recording.md`, not `reports/lab/`. Capture checks that file’s identity, writes a playback copy under `reports/demo/playback-artifacts/`, and opens it on the recording server. It is a child of committed Roadster id `6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38` (`transfers/roadster/current.json`). Its summary is a press-activation, opposite-direction dash at unit scale 0.05. Do not press `Adapt with Meta` or `Remix with Meta`. If the evidence file is missing, record the form and label it `FORM ONLY`.
+The playable remix bytes are the committed evidence file named in `docs/demo-recording.md`, not `reports/lab/`. Capture checks that file’s identity, writes a playback copy under `reports/demo/playback-artifacts/`, and opens it on the recording server. It is a child of committed Roadster id `6790a603505a6435dc25835896a4d1d09c5a1f1f3d10115daf524ec7a2d9ab38` (`assets/transfers/roadster/current.json`). Its summary is a press-activation, opposite-direction dash at unit scale 0.05. Do not press `Adapt with Meta` or `Remix with Meta`. If the evidence file is missing, record the form and label it `FORM ONLY`.
 
 `npm run dev` on port 4444 is the donor alone. Prefer `/donor/play` on the preview server so the recording stays on one origin.
 
@@ -81,8 +81,8 @@ Exact positions asserted by the challenge test: baseline x `-49.46847388339292`,
 
 Use these lines and no others. Leave a blank line where a count does not exist.
 
-- Saved component `1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2`. Muse Wonder 1.0 generated it; Muse Spark 1.3 repaired it. Estimated generation cost `$0.28511425` across three historical requests. Finite checks: 12 development, 21 regression, 20 acceptance traces; 6,744 ticks; maximum position error 0 at tolerance 0.25 source pixels. Source: `components/dashy-dango-dash/README.md`.
-- November 2 developer campaign `eb9ac874-30ad-4a0b-9bcc-78f8c25f539a`: 2 of 3 tasks completed, estimated `$0.7299162`, reservations settled. The recovery task submitted no candidate. Source: `benchmark/recordings/README.md`. The root README rounds the same campaign to `$0.7299` and reports two later development trials at `$0.640187`, one reaching 10 of 13 development checks. Neither passed acceptance.
+- Saved component `1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2`. Muse Wonder 1.0 generated it; Muse Spark 1.3 repaired it. Estimated generation cost `$0.28511425` across three historical requests. Finite checks: 12 development, 21 regression, 20 acceptance traces; 6,744 ticks; maximum position error 0 at tolerance 0.25 source pixels. Source: `assets/components/dashy-dango-dash/README.md`.
+- November 2 developer campaign `eb9ac874-30ad-4a0b-9bcc-78f8c25f539a`: 2 of 3 tasks completed, estimated `$0.7299162`, reservations settled. The recovery task submitted no candidate. Source: `assets/benchmark/recordings/README.md`. The root README rounds the same campaign to `$0.7299` and reports two later development trials at `$0.640187`, one reaching 10 of 13 development checks. Neither passed acceptance.
 - Phase budget: do not recreate a journal. The missing historical v1 ledger is not quoted. If a different ledger is on disk, the card says it is not quoted and gives no ceiling or reservation. Say that this is not an acceptance and not a finished ten-trial rate.
 - The Wonder campaign files are restored. The default cut still does not label that trial as its own acceptance. The accepted Roadster cut is `node scripts/record-demo.mjs --accepted-roadster`, and it has to match the pinned receipt, report, and chart hashes.
 - Public player counts, independent users, a fidelity chart, a Muse Code clean-room rate, and a hosted link: omit. They are not evidenced in this cut.

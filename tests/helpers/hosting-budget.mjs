@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { tmpdir } from 'node:os';
 import { resolve, sep } from 'node:path';
-import { createPhaseBudget } from '../../campaign/phase-budget.mjs';
+import { createPhaseBudget } from '../../src/campaign/phase-budget.mjs';
 
 /** Isolated $50 fixtures for the $7 job envelope; never opens the shared ledger. */
 export async function createHostedTestBudget(directory) {

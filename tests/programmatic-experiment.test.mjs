@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {createCartridgeTools} from '../agent/tools.mjs';
+import {createCartridgeTools} from '../src/agent/tools.mjs';
 
 const preparation={requestId:'prepare-regression',hypothesis:'Reach an actual ready checkpoint, without choosing branch names.',steps:[{buttons:1,frames:1,checkpoint:'gameplay'},{buttons:0,frames:10,checkpoint:'ready'}],watches:[]};
 function experiment(prepared,requestId='paired-regression',value=40){return{requestId,hypothesis:'Test a timer intervention without prescribing its outcome.',checkpointId:prepared.checkpointId,interventions:[{targetId:prepared.targets.find(target=>target.name==='cooldown').id,value,hypothesis:'A candidate cooldown intervention.'}],steps:[{buttons:33,frames:8,checkpoint:'same inputs'}],observations:{channels:['motion','timers','events','memory','rendering'],watches:[],captures:['control-after','intervention-after']}};}
@@ -39,7 +39,7 @@ test('targets are checkpoint-bound and completion is idempotent after worker rec
 });
 
 test('the recorded occupied-main failure can use its checkpoint without any agent-created branch',async()=>{
-  const {readFile}=await import('node:fs/promises'),record=JSON.parse(await readFile(new URL('../lab/recordings/branch-experiment.json',import.meta.url),'utf8'));
+  const {readFile}=await import('node:fs/promises'),record=JSON.parse(await readFile(new URL('../assets/lab/recordings/branch-experiment.json',import.meta.url),'utf8'));
   const tools=createCartridgeTools();
   try{
     await tools.open(record.report.session);const cp=record.report.session.checkpoints[0];

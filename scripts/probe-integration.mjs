@@ -1,6 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { parseArgs } from 'node:util';
-import { probeIntegration } from '../integration/probe.mjs';
+import { probeIntegration } from '../src/integration/probe.mjs';
 
 try {
   const { values, positionals } = parseArgs({ allowPositionals: true, options: {

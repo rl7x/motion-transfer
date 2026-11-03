@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createMetaClient } from '../agent/meta-client.mjs';
+import { createMetaClient } from '../src/agent/meta-client.mjs';
 
 test('token preflight counts the same model, instructions, history, and tools', async () => {
   const calls = [];

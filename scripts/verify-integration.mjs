@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
-import { savePackageRecording } from '../integration/assets.mjs';
-import { buildJujumpIntegration } from '../integration/jujump.mjs';
-import { loadJujumpAdapter } from '../transfer/jujump.mjs';
-import { verifyJujumpBrowser } from '../evaluator/jujump-browser.mjs';
-import { extractIntegration, serveIntegration, integrationBrowser, exec, cleanEnv } from '../evaluator/integration-harness.mjs';
+import { savePackageRecording } from '../src/integration/assets.mjs';
+import { buildJujumpIntegration } from '../src/integration/jujump.mjs';
+import { loadJujumpAdapter } from '../src/transfer/jujump.mjs';
+import { verifyJujumpBrowser } from '../src/evaluator/jujump-browser.mjs';
+import { extractIntegration, serveIntegration, integrationBrowser, exec, cleanEnv } from '../src/evaluator/integration-harness.mjs';
 
 let extracted, server, harness;
 const started = performance.now(), stages = {};
@@ -37,7 +37,7 @@ try {
   await mkdir(new URL('../reports/', import.meta.url), { recursive: true });
   await writeFile(new URL('../reports/jujump-integration-verification.json', import.meta.url), JSON.stringify(report, null, 2) + '\n');
   if (process.argv.includes('--save')) {
-    const name = await savePackageRecording(new URL('../integration/recordings/', import.meta.url), report);
+    const name = await savePackageRecording(new URL('../assets/integration/recordings/', import.meta.url), report);
     console.log(`Saved package recording ${name} without changing earlier recordings.`);
   }
   console.log(`Standalone integration verified: 3 Node checks, ${browser.results.length} actual-browser checks; ${report.archiveBytes} bytes, ${report.exportedFiles} files. No API calls.`);

@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { createInvestigationSession } from '../runtime/investigation-session.mjs';
-import { loadTarget } from '../agent/target.mjs';
-import { createRecoveryProtocol } from '../agent/recovery-protocol.mjs';
+import { createInvestigationSession } from '../src/runtime/investigation-session.mjs';
+import { loadTarget } from '../src/agent/target.mjs';
+import { createRecoveryProtocol } from '../src/agent/recovery-protocol.mjs';
 
 test('reviewed historical sessions retain their identity while replay verifies actual machine state', async () => {
-  const { report } = JSON.parse(await readFile(new URL('../lab/recordings/programmatic-investigation.json', import.meta.url), 'utf8'));
+  const { report } = JSON.parse(await readFile(new URL('../assets/lab/recordings/programmatic-investigation.json', import.meta.url), 'utf8'));
   const bytes = (await loadTarget()).bytes;
   const restored = await createInvestigationSession(bytes, report.session);
   assert.deepEqual(restored.identity, report.session.identity);

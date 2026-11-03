@@ -3,9 +3,9 @@ import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { createPakuBrowser } from '../evaluator/browser-harness.mjs';
-import { createLabService } from '../lab/service.mjs';
-import { loadSavedRoadster } from '../roadster/saved.mjs';
+import { createPakuBrowser } from '../src/evaluator/browser-harness.mjs';
+import { createLabService } from '../src/lab/service.mjs';
+import { loadSavedRoadster } from '../src/roadster/saved.mjs';
 
 const shot = join('reports', 'product-review');
 

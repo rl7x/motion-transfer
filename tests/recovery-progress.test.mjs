@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { recoveryProgress, recoveryGuidance, recoveryStep } from '../agent/recovery-progress.mjs';
-import { requireInvestigationConclusion } from '../agent/investigation-completion.mjs';
+import { recoveryProgress, recoveryGuidance, recoveryStep } from '../src/agent/recovery-progress.mjs';
+import { requireInvestigationConclusion } from '../src/agent/investigation-completion.mjs';
 
 test('recovery guidance describes missing work without supplying behavioral answers', () => {
   const report = { toolCalls: [], session: { recovery: {} } };

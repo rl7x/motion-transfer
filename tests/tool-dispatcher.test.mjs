@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createToolDispatcher } from '../agent/tool-dispatcher.mjs';
-import { loadTarget } from '../agent/target.mjs';
+import { createToolDispatcher } from '../src/agent/tool-dispatcher.mjs';
+import { loadTarget } from '../src/agent/target.mjs';
 
 test('dispatchers initialize lazily and own separate live session and inspection state', async () => {
   const target = await loadTarget();

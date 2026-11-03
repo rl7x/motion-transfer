@@ -5,7 +5,7 @@ The developer task is to carry one movement mechanic from a compiled game into a
 ## Which page to open
 
 ```sh
-npm run build:release -- --accepted-roadster transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c
+npm run build:release -- --accepted-roadster assets/transfers/roadster/accepted/216a2c7621dedf133de9d45f464cb478956f376a07b0ead9212d453b6eb8069c
 npm run serve:release -- --root reports/release-accepted --port 4174 --base-path /motion-transfer/
 ```
 
@@ -39,7 +39,7 @@ The configuration remains frozen: 60 Hz, body width 8, eight active ticks, 25 in
 
 `npm run verify:integration` system-unzips the delivered archive into a temporary folder outside the repository. It runs three Node checks and reuses all seven JUJUMP browser scenarios against the standalone server, with outside browser requests blocked. The machine timings cover building, extracting and checking this package only. They are not estimates of developer time, original recovery duration or time saved.
 
-The checked-in recording is `integration/recordings/jujump-validation.json`. It binds the package and ZIP hashes to the observed result, environment and traces. The UI only displays that saved result for a matching export. The downloaded project's own Node checks reproduce 100 saved controller observations and verify all file hashes; they are regression checks, not a new unseen donor acceptance suite.
+The checked-in recording is `assets/integration/recordings/jujump-validation.json`. It binds the package and ZIP hashes to the observed result, environment and traces. The UI only displays that saved result for a matching export. The downloaded project's own Node checks reproduce 100 saved controller observations and verify all file hashes; they are regression checks, not a new unseen donor acceptance suite.
 
 Human setup, field mapping, boundary selection, evaluator construction, adapter and host work remain disclosed. Human elapsed time, time saved and a comparable baseline are explicitly unmeasured. There is no claim of independent user validation or arbitrary-binary support.
 

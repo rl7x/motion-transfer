@@ -1,7 +1,7 @@
 import { BoxGeometry, Mesh, MeshBasicMaterial } from 'three';
 import config from 'roadster-config';
 import { app, port, release, start, renderBatch } from './roadster-entry.js';
-import { landingInTarget } from '../roadster/challenge-contract.mjs';
+import { landingInTarget } from '../src/roadster/challenge-contract.mjs';
 
 const challenge = config.challenge;
 const testing = new URLSearchParams(location.search).get('test') === '1';

@@ -3,11 +3,11 @@ import test from 'node:test';
 import {mkdtemp,readFile,rm,writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {createComponentWorkbench} from '../agent/component-workbench.mjs';
-import {createInvestigationSession} from '../runtime/investigation-session.mjs';
-import {loadTarget} from '../agent/target.mjs';
-import {compileMotion,digest} from '../component/build.mjs';
-import {saveInvestigationEvidence} from '../lab/investigation-evidence.mjs';
+import {createComponentWorkbench} from '../src/agent/component-workbench.mjs';
+import {createInvestigationSession} from '../src/runtime/investigation-session.mjs';
+import {loadTarget} from '../src/agent/target.mjs';
+import {compileMotion,digest} from '../src/component/build.mjs';
+import {saveInvestigationEvidence} from '../src/lab/investigation-evidence.mjs';
 
 const source=`export function init(){return {cooldown:0,remaining:0};}
 export function step(state){return {state,output:{ownsMotion:false,displacement:{x:0,y:0},events:[]}};}`;

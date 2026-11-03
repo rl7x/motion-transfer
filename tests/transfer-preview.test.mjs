@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createPakuBrowser } from '../evaluator/browser-harness.mjs';
+import { createPakuBrowser } from '../src/evaluator/browser-harness.mjs';
 import { prepareVisitor } from './helpers/app-navigation.mjs';
 
 test('the preview starts both games and its dash button calls the verified component without turning', async () => {

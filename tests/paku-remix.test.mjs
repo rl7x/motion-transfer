@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { evaluatePakuRemix } from '../evaluator/paku-remix.mjs';
-import { BASE_REMIX_INTENT } from '../remix/contract.mjs';
-import { compileAdapter } from '../transfer/adapter.mjs';
-import { buildRemixFrame } from '../remix/frame.mjs';
-import { verifyRemixBrowser } from '../evaluator/remix-browser.mjs';
+import { evaluatePakuRemix } from '../src/evaluator/paku-remix.mjs';
+import { BASE_REMIX_INTENT } from '../src/remix/contract.mjs';
+import { compileAdapter } from '../src/transfer/adapter.mjs';
+import { buildRemixFrame } from '../src/remix/frame.mjs';
+import { verifyRemixBrowser } from '../src/evaluator/remix-browser.mjs';
 import { remixFixture } from './helpers/remix-fixture.mjs';
 
 const intent={unitScale:0.75,activation:'press',direction:'opposite'};

@@ -1,21 +1,21 @@
-import { addReplayToArchive } from '../hosting/export.mjs';
-import { parseRemixBody } from '../hosting/policy.mjs';
-import { zipStored } from '../release/zip.mjs';
+import { addReplayToArchive } from '../src/hosting/export.mjs';
+import { parseRemixBody } from '../src/hosting/policy.mjs';
+import { zipStored } from '../src/release/zip.mjs';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { loadPakuPaku } from '../recipients/paku-paku/load.mjs';
-import { clockedPakuRuntime, pakuObservationSource, hookedPakuSource } from '../runtime/paku-browser.mjs';
-import { loadRecoveredMotion } from '../component/load.mjs';
-import { loadPakuTransfer } from '../transfer/saved-paku.mjs';
-import { PAKU_POLICY } from '../transfer/paku-policy.mjs';
+import { loadPakuPaku } from '../src/recipients/paku-paku/load.mjs';
+import { clockedPakuRuntime, pakuObservationSource, hookedPakuSource } from '../src/runtime/paku-browser.mjs';
+import { loadRecoveredMotion } from '../src/component/load.mjs';
+import { loadPakuTransfer } from '../src/transfer/saved-paku.mjs';
+import { PAKU_POLICY } from '../src/transfer/paku-policy.mjs';
 import { experienceAssets } from './experience-assets.mjs';
-import { loadSavedRoadster } from '../roadster/saved.mjs';
+import { loadSavedRoadster } from '../src/roadster/saved.mjs';
 import { buildFrontend, buildExportedExperiment } from './build.mjs';
-import { developerBenchmarkAssets } from '../benchmark/assets.mjs';
-import { buildRoadsterChallenge } from '../roadster/challenge.mjs';
-import { buildParallaxiaChallenge } from '../parallaxia/challenge.mjs';
-import { loadParallaxiaBaseline } from '../parallaxia/artifact.mjs';
-import { acceptedJujumpComparison } from '../release/accepted.mjs';
+import { developerBenchmarkAssets } from '../src/benchmark/assets.mjs';
+import { buildRoadsterChallenge } from '../src/roadster/challenge.mjs';
+import { buildParallaxiaChallenge } from '../src/parallaxia/challenge.mjs';
+import { loadParallaxiaBaseline } from '../src/parallaxia/artifact.mjs';
+import { acceptedJujumpComparison } from '../src/release/accepted.mjs';
 
 export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapter, remixes, lab, coordinator, allowUnverified = false, benchmarks = developerBenchmarkAssets() } = {}) {
   if (adapter === undefined) adapter = await loadPakuTransfer({ optional: true });
@@ -44,7 +44,7 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
     ['/assets/game.js', ['text/javascript', recipient.source + '\n' + pakuObservationSource()]],
     ['/assets/game-transfer.js', ['text/javascript', hookedPakuSource(recipient.source) + '\n' + pakuObservationSource()]],
     ['/assets/component.js', ['text/javascript', recovered.javascript]],
-    ['/assets/transfer-output.js', ['text/javascript', await readFile(new URL('../transfer/output.mjs', import.meta.url), 'utf8')]],
+    ['/assets/transfer-output.js', ['text/javascript', await readFile(new URL('../src/transfer/output.mjs', import.meta.url), 'utf8')]],
     ['/api/transfer-config', ['application/json', JSON.stringify({ motion: recovered.contract.defaults, unitScale: PAKU_POLICY.unitScale, componentId: recovered.provenance.id })]],
     ['/api/transfer', ['application/json', JSON.stringify(adapter?.receipt ? {
       status: 'verified', id: adapter.receipt.id, componentId: recovered.provenance.id,

@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {createPakuBrowser} from '../evaluator/browser-harness.mjs';
+import {createPakuBrowser} from '../src/evaluator/browser-harness.mjs';
 import {prepareVisitor,reveal} from './helpers/app-navigation.mjs';
-import {readRoadsterArtifact} from '../roadster/artifact.mjs';
+import {readRoadsterArtifact} from '../src/roadster/artifact.mjs';
 import {fileURLToPath} from 'node:url';
 
 test('the historical Roadster transfer and guided comparison execute without model requests',async()=>{
@@ -33,7 +33,7 @@ test('the historical Roadster transfer and guided comparison execute without mod
 });
 
 test('historical Roadster versions display their own verification count',async()=>{
-  const historical=await readRoadsterArtifact(fileURLToPath(new URL('../transfers/roadster/versions/',import.meta.url)),'9126d1dd00b794daab3fda1711fd3b7058b4962eed800cc8105fd4b874d6eed3');
+  const historical=await readRoadsterArtifact(fileURLToPath(new URL('../assets/transfers/roadster/versions/',import.meta.url)),'9126d1dd00b794daab3fda1711fd3b7058b4962eed800cc8105fd4b874d6eed3');
   const lab={status:()=>({enabled:false,activeRunId:null,budget:null}),artifact:async id=>{assert.equal(id,historical.id);return historical;}};
   const harness=await createPakuBrowser({lab});
   try{

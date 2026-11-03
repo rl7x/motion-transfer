@@ -4,10 +4,10 @@ import wabtFactory from 'wabt';
 import {mkdtemp,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {createCartridgeTools} from '../agent/tools.mjs';
-import {createInvestigationSession} from '../runtime/investigation-session.mjs';
-import {createExperimentWorkbench,EXPERIMENT_LIMITS} from '../experiment/workbench.mjs';
-import {saveInvestigationEvidence} from '../lab/investigation-evidence.mjs';
+import {createCartridgeTools} from '../src/agent/tools.mjs';
+import {createInvestigationSession} from '../src/runtime/investigation-session.mjs';
+import {createExperimentWorkbench,EXPERIMENT_LIMITS} from '../src/experiment/workbench.mjs';
+import {saveInvestigationEvidence} from '../src/lab/investigation-evidence.mjs';
 
 const preparation={requestId:'boundary-preparation',hypothesis:'Offline preparation for resource and integrity verification.',steps:[{buttons:1,frames:1,checkpoint:'gameplay'},{buttons:0,frames:10,checkpoint:'ready'}],watches:[]};
 const trial=prepared=>({requestId:'boundary-experiment',hypothesis:'An offline bounded intervention.',checkpointId:prepared.checkpointId,interventions:[{targetId:prepared.targets.find(item=>item.name==='cooldown').id,value:40,hypothesis:'Human-scripted timer edit.'}],steps:[{buttons:33,frames:8,checkpoint:'after'}],observations:{channels:['motion','timers','events','memory','rendering'],watches:[],captures:[]}});

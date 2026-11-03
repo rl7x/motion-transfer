@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createHash } from 'node:crypto';
-import { createPakuBrowser } from '../evaluator/browser-harness.mjs';
+import { createPakuBrowser } from '../src/evaluator/browser-harness.mjs';
 import { reveal } from './helpers/app-navigation.mjs';
 
 test('the developer task links a verified download and working standalone comparison without inference', async () => {

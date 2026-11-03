@@ -3,8 +3,8 @@ import test from 'node:test';
 import { mkdtemp,rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { createLabService } from '../lab/service.mjs';
-import { createRecoveryProtocol } from '../agent/recovery-protocol.mjs';
+import { createLabService } from '../src/lab/service.mjs';
+import { createRecoveryProtocol } from '../src/agent/recovery-protocol.mjs';
 const request={questionId:'held',idempotencyKey:'lab-test-request'};
 async function fixture(t,options={}){const directory=await mkdtemp(join(tmpdir(),'motion-lab-'));const service=await createLabService({directory,client:{},...options});t.after(async()=>{await service.close();await rm(directory,{recursive:true,force:true});});return{service,directory};}
 async function done(service, id) {

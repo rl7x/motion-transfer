@@ -3,9 +3,9 @@ import test from 'node:test';
 import { readFile, mkdtemp, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { investigate } from '../agent/investigate.mjs';
-import { saveInvestigationEvidence } from '../lab/investigation-evidence.mjs';
-import { loadAcceptedComponent } from '../integration/accepted-component.mjs';
+import { investigate } from '../src/agent/investigate.mjs';
+import { saveInvestigationEvidence } from '../src/lab/investigation-evidence.mjs';
+import { loadAcceptedComponent } from '../src/integration/accepted-component.mjs';
 
 const tool = (turn, name, args, namespace) => ({ type: 'function_call', name, arguments: JSON.stringify(args),
   call_id: 'local-recovery-' + turn, status: 'completed', ...(namespace ? { namespace } : {}) });
@@ -19,7 +19,7 @@ return {experimentId:trial.experimentId,control:trial.final.control.dx,intervent
 
 test('an injected agent inspects real code, reacts to an actual experiment and development failure, then freezes before acceptance', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'recovery-injected-agent-'));
-  const goodSource = '// Local injected client fixture; not a Meta recovery.\n' + await readFile(new URL('../components/dashy-dango-dash/component.ts', import.meta.url), 'utf8');
+  const goodSource = '// Local injected client fixture; not a Meta recovery.\n' + await readFile(new URL('../assets/components/dashy-dango-dash/component.ts', import.meta.url), 'utf8');
   let turn = 0, experimentId, selectionId, candidateId, sawFailure = false;
   const results = request => request.input.flatMap(item => {
     if (item.type === 'function_call_output') return [JSON.parse(item.output)];

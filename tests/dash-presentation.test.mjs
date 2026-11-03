@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {createDashPresentation} from '../roadster/dash-presentation.mjs';
+import {createDashPresentation} from '../src/roadster/dash-presentation.mjs';
 
 const sample=(tick,active)=>Object.freeze({tick,output:Object.freeze({ownsMotion:active,events:Object.freeze(tick===1?['dash-start']:tick===8?['dash-end']:[])}),pose:Object.freeze({x:tick*.75,y:20,pitch:0,roll:0})});
 test('visual hold lasts three logical updates and five fading poses survive the dash',()=>{

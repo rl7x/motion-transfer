@@ -28,4 +28,4 @@ RUN bin=$(sed -n "s/^exec '\\([^']*\\)'.*/\\1/p" /opt/google/chrome/chrome) \
     && chmod 755 /opt/google/chrome/chrome \
     && chmod -R a+rX /app
 USER 10001:10001
-ENTRYPOINT ["node", "/app/hosting/worker.mjs"]
+ENTRYPOINT ["node", "/app/src/hosting/worker.mjs"]

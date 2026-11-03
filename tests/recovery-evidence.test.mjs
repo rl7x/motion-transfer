@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { validateRecoveryEvidence, recoveryCitationRequirements } from '../agent/recovery-evidence.mjs';
+import { validateRecoveryEvidence, recoveryCitationRequirements } from '../src/agent/recovery-evidence.mjs';
 
 function fixture() {
   const trials = [1, 2, 3].map(index => ({ name: 'run_experiment', ok: true, requestAttempt: index,

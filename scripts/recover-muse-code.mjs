@@ -1,9 +1,9 @@
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { pathToFileURL } from 'node:url';
-import { createRecoveryProtocol } from '../agent/recovery-protocol.mjs';
-import { prepareMusePaidRun } from '../mcp/control.mjs';
-import { runEchoPreflight } from '../mcp/preflight.mjs';
+import { createRecoveryProtocol } from '../src/agent/recovery-protocol.mjs';
+import { prepareMusePaidRun } from '../src/mcp/control.mjs';
+import { runEchoPreflight } from '../src/mcp/preflight.mjs';
 
 export async function main(args = process.argv.slice(2)) {
   const { values } = parseArgs({ args, options: {

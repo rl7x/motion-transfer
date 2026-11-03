@@ -4,15 +4,15 @@ import { randomUUID, createHash } from 'node:crypto';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { createCoordinator } from '../hosting/coordinator.mjs';
-import { createPhaseBudget } from '../campaign/phase-budget.mjs';
+import { createCoordinator } from '../src/hosting/coordinator.mjs';
+import { createPhaseBudget } from '../src/campaign/phase-budget.mjs';
 import { createHostedTestBudget } from './helpers/hosting-budget.mjs';
-import { parseJob } from '../hosting/protocol.mjs';
-import { loadPinnedComponent } from '../hosting/component-load.mjs';
-import { ACCEPTED_COMPONENT_ID } from '../hosting/component-pin.mjs';
-import { createFakeMetaClient } from '../hosting/fake-client.mjs';
+import { parseJob } from '../src/hosting/protocol.mjs';
+import { loadPinnedComponent } from '../src/hosting/component-load.mjs';
+import { ACCEPTED_COMPONENT_ID } from '../src/hosting/component-pin.mjs';
+import { createFakeMetaClient } from '../src/hosting/fake-client.mjs';
 import { roadsterAdapterFixture } from './helpers/roadster-adapter.mjs';
-import { requestedParallaxiaIntent } from '../agent/recipient-request.mjs';
+import { requestedParallaxiaIntent } from '../src/agent/recipient-request.mjs';
 const digest = value => createHash('sha256').update(value).digest('hex');
 
 test('PARALLAXIA requests preserve inherited intent and reject unknown worker recipients', () => {

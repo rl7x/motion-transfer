@@ -4,12 +4,12 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { createPhaseBudget } from '../campaign/phase-budget.mjs';
-import { renderFidelityMedia } from '../campaign/video-media.mjs';
+import { createPhaseBudget } from '../src/campaign/phase-budget.mjs';
+import { renderFidelityMedia } from '../src/campaign/video-media.mjs';
 import {
   SAVED_RECOVERY, SUPPLIED_DEFAULTS, buildCandidateRequest, buildSamplingRequest, candidateInstructions, probeInstructions,
   runVideoCandidate, visibleRequestText,
-} from '../campaign/video-candidate.mjs';
+} from '../src/campaign/video-candidate.mjs';
 import { main } from '../scripts/video-candidate.mjs';
 
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
@@ -51,7 +51,7 @@ async function fixture(t) {
 }
 
 test('the candidate prompt discloses the ABI and hides recovered source and acceptance answers', async () => {
-  const component = await readFile(new URL('../components/dashy-dango-dash/component.ts', import.meta.url), 'utf8');
+  const component = await readFile(new URL('../assets/components/dashy-dango-dash/component.ts', import.meta.url), 'utf8');
   const request = buildCandidateRequest(Buffer.from('clip'), 'video');
   const text = visibleRequestText(request);
   assert.equal(request.model, 'muse-spark-1.3');
@@ -75,7 +75,7 @@ test('the candidate prompt discloses the ABI and hides recovered source and acce
   assert.equal(probeInstructions().includes('walkingSpeed'), false);
   assert.equal(candidateInstructions().includes('eight-tick'), false);
   assert.equal(candidateInstructions().includes('component.ts'), false);
-  const implementation = await readFile(new URL('../campaign/video-candidate.mjs', import.meta.url), 'utf8');
+  const implementation = await readFile(new URL('../src/campaign/video-candidate.mjs', import.meta.url), 'utf8');
   const prompts = implementation.slice(implementation.indexOf('export function probeInstructions'), implementation.indexOf('export function visibleRequestText'));
   assert.equal(implementation.includes('scoreFidelityStudy'), false);
   assert.equal(prompts.includes('dashy-dango-dash/component'), false);

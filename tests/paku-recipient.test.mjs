@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { after, before } from 'node:test';
 import test from 'node:test';
-import { loadPakuPaku } from '../recipients/paku-paku/load.mjs';
+import { loadPakuPaku } from '../src/recipients/paku-paku/load.mjs';
 import { createPakuBrowser, replayPaku, startPaku } from './helpers/paku-browser.mjs';
 
 let harness;

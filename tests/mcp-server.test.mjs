@@ -5,24 +5,24 @@ import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { PRICES } from '../agent/accounting.mjs';
-import { createComponentWorkbench } from '../agent/component-workbench.mjs';
-import { createRecoveryProtocol } from '../agent/recovery-protocol.mjs';
-import { loadTarget } from '../agent/target.mjs';
-import { compileMotion } from '../component/build.mjs';
-import { createPhaseBudget } from '../campaign/phase-budget.mjs';
-import { createInvestigationSession } from '../runtime/investigation-session.mjs';
+import { PRICES } from '../src/agent/accounting.mjs';
+import { createComponentWorkbench } from '../src/agent/component-workbench.mjs';
+import { createRecoveryProtocol } from '../src/agent/recovery-protocol.mjs';
+import { loadTarget } from '../src/agent/target.mjs';
+import { compileMotion } from '../src/component/build.mjs';
+import { createPhaseBudget } from '../src/campaign/phase-budget.mjs';
+import { createInvestigationSession } from '../src/runtime/investigation-session.mjs';
 import {
   PINNED_MUSE_VERSION, admitNextRequest, appendJsonLine, createTurnAuthority, defaultMuseBinary, emptySpend,
   eventToolViolations, isPinnedMuseVersion, museChildEnv, museExecArgs, museSettingsDocument, museSpendControl,
   prepareMusePaidRun, recordUsage, trustedTurnBefore,
-} from '../mcp/control.mjs';
-import { cleanRoomTask, createMotionHost } from '../mcp/host.mjs';
+} from '../src/mcp/control.mjs';
+import { cleanRoomTask, createMotionHost } from '../src/mcp/host.mjs';
 
 const source = `export function init(){return {cooldown:0,remaining:0};}
 export function step(state){return {state,output:{ownsMotion:false,displacement:{x:0,y:0},events:[]}};}`;
 const tinyPng = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
-const serverPath = fileURLToPath(new URL('../mcp/server.mjs', import.meta.url));
+const serverPath = fileURLToPath(new URL('../src/mcp/server.mjs', import.meta.url));
 
 function generation(kind, turn) {
   return { payload_type: 'task.lifecycle.proposed', payload: { event: { task_kind: kind, turn }, turn } };
@@ -191,7 +191,7 @@ test('echo argv, settings, and the child environment stay isolated', () => {
 });
 
 test('the clean room task does not contain the saved component', async () => {
-  const component = await readFile(new URL('../components/dashy-dango-dash/component.ts', import.meta.url), 'utf8');
+  const component = await readFile(new URL('../assets/components/dashy-dango-dash/component.ts', import.meta.url), 'utf8');
   const distinctive = component.split('\n').find(line => line.length > 60);
   assert.ok(distinctive);
   const task = cleanRoomTask(createRecoveryProtocol());

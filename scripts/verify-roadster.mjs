@@ -1,7 +1,7 @@
 import {mkdir,writeFile} from 'node:fs/promises';
-import {loadSavedRoadster} from '../roadster/saved.mjs';
-import {evaluateRoadsterAdapter} from '../evaluator/roadster.mjs';
-import {verifyRoadsterBrowser} from '../evaluator/roadster-browser.mjs';
+import {loadSavedRoadster} from '../src/roadster/saved.mjs';
+import {evaluateRoadsterAdapter} from '../src/evaluator/roadster.mjs';
+import {verifyRoadsterBrowser} from '../src/evaluator/roadster-browser.mjs';
 
 try{
   const artifact=await loadSavedRoadster(),source=artifact.files['adapter.ts'];

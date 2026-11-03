@@ -1,1 +1,1 @@
-export { createPakuBrowser, startPaku, replayPaku } from '../../evaluator/browser-harness.mjs';
+export { createPakuBrowser, startPaku, replayPaku } from '../../src/evaluator/browser-harness.mjs';

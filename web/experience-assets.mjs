@@ -1,13 +1,13 @@
 import { readFile } from 'node:fs/promises';
-import { loadRecoveredMotion } from '../component/load.mjs';
-import { loadJujump } from '../recipients/jujump/load.mjs';
-import { loadJujumpTransfer, JUJUMP_POLICY } from '../transfer/jujump.mjs';
-import { hookedJujumpSource, jujumpObservationSource } from '../runtime/jujump-browser.mjs';
+import { loadRecoveredMotion } from '../src/component/load.mjs';
+import { loadJujump } from '../src/recipients/jujump/load.mjs';
+import { loadJujumpTransfer, JUJUMP_POLICY } from '../src/transfer/jujump.mjs';
+import { hookedJujumpSource, jujumpObservationSource } from '../src/runtime/jujump-browser.mjs';
 import { buildDonorFrame } from './donor-frame.mjs';
-import { loadSavedRoadster } from '../roadster/saved.mjs';
-import { buildRoadsterFrame } from '../roadster/build.mjs';
-import { savedInvestigations } from '../lab/saved.mjs';
-import { integrationAssets } from '../integration/assets.mjs';
+import { loadSavedRoadster } from '../src/roadster/saved.mjs';
+import { buildRoadsterFrame } from '../src/roadster/build.mjs';
+import { savedInvestigations } from '../src/lab/saved.mjs';
+import { integrationAssets } from '../src/integration/assets.mjs';
 
 export async function experienceAssets({allowUnverified=false,adapter,roadster}={}) {
   if(roadster===undefined)roadster=await loadSavedRoadster({optional:true});
@@ -18,7 +18,7 @@ export async function experienceAssets({allowUnverified=false,adapter,roadster}=
   for(const record of recordings)json('/api/investigations/saved/'+record.id,record.job);
   json('/api/investigations/recordings', recordings.filter(record => record.job.request?.questionId === 'extraction')
     .map(({ id, title }) => ({ id, title })));
-  assets.set('/evidence/experiment-benchmark.json',['application/json',await readFile(new URL('../lab/recordings/experiment-benchmark.json',import.meta.url),'utf8')]);
+  assets.set('/evidence/experiment-benchmark.json',['application/json',await readFile(new URL('../assets/lab/recordings/experiment-benchmark.json',import.meta.url),'utf8')]);
   assets.set('/donor/play',['text/html',await buildDonorFrame()]);
   assets.set('/assets/jujump-game.js',['text/javascript',recipient.source+'\n'+jujumpObservationSource()]);
   assets.set('/assets/jujump-game-transfer.js',['text/javascript',hookedJujumpSource(recipient.source)+'\n'+jujumpObservationSource()]);
@@ -40,7 +40,7 @@ export async function experienceAssets({allowUnverified=false,adapter,roadster}=
     assets.set('/roadster/play-transfer',['text/html',transferFrame.html]);
     assets.set('/roadster/adapter.ts',['text/plain',roadster.files['adapter.ts']]);
     assets.set('/roadster/report.json',['application/json',roadster.files['verification.json']]);
-    assets.set('/roadster/presentation.json',['application/json',await readFile(new URL('../transfers/roadster/presentation-evidence.json',import.meta.url),'utf8')]);
+    assets.set('/roadster/presentation.json',['application/json',await readFile(new URL('../assets/transfers/roadster/presentation-evidence.json',import.meta.url),'utf8')]);
     assets.set('/roadster/notices',['text/plain',roadster.files['notices.txt']]);
     json('/api/roadster/base',{id:roadster.id,componentId:roadster.componentId,intent:roadster.intent,summary:roadster.summary,parentArtifactId:roadster.parentArtifactId});
     destinations.push({id:'roadster',name:'RDSTR Stunts',kind:'A historical driving transfer',componentId:component.provenance.id,before:'/roadster/play?mode=original&quality=low',after:'/roadster/play?mode=transfer&quality=low',artifactId:roadster.id,aspect:1.5,
@@ -60,14 +60,14 @@ export async function experienceAssets({allowUnverified=false,adapter,roadster}=
   json('/api/ability',{id:component.provenance.id,name:'Dash',status:'saved-recovery',provenance:component.provenance,contract:component.contract});
   json('/component/export',{source:component.source,javascript:component.javascript,contract:component.contract,provenance:component.provenance});
   try{
-    const comparison=JSON.parse(await readFile(new URL('../transfers/comparison.json',import.meta.url),'utf8'));
+    const comparison=JSON.parse(await readFile(new URL('../assets/transfers/comparison.json',import.meta.url),'utf8'));
     if(comparison.componentId!==component.provenance.id||!comparison.passed)throw Error('Comparison identity mismatch');
     if(adapter?.receipt&&comparison.adapters.paku!==adapter.sourceSha256)throw Error('PAKU comparison source is stale');
     if(jujump?.verified&&comparison.adapters.jujump!==jujump.sourceSha256)throw Error('JUJUMP comparison source is stale');
     json('/evidence/transfer-comparison.json',comparison);
   }catch(error){if(error.code!=='ENOENT')throw error;}
   for(const name of ['provenance','contract','evidence','evaluation-development','evaluation-regressions','evaluation-acceptance','recovery-history']){
-    assets.set(`/evidence/${name}.json`,['application/json',await readFile(new URL(`../components/dashy-dango-dash/${name}.json`,import.meta.url),'utf8')]);
+    assets.set(`/evidence/${name}.json`,['application/json',await readFile(new URL(`../assets/components/dashy-dango-dash/${name}.json`,import.meta.url),'utf8')]);
   }
   return assets;
 }

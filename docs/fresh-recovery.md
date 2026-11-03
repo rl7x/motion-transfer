@@ -54,8 +54,8 @@ The campaign directory `reports/motion-transfer-phase/wonder-development-001` an
 
 A clean checkout reads the same host publication from these three files. They are a byte copy of the delivery artifact, not a regenerated package:
 
-- [receipt.json](../integration/recordings/recoveries/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/receipt.json)
-- [project.json](../integration/recordings/recoveries/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/project.json)
-- [validation.json](../integration/recordings/recoveries/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/validation.json)
+- [receipt.json](../assets/integration/recordings/recoveries/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/receipt.json)
+- [project.json](../assets/integration/recordings/recoveries/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/project.json)
+- [validation.json](../assets/integration/recordings/recoveries/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/validation.json)
 
-`createIntegrationPublication` on an empty directory finds no local `integrations/` copy and falls back to `integration/recordings/recoveries/`. That read rebuilds the ZIP from `project.json`.
+`createIntegrationPublication` on an empty directory finds no local `integrations/` copy and falls back to `assets/integration/recordings/recoveries/`. That read rebuilds the ZIP from `project.json`.
