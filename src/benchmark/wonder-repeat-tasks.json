@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "name": "wonder-repeat-v1",
+  "question": "Does Muse Wonder reach an accepted recovery of the dash again, in fresh sessions, under the same rules as its first success?",
+  "model": "muse-wonder-1.0",
+  "protocolId": "da119ff83d909d5154373a1c16002cb4dbb02d2176e618dd2b259cd446841080",
+  "plannedTrials": 3,
+  "success": "A trial counts as a success only if a candidate passes all 13 development checks, is frozen, and then passes all 20 acceptance checks.",
+  "secondaryOutcome": "Whether the accepted candidate also publishes through the JUJUMP integration.",
+  "rules": [
+    "Every planned trial that starts is reported, including failures.",
+    "A started trial is never repeated, and no trial is added to improve the result.",
+    "Trials run one at a time through the authoritative cloud ledger.",
+    "The first success is the baseline. It is reported separately and does not count toward this rate.",
+    "A trial stopped by infrastructure before Wonder finished is reported with its reason, and is not counted as a success."
+  ],
+  "budget": {
+    "category": "wonder",
+    "remainingAtFreezeUsd": 10.310964,
+    "reservedPerTrialUsd": 6,
+    "reason": "Each trial reserves $6 before it starts. At the first trial's $1.69, three trials fit and a fourth would not."
+  },
+  "baseline": {
+    "campaignId": "67a02792-0e21-48fa-832c-991d00085d85",
+    "protocolId": "9c7cda7c802c7ca4ab51729266af7ca21e52b886c6e61659e21ff38d6b922c5e",
+    "estimatedCostUsd": 1.689036,
+    "comparison": "Model, task and limits match the baseline. The evaluator, check cases, agent loop and output contract are byte-identical to it. The protocol id differs because other hashed files moved or changed afterward."
+  }
+}
