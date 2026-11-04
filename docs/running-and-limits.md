@@ -2,6 +2,12 @@
 
 Setup, spending, measured results and remaining limits, in detail. For the design, see [architecture](architecture.md).
 
+## Hosted site and its limits
+
+Open [Motion Transfer on Vercel](https://motion-transfer-rl7x.vercel.app). Judges can play the saved versions and create new PARALLAXIA remixes. New adapters pass the same 13 native and 3 browser checks in credential-free Vercel Sandbox microVMs before publication. The public whole-job cap is **$5, including at most one repair**, with two requests per browser session and the existing overall ledger limits.
+
+Hosting uses Vercel Hobby's included quotas; generation uses Meta API credits. Free-tier exhaustion can pause the service. Saved versions and the authoritative spending ledger survive backend restarts. When this workspace's `.vercel/remote-generation.json` marker is present, the local preview stays playback-only to avoid duplicating the cloud allowance. See [Vercel hosting](vercel-hosting.md) for the architecture and validation.
+
 ## Play without inference
 
 Node.js 22 or newer. This builds an explicitly labeled baseline reuse copy; it makes no provider request.
