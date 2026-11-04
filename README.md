@@ -4,7 +4,7 @@
 
 **Recover a move from a compiled game, then port it into games the model has never seen.**
 
-Muse Wonder rebuilt Dashy Dango's dash from the compiled WebAssembly game, in 1 of 3 full sessions. Muse Spark then wrote the code that connects that dash to a game, and ported it into 7 of 8 eligible games it had never seen. It's for game developers who want a mechanic from a game whose source they don't have, and for keeping behavior alive when only the binary survives.
+Muse Wonder rebuilt Dashy Dango's dash from the compiled WebAssembly game. It succeeded in 1 of 3 full sessions at first, and in 2 of 3 fresh sessions after we improved the harness. Muse Spark then wrote the code that connects that dash to a game, and ported it into 7 of 8 eligible games it had never seen. It's for game developers who want a mechanic from a game whose source they don't have, and for keeping behavior alive when only the binary survives.
 
 ![A borrowed dash firing in a game Muse Spark ported it into](docs/media/demo.gif)
 
@@ -16,7 +16,7 @@ Hackathon problem statement: **Push the Frontier**. Models used through the Meta
 
 | Claim | Measured result | Evidence |
 | --- | --- | --- |
-| Recover a behavior from a binary | Accepted in 1 of 3 full sessions. The first scored 0/13, 11/13, then 13/13 and passed all 20 separate acceptance checks. Both frozen repeats were rejected | [Recovery record](docs/fresh-recovery.md) · [Repeat trials](docs/wonder-repeat-results.md) |
+| Recover a behavior from a binary | Accepted in 1 of 3 full sessions. The first scored 0/13, 11/13, then 13/13 and passed all 20 separate acceptance checks. Both frozen repeats were rejected. On an improved harness, 2 of 3 fresh sessions passed 32/32 and 20/20 | [Recovery record](docs/fresh-recovery.md) · [Repeat trials](docs/wonder-repeat-results.md) · [Harness results](docs/wonder-harness-results.md) |
 | Port it into unseen games | 7 of 8 eligible games, 2 excluded up front, $0.33 estimated | [Port results](docs/auto-port-results.md) |
 | Remix it from a sentence | 8/9 positive tasks passed, and the deliberately impossible task was correctly refused | [Task results](docs/live-mechanics-results.md) |
 

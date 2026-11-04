@@ -1,4 +1,5 @@
 import story from '../../../assets/evidence/recovery.json';
+import harness from '../../../assets/benchmark/wonder-harness-v5/results.json';
 import repeats from '../../../assets/evidence/wonder-repeat.json';
 import { MetaChip } from './meta-chip';
 import { PixelSprite } from './pixel-sprite';
@@ -9,6 +10,14 @@ const pair = (position: { x: number; y: number }) =>
   `(${position.x.toFixed(2)}, ${position.y.toFixed(2)})`;
 
 const SESSION_RESULT = { accepted: 'ACCEPTED', rejected: 'REJECTED', 'not-run': 'NOT RUN' };
+
+const harnessSessions = harness.trials.map((trial) => {
+  const attempts = trial.attempts as {
+    developmentPassed: number;
+    acceptancePassed: number | null;
+  }[];
+  return { ...trial, best: attempts[attempts.length - 1] };
+});
 
 type Attempt = (typeof story.attempts)[number];
 
@@ -109,11 +118,10 @@ export function RecoveryPanel() {
       <div className="recovery__repeats">
         <h3>Then we ran it again</h3>
         <p className="recovery__intro">
-          With the rules committed first, Wonder got the same test in fresh sessions. So far{' '}
-          {repeats.acceptedSessions} of {repeats.fullSessions} full sessions has produced an
-          accepted dash, so recovery works but isn&apos;t reliable yet. The exam did its job: one
-          candidate matched every development trace, then failed most of the unseen checks and was
-          rejected.
+          With the rules committed first, Wonder got the same test in fresh sessions. Under those
+          rules, {repeats.acceptedSessions} of {repeats.fullSessions} full sessions produced an
+          accepted dash. The exam did its job: one candidate matched every development trace, then
+          failed most of the unseen checks and was rejected.
         </p>
         <ul className="recovery__sessions">
           {repeats.sessions.map((session) => (
@@ -136,6 +144,35 @@ export function RecoveryPanel() {
                   Not run: ${repeats.remainingUsd.toFixed(2)} left, below the $6 each trial reserves
                 </p>
               )}
+            </li>
+          ))}
+        </ul>
+        <h3>Then we fixed the test bench</h3>
+        <p className="recovery__intro">
+          Those failures showed what the harness was missing, so we gave Wonder harder development
+          checks, clearer feedback and tighter evidence. In a new frozen plan, {harness.accepted} of{' '}
+          {harness.trials.length} fresh sessions passed every check. The rules changed, so this rate
+          stands alone, and three sessions is still a small sample.
+        </p>
+        <ul className="recovery__sessions">
+          {harnessSessions.map((session) => (
+            <li
+              key={session.ordinal}
+              className={
+                'recovery__session ' +
+                (session.status === 'delivered' ? 'is-accepted' : 'is-rejected')
+              }
+            >
+              <p className="recovery__top">
+                <strong>Session {session.ordinal}</strong>
+                <span>{session.status === 'delivered' ? 'ACCEPTED' : 'REJECTED'}</span>
+              </p>
+              <p className="recovery__stats">
+                {session.best
+                  ? `Development ${session.best.developmentPassed}/32 · Unseen exam ${session.best.acceptancePassed}/20`
+                  : 'Stopped before writing a candidate'}{' '}
+                · ${session.estimatedCostUsd.toFixed(2)}
+              </p>
             </li>
           ))}
         </ul>

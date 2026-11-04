@@ -14,6 +14,8 @@
     "investigate": "node scripts/investigate.mjs",
     "recover:motion": "node scripts/recover-motion.mjs",
     "recover:campaign": "node scripts/recovery-campaign.mjs",
+    "wonder:harness": "node scripts/wonder-harness.mjs",
+    "verify:wonder": "node scripts/verify-wonder-harness.mjs --replay && node scripts/verify-wonder-harness.mjs --v4 && node scripts/verify-wonder-harness.mjs --v5 --replay",
     "recover:muse-code": "node scripts/recover-muse-code.mjs",
     "deliver:recovery": "node scripts/deliver-accepted-recovery.mjs",
     "verify:motion": "node scripts/verify-motion.mjs",

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { applyPatches } from '../src/auto-port/patches.mjs';
+import { verifyWonderHarness } from './verify-wonder-harness.mjs';
 
 // Recomputes every headline number from committed files. Makes no model request, and needs no gitignored reports.
 const json = async path => JSON.parse(await readFile(path, 'utf8'));
@@ -74,6 +75,11 @@ near(finished.reduce((sum, session) => sum + session.estimatedCostUsd, 0), wonde
 for (const session of repeats.filter(session => session.status === 'not-run')) assert.ok(wonder.remainingUsd < wonderPlan.budget.reservedPerTrialUsd, `${session.label} could have run`);
 assert.ok(readme.includes(`${wonder.acceptedSessions} of ${wonder.fullSessions} full sessions`), 'README must state the Wonder repeat result');
 lines.push(`Wonder repeats: ${wonder.repeatsAccepted} of ${wonder.repeatsRun} accepted, ${wonder.acceptedSessions} of ${wonder.fullSessions} full sessions, $${wonder.repeatCostUsd.toFixed(4)}`);
+
+for (const version of ['v3', 'v4', 'v5']) lines.push(await verifyWonderHarness({ version }));
+const latest = await json('assets/benchmark/wonder-harness-v5/results.json');
+const latestStarted = latest.trials.filter(trial => trial.status !== 'not-run').length;
+assert.ok(readme.includes(`${latest.accepted} of ${latestStarted} fresh sessions`), 'README must state the latest harness result');
 
 console.log(lines.join('\n'));
 console.log('Evidence verified from committed files. No model request was made.');

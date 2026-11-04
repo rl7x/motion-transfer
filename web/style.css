@@ -2494,7 +2494,7 @@ html:has(.ai-lab) body {
   margin-top: 28px;
 }
 .ai-lab .recovery__repeats h3 {
-  margin: 0 0 6px;
+  margin: 22px 0 6px;
   font: 800 22px var(--display);
   letter-spacing: -0.02em;
 }

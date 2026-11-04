@@ -32,7 +32,22 @@ This makes paid model requests. The protocol, ceiling and executable inputs are 
 
 Use `--protocol motion-recovery-v2` only when deliberately selecting the earlier development suite. A source change still changes the protocol hash, so selecting the old name does not reproduce a historical frozen protocol by itself.
 
+## Running a frozen plan
+
+`scripts/wonder-harness.mjs` runs a committed plan through the authoritative cloud ledger. It needs this workspace's deployment credentials, and `run` spends Meta credits.
+
+```sh
+npm run wonder:harness -- status --version v5
+npm run wonder:harness -- run --version v5 --trial 1 --allow-paid
+npm run wonder:harness -- finalize --version v5
+```
+
+`run` refuses a session that already started. It restarts the backend if fewer than 16 minutes remain, restores the frozen source from its hashed archive when needed, and stops unless the protocol matches the plan. It then waits for the session and saves its exact report under `assets/benchmark/`. `finalize` writes `results.json`, and a session that never started needs a `--reason`.
+
 ## Local verification
+
+`npm run verify:wonder` checks every saved result and replays the accepted sources against the donor. It makes no model request.
+
 
 `tests/fixtures/wonder-recovery-failures.json` contains three unchanged historical Wonder candidates with their original source hashes. These are offline regression inputs, never synthesis context. Tests replay them against the real donor, verify that v3 catches the wrong direction-history rule, and check the early/missing activation windows. A saved accepted controller is a positive control for the new suite, not evidence of a new recovery.
 

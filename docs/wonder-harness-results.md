@@ -28,4 +28,16 @@ Session 1 failed at the input-token limit after 20 requests and two candidates (
 
 ## v5: bounded evidence context
 
-V5 retains v4's host verification and $8 ceiling, and bounds the evidence ledger after compaction. The real v4 failure is a regression fixture: the new context retains current source, development failures, recent measurements and trace IDs while archiving older repeated detail. The full journal remains intact. The next validation uses a separate frozen plan; its results will not be merged with the earlier protocol's outcomes.
+V5 retains v4's host verification and $8 ceiling, and bounds the evidence ledger after compaction. The real v4 failure is a regression fixture: the new context retains current source, development failures, recent measurements and trace IDs while archiving older repeated detail. The full journal remains intact.
+
+[The frozen v5 plan](../assets/benchmark/wonder-harness-v5/plan.json) declared three fresh sessions before the first one ran, and all three ran. **2 of 3 were accepted**, for an estimated $4.77.
+
+| Session | Development | Acceptance | Result | Requests | Estimated cost |
+| --- | --- | --- | --- | ---: | ---: |
+| 1 | 0/32 → 19/32 → 32/32 | 20/20 | Accepted and published to JUJUMP | 21 | $1.722197 |
+| 2 | No candidate | Not run | Wonder stopped before the required inspection and experiments | 13 | $1.331024 |
+| 3 | 0/32 → 12/32 → 32/32 | 20/20 | Accepted and published to JUJUMP | 17 | $1.717993 |
+
+Sessions 1 and 3 reached 32 of 32 development checks on their third candidate, then passed all 20 unseen acceptance checks. Both also published through the JUJUMP integration. Session 2 produced no candidate, so the evidence-gathering gate remains a real way for a session to fail.
+
+This is a small exploratory sample. It is not merged with the earlier protocols' outcomes, and the public site's controller still comes from the original accepted session. `node scripts/verify-wonder-harness.mjs --v5 --replay` checks the exact reports and replays both accepted sources against the donor, with no model request.

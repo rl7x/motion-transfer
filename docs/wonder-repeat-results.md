@@ -2,7 +2,7 @@
 
 **Muse Wonder's recovery isn't reliable yet: both frozen repeat sessions were rejected, so 1 of 3 full sessions under these rules has produced an accepted dash.**
 
-The dash in every game on this site comes from the first session, and that candidate passed all 13 development checks and all 20 acceptance checks. These trials measure something different: how often Wonder gets there.
+Later sessions on an improved harness are measured separately in [the harness experiments](wonder-harness-results.md). The dash in every game on this site comes from the first session, and that candidate passed all 13 development checks and all 20 acceptance checks. These trials measure something different: how often Wonder gets there.
 
 | Session | Result | Best development | Unseen acceptance | Candidates | Requests and time | Estimated cost |
 | --- | --- | ---: | ---: | ---: | --- | ---: |
