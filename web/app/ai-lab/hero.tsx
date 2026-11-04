@@ -89,8 +89,9 @@ export function Hero({ playback, savedCount }: { playback: boolean; savedCount: 
           </Afterimage>
         </h1>
         <p className="hero__tagline">
-          Steal a move from one game. Drop it into another.{' '}
-          <strong>Meta writes the glue — and proves it works.</strong>
+          <strong>Source code gets lost. Great moves don&apos;t have to be.</strong> Meta&apos;s
+          models recover a move from a compiled game and carry it into new ones, and every result is
+          checked. Every game here is openly licensed and credited.
         </p>
         <div className="hero__actions">
           <a className="btn btn--primary btn--large" href="#stage">
