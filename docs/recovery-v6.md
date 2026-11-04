@@ -17,7 +17,7 @@ Humans chose the mechanic, wrote the ABI, experiment tools and evaluators, and m
 ## Three gates
 
 1. The candidate must pass the existing 32 development cases.
-2. The [exhaustive verifier](exhaustive-verification.md) searches the product of donor and candidate state. A confirmed counterexample is replayed with 12 idle ticks and returned as a normal development failure window. It consumes the current attempt. An inconclusive result also fails development and requests revision. Only `proved` advances.
+2. The [exhaustive verifier](exhaustive-verification.md) searches the product of donor and candidate state. A confirmed counterexample is replayed with 12 idle ticks and returned as a normal development failure window. It consumes the current attempt. An inconclusive result also fails development and requests revision, and a refusal gives the model its real cause. Only `proved` advances.
 3. The host freezes the exact candidate and runs the unchanged 20 unseen acceptance cases. A disagreement after `proved` stops the session and blocks subsequent planned sessions: the state abstraction must be investigated.
 
 Each searched attempt records the full exhaustive verdict in the session and report. Each started session gets `verification-N.json`, including development, exhaustive and acceptance outcomes, even when no candidate is accepted. Recipient integration verification is stored separately. Reaching the cost ceiling counts as failure.
@@ -29,6 +29,8 @@ A successful exhaustive verdict supports: “matches the compiled binary on ever
 The plan binds an implementation commit, a Git source archive SHA-256, all recovery protocol source hashes, a unique backend workspace and output directory, and a 4 PM ET start cutoff. It plans **one fresh session at $2.50**, because the read-only cloud ledger shows $1.05135725 of other Meta work since midnight ET on November 4. Conservatively counting that spending against the $5 working limit leaves $3.94864275. No category allocation is changed.
 
 The [original plan](../assets/benchmark/wonder-harness-v6/plan.json) is preserved byte-for-byte. Before any request, full-suite checks exposed an older-session compatibility issue. The active revision binds the original plan's SHA-256, records that no session started, and freezes the corrected source under new workspace and output paths. The harness refuses the revision if the original backend output contains a started session. This revision does not add a session or increase the budget.
+
+The later feedback fixes changed hashed source, so `main` no longer matches `plan-revision-1.json`. That plan would still run its frozen commit, without the fixes. A paid run with them needs a new `plan-revision-2.json`, which `loadV6Plan` accepts only if it binds the revision before it and nothing has started.
 
 After explicit approval, `wonder-harness.mjs` uploads the matching archive into the plan's isolated `/tmp/wonder-harness-v6-*` backend workspace, uses the backend's installed dependencies, and checks the source protocol identity before starting. It does not update the live backend application or deploy the website. The local run uses the isolated worktree; `--deployment-root` reads credentials and backend connection state from the original checkout without copying them into the archive.
 
