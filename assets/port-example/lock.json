@@ -1,0 +1,40 @@
+{
+  "name": "tiny-platformer",
+  "repository": "https://github.com/jakesgordon/javascript-tiny-platformer",
+  "revision": "50cbd06c410efe768b7c76f4458387a194130339",
+  "license": "MIT",
+  "files": [
+    {
+      "local": "tiny-platformer/LICENSE",
+      "sha256": "127d037a038179131264d54a0cd2d49419d824a4545d2337a3d208dd5be05295"
+    },
+    {
+      "local": "tiny-platformer/README.md",
+      "sha256": "106e6f6a8eeab43ff4bdb3bb08cb4d3973349b4ec514056a15fa3de7e14da458"
+    },
+    {
+      "local": "tiny-platformer/fpsmeter.min.js",
+      "sha256": "fec43a13a522dafe9c28c3d30635a275af350edf3423de0349fb6fb9c01e9450"
+    },
+    {
+      "local": "tiny-platformer/index.html",
+      "sha256": "5565940e2b29bd4d8f726c643800a70a07e9a23364e2685b3756149bbb8f7406"
+    },
+    {
+      "local": "tiny-platformer/level.json",
+      "sha256": "7943215a4c9162a7e9bdcb9937d8dd80bebb311b13b383932e62b9967e422eda"
+    },
+    {
+      "local": "tiny-platformer/level.tmx",
+      "sha256": "017a16c0c7b8bdfc56f0d3a70707c35fab37dbaa21753f09cf54f13955cbb985"
+    },
+    {
+      "local": "tiny-platformer/platformer.js",
+      "sha256": "c67966aae382f2e87fca56d864a252a01f80434b9028b18886a7eb3b932671e4"
+    },
+    {
+      "local": "tiny-platformer/tiles.png",
+      "sha256": "2f50f7d9bbdbc0de7fe34ea42f20fa81e6f0d5b05dacf0b7f4f90457bbdc29fa"
+    }
+  ]
+}
