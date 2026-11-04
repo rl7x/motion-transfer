@@ -720,6 +720,34 @@ test('five-dollar public jobs reserve their full cap without resetting historica
   assert.equal(journal.definition.maxCostUsd,50);
 });
 
+test('an unconfirmed remix bill stays held without stopping later visitors', async t => {
+  const broker = fakeBroker(verified(parentComponent.id, Buffer.from('<!doctype html><title>after a timeout</title>')));
+  const client = createFakeMetaClient({ source: 'export function init(){return {}}\n', intent });
+  const respond = client.respond.bind(client);
+  client.respond = async () => { client.respond = respond; throw Error('uncertain transport'); };
+  const { coordinator, parentId, ledgerDirectory } = await setup(t, broker, client, { maxJobCostUsd: 0.5 });
+  const failed = await coordinator.wait((await coordinator.submit(remix(parentId))).id);
+  assert.equal(failed.status, 'failed');
+  const budget = await createPhaseBudget(ledgerDirectory);
+  assert.equal((await budget.status()).uncertain, true);
+  const next = await coordinator.wait((await coordinator.submit(remix(parentId))).id);
+  assert.equal(next.status, 'ready', next.error);
+  const [first] = (await budget.journal()).reservations;
+  assert.equal(first.status, 'bounded-unknown');
+  assert.equal((await budget.status()).categories.remix.reservedUsd, 0.5);
+});
+
+test('an uncertain charge from outside a remix job still blocks inference', async t => {
+  const broker = fakeBroker(verified(parentComponent.id, Buffer.from('<!doctype html>')));
+  const client = createFakeMetaClient({ source: 'export function init(){return {}}\n', intent });
+  const { coordinator, parentId, ledgerDirectory } = await setup(t, broker, client, { maxJobCostUsd: 0.5 });
+  const budget = await createPhaseBudget(ledgerDirectory);
+  await budget.reserve({ id: 'campaign:outside', category: 'reserve', maxCostUsd: 1 });
+  await budget.settle({ id: 'campaign:outside', estimatedCostUsd: 0, uncertain: true });
+  await assert.rejects(() => coordinator.submit(remix(parentId)), /no further inference admitted/);
+  assert.equal(client.calls.filter(call => call.method === 'respond').length, 0);
+});
+
 test('a missing or shared ledger never starts a provider call', async t => {
   const before = await ledgerHash();
   const broker = fakeBroker(verified(parentComponent.id, Buffer.from('<!doctype html>')));
@@ -780,7 +808,8 @@ test('unknown provider usage stays reserved and a restart does not retry', async
   assert.equal(broker.calls.length, 0);
   assert.equal((await (await createPhaseBudget(ledgerDirectory)).status()).uncertain, true);
   assert.equal((await (await createPhaseBudget(ledgerDirectory)).status()).categories.reserve.reservedUsd,7);
-  await assert.rejects(() => coordinator.submit(remix(parentId)), /no further inference admitted/);
+  // The ceiling stays held, so a $7 job no longer fits. See the test below for the public $0.50 cap.
+  await assert.rejects(() => coordinator.submit(remix(parentId)), /cannot cover the whole-job reservation/);
   assert.equal(client.calls.filter(call => call.method === 'respond').length, 1);
 
   const hung = createFakeMetaClient({ source: 'export function init(){return {}}\n', intent });
@@ -796,7 +825,7 @@ test('unknown provider usage stays reserved and a restart does not retry', async
   assert.equal(expired.status, 'failed');
   assert.match(expired.error, /timeout|aborted/i);
   assert.equal((await (await createPhaseBudget(timed.ledgerDirectory)).status()).uncertain, true);
-  await assert.rejects(() => timed.coordinator.submit(remix(timed.parentId)), /no further inference admitted/);
+  await assert.rejects(() => timed.coordinator.submit(remix(timed.parentId)), /cannot cover the whole-job reservation/);
   assert.equal(hung.calls.filter(call => call.method === 'respond').length, 1);
 
   const over = createFakeMetaClient({ source: 'export function init(){return {}}\n', intent, inputTokens: 12001 });
