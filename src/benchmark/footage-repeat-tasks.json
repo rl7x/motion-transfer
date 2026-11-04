@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "name": "footage-repeat-v1",
+  "follows": "footage-calibration-v3",
+  "question": "How often does a fresh Muse Spark Open session reach the same exam result from the same footage?",
+  "sessions": 5,
+  "controllerModel": "meta-models/muse-spark-open-1026",
+  "maxAttempts": 3,
+  "clipSha256": "bc312874358d8d9e752c67c7b1fea548b1fa553db7641d84a585c468b9b60ca7",
+  "reported": "Every session started, including failures.",
+  "sources": {
+    "src/footage/calibration.mjs": "456ec71eb086fa4f01cfa6c220081842e799ea297b94bb1bfb08e4376a9e41af",
+    "src/footage/clip.mjs": "5bba1112533a0eba050047a0dd0a945651f315f2bcdac3444cdb779aee62302e",
+    "src/footage/grade.mjs": "4000adc5761dcae617fab300adaed47fad12649ced4b6d88ad5013b1ebab2292",
+    "src/footage/landmarks.mjs": "e03285b3abdc6cfb2f6e8be19bbc980a6096271de082620e5aa8e292a118df3e",
+    "src/footage/recover.mjs": "eac30e909356e5d537a43b6b0c26ac0250407127d59a7579ae620fc519d98c7f",
+    "src/footage/request.mjs": "23004a7db9479e01988a87b1a42e552fefe636de9733fce3632ca40eb34f0078",
+    "src/footage/sam.mjs": "4f378485231f851488b11f5b53a13be5f6b92ce3aeb8544f0caa865ffbae2340",
+    "src/footage/trajectory.mjs": "6605af3d27b9c7c7791fabebbdb75e3d27dc2fc5f9fefbfd781543a24dd825c9",
+    "src/agent/open-client.mjs": "34bc5a7d1d528af9368fc15c4857a830cf0cc9d1bb238d3b17b698c396c8cc75",
+    "scripts/footage-repeats.mjs": "f66439e24cfc079a72ccc4054f2c0b0f5cbc2365d5eac71f3127e4e8b88fcc56"
+  }
+}
