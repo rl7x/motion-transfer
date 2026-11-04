@@ -100,7 +100,10 @@ function validate(journal) {
 }
 
 /** Additional spending only. A durable full-job reservation precedes inference. */
-export async function createPhaseBudget(directory) {
+export async function createPhaseBudget(directory, { workingLimit } = {}) {
+  if (workingLimit && (workingLimit.maxCostUsd !== 5 || !Number.isFinite(Date.parse(workingLimit.since)))) {
+    throw Error('Invalid $5 working limit');
+  }
   const root = resolve(directory), path = join(root, 'phase-budget.json'), lock = join(root, '.phase-budget-lock');
   await mkdir(root, { recursive: true });
   async function locked(action) {
@@ -231,6 +234,12 @@ export async function createPhaseBudget(directory) {
           if (existing.requestSha256 !== requestSha256) throw Error('Phase reservation ID already binds different input');
           if (existing.status !== 'reserved' || existing.ownerPid !== process.pid) throw Error('A completed or externally owned phase reservation cannot start another request');
           return structuredClone(existing);
+        }
+        if (workingLimit) {
+          const used = journal.reservations.filter(entry => Date.parse(entry.createdAt) >= Date.parse(workingLimit.since))
+            .reduce((sum, entry) => sum + (['reserved', 'uncertain', 'bounded-unknown'].includes(entry.status)
+              ? Math.max(entry.estimatedCostUsd, entry.maxCostUsd) : entry.estimatedCostUsd), 0);
+          if (used + maxCostUsd > workingLimit.maxCostUsd + 1e-9) throw Error('The $5 project working limit cannot cover this reservation');
         }
         if (maxCostUsd > totals.remainingUsd + 1e-9 || maxCostUsd > totals.categories[category].remainingUsd + 1e-9) {
           throw Error('Phase budget or category cannot cover this full job reservation');
