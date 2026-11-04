@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { digest } from '../src/component/build.mjs';
 import { validateRecoveryProtocol } from '../src/agent/recovery-protocol.mjs';
 
@@ -44,6 +46,25 @@ export function validateV6Plan(plan) {
   assert.ok(Number.isFinite(Date.parse(plan.startCutoff)), 'A session start cutoff is required');
   assert.ok(Date.parse(plan.createdAt) < Date.parse(plan.startCutoff));
   return plan;
+}
+
+/** A pre-request correction gets its own record; the original plan is immutable. */
+export async function loadV6Plan(directory) {
+  const originalBytes = await readFile(join(directory, 'plan.json'));
+  const original = validateV6Plan(JSON.parse(originalBytes));
+  let revisionBytes;
+  try { revisionBytes = await readFile(join(directory, 'plan-revision-1.json')); }
+  catch (error) { if (error.code === 'ENOENT') return { plan: original, file: 'plan.json' }; throw error; }
+  const revision = validateV6Plan(JSON.parse(revisionBytes));
+  assert.equal(revision.supersedesPlanSha256, digest(originalBytes), 'Plan revision must bind the exact preserved original');
+  assert.ok(typeof revision.revisionReason === 'string' && revision.revisionReason.length > 0);
+  assert.equal(revision.previousPlanStartedSessions, 0, 'Only an unstarted plan can be superseded');
+  assert.equal(revision.plannedTrials, original.plannedTrials);
+  assert.equal(revision.budget.since, original.budget.since);
+  assert.notEqual(revision.workspace, original.workspace);
+  assert.notEqual(revision.output, original.output);
+  assert.ok(Date.parse(revision.createdAt) >= Date.parse(original.createdAt));
+  return { plan: revision, file: 'plan-revision-1.json', superseded: original };
 }
 
 export function v6Verification(report) {

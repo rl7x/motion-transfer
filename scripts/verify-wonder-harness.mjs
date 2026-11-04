@@ -2,14 +2,14 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { gunzipSync } from 'node:zlib';
 import { resolve } from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { pathToFileURL, fileURLToPath } from 'node:url';
 import { digest } from '../src/component/build.mjs';
 import { validateRecoveryProtocol } from '../src/agent/recovery-protocol.mjs';
 import { evaluateRecoveryMotion as evaluateMotion } from '../src/evaluator/recovery-motion.mjs';
 import { acceptanceCases } from '../src/evaluator/cases.mjs';
 import { RECOVERY_DEVELOPMENT_CASES } from '../src/evaluator/recovery-cases.mjs';
 import { verifyExhaustiveMotion } from '../src/evaluator/exhaustive.mjs';
-import { validateV6Plan, v6Verification } from './wonder-harness-v6.mjs';
+import { loadV6Plan, v6Verification } from './wonder-harness-v6.mjs';
 
 const near = (actual, expected) => assert.ok(Math.abs(actual - expected) < 1e-8, `${actual} differs from ${expected}`);
 
@@ -18,11 +18,11 @@ export async function verifyWonderHarness({ replay = false, version = 'v3', plan
   assert.ok(['v3', 'v4', 'v5', 'v6'].includes(version));
   const root = new URL(`../assets/benchmark/wonder-harness-${version}/`, import.meta.url);
   const json = async name => JSON.parse(await readFile(new URL(name, root), 'utf8'));
-  const plan = await json('plan.json'), followup = version === 'v3' ? await json('followup-plan.json') : null;
+  const selectedPlan = version === 'v6' ? await loadV6Plan(fileURLToPath(root)) : { plan: await json('plan.json'), file: 'plan.json' };
+  const { plan } = selectedPlan, followup = version === 'v3' ? await json('followup-plan.json') : null;
   validateRecoveryProtocol(plan.protocol);
   assert.equal(plan.protocol.name, 'motion-recovery-' + version);
-  if(version==='v6')validateV6Plan(plan);
-  if(planOnly){assert.equal(version,'v6');return `Wonder harness v6: frozen plan verified; ${plan.plannedTrials} planned session(s), $2.50 ceiling each. Results were not checked.`;}
+  if(planOnly){assert.equal(version,'v6');return `Wonder harness v6: ${selectedPlan.file} verified; ${plan.plannedTrials} planned session(s), $2.50 ceiling each. Results were not checked.`;}
   const results = await json('results.json');
   if (followup) {
     assert.equal(followup.originalPlan, plan.name);

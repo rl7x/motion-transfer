@@ -1,11 +1,31 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { mkdtemp, rm, readFile } from 'node:fs/promises';
+import { mkdtemp, rm, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createPhaseBudget } from '../src/campaign/phase-budget.mjs';
 import { createRecoveryProtocol } from '../src/agent/recovery-protocol.mjs';
-import { workingBudgetSnapshot, v6Verification, validateV6Plan } from '../scripts/wonder-harness-v6.mjs';
+import { workingBudgetSnapshot, v6Verification, validateV6Plan, loadV6Plan } from '../scripts/wonder-harness-v6.mjs';
+import { digest } from '../src/component/build.mjs';
+
+test('an unstarted plan revision binds the preserved original and cannot replace a started plan', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'v6-plan-revision-'));
+  try {
+    const bytes = await readFile(new URL('../assets/benchmark/wonder-harness-v6/plan.json', import.meta.url));
+    const original = JSON.parse(bytes);
+    await writeFile(join(directory, 'plan.json'), bytes);
+    assert.equal((await loadV6Plan(directory)).file, 'plan.json');
+    const revision = { ...original, workspace: original.workspace + '-revision', output: original.output + '-revision',
+      supersedesPlanSha256: digest(bytes), revisionReason: 'Offline source correction before any request.', previousPlanStartedSessions: 0 };
+    await writeFile(join(directory, 'plan-revision-1.json'), JSON.stringify(revision));
+    assert.equal((await loadV6Plan(directory)).file, 'plan-revision-1.json');
+    assert.deepEqual(await readFile(join(directory, 'plan.json')), bytes);
+    for (const fields of [{ previousPlanStartedSessions: 1 }, { supersedesPlanSha256: '0'.repeat(64) }, { workspace: original.workspace }]) {
+      await writeFile(join(directory, 'plan-revision-1.json'), JSON.stringify({ ...revision, ...fields }));
+      await assert.rejects(loadV6Plan(directory));
+    }
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
 
 test('the working limit counts settled and held spending under the existing ledger lock', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'v6-working-limit-'));

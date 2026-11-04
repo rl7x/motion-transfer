@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { loadEnvFile } from 'node:process';
 import { parseArgs } from 'node:util';
 import { gzipSync } from 'node:zlib';
-import { validateV6Plan, v6Verification, workingBudgetSnapshot } from './wonder-harness-v6.mjs';
+import { loadV6Plan, v6Verification, workingBudgetSnapshot } from './wonder-harness-v6.mjs';
 
 /*
  * Runs and records one frozen Wonder harness plan through the authoritative cloud ledger.
@@ -35,8 +35,9 @@ if (values.help || !command) { console.log(USAGE); process.exit(0); }
 assert.ok(['v3', 'v4', 'v5', 'v6'].includes(values.version), 'Unknown harness version');
 
 const target = `assets/benchmark/wonder-harness-${values.version}`, local = `reports/wonder-harness-${values.version}`;
-const plan = JSON.parse(await readFile(join(target, 'plan.json'), 'utf8'));
-if (values.version === 'v6') validateV6Plan(plan);
+const selectedPlan = values.version === 'v6' ? await loadV6Plan(target)
+  : { plan: JSON.parse(await readFile(join(target, 'plan.json'), 'utf8')), file: 'plan.json' };
+const { plan, file: planFile, superseded } = selectedPlan;
 const ordinal = Number(values.trial);
 const requireTrial = () => assert.ok(Number.isInteger(ordinal) && ordinal >= 1 && ordinal <= plan.plannedTrials, `Pass --trial 1 to ${plan.plannedTrials}`);
 
@@ -70,7 +71,7 @@ async function frozenWorkspace(sandbox) {
     const archive = await readFile(join(local, 'source.tgz'));
     assert.equal(sha256(archive), plan.sourceArchiveSha256, 'The source archive does not match the frozen plan');
     await sandbox.writeFiles([{ path: '/tmp/harness-source.tgz', content: archive },
-      { path: `${plan.workspace}/plan.json`, content: await readFile(join(target, 'plan.json')) }]);
+      { path: `${plan.workspace}/plan.json`, content: await readFile(join(target, planFile)) }]);
     const restored = await shell(sandbox, `mkdir -p ${plan.workspace} && tar -xzf /tmp/harness-source.tgz -C ${plan.workspace} && ln -sfn /app/node_modules ${plan.workspace}/node_modules && rm /tmp/harness-source.tgz`);
     assert.equal(restored.code, 0, restored.err);
   }
@@ -142,9 +143,10 @@ async function collect(sandbox, trialNumber) {
 async function run() {
   requireTrial();
   assert.ok(values['allow-paid'], 'Pass --allow-paid to spend through the authoritative ledger');
-  assert.equal(execFileSync('git', ['status', '--porcelain', '--', join(target, 'plan.json')], { encoding: 'utf8' }), '', 'Commit the frozen plan first');
+  assert.equal(execFileSync('git', ['status', '--porcelain', '--', target], { encoding: 'utf8' }), '', 'Commit the frozen plan first');
   const sandbox = await withLifetime();
   if(values.version==='v6'){
+    if(superseded)assert.notEqual((await shell(sandbox,`test -e ${superseded.output}/trial-1`)).code,0,'The superseded plan started; it must be reported, not replaced');
     assert.ok(Date.now()<Date.parse(plan.startCutoff),'No paid session may start after the frozen cutoff');
     assert.equal(execFileSync('git',['status','--porcelain','--','src','scripts','web','package-lock.json'],{encoding:'utf8'}),'','Run from the unchanged isolated worktree');
     const bytes=await sandbox.readFileToBuffer({path:plan.phaseLedger+'/phase-budget.json'});
@@ -154,7 +156,7 @@ async function run() {
   }
   await frozenWorkspace(sandbox);
   if(values.version==='v6'){
-    await sandbox.writeFiles([{path:plan.workspace+'/plan.json',content:await readFile(join(target,'plan.json'))}]);
+    await sandbox.writeFiles([{path:plan.workspace+'/plan.json',content:await readFile(join(target,planFile))}]);
     // Preflight here; the runner also enforces the working limit under the ledger lock.
     const check=`import {readFile} from 'node:fs/promises';import {workingBudgetSnapshot} from './scripts/wonder-harness-v6.mjs';const p=JSON.parse(await readFile('plan.json'));const b=workingBudgetSnapshot(await readFile(p.phaseLedger+'/phase-budget.json'),p.budget.since);if(b.uncertain||b.remainingUsd<2.5||b.wonderRemainingUsd<2.5)throw Error('Working budget cannot admit this session');`;
     const budgetCheck=await shell(sandbox,`node --input-type=module -e "${check}"`,{cwd:plan.workspace});
