@@ -1,0 +1,76 @@
+{
+  "name": "wonder-repeat-v1",
+  "model": "muse-wonder-1.0",
+  "protocolId": "da119ff83d909d5154373a1c16002cb4dbb02d2176e618dd2b259cd446841080",
+  "plannedTrials": 3,
+  "repeatsRun": 2,
+  "repeatsAccepted": 0,
+  "fullSessions": 3,
+  "acceptedSessions": 1,
+  "repeatCostUsd": 5.381621600000001,
+  "remainingUsd": 4.9293423999999995,
+  "sessions": [
+    {
+      "label": "First session",
+      "kind": "baseline",
+      "status": "accepted",
+      "failureCategory": null,
+      "bestDevelopment": {
+        "passed": 13,
+        "total": 13
+      },
+      "acceptance": {
+        "passed": 20,
+        "total": 20
+      },
+      "stuckOn": [],
+      "candidates": 3,
+      "requests": 20,
+      "elapsedMs": 218357,
+      "estimatedCostUsd": 1.689036
+    },
+    {
+      "label": "Repeat 1",
+      "kind": "repeat",
+      "status": "rejected",
+      "failureCategory": "recovery-incomplete",
+      "bestDevelopment": {
+        "passed": 11,
+        "total": 13
+      },
+      "acceptance": null,
+      "stuckOn": [
+        "startup-held",
+        "held-retrigger"
+      ],
+      "candidates": 5,
+      "requests": 29,
+      "elapsedMs": 440886,
+      "estimatedCostUsd": 3.3265408000000005
+    },
+    {
+      "label": "Repeat 2",
+      "kind": "repeat",
+      "status": "rejected",
+      "failureCategory": "acceptance",
+      "bestDevelopment": {
+        "passed": 13,
+        "total": 13
+      },
+      "acceptance": {
+        "passed": 5,
+        "total": 20
+      },
+      "stuckOn": [],
+      "candidates": 2,
+      "requests": 19,
+      "elapsedMs": 326147,
+      "estimatedCostUsd": 2.0550808
+    },
+    {
+      "label": "Repeat 3",
+      "kind": "repeat",
+      "status": "not-run"
+    }
+  ]
+}

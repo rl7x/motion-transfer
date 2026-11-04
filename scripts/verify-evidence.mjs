@@ -62,5 +62,18 @@ assert.equal(finalPort.sweep.enteredWalls, 0);
 assert.ok(readme.includes(`${first.sweep.enteredWalls} of ${outside.sweep.dashes.toLocaleString('en-US')} measured dashes`), 'README must state the port command trial');
 lines.push(`Port command: ${first.sweep.enteredWalls} then ${finalPort.sweep.enteredWalls} of ${outside.sweep.dashes} dashes into walls, ${outside.runs.length} runs, $${outside.runs.reduce((sum, run) => sum + run.estimatedCostUsd, 0).toFixed(4)}`);
 
+const wonder = await json('assets/evidence/wonder-repeat.json');
+const wonderPlan = await json('src/benchmark/wonder-repeat-tasks.json');
+const repeats = wonder.sessions.filter(session => session.kind === 'repeat'), finished = repeats.filter(session => session.status !== 'not-run');
+assert.equal(wonder.protocolId, wonderPlan.protocolId);
+assert.equal(repeats.length, wonderPlan.plannedTrials, 'Every planned repeat is reported, including one that could not run');
+assert.equal(finished.length, wonder.repeatsRun);
+assert.equal(finished.filter(session => session.status === 'accepted').length, wonder.repeatsAccepted);
+assert.equal(wonder.sessions.filter(session => session.status === 'accepted').length, wonder.acceptedSessions);
+near(finished.reduce((sum, session) => sum + session.estimatedCostUsd, 0), wonder.repeatCostUsd, 'Wonder repeat cost');
+for (const session of repeats.filter(session => session.status === 'not-run')) assert.ok(wonder.remainingUsd < wonderPlan.budget.reservedPerTrialUsd, `${session.label} could have run`);
+assert.ok(readme.includes(`${wonder.acceptedSessions} of ${wonder.fullSessions} full sessions`), 'README must state the Wonder repeat result');
+lines.push(`Wonder repeats: ${wonder.repeatsAccepted} of ${wonder.repeatsRun} accepted, ${wonder.acceptedSessions} of ${wonder.fullSessions} full sessions, $${wonder.repeatCostUsd.toFixed(4)}`);
+
 console.log(lines.join('\n'));
 console.log('Evidence verified from committed files. No model request was made.');

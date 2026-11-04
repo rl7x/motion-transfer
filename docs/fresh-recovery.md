@@ -1,5 +1,7 @@
 # Fresh Wonder recovery
 
+This is the session that succeeded. Two later repeat sessions were rejected, so see [the repeat trials](wonder-repeat-results.md) for how often Wonder gets there.
+
 `reports/motion-transfer-phase/wonder-development-001` is one Muse Wonder development trial. Protocol `9c7cda7c802c7ca4ab51729266af7ca21e52b886c6e61659e21ff38d6b922c5e`, model `muse-wonder-1.0`, campaign `67a02792-0e21-48fa-832c-991d00085d85`, definition sha256 `c9f0a0620e3567ef2ca4f2b7fbb57eaff04eadb97c14bb72491f706161656a89`. The journal records estimated cost `$1.689036`, reserved cost `$0`, one donor acceptance, and zero accepted deliveries. Its Wilson interval is null. The frozen ten-trial arm has not been run, so this page does not state a reliability rate.
 
 The source journal remains a completed campaign whose only trial failed. Journal sha256 `3b4c3a246aeb1767036cedeefef03c9d10d6e7b9833b697f0ed41d81c39ba528`. Trial `0f594188-18ed-4e7a-9aaf-6e2843823e9a` is still `failed` / `recipient-or-export`. Exact report `reports/aa6b3cf7c82f88102242356fa5aab2f3cb9e9f8a4e61f069e6251aecf598cf76.json`.

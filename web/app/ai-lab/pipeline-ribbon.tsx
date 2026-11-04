@@ -16,7 +16,7 @@ const STATIONS: {
     sprites: ['wonder'],
     model: 'wonder',
     body: 'Read Dashy Dango’s compiled WebAssembly and measured traces, then wrote a standalone dash controller that runs without the donor binary.',
-    proof: '13/13 development · 20 acceptance checks',
+    proof: '13/13 development · 20 acceptance · 1 of 3 sessions',
   },
   {
     step: '02',
