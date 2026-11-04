@@ -135,6 +135,7 @@ return {experimentId:trial.experimentId,prepared:prepared,trial:trial};` };
     } else if (turn === 2) {
       assert.equal(previous.status, 'completed', JSON.stringify(previous));
       assertBlind(previous.output);
+      assert.equal(previous.activity, undefined, 'Unavailable normalized motion must not become a zero-activity claim');
       experimentId = previous.output.experimentId;
       name = 'select_component_evidence'; args = { functionIndices: [9], evidenceIds: [experimentId], scope: 'Local mocked selection from observed raw intervention.' };
     } else {

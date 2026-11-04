@@ -1,5 +1,6 @@
 import { digest } from '../component/build.mjs';
 import { inputDiagnostics } from './input-diagnostics.mjs';
+import { isBlindRecovery } from './blind-output.mjs';
 
 const SDK_HELP = 'source is an already-invoked async function body. Await SDK calls directly, or call a helper you define. Static methods are sdk.static.inspectWasm, sdk.static.listFunctions, sdk.static.inspectFunction and sdk.static.decompileFunction; sdk.inspectWasm does not exist. Core inspection and recovery tools can also be called directly. No program allowance is refunded.';
 
@@ -18,7 +19,7 @@ function branchActivity(trace, branch) {
 export function experimentFeedback(name, result, session) {
   if (!['run_experiment', 'run_experiment_program'].includes(name)) return result;
   const trials = name === 'run_experiment' ? [result] : result.experiments ?? [];
-  const activity = trials.flatMap(trial => {
+  const activity = isBlindRecovery(session?.recovery?.protocol) ? [] : trials.flatMap(trial => {
     const artifact = session?.experimentWorkbench?.artifacts.find(item => item.id === trial.artifactRef?.id);
     if (!artifact) return [];
     if (digest(JSON.stringify(artifact.payload)) !== artifact.id) throw Error('Experiment summary evidence integrity mismatch');
