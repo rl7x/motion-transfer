@@ -64,6 +64,19 @@ export async function reservePublicGeneration({
   return budget.reserve({ id, category: 'public', maxCostUsd, metadata });
 }
 
+/**
+ * A remix that ended without a confirmed bill keeps its whole ceiling held, but it must not stop
+ * every later visitor. An uncertain reservation from anything other than a remix job still blocks.
+ */
+async function boundUncertainJobs(ledger) {
+  const { reservations } = await ledger.journal();
+  for (const { id, status, metadata } of reservations) {
+    if (status === 'uncertain' && id === `remix:${metadata?.jobId}`) {
+      await ledger.reconcileBoundedUnknown({ id, reason: 'A remix ended without a confirmed bill; its whole ceiling stays held.' });
+    }
+  }
+}
+
 function withDeadline(signal, promise) {
   if (signal.aborted) return Promise.reject(signal.reason ?? Error('Roadster provider timed out'));
   return new Promise((resolve, reject) => {
@@ -521,7 +534,9 @@ export async function createCoordinator({
             }
           }
           if (!ledgerDirectory) throw statusError('An explicit phase ledger path is required', 503);
-          const phase = await (await openExistingPhaseLedger(ledgerDirectory, { confirmSharedLedger })).status();
+          const ledger = await openExistingPhaseLedger(ledgerDirectory, { confirmSharedLedger });
+          await boundUncertainJobs(ledger);
+          const phase = await ledger.status();
           if (phase.uncertain || phase.overrun) throw statusError('Phase billing is uncertain or exceeded a reservation; no further inference admitted', 402);
           if (phase.remainingUsd < maxJobCostUsd || phase.categories[budgetCategory].remainingUsd < maxJobCostUsd) {
             throw statusError('Phase budget cannot cover the whole-job reservation; no inference admitted', 402);

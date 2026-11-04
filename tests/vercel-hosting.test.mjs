@@ -89,3 +89,72 @@ test('a same-origin remix reaches the loopback application, while direct sandbox
     assert.deepEqual(received,[{url:'/api/remixes',origin:previewOrigin,body:'{"prompt":"half as far"}',key:undefined}]);
   } finally {await close(gateway);await ingress.close();await close(preview);}
 });
+
+const savedSite = {
+  async read(url) {
+    const files = {
+      '/ported/skyhaul/after/index.html': ['<!doctype html><title>saved</title>', 'text/html'],
+      '/api/catalog': [JSON.stringify({ versions: [1], generationConfigured: true }), 'application/json'],
+      '/api/remixes/status': [JSON.stringify({ ok: true, generationConfigured: true }), 'application/json'],
+    };
+    return files[url] ? { bytes: Buffer.from(files[url][0]), headers: { 'content-type': files[url][1] } } : null;
+  },
+};
+
+test('saved games play with the backend paused, and generation reads as paused', async () => {
+  let wakes = 0;
+  const server = createServer(createVercelProxy({ proxyKey: key, hosts: ['play.example'], snapshot: savedSite,
+    getBackend: async () => { wakes++; throw Error('quota paused'); } }));
+  const origin = await listen(server);
+  try {
+    const game = await send(origin + '/ported/skyhaul/after/index.html', { headers: { host: 'play.example' } });
+    assert.equal(game.status, 200);
+    assert.equal(game.headers.get('x-motion-snapshot'), '1');
+    assert.equal(wakes, 0, 'A saved game must not wake the sandbox');
+    assert.match(await game.text(), /saved/);
+    const status = await send(origin + '/api/remixes/status', { headers: { host: 'play.example' } });
+    assert.equal(status.status, 200);
+    assert.equal((await status.json()).generationConfigured, false);
+    const catalog = await send(origin + '/api/catalog', { headers: { host: 'play.example' } });
+    assert.deepEqual(await catalog.json(), { versions: [1], generationConfigured: false });
+    assert.equal(wakes, 2);
+    const unknown = await send(origin + '/artifacts/' + 'a'.repeat(64), { headers: { host: 'play.example' } });
+    assert.equal(unknown.status, 503);
+  } finally { await close(server); }
+});
+
+test('a slow wake gets the saved catalog now, keeps generation available, and finishes in the background', async () => {
+  let finished = false, kept = null;
+  const slow = new Promise(resolve => { setTimeout(() => { finished = true; resolve('https://backend.example'); }, 4300); });
+  const server = createServer(createVercelProxy({ proxyKey: key, hosts: ['play.example'], snapshot: savedSite,
+    getBackend: () => slow, background: promise => { kept = promise; } }));
+  const origin = await listen(server);
+  try {
+    const started = Date.now();
+    const response = await send(origin + '/api/catalog', { headers: { host: 'play.example' } });
+    assert.ok(Date.now() - started < 4250, 'The saved copy must not wait for the wake');
+    assert.equal(response.headers.get('x-motion-snapshot'), '1');
+    assert.equal((await response.json()).generationConfigured, true);
+    assert.equal(finished, false);
+    assert.ok(kept, 'The wake must keep running after the response');
+    await kept;
+    assert.equal(finished, true);
+  } finally { await close(server); }
+});
+
+test('a running backend answers live reads and writes even when a snapshot exists', async () => {
+  const calls = [];
+  const fetchImpl = async url => { calls.push(new URL(url).pathname); return new Response(JSON.stringify({ versions: [1, 2] }), { headers: { 'content-type': 'application/json' } }); };
+  const server = createServer(createVercelProxy({ proxyKey: key, hosts: ['play.example'], snapshot: savedSite, fetchImpl,
+    getBackend: async () => 'https://backend.example' }));
+  const origin = await listen(server);
+  try {
+    const response = await send(origin + '/api/catalog', { headers: { host: 'play.example' } });
+    assert.equal(response.headers.get('x-motion-snapshot'), null);
+    assert.deepEqual(await response.json(), { versions: [1, 2] });
+    const write = await send(origin + '/api/remixes', { method: 'POST', body: '{}',
+      headers: { host: 'play.example', origin: 'https://play.example', 'content-type': 'application/json' } });
+    assert.equal(write.status, 200);
+    assert.deepEqual(calls, ['/api/catalog', '/api/remixes']);
+  } finally { await close(server); }
+});
