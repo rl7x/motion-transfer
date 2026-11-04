@@ -18,9 +18,9 @@ import { recoverMove } from '../src/footage/recover.mjs';
  * The plan is committed before the first request, and every session is reported. Each one gets its
  * own exam seed, created after that session's controller is frozen.
  */
-const MANIFEST = 'src/benchmark/footage-repeat-tasks.json';
+const MANIFEST = 'src/benchmark/footage-repeat-v2-tasks.json';
 const CLIP = 'reports/footage/calibration-v3/clip.mp4';
-const SESSIONS = 5;
+const SESSIONS = 6;
 const FROZEN = ['src/footage/calibration.mjs', 'src/footage/clip.mjs', 'src/footage/grade.mjs', 'src/footage/landmarks.mjs', 'src/footage/recover.mjs',
   'src/footage/request.mjs', 'src/footage/sam.mjs', 'src/footage/trajectory.mjs', 'src/agent/open-client.mjs', 'scripts/footage-repeats.mjs'];
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
@@ -30,7 +30,7 @@ async function definition() {
   const sources = {};
   for (const path of FROZEN) sources[path] = digest(await readFile(path));
   return {
-    schemaVersion: 1, name: 'footage-repeat-v1', follows: 'footage-calibration-v3',
+    schemaVersion: 1, name: 'footage-repeat-v2', follows: { name: 'footage-repeat-v1', outcome: '2 of 5 sessions scored 40/40; the others scored 14, 16 and 0 after passing every footage check. Those checks never tested walking speed or a dash with no direction held, and the reported diagonal speed was wrong.' },
     question: 'How often does a fresh Muse Spark Open session reach the same exam result from the same footage?',
     sessions: SESSIONS, controllerModel: OPEN_MODEL, maxAttempts: 3, clipSha256: digest(await readFile(CLIP)),
     reported: 'Every session started, including failures.', sources,
@@ -51,8 +51,7 @@ loadEnvFile('.env');
 await mkdir(values.out, { recursive: true });
 
 // Tracking is the same each time, so only the first session pays for it.
-const cacheDirectory = join(values.out, 'sam-cache');
-await mkdir(cacheDirectory, { recursive: true });
+const cacheDirectory = 'reports/footage/repeats-v1/sam-cache';
 let live = null;
 const sam = async job => {
   const path = join(cacheDirectory, `${createHash('sha256').update(job.video).update(job.prompt).digest('hex')}.json`);

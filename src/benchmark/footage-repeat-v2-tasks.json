@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "name": "footage-repeat-v2",
+  "follows": {
+    "name": "footage-repeat-v1",
+    "outcome": "2 of 5 sessions scored 40/40; the others scored 14, 16 and 0 after passing every footage check. Those checks never tested walking speed or a dash with no direction held, and the reported diagonal speed was wrong."
+  },
+  "question": "How often does a fresh Muse Spark Open session reach the same exam result from the same footage?",
+  "sessions": 6,
+  "controllerModel": "meta-models/muse-spark-open-1026",
+  "maxAttempts": 3,
+  "clipSha256": "bc312874358d8d9e752c67c7b1fea548b1fa553db7641d84a585c468b9b60ca7",
+  "reported": "Every session started, including failures.",
+  "sources": {
+    "src/footage/calibration.mjs": "456ec71eb086fa4f01cfa6c220081842e799ea297b94bb1bfb08e4376a9e41af",
+    "src/footage/clip.mjs": "5bba1112533a0eba050047a0dd0a945651f315f2bcdac3444cdb779aee62302e",
+    "src/footage/grade.mjs": "c1794bebf321fe67067c723017217d4d1c3e94ae2fd737320e0f5dab2c092fab",
+    "src/footage/landmarks.mjs": "e03285b3abdc6cfb2f6e8be19bbc980a6096271de082620e5aa8e292a118df3e",
+    "src/footage/recover.mjs": "4207750410cb95eff0733da5e61187e893dd4bb9293d887de3a7a68422f9a572",
+    "src/footage/request.mjs": "919916518bd159098b03b55596d4928694016c192189f9d5f041ac682c95baa2",
+    "src/footage/sam.mjs": "4f378485231f851488b11f5b53a13be5f6b92ce3aeb8544f0caa865ffbae2340",
+    "src/footage/trajectory.mjs": "288961a2849625e943104de05e471c02c653de2ffc31842573852ffdb943e163",
+    "src/agent/open-client.mjs": "34bc5a7d1d528af9368fc15c4857a830cf0cc9d1bb238d3b17b698c396c8cc75",
+    "scripts/footage-repeats.mjs": "7f3e0aec74fade356a00dbaa312e9500b3ad745b72b00890e10bb708c9bb88b7"
+  }
+}

@@ -8,7 +8,7 @@ import { gradeController } from './grade.mjs';
 import { chooseLandmarks, findSprites, pointPrompt } from './landmarks.mjs';
 import { footageRequest, readController } from './request.mjs';
 import { parseTracks } from './sam.mjs';
-import { detectBursts, motionSummary, shortestGap, splitBursts, staysOnScreen, worldSteps } from './trajectory.mjs';
+import { defaultDirection, detectBursts, motionSummary, shortestGap, splitBursts, staysOnScreen, worldSteps } from './trajectory.mjs';
 
 export const RIGHTS = Object.freeze({
   own: 'This is my own game.',
@@ -98,6 +98,8 @@ export async function recoverMove({ clip, out, rights, source, player, pixelScal
     const gap = shortestGap(bursts);
     const firstBurst = playStart === null ? null : bursts[0].startFrame - playStart;
     const measurements = motionSummary({ steps, bursts, walkSpeed, practice, firstBurst });
+    const walking = { straight: measurements.usualMovingSpeed, diagonal: measurements.diagonalMovingSpeed };
+    const standing = defaultDirection(bursts) ?? [];
     const attempts = [];
     let feedback = null, accepted = null;
     for (let attempt = 1; attempt <= MAX_ATTEMPTS && !accepted; attempt += 1) {
@@ -110,8 +112,8 @@ export async function recoverMove({ clip, out, rights, source, player, pixelScal
       catch (error) { record.failures = [error.message]; log(`Attempt ${attempt} failed: ${error.message}`); continue; }
       record.summary = submission.summary;
       try {
-        const grade = await gradeController({ source: submission.source, config: submission.config, heldOut, gap, firstBurst });
-        Object.assign(record, { bursts: grade.bursts, recharge: grade.recharge, start: grade.start, failures: grade.failures, passed: grade.passed });
+        const grade = await gradeController({ source: submission.source, config: submission.config, heldOut, gap, firstBurst, walking, standing });
+        Object.assign(record, { bursts: grade.bursts, standing: grade.standing, walking: grade.walking, recharge: grade.recharge, start: grade.start, failures: grade.failures, passed: grade.passed });
         if (grade.passed) accepted = { submission, grade };
         else { feedback = repairFeedback(submission, grade); log(`Attempt ${attempt} failed: ${grade.failures[0]}`); }
       } catch (error) {
@@ -135,7 +137,7 @@ export async function recoverMove({ clip, out, rights, source, player, pixelScal
       clip: { sha256: clipSha256, frames: info.frames, fps: info.fps, note: 'The clip itself is not kept. Only this hash and the motion numbers are.' },
       models: { tracking: 'sam-3.1', controller: modelName },
     };
-    const report = { label: 'footage match', camera: followed ? 'follows the player' : 'fixed', measurements, heldOut: { bursts: grade.bursts, recharge: grade.recharge, start: grade.start }, sections, attempts, estimatedCostUsd: { tracking: samUsd, controller: modelUsd, total: samUsd + modelUsd } };
+    const report = { label: 'footage match', camera: followed ? 'follows the player' : 'fixed', measurements, heldOut: { bursts: grade.bursts, standing: grade.standing, walking: grade.walking, recharge: grade.recharge, start: grade.start }, sections, attempts, estimatedCostUsd: { tracking: samUsd, controller: modelUsd, total: samUsd + modelUsd } };
     await mkdir(out, { recursive: true });
     await writeFile(join(out, 'component.ts'), submission.source);
     await writeFile(join(out, 'component.js'), grade.compiled.javascript);

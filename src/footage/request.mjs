@@ -33,10 +33,10 @@ How to read the numbers:
 - The tracker measures on-screen positions, and games often round those to whole pixels. Values that alternate, such as 8, 7, 8, 7, mean one constant fractional speed. Use total distance divided by frames.
 - The ability's first moving tick is the tick its button is pressed.
 - A gap between two burst starts covers the burst and its recharge, so the shortest gap is the closest thing you have to the true timing. That gap may be longer than the true minimum if the player never pressed as soon as possible.
-- A burst marked as starting from standing still shows where the ability goes when no direction is held.
+- A burst that starts from standing still with thenStopped true most likely had no direction held, because someone holding a direction keeps walking afterwards. It shows where the ability goes by default. Its lastMovedDirection is where the player was last moving, so compare the two to see whether the burst follows that direction or a fixed default.
 - framesOfPlayBeforeFirstBurst, when present, comes from a clip that shows the very start of play, so treat it like the shortest gap: if the ability is held from the first step, the first burst begins on that step, counting from 0.
 - Bursts are straight lines, so assume the direction is fixed when the ability starts.
-- Compare ordinary speed in a straight line with diagonalMovingSpeed to see whether diagonal movement is normalized.
+- diagonalMovingSpeed is the distance moved per frame along a diagonal. If it matches usualMovingSpeed, diagonal movement is normalized, so each axis moves usualMovingSpeed divided by the square root of 2.
 
 Submit exactly one submit_motion_controller call.`;
 

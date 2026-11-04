@@ -5,7 +5,7 @@ import { distanceTolerance, gradeController } from '../src/footage/grade.mjs';
 import { chooseLandmarks, findSprites, pointPrompt } from '../src/footage/landmarks.mjs';
 import { checkClipPath, checkRights, recoverMove } from '../src/footage/recover.mjs';
 import { parseTracks, samCostUsd, samRequest, textFromStream } from '../src/footage/sam.mjs';
-import { detectBursts, motionSummary, shortestGap, splitBursts, worldSteps } from '../src/footage/trajectory.mjs';
+import { defaultDirection, detectBursts, motionSummary, shortestGap, splitBursts, worldSteps } from '../src/footage/trajectory.mjs';
 
 // Real SAM 3.1 output for a 60-frame Dashy Dango clip at 4x, with masks removed to keep it small.
 const fixture = await readFile(new URL('./fixtures/sam-tracks.txt', import.meta.url), 'utf8');
@@ -156,4 +156,77 @@ test('a clip that shows the start of play also checks how soon the ability is av
   const summary = motionSummary({ steps: [], bursts: [burst], walkSpeed: 2, practice: [], firstBurst: 10 });
   assert.equal(summary.framesOfPlayBeforeFirstBurst, 10);
   assert.equal(motionSummary({ steps: [], bursts: [burst], walkSpeed: 2, practice: [] }).framesOfPlayBeforeFirstBurst, undefined);
+});
+
+test('diagonal speed is true distance per frame, not a rounded single frame', () => {
+  // A speed of 2 along a diagonal is 1.41 per axis, which a whole-pixel screen shows as 1s and 2s.
+  const axis = [1, 2, 1, 2, 1, 1, 2, 1, 2, 1, 2, 1, 1, 2];
+  const steps = axis.map((value, index) => ({ frame: index + 1, x: value, y: axis[(index + 1) % axis.length] }));
+  steps.push(...Array.from({ length: 30 }, (_, index) => ({ frame: 100 + index, x: 2, y: 0 })));
+  const summary = motionSummary({ steps, bursts: [], walkSpeed: 2, practice: [] });
+  assert.ok(Math.abs(summary.diagonalMovingSpeed - 2) < 0.2, `Got ${summary.diagonalMovingSpeed}`);
+});
+
+test('a standing burst records where the player last moved, and only agreeing ones set a default', () => {
+  const steps = [];
+  for (let frame = 1; frame <= 20; frame++) steps.push({ frame, x: 1.41, y: 1.41 });
+  for (let frame = 21; frame <= 40; frame++) steps.push({ frame, x: 0, y: 0 });
+  for (let frame = 41; frame <= 48; frame++) steps.push({ frame, x: 7.5, y: 0 });
+  for (let frame = 49; frame <= 60; frame++) steps.push({ frame, x: 0, y: 0 });
+  const { bursts } = detectBursts(steps);
+  assert.equal(bursts[0].startedFrom, 'standing still');
+  assert.deepEqual(bursts[0].lastMovedDirection, [0.707, 0.707]);
+  assert.equal(bursts[0].thenStopped, true);
+  assert.equal(defaultDirection(bursts).length, 1);
+  const other = { ...bursts[0], direction: [-1, 0] };
+  assert.equal(defaultDirection([...bursts, other]), null);
+  assert.equal(defaultDirection([{ ...bursts[0], startedFrom: 'moving' }]), null);
+  // Aimed from a stop: the player keeps walking afterwards, so it says nothing about a default.
+  assert.equal(defaultDirection([...bursts, { ...other, thenStopped: false }]).length, 1);
+});
+
+const WALKER = CONTROLLER.replace('return{state:s,output:{ownsMotion:false,displacement:{x:0,y:0},events}}', 'const x=(b&32?1:0)-(b&16?1:0),y=(b&128?1:0)-(b&64?1:0),l=Math.hypot(x,y)||1;return{state:s,output:{ownsMotion:false,displacement:{x:x/l*config.walkingSpeed,y:y/l*config.walkingSpeed},events}}');
+
+test('walking is checked in a straight line and on a diagonal', async () => {
+  const right = await gradeController({ source: WALKER, config, heldOut: [burst], walking: { straight: 2, diagonal: 2 } });
+  assert.deepEqual(right.failures, []);
+  const unnormalized = WALKER.replace('x/l*config.walkingSpeed', 'x*config.walkingSpeed').replace('y/l*config.walkingSpeed', 'y*config.walkingSpeed');
+  const fast = await gradeController({ source: unnormalized, config, heldOut: [burst], walking: { straight: 2, diagonal: 2 } });
+  assert.match(fast.failures[0], /Diagonal movement went 2\.83 pixels per tick; the footage shows 2/);
+  const slow = await gradeController({ source: WALKER, config: { ...config, walkingSpeed: 1 }, heldOut: [burst], walking: { straight: 2 } });
+  assert.match(slow.failures[0], /Straight movement went 1\.00 pixels per tick/);
+});
+
+test('a standing burst has to go the way the footage shows, not the way the player last moved', async () => {
+  const standing = { ...burst, startedFrom: 'standing still', lastMovedDirection: [0.707, 0.707] };
+  const right = await gradeController({ source: WALKER, config, heldOut: [burst], standing: [standing] });
+  assert.deepEqual(right.failures, []);
+  const remembers = WALKER
+    .replace('return{remaining:0,cooldown:0,dx:0,dy:0}', 'return{remaining:0,cooldown:0,dx:0,dy:0,lx:1,ly:0}')
+    .replace('const s={...state},b=input.buttons,events=[];', 'const s={...state},b=input.buttons,events=[];const hx=(b&32?1:0)-(b&16?1:0),hy=(b&128?1:0)-(b&64?1:0);if(hx||hy){const h=Math.hypot(hx,hy);s.lx=hx/h;s.ly=hy/h}')
+    .replace('s.dx=(l===1&&x===0&&y===0?1:x/l)*config.dashDistance/8;s.dy=y/l*config.dashDistance/8', 's.dx=s.lx*config.dashDistance/8;s.dy=s.ly*config.dashDistance/8');
+  const wrong = await gradeController({ source: remembers, config, heldOut: [burst], standing: [standing] });
+  assert.match(wrong.failures[0], /With no direction held after moving, the burst went 45\.0 degrees off/);
+  const nowhere = WALKER.replace('l===1&&x===0&&y===0?1:x/l', 'x/l');
+  const still = await gradeController({ source: nowhere, config, heldOut: [burst], standing: [standing] });
+  assert.match(still.failures.join(' '), /With no direction held after moving/);
+});
+
+test('one lost frame mid-burst is filled, but a lost frame at its edge drops the burst', () => {
+  const clip = holes => {
+    const steps = [];
+    for (let frame = 1; frame <= 30; frame++) {
+      if (holes.includes(frame)) continue;
+      steps.push({ frame, x: frame >= 10 && frame < 18 ? 7.5 : 2, y: 0 });
+    }
+    return detectBursts(steps).bursts;
+  };
+  assert.equal(clip([])[0].frames, 8);
+  const filled = clip([13]);
+  assert.equal(filled.length, 1);
+  assert.equal(filled[0].frames, 8);
+  assert.equal(filled[0].distance, 60);
+  assert.equal(clip([18]).length, 0, 'The burst might have lasted one more frame');
+  assert.equal(clip([9]).length, 0, 'The burst might have started one frame sooner');
+  assert.equal(clip([12, 13]).length, 0, 'Two lost frames are too many to fill');
 });
