@@ -131,7 +131,7 @@ export function Hero({ playback, savedCount }: { playback: boolean; savedCount: 
         </ul>
         <dl className="hero__stats">
           <div>
-            <dt>footage sessions at 40/40</dt>
+            <dt>perfect footage runs</dt>
             <dd>
               {footage.finalChecks.length} of {footage.sessions}
             </dd>
