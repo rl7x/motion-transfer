@@ -7,7 +7,7 @@ import {DEVELOPMENT_CASES,MOTION_REGRESSIONS,acceptanceCases} from '../evaluator
 import {RECOVERY_DEVELOPMENT_CASES} from '../evaluator/recovery-cases.mjs';
 import {developmentFeedback} from './development-feedback.mjs';
 import {recoveryPolicy} from './recovery-protocol.mjs';
-import {BLIND_HUMAN_ASSISTANCE,blindOutput,isBlindRecovery} from './blind-output.mjs';
+import {BLIND_HUMAN_ASSISTANCE,blindOutput,inconclusiveFeedback,isBlindRecovery} from './blind-output.mjs';
 import {verifyExhaustiveMotion} from '../evaluator/exhaustive.mjs';
 
 export const COMPONENT_TOOLS=[{
@@ -68,8 +68,7 @@ export function createComponentWorkbench(session,{evaluate,verifyExhaustive=veri
         }catch(error){
           entry.exhaustive={verdict:'inconclusive',reason:'verification-error',error:String(error.message).slice(0,1000)};
         }
-        if(entry.exhaustive.verdict==='inconclusive')entry.development={...entry.development,passed:false,
-          error:'Exhaustive verification is inconclusive ('+entry.exhaustive.reason+'). Keep state to timers and direction so outputs and other state cannot depend on position.'};
+        if(entry.exhaustive.verdict==='inconclusive')entry.development={...entry.development,passed:false,error:inconclusiveFeedback(entry.exhaustive)};
       }
       return{result:{candidateId:entry.candidateId,attempt:entry.attempt,sourceSha256:entry.sourceSha256,development:expanded?developmentFeedback(entry.development):entry.development,
         ...(entry.exhaustive?{exhaustive:{verdict:entry.exhaustive.verdict,reason:entry.exhaustive.reason,checked:entry.exhaustive.checked,pairs:entry.exhaustive.pairs}}:{}),

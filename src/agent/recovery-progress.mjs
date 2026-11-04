@@ -129,7 +129,8 @@ export function recoveryGuidance(report, { remainingRequests } = {}) {
     + ' Program source is an ALREADY-INVOKED async function BODY: put awaited SDK calls directly in it. Defining async function main() without calling it performs zero operations.'
     + ' Static methods are sdk.static.inspectWasm/listFunctions/inspectFunction/decompileFunction; sdk.inspectWasm does not exist.'
     + ' The current stage exposes directly callable tools. There is no tool-search step in this recovery workflow. Additional static inspection and controlled experiments remain available during development if a concrete failure needs them.'
-    + ' Paired branches receive identical inputs. With no edit they are a reproducibility control, not different input conditions. A final inactive state does not prove no dash occurred; inspect event and timer observations within the trace.'
+    + ' Paired branches receive identical inputs. With no edit they are a reproducibility control, not different input conditions. A final inactive state does not prove no dash occurred; '
+    + (isBlindRecovery(reportRecoveryProtocol(report)) ? 'inspect rendering and your raw memory watches across the trace.' : 'inspect event and timer observations within the trace.')
     + ' Prefer one compact program for orientation, targeted code inspection and an experiment; return only measurements and IDs.'
     + ' All tools listed in this request are immediately callable; use their exact schemas.'
     + ' In program output include only a chosen short code excerpt and the measurements you need, not whole result objects. Full experiment summaries arrive automatically even when the output limit rejects your return value.'

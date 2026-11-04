@@ -151,7 +151,7 @@ async function run() {
   assert.equal(execFileSync('git', ['status', '--porcelain', '--', target], { encoding: 'utf8' }), '', 'Commit the frozen plan first');
   const sandbox = await withLifetime();
   if(values.version==='v6'){
-    if(superseded)assert.notEqual((await shell(sandbox,`test -e ${superseded.output}/trial-1`)).code,0,'The superseded plan started; it must be reported, not replaced');
+    for(const previous of superseded??[])assert.notEqual((await shell(sandbox,`test -e ${previous.output}/trial-1`)).code,0,'A superseded plan started; it must be reported, not replaced');
     assert.ok(Date.now()<Date.parse(plan.startCutoff),'No paid session may start after the frozen cutoff');
     assert.equal(execFileSync('git',['status','--porcelain','--','src','scripts','web','package-lock.json'],{encoding:'utf8'}),'','Run from the unchanged isolated worktree');
     const bytes=await sandbox.readFileToBuffer({path:plan.phaseLedger+'/phase-budget.json'});

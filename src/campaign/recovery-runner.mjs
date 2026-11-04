@@ -7,6 +7,7 @@ import { investigate } from '../agent/investigate.mjs';
 import { snapshotRecoveryProtocol, validateRecoveryProtocol, assertRecoveryProtocolSources } from '../agent/recovery-protocol.mjs';
 import { INVESTIGATION_QUESTIONS } from '../lab/service.mjs';
 import { saveInvestigationEvidence } from '../lab/investigation-evidence.mjs';
+import { recoveryQuestion } from '../agent/blind-output.mjs';
 import { finishRecoveryIntegration } from '../integration/recovery.mjs';
 import { loadAcceptedComponent } from '../integration/accepted-component.mjs';
 import { createIntegrationPublication } from '../integration/publication.mjs';
@@ -162,10 +163,10 @@ export async function runRecoveryCampaign({
       const protocol = await snapshotRecoveryProtocol({ model, name: protocolName, maxCostUsd });
       if (!development && !developmentReport) throw Error('Freeze requires --development-report with a checked accepted delivery');
       const gate = development ? null : await developmentGate(developmentReport, protocol);
-      const id = randomUUID();
+      const id = randomUUID(), question = recoveryQuestion(INVESTIGATION_QUESTIONS.extraction, protocol);
       const body = { schemaVersion: 1, id, mode: development ? 'development' : 'frozen',
-        createdAt: new Date().toISOString(), protocol, question: INVESTIGATION_QUESTIONS.extraction,
-        questionSha256: digest(INVESTIGATION_QUESTIONS.extraction), developmentGate: gate,
+        createdAt: new Date().toISOString(), protocol, question,
+        questionSha256: digest(question), developmentGate: gate,
         concurrency: 1, providerRetries: false,
         trials: Array.from({ length: development ? 1 : 10 }, (_, index) => {
           const trialId = randomUUID(); return { id: trialId, ordinal: index + 1, phaseReservationId: 'recovery:' + id + ':' + trialId };

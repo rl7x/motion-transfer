@@ -27,6 +27,25 @@ test('an unstarted plan revision binds the preserved original and cannot replace
   } finally { await rm(directory, { recursive: true, force: true }); }
 });
 
+test('a second revision binds the first and every superseded plan stays checked', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'v6-plan-second-'));
+  try {
+    const originalBytes = await readFile(new URL('../assets/benchmark/wonder-harness-v6/plan.json', import.meta.url));
+    const firstBytes = await readFile(new URL('../assets/benchmark/wonder-harness-v6/plan-revision-1.json', import.meta.url));
+    const first = JSON.parse(firstBytes);
+    await writeFile(join(directory, 'plan.json'), originalBytes);
+    await writeFile(join(directory, 'plan-revision-1.json'), firstBytes);
+    const second = { ...first, workspace: first.workspace + '-two', output: first.output + '-two', supersedesPlanSha256: digest(firstBytes),
+      revisionReason: 'Offline feedback correction before any request.', previousPlanStartedSessions: 0 };
+    await writeFile(join(directory, 'plan-revision-2.json'), JSON.stringify(second));
+    const loaded = await loadV6Plan(directory);
+    assert.equal(loaded.file, 'plan-revision-2.json');
+    assert.equal(loaded.superseded.length, 2);
+    await writeFile(join(directory, 'plan-revision-2.json'), JSON.stringify({ ...second, supersedesPlanSha256: digest(originalBytes) }));
+    await assert.rejects(loadV6Plan(directory), /exact preserved plan/);
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
+
 test('the working limit counts settled and held spending under the existing ledger lock', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'v6-working-limit-'));
   try {
