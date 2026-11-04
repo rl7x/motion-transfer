@@ -118,13 +118,14 @@ export function shortestGap(bursts) {
 }
 
 /** Everything the model is told about the clip. Numbers only. */
-export function motionSummary({ steps, bursts, walkSpeed, practice }) {
+export function motionSummary({ steps, bursts, walkSpeed, practice, firstBurst = null }) {
   const diagonal = steps.filter(step => Math.abs(step.x) > STILL && Math.abs(step.y) > STILL && Math.hypot(step.x, step.y) <= walkSpeed * 1.6);
   return {
     framesMeasured: steps.length, framesPerSecond: 60,
     usualMovingSpeed: walkSpeed,
     ...(diagonal.length ? { diagonalMovingSpeed: Number(median(diagonal.map(step => Math.hypot(step.x, step.y))).toFixed(2)) } : {}),
     shortestGapBetweenBurstStarts: shortestGap(bursts), burstsSeen: bursts.length,
+    ...(firstBurst !== null ? { framesOfPlayBeforeFirstBurst: firstBurst } : {}),
     practiceBursts: practice,
   };
 }

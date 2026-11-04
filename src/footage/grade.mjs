@@ -40,18 +40,27 @@ function checkRecharge(frames, gap) {
   const starts = frames.flatMap((frame, tick) => (frame.events.includes('dash-start') ? [tick] : []));
   const gaps = starts.slice(1).map((start, index) => start - starts[index]);
   const shortest = gaps.length ? Math.min(...gaps) : null;
-  const passed = shortest !== null && shortest <= gap && shortest >= gap - 2;
+  const passed = shortest === gap;
   return { name: 'recharge', expected: gap, measured: shortest, passed, failures: passed ? [] : [`Holding the ability repeated every ${shortest ?? 'never'} ticks; the shortest gap in the footage is ${gap}.`] };
 }
 
+function checkFirstBurst(frames, expected) {
+  const first = frames.findIndex(frame => frame.events.includes('dash-start'));
+  const passed = first === expected;
+  return { name: 'first-burst', expected, measured: first, passed, failures: passed ? [] : [`Holding the ability from the first step started the first burst on step ${first}, counting from 0; the footage shows step ${expected}.`] };
+}
+
 /** Replays held-out bursts in the same sandbox that runs every other generated controller. */
-export async function gradeController({ source, config, heldOut, gap, signal }) {
+export async function gradeController({ source, config, heldOut, gap, firstBurst = null, signal }) {
   const compiled = await compileMotion(source);
   const held = buttonsFor(heldOut[0].direction) | ABILITY;
-  const traces = [...heldOut.map(burstTrace), ...(gap ? [{ name: 'recharge', inputs: Array(SETTLE_TICKS + gap * 4).fill(input(held)) }] : [])];
+  const traces = [...heldOut.map(burstTrace)];
+  if (gap) traces.push({ name: 'recharge', inputs: Array(SETTLE_TICKS + gap * 4).fill(input(held)) });
+  if (firstBurst !== null) traces.push({ name: 'first-burst', inputs: Array(firstBurst + 20).fill(input(held)) });
   const runs = await executeMotion(compiled, traces, config, { signal });
   const bursts = heldOut.map((burst, index) => checkBurst(burst, runs[index].frames));
-  const recharge = gap ? checkRecharge(runs.at(-1).frames, gap) : null;
-  const failures = [...bursts.flatMap(burst => burst.failures), ...(recharge?.failures ?? [])];
-  return { passed: failures.length === 0, bursts, recharge, failures, compiled };
+  const recharge = gap ? checkRecharge(runs[heldOut.length].frames, gap) : null;
+  const start = firstBurst !== null ? checkFirstBurst(runs.at(-1).frames, firstBurst) : null;
+  const failures = [...bursts.flatMap(burst => burst.failures), ...(recharge?.failures ?? []), ...(start?.failures ?? [])];
+  return { passed: failures.length === 0, bursts, recharge, start, failures, compiled };
 }

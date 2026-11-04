@@ -8,24 +8,25 @@ import { median } from './trajectory.mjs';
 
 export const CLIP_SCALE = 4;
 export const CLIP_SIZE = 160 * CLIP_SCALE;
-/** The game starts on a title screen. This is the first frame of play. */
-export const FIRST_PLAY_FRAME = 14;
+/** Frame 0 is the title screen, and play is on screen from the next frame. */
+export const FIRST_PLAY_FRAME = 1;
 /** The camera keeps the player here on screen. */
 export const PLAYER_POINT = Object.freeze({ x: 322, y: 322 });
 
 const { X, LEFT, RIGHT, UP, DOWN } = BUTTONS;
 
 /**
- * What a person might record: walking, dashing every way, standing dashes and holding the button.
- * The tracker was tuned on an earlier clip, so this order and timing are new to it.
+ * What a careful person might record: holding the ability from the first moment of play, then
+ * walking, dashing every way, standing dashes and holding the button again. The tracker was tuned on
+ * an earlier clip and the checks on a later one, so this order and timing are new to both.
  */
 export function calibrationSteps() {
-  const steps = [[X, 1], [0, 12]];
-  for (const direction of [LEFT, RIGHT | UP, DOWN, RIGHT, LEFT | DOWN, UP, LEFT | UP, RIGHT | DOWN]) {
-    steps.push([direction, 14], [direction | X, 1], [direction, 3], [0, 26]);
+  const steps = [[X, 1], [RIGHT | X, 36], [0, 24]];
+  for (const direction of [DOWN, LEFT | UP, RIGHT, UP, LEFT | DOWN, LEFT, RIGHT | UP, RIGHT | DOWN]) {
+    steps.push([direction, 9], [direction | X, 1], [direction, 5], [0, 23]);
   }
-  steps.push([0, 40], [X, 1], [0, 35], [X, 1], [0, 35], [X, 1], [0, 20]);
-  steps.push([UP | X, 90], [0, 12], [RIGHT | DOWN | X, 90], [0, 12], [LEFT | X, 90]);
+  steps.push([0, 33], [X, 1], [0, 44], [X, 1], [0, 30]);
+  steps.push([DOWN | X, 95], [0, 9], [LEFT | UP | X, 95], [0, 9], [RIGHT | X, 95]);
   return steps;
 }
 

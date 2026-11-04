@@ -18,6 +18,8 @@ const USAGE = `Recover a dash-like move from a gameplay clip, with no source cod
   --player <f:x,y>    A point on the player: frame number, then its pixel position in that frame
   --pixel-scale <n>   For pixel art, how many video pixels make one game pixel. Defaults to 1
   --from, --to <n>    Use only these frames, for example to skip a title screen
+  --play-start <n>    The first frame of play, if the clip shows it. Only use this if you held the
+                      ability from that moment, so the first burst shows how soon it can be used
   --out <directory>   Where the result goes. Defaults to ./recovered-move
   --allow-paid        Confirms this uses your MODEL_API_KEY for SAM 3.1 and BASETEN_API_KEY for ${OPEN_MODEL_NAME}
 
@@ -27,7 +29,7 @@ Use it with: npm run port -- <game> --core <file> --component <directory> --open
 
 const { values, positionals } = parseArgs({ allowPositionals: true, options: {
   rights: { type: 'string' }, source: { type: 'string' }, player: { type: 'string' }, 'pixel-scale': { type: 'string', default: '1' },
-  from: { type: 'string', default: '0' }, to: { type: 'string' }, out: { type: 'string', default: './recovered-move' },
+  from: { type: 'string', default: '0' }, to: { type: 'string' }, 'play-start': { type: 'string' }, out: { type: 'string', default: './recovered-move' },
   'allow-paid': { type: 'boolean' }, help: { type: 'boolean' },
 } });
 const [clip] = positionals;
@@ -63,6 +65,7 @@ try {
     clip, out: resolve(values.out), rights: values.rights, source: values.source, sam, generate,
     model: OPEN_MODEL, modelName: OPEN_MODEL_NAME, log: line => console.log(line),
     player: { x: point.x, y: point.y }, from: point.frame + Number(values.from), to: values.to ? Number(values.to) : null, pixelScale: Number(values['pixel-scale']),
+    playStart: values['play-start'] ? Number(values['play-start']) : null,
   });
   console.log(`\n${OPEN_MODEL_NAME}: ${result.submission.summary}`);
   console.log(`Saved to ${result.out}. Label: footage match. Cost: $${result.report.estimatedCostUsd.total.toFixed(4)} estimated.`);

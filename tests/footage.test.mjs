@@ -140,3 +140,20 @@ test('a controller with the wrong length, distance, direction or recharge fails 
   assert.match(slow.failures[0], /repeated every 33 ticks/);
   assert.equal(distanceTolerance(60), 2.4);
 });
+
+test('the recharge check is exact, because a one tick error fails almost every real trace', async () => {
+  const early = await gradeController({ source: CONTROLLER, config: { ...config, cooldownTicks: 24 }, heldOut: [burst], gap: 33 });
+  assert.match(early.failures[0], /repeated every 32 ticks; the shortest gap in the footage is 33/);
+});
+
+test('a clip that shows the start of play also checks how soon the ability is available', async () => {
+  const delayed = CONTROLLER.replace('cooldown:0', 'cooldown:config.initialCooldownTicks');
+  const right = await gradeController({ source: delayed, config: { ...config, initialCooldownTicks: 10 }, heldOut: [burst], gap: 33, firstBurst: 10 });
+  assert.deepEqual(right.failures, []);
+  assert.equal(right.start.measured, 10);
+  const wrong = await gradeController({ source: delayed, config: { ...config, initialCooldownTicks: 25 }, heldOut: [burst], gap: 33, firstBurst: 10 });
+  assert.match(wrong.failures.at(-1), /first burst on step 25, counting from 0; the footage shows step 10/);
+  const summary = motionSummary({ steps: [], bursts: [burst], walkSpeed: 2, practice: [], firstBurst: 10 });
+  assert.equal(summary.framesOfPlayBeforeFirstBurst, 10);
+  assert.equal(motionSummary({ steps: [], bursts: [burst], walkSpeed: 2, practice: [] }).framesOfPlayBeforeFirstBurst, undefined);
+});

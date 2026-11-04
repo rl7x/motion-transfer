@@ -27,10 +27,13 @@ async function definition() {
   const sources = {};
   for (const path of FROZEN) sources[path] = digest(await readFile(path));
   return {
-    schemaVersion: 1, name: 'footage-calibration-v2', follows: { name: 'footage-calibration-v1', outcome: 'Failed. Sections of 120 frames lost landmarks during fast scrolling, so bursts reached the model in fragments.' },
+    schemaVersion: 1, name: 'footage-calibration-v3', follows: [
+      { name: 'footage-calibration-v1', outcome: 'Failed. Sections of 120 frames lost landmarks during fast scrolling, so bursts reached the model in fragments.' },
+      { name: 'footage-calibration-v2', outcome: '2 of 40. The controller passed its checks, but they allowed a recharge one tick too short, and the clip never showed how soon the ability is first available.' },
+    ],
     question: 'From footage alone, how close can SAM 3.1 and Muse Spark Open get to a move whose true behavior is known?',
     tracker: 'sam-3.1', controllerModel: OPEN_MODEL, maxAttempts: 3, clipSteps: calibrationSteps(), exam: 'the existing 40-trace fidelity comparison, generated after the candidate is frozen',
-    disclosed: 'Only tracker measurements of practice bursts. No source, binary, button log, true positions or timing defaults.', sources,
+    disclosed: 'Only tracker measurements of practice bursts, the shortest gap and how long play ran before the first burst. No source, binary, button log, true positions or timing defaults.', sources,
   };
 }
 
@@ -51,7 +54,7 @@ const { clip, truth } = await renderCalibrationClip(values.out);
 const client = createOpenClient(process.env.BASETEN_API_KEY);
 const result = await recoverMove({
   clip, out: join(values.out, 'recovered'), rights: 'open-license', source: 'Dashy Dango by samX500 and willGuimont (ISC)',
-  player: PLAYER_POINT, pixelScale: CLIP_SCALE, from: FIRST_PLAY_FRAME, sam: await ledgerSam(), model: OPEN_MODEL, modelName: OPEN_MODEL_NAME, log: line => console.log(line),
+  player: PLAYER_POINT, pixelScale: CLIP_SCALE, from: FIRST_PLAY_FRAME, playStart: FIRST_PLAY_FRAME, sam: await ledgerSam(), model: OPEN_MODEL, modelName: OPEN_MODEL_NAME, log: line => console.log(line),
   generate: async request => {
     const response = await client.respond(request);
     return { response, estimatedCostUsd: tokenCost(readUsage(response.usage), OPEN_PRICE) };

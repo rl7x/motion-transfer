@@ -34,6 +34,7 @@ How to read the numbers:
 - The ability's first moving tick is the tick its button is pressed.
 - A gap between two burst starts covers the burst and its recharge, so the shortest gap is the closest thing you have to the true timing. That gap may be longer than the true minimum if the player never pressed as soon as possible.
 - A burst marked as starting from standing still shows where the ability goes when no direction is held.
+- framesOfPlayBeforeFirstBurst, when present, comes from a clip that shows the very start of play, so treat it like the shortest gap: if the ability is held from the first step, the first burst begins on that step, counting from 0.
 - Bursts are straight lines, so assume the direction is fixed when the ability starts.
 - Compare ordinary speed in a straight line with diagonalMovingSpeed to see whether diagonal movement is normalized.
 

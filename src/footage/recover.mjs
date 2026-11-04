@@ -81,7 +81,7 @@ const repairFeedback = (submission, grade) => ({
  * Recovers a burst of motion from a clip, using only what the clip shows. `sam` tracks a section,
  * and `generate` makes one model request and returns { response, estimatedCostUsd }.
  */
-export async function recoverMove({ clip, out, rights, source, player, pixelScale = 1, from = 0, to = null, sam, generate, model, modelName, log = () => {} }) {
+export async function recoverMove({ clip, out, rights, source, player, pixelScale = 1, from = 0, to = null, playStart = null, sam, generate, model, modelName, log = () => {} }) {
   checkRights({ rights, source });
   checkClipPath(clip);
   if (existsSync(out) && (await readdir(out)).length > 0) throw Error(`${out} is not empty; choose a new --out`);
@@ -96,7 +96,8 @@ export async function recoverMove({ clip, out, rights, source, player, pixelScal
     if (bursts.length < 2) throw Error(`Found ${bursts.length} burst${bursts.length === 1 ? '' : 's'}. Recovery needs at least 2, so one can be held back as a check. Use a clip with the move used several times.`);
     const { practice, heldOut } = splitBursts(bursts);
     const gap = shortestGap(bursts);
-    const measurements = motionSummary({ steps, bursts, walkSpeed, practice });
+    const firstBurst = playStart === null ? null : bursts[0].startFrame - playStart;
+    const measurements = motionSummary({ steps, bursts, walkSpeed, practice, firstBurst });
     const attempts = [];
     let feedback = null, accepted = null;
     for (let attempt = 1; attempt <= MAX_ATTEMPTS && !accepted; attempt += 1) {
@@ -109,8 +110,8 @@ export async function recoverMove({ clip, out, rights, source, player, pixelScal
       catch (error) { record.failures = [error.message]; log(`Attempt ${attempt} failed: ${error.message}`); continue; }
       record.summary = submission.summary;
       try {
-        const grade = await gradeController({ source: submission.source, config: submission.config, heldOut, gap });
-        Object.assign(record, { bursts: grade.bursts, recharge: grade.recharge, failures: grade.failures, passed: grade.passed });
+        const grade = await gradeController({ source: submission.source, config: submission.config, heldOut, gap, firstBurst });
+        Object.assign(record, { bursts: grade.bursts, recharge: grade.recharge, start: grade.start, failures: grade.failures, passed: grade.passed });
         if (grade.passed) accepted = { submission, grade };
         else { feedback = repairFeedback(submission, grade); log(`Attempt ${attempt} failed: ${grade.failures[0]}`); }
       } catch (error) {
@@ -134,7 +135,7 @@ export async function recoverMove({ clip, out, rights, source, player, pixelScal
       clip: { sha256: clipSha256, frames: info.frames, fps: info.fps, note: 'The clip itself is not kept. Only this hash and the motion numbers are.' },
       models: { tracking: 'sam-3.1', controller: modelName },
     };
-    const report = { label: 'footage match', camera: followed ? 'follows the player' : 'fixed', measurements, heldOut: { bursts: grade.bursts, recharge: grade.recharge }, sections, attempts, estimatedCostUsd: { tracking: samUsd, controller: modelUsd, total: samUsd + modelUsd } };
+    const report = { label: 'footage match', camera: followed ? 'follows the player' : 'fixed', measurements, heldOut: { bursts: grade.bursts, recharge: grade.recharge, start: grade.start }, sections, attempts, estimatedCostUsd: { tracking: samUsd, controller: modelUsd, total: samUsd + modelUsd } };
     await mkdir(out, { recursive: true });
     await writeFile(join(out, 'component.ts'), submission.source);
     await writeFile(join(out, 'component.js'), grade.compiled.javascript);
