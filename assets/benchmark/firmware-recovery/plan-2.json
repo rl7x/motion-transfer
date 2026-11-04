@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "name": "firmware-recovery-2026-11-04-19-56",
+  "createdAt": "2026-11-04T19:56:23.936Z",
+  "plannedSessions": 1,
+  "protocol": {
+    "name": "firmware-recovery-v2",
+    "model": "muse-wonder-1.0",
+    "reasoningEffort": "medium",
+    "maxSubmissions": 5,
+    "maxBinaryRuns": 16,
+    "maxInputsPerRun": 64,
+    "maxDisassemblyLines": 120,
+    "maxTruncations": 2,
+    "limits": {
+      "maxModelCalls": 16,
+      "maxToolCalls": 30,
+      "maxInputTokens": 32000,
+      "maxOutputTokens": 6000,
+      "maxCostUsd": 1.19,
+      "timeoutMs": 600000,
+      "requestTimeoutMs": 120000
+    },
+    "success": "proved"
+  },
+  "previousSession": {
+    "plan": "plan.json",
+    "protocol": "firmware-recovery-v1",
+    "status": "failed",
+    "estimatedCostUsd": 0.25494,
+    "reason": "The first response used its whole 12,000 token limit reasoning and made no tool call, and the harness ended the session."
+  },
+  "success": "proved",
+  "sourceHashes": {
+    "src/firmware/session.mjs": "0bd66c72092832da52384ba6885696a66239e0b5da750d2a09906c9aed3668f0",
+    "src/firmware/state-space.mjs": "98ac03b5464235625ab91ca56bf39a232962fc128ac9af21eb9015d9a47f4cf4",
+    "src/firmware/verify.mjs": "fdfb952cbf43136db98795e701625c204d6402dc60ef5fd87a0f7ec8f74d3775",
+    "src/firmware/verify-worker.mjs": "00a8ddcf804bca1bbddb2d1692affb47dc903b96107dad3c2a73ddcf6aaa9f56",
+    "src/evaluator/exhaustive-candidate.mjs": "f76a61b9422dbf4cbabf658d55bd48571913285e805dc9cb807400fd5cc14244",
+    "src/component/build.mjs": "7f04316154f9221b5f94042330235a485f964ba50673d78a4ce8686731540703",
+    "src/agent/accounting.mjs": "120f1dfbcc1a5986a5ee86e65e20abc373f96b9e1cb0c34a29fd0e227e4cacc9",
+    "src/agent/meta-client.mjs": "4f16d99b64649bd7a85de7672ee76f2799f99468d73047338afbf06ed9654e7d",
+    "src/campaign/phase-budget.mjs": "e5387acda682eb226d4807f2ff7302e8a8e215ffbc9fd9a57db53e29723e4dc3",
+    "assets/targets/px4-arming/arming.wasm": "b481030c5dc08c9bc7596f02706b15a636276c1f17dd6bf518d0019e7b7f58e8",
+    "assets/targets/px4-arming/target.lock.json": "48a167d8d1419dc29d99cfa4aa44b72273d2f66bfe2e1c14a7402b2ff0efd683"
+  },
+  "workspace": "/tmp/firmware-recovery-2026-11-04-19-56",
+  "output": "/app/reports/firmware-recovery-2026-11-04-19-56",
+  "phaseLedger": "/app/reports/motion-transfer-phase",
+  "startCutoff": "2026-11-04T21:00:00Z",
+  "budget": {
+    "ledgerSha256": "d74fe2e15d48f0f6fb4af7fe0d990653384930e09cd20ea11f619e0ceeb14ec6",
+    "since": "2026-11-04T05:00:00Z",
+    "workingLimitUsd": 5,
+    "usedUsd": 1.3062972500000005,
+    "remainingUsd": 3.6937027499999995,
+    "cloudRemainingUsd": 28.313121081999878,
+    "wonderRemainingUsd": 7.668337599999997,
+    "uncertain": false,
+    "observedAt": "2026-11-04T19:56:23.936Z",
+    "category": "wonder",
+    "ceilingUsd": 1.19,
+    "accounting": "Count all Meta reservations since midnight ET on November 4, the same rule as the v6 plan. Settled costs and full holds count. No category is reallocated."
+  },
+  "rules": [
+    "One session. A started session is never repeated, whatever it returns.",
+    "Reserve the full ceiling under the ledger lock, enforcing the $5 working limit.",
+    "Success means proved. A cost ceiling, an exhausted allowance or an inconclusive verdict is a failure, and is published as one.",
+    "No model is told what the binary is."
+  ]
+}
