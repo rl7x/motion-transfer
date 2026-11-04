@@ -57,6 +57,11 @@ const shell = async (sandbox, command, options = {}) => {
 async function withLifetime() {
   const { Sandbox, name, sandbox } = await backend();
   if (sandbox.expiresAt.getTime() - Date.now() > MINIMUM_LIFETIME_MS) return sandbox;
+  if(values.version==='v6'){
+    const budget=workingBudgetSnapshot(await sandbox.readFileToBuffer({path:plan.phaseLedger+'/phase-budget.json'}),plan.budget.since);
+    assert.equal(budget.uncertain,false,'An active or uncertain reservation blocks restarting the backend');
+    assert.ok(budget.remainingUsd>=2.5&&budget.wonderRemainingUsd>=2.5,'The budget cannot admit this session');
+  }
   const running = await shell(sandbox, 'ps -eo command | grep -E "recovery|run-[0-9]\\.mjs" | grep -v grep | wc -l');
   assert.equal(running.out, '0', 'A session is still running; let it finish first');
   await sandbox.stop();
