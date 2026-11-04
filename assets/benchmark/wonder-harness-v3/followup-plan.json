@@ -1,0 +1,10 @@
+{
+  "createdAt": "2026-11-04T02:24:51.914Z",
+  "originalPlan": "wonder-harness-v3-1793758612383",
+  "protocolId": "0c4a0d9463b9b6df2d2f37d49806001a1d3ef5fc9b95f1de2083be17873c0789",
+  "plannedAdditionalTrials": 1,
+  "ordinal": 3,
+  "maxCostUsd": 2.4,
+  "reason": "The second session was interrupted by the sandbox lifetime after one completed request and before a second generation reservation. Its interrupted outcome is retained. This is a new, separately declared session after checking at least 16 minutes of sandbox lifetime; no candidate or accepted result is reused.",
+  "sandboxExpiresAt": "2026-11-04T03:06:42.623Z"
+}
