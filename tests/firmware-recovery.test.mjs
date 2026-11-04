@@ -117,7 +117,7 @@ test('the first request carries no disassembly, and the tool returns it in piece
     { name: 'read_disassembly', arguments: JSON.stringify({ startLine: 1, lineCount: 500 }) }, submit(reference)]);
   const report = await runFirmwareSession({ client, bytes });
   assert.equal(report.status, 'completed', report.error);
-  assert.doesNotMatch(JSON.stringify(requests[0].input), /i32\.const/);
+  assert.doesNotMatch(JSON.stringify(requests[0].input[0]), /i32\.const/, 'History grows in place, so only its first item is the first request');
   const replies = requests.at(-1).input.filter(item => item.type === 'function_call_output').map(item => JSON.parse(item.output));
   assert.equal(replies[0].lines.length, 120);
   assert.ok(replies[0].totalLines > 300);
@@ -159,9 +159,11 @@ test('a mocked session reaches proved through a real counterexample and a real r
 });
 
 test('failures stay failures: ceiling, exhausted submissions and a silent model', { timeout: 170000 }, async () => {
-  const expensive = await runFirmwareSession({ bytes, client: mockClient(Array(20).fill({ name: 'run_binary', arguments: JSON.stringify({ boot: 0, inputs: [[1, 0, 0, 0, 0]] }) }), { input_tokens: 20000, output_tokens: 8000 }).client });
+  const expensive = await runFirmwareSession({ bytes, client: mockClient(Array(20).fill({ name: 'run_binary', arguments: JSON.stringify({ boot: 0, inputs: [[1, 0, 0, 0, 0]] }) }), { input_tokens: 20000, output_tokens: 5000 }).client });
   assert.equal(expensive.status, 'failed'); assert.match(expensive.error, /Cost budget cannot cover/);
   assert.ok(expensive.estimatedCostUsd <= FIRMWARE_PROTOCOL.limits.maxCostUsd);
+  const overrun = await runFirmwareSession({ bytes, client: mockClient(Array(20).fill({ name: 'run_binary', arguments: JSON.stringify({ boot: 0, inputs: [[1, 0, 0, 0, 0]] }) }), { input_tokens: 20000, output_tokens: 8000 }).client });
+  assert.equal(overrun.status, 'failed'); assert.match(overrun.error, /exceeded the session cost ceiling/);
   const wrong = await runFirmwareSession({ bytes, client: mockClient(Array(5).fill(submit(controls['lockdown is not latched'][0]))).client });
   assert.equal(wrong.status, 'failed'); assert.match(wrong.error, /All 5 submissions failed/); assert.equal(wrong.acceptedAttempt, undefined);
   const silent = await runFirmwareSession({ bytes, client: mockClient([null]).client });
