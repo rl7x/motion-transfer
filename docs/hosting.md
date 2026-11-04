@@ -98,7 +98,7 @@ PARALLAXIA roots may be seeded from their independently verified artifact direct
 
 Validation on this Mac: the formerly failing `npm run verify:hosting:isolation` passed with no skips (218.24 seconds). The direct Roadster worker response also passed all eight browser gates; the historical other-Mac failure could not be reproduced. Rejected payloads are now retained with failed attempts rather than discarded behind the generic publication error. No isolation check was weakened.
 
-The persistent age/privacy/model banner was removed at Richard’s request. Playing has no age dialog. A first new creation uses a focused age-confirmation dialog; cancel and Escape send no request, and confirmation resumes the pending creation once. Backend age, invite, host/origin and quota checks remain. The current whole-job cap is returned in status and displayed by the React request panel. Historical frozen-task v1 retains its explicit $0.15 cap and measurements.
+The persistent age/privacy/model banner and the first-creation age dialog were removed at Richard’s request, so the local and Vercel pages start a creation without an age confirmation. The invite-gated coordinator keeps its check: it requires `adultConfirmed: true`, which the creator page sends after its 18+ checkbox. Invite, host/origin and quota checks remain. The current whole-job cap is returned in status and displayed by the React request panel. Historical frozen-task v1 retains its explicit $0.15 cap and measurements.
 
 ## Local request limits
 

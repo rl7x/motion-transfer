@@ -4,7 +4,6 @@ import { useTransfer } from '../transfer-context';
 import { useJob, useLabStatus } from '../hooks/use-job';
 import { modelFailure, readGenerationMode, readRecovery, stageLabel } from '../data-source';
 import { linkHref } from '../links';
-import { useAgeAcknowledgment } from './age-acknowledgment';
 import { ShareStatus } from './share-status';
 import type { Job, ServiceStatus } from '../types';
 
@@ -15,7 +14,6 @@ interface AdaptRequest {
 }
 function RoadsterRemix({ status }: { status: ServiceStatus | null }) {
   const { artifact, openRoadsterArtifact } = useTransfer();
-  const { allow } = useAgeAcknowledgment();
   const [prompt, setPrompt] = useState('');
   const playbackOnly = readGenerationMode() === 'playback-only';
   const flow = useJob<AdaptRequest, unknown>({
@@ -35,7 +33,7 @@ function RoadsterRemix({ status }: { status: ServiceStatus | null }) {
   const submit = (event: FormEvent) => {
     event.preventDefault();
     const continuing = flow.reconnect || Boolean(flow.pending?.id);
-    if (!allow(continuing) || !artifact) return;
+    if ((playbackOnly && !continuing) || !artifact) return;
     void flow.submit({
       parentArtifactId: artifact.id,
       prompt: prompt || flow.pending?.request.prompt || '',
@@ -173,7 +171,6 @@ function RoadsterRemix({ status }: { status: ServiceStatus | null }) {
 }
 function PakuRemix() {
   const { artifact, share } = useTransfer();
-  const { allow } = useAgeAcknowledgment();
   const [prompt, setPrompt] = useState('');
   const playbackOnly = readGenerationMode() === 'playback-only';
   const status = useLabStatus('/api/remixes/status');
@@ -232,7 +229,7 @@ function PakuRemix() {
           onSubmit={(event) => {
             event.preventDefault();
             const continuing = flow.reconnect || Boolean(flow.pending?.id);
-            if (!allow(continuing) || !artifact) return;
+            if ((playbackOnly && !continuing) || !artifact) return;
             void flow.submit({
               parentArtifactId: artifact.id,
               prompt,

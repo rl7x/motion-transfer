@@ -67,11 +67,9 @@ test('PARALLAXIA omits the notice, shows the configured $7 cap and confirms only
     assert.equal(await page.getByRole('link',{name:'Privacy',exact:true}).count(),0);
     assert.ok((await page.locator('main').innerText()).includes('Maximum $7 for the whole job'));
     const baseline=await page.locator('#parallaxia-game').getAttribute('src');
-    await page.locator('#motion-submit').click();await page.getByRole('dialog',{name:'Confirm before creating'}).waitFor();
-    assert.equal(posts.length,0);await page.keyboard.press('Escape');assert.equal(await page.getByRole('dialog').count(),0);
-    await page.locator('#motion-submit').click();await page.locator('#confirm-age').click();
+    await page.locator('#motion-submit').click();
     await page.waitForFunction(()=>document.querySelector('#motion-job')?.textContent.includes('unsupported'));
-    assert.equal(posts.length,1);assert.equal(posts[0].adultConfirmed,true);
+    assert.equal(posts.length,1);assert.equal('adultConfirmed' in posts[0],false);assert.equal(await page.getByRole('dialog').count(),0);
     assert.equal(await page.locator('#parallaxia-game').getAttribute('src'),baseline);
     await page.reload();await page.waitForFunction(()=>document.querySelector('#motion-job')?.textContent.includes('unsupported'));
     assert.equal(posts.length,1);assert.equal(await page.getByRole('dialog').count(),0);assert.deepEqual(errors,[]);

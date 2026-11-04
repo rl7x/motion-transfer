@@ -3,7 +3,6 @@ import type { ErrorInfo, ReactNode } from 'react';
 import { readGenerationMode } from './data-source';
 import { TransferProvider } from './transfer-context';
 import { useLabStatus } from './hooks/use-job';
-import { AgeAcknowledgment, AgeProvider } from './components/age-acknowledgment';
 import { PrivacyNote } from './components/privacy-note';
 import { Header, Intro, RecoveryDetails, Footer } from './components/static-content';
 import { Destinations, Players } from './components/players';
@@ -43,7 +42,6 @@ function Experience() {
   return (
     <main>
       <Header />
-      <AgeAcknowledgment />
       <Intro />
       <Players />
       <RemixPanel status={status} />
@@ -78,11 +76,9 @@ export function App() {
     return <MotionWorkbench />;
   return (
     <AppBoundary>
-      <AgeProvider>
-        <TransferProvider>
-          <Experience />
-        </TransferProvider>
-      </AgeProvider>
+      <TransferProvider>
+        <Experience />
+      </TransferProvider>
     </AppBoundary>
   );
 }

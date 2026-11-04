@@ -22,10 +22,6 @@ export function PrivacyNote() {
           remain until an operator deletes them.
         </p>
         <p>
-          The 18+ confirmation is a flag in this tab&apos;s sessionStorage. It is not sent as an
-          account and it is not a profile.
-        </p>
-        <p>
           This application does not send data to a third-party tracking or analytics service. It
           does not collect anonymous aggregate counts of plays, remixes, downloads, or link opens.
           Those counts are not implemented.

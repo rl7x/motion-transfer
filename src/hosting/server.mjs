@@ -127,7 +127,7 @@ export async function createHostingServer({ policy, coordinator, creatorRoot = n
       }
       if (decision.route === 'remix') {
         let remix;
-        try { remix = parseRemixBody(JSON.parse(body)); }
+        try { remix = parseRemixBody(JSON.parse(body), { adultRequired: true }); }
         catch (error) {
           json(request, response, String(error.message).includes('18 and older') ? 403 : 400, { error: error.message });
           return;

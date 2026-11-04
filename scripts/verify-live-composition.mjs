@@ -34,7 +34,7 @@ try {
     let job=evidence.jobs[index], pending;const reused=Boolean(job);
     if (!job) {
       await page.locator('#motion-task').selectOption(index===0?'dash-end-shot':'none');
-      await page.locator('#motion-prompt').fill(prompt); await page.locator('#motion-submit').click();if(await page.getByRole('dialog',{name:'Confirm before creating'}).isVisible())await page.locator('#confirm-age').click();
+      await page.locator('#motion-prompt').fill(prompt); await page.locator('#motion-submit').click();
       await page.waitForFunction(previous=>{const value=JSON.parse(sessionStorage.getItem('motion-creator-session'))?.pending;return Boolean(value?.jobId&&value.jobId!==previous);},evidence.jobs.at(-1)?.id??null);
       pending = await page.evaluate(() => JSON.parse(sessionStorage.getItem('motion-creator-session')).pending);
       console.log('Submitted',index + 1,pending.jobId);

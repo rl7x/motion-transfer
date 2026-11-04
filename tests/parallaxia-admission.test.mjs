@@ -15,7 +15,6 @@ test('a rejected PARALLAXIA admission stops retrying, retains its draft and allo
       if(window.top!==window)return;
       if(sessionStorage.getItem('admission-test-initialized'))return;
       sessionStorage.setItem('admission-test-initialized','true');
-      sessionStorage.setItem('motion-transfer-age',JSON.stringify('18+'));
       sessionStorage.setItem('motion-creator-session',JSON.stringify({sessionId:'local-test-session',invite:'',adult:true,pending:{
         idempotencyKey:key,parentArtifactId:'ab'.repeat(32),prompt,jobId:null,
       }}));

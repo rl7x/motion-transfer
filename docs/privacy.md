@@ -14,10 +14,6 @@ A checked artifact can include a short summary that restates the request. This p
 
 The local server can return a stored request to the browser that submitted it. That response stays on the local origin.
 
-## 18+ confirmation
-
-The 18+ confirmation is a flag in this tab's sessionStorage. It is not sent with the model request and it is not an account.
-
 ## What is not implemented
 
 This application does not send data to a third-party tracking or analytics service. It does not collect anonymous aggregate counts of plays, remixes, downloads, or link opens. Those counts are not implemented. No automatic deletion is implemented, so this note does not promise a retention period.

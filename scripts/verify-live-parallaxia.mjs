@@ -27,7 +27,7 @@ try {
 
   for (const [index, prompt] of ['Make the dash backward, only on a fresh press.', 'Half as far.'].entries()) {
     const started = Date.now();
-    await page.locator('#motion-prompt').fill(prompt); await page.locator('#motion-submit').click();if(await page.getByRole('dialog',{name:'Confirm before creating'}).isVisible())await page.locator('#confirm-age').click();
+    await page.locator('#motion-prompt').fill(prompt); await page.locator('#motion-submit').click();
     await page.waitForFunction(() => Boolean(JSON.parse(sessionStorage.getItem('motion-creator-session'))?.pending?.jobId));
     const pending = await page.evaluate(() => JSON.parse(sessionStorage.getItem('motion-creator-session')).pending);
     console.log('Submitted',index + 1,pending.jobId);
