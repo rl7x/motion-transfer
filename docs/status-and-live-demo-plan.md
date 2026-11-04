@@ -1,5 +1,7 @@
 # Implementation status and PARALLAXIA demo plan
 
+> **Historical.** This records the project as it stood earlier in the hackathon, and some of it is out of date. For the current state, see the [README](../README.md).
+
 Updated November 3, 2026 after implementing M0–M4 on `feat/parallaxia-live-mechanics`, based on merged main `a0aed8e`. The active plan remains in the extracted Downloads handoff. Its old Mac paths, branch names and references to uncommitted work are historical. Main has not been changed by this implementation.
 
 | Area | Current result |

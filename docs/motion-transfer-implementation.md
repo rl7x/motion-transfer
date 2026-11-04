@@ -1,5 +1,7 @@
 # Motion Transfer implementation checklist
 
+> **Historical.** This records the project as it stood earlier in the hackathon, and some of it is out of date. For the current state, see the [README](../README.md).
+
 The summary a new developer should read is the root README. This page only separates what is present from what is still pending. It assigns no score. Ledger rows stay in [recovery-evidence-status.md](recovery-evidence-status.md).
 
 Publication, deployment, outreach, a public video, and independent-use sessions are pending by direction. Paid commands require the existing `$50` ledger. No further paid call is planned. Do not reset the ledger.

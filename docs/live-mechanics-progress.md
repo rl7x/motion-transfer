@@ -1,6 +1,8 @@
 # Live mechanics implementation
 
-Working repository: `/Users/richardliu/code/meta-ai-developer-hackathon`. Started from merged main `a0aed8e` on `feat/parallaxia-live-mechanics` on November 3, 2026. The active implementation plan is the supplied `motion-transfer-live-mechanics-plan.md` in the extracted Downloads handoff; its old Mac paths and branch descriptions are historical.
+> **Historical.** This records the project as it stood earlier in the hackathon, and some of it is out of date. For the current state, see the [README](../README.md).
+
+Working repository: ``. Started from merged main `a0aed8e` on `feat/parallaxia-live-mechanics` on November 3, 2026. The active implementation plan is the supplied `motion-transfer-live-mechanics-plan.md` in the extracted Downloads handoff; its old Mac paths and branch descriptions are historical.
 
 ## Spending reconciliation
 
