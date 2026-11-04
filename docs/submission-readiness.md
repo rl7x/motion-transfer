@@ -21,7 +21,7 @@ npm run serve:release -- --root reports/release-accepted --port 4174 --base-path
 
 | Criterion | On hand | Not on hand |
 | --- | --- | --- |
-| Stage-one fit | Muse Wonder 1.0 and Muse Spark 1.3 produced the saved dash and later the accepted component `54465741…`. Spark also wrote the accepted Roadster adapter and the older remix adapters. The README names **Push the Frontier**. | No submission form. |
+| Stage-one fit | Muse Wonder 1.0 and Muse Spark 1.3 produced the saved dash and later the accepted component `54465741…`. Spark also wrote the accepted Roadster adapter and the older remix adapters. The README names **Build for Your World**. | No submission form. |
 | Impact, 30% | A local accepted backflip and a saved library in three games. | No outside session, public player count, or author reply. |
 | Meta AI tooling, 25% | Wonder donor acceptance, `$1.689036`, then a published pin. Accepted Spark adapter, `$0.008666`, 8 mapping and 8 browser checks. Echo preflight, 13 unpaid checks, paid Muse closed. Contact-sheet comparison 0/40 against saved 40/40, one attempt, `$0.02293425`. Fixed remix set, 8 outcomes, `$0.06688125`, older component. | No ten-trial rate, no j/3, no accepted Contributor development delivery. Trial 004 timed out and its `$0.50` cap remains reserved. |
 | Technical depth, 20% | Accepted and saved controllers are different ids and are labeled differently. The accepted page bundles source and evidence. The WebGL2-absent JUJUMP link was tested. | Hosted creation is not verified. |
