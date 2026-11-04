@@ -12,6 +12,23 @@ export const BLIND_HUMAN_ASSISTANCE = Object.freeze([
 const hidden = new Set(['motion', 'motionNotice', 'fieldHints', 'normalized', 'normalizedTrace',
   'eventConvention', 'normalization', 'firstTimerDifference', 'firstBehaviorDivergence']);
 
+/** The shared recovery request stays unchanged for older protocols. V6 offers no mapped fields. */
+export function recoveryQuestion(question, protocol) {
+  if (!isBlindRecovery(protocol)) return question;
+  const clause = 'mapped fields, ABI, evaluators and recipient adapter are human assistance.';
+  if (!question.includes(clause)) throw Error('The recovery request no longer has its assistance clause');
+  return question.replace(clause, 'the ABI, evaluators and recipient adapter are human assistance.');
+}
+
+// Refusals and crashes name their real cause, because the advice to shrink state would not fix them.
+export function inconclusiveFeedback(result) {
+  const prefix = `Exhaustive verification is inconclusive (${result.reason}).`;
+  if (['position-affects-behavior', 'search-cap', 'time-limit', 'counterexample-not-confirmed'].includes(result.reason)) {
+    return `${prefix} Keep state to timers and direction so outputs and other state cannot depend on position.`;
+  }
+  return `${prefix} ${result.error ?? 'The candidate could not be checked.'} Fix this and resubmit.`;
+}
+
 export function blindOutput(value, protocol) {
   if (!isBlindRecovery(protocol)) return value;
   const clean = item => {

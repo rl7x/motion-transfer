@@ -2,7 +2,9 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
 import { createRecoveryProtocol, validateRecoveryProtocol, RECOVERY_REQUIREMENTS } from '../src/agent/recovery-protocol.mjs';
-import { blindOutput } from '../src/agent/blind-output.mjs';
+import { blindOutput, inconclusiveFeedback, recoveryQuestion } from '../src/agent/blind-output.mjs';
+import { recoveryGuidance } from '../src/agent/recovery-progress.mjs';
+import { INVESTIGATION_QUESTIONS } from '../src/lab/service.mjs';
 import { createJournalToolExecutor } from '../src/agent/journal-tools.mjs';
 import { evidenceHistory } from '../src/agent/evidence.mjs';
 import { investigate } from '../src/agent/investigate.mjs';
@@ -212,4 +214,20 @@ test('verifier exceptions remain an inconclusive consumed attempt', async () => 
   assert.equal(result.canRevise, true);
   assert.equal(session.recovery.attempts.length, 1);
   await assert.rejects(workbench.execute('freeze_component', { candidateId: result.candidateId }), /development-passed/);
+});
+
+test('the real recovery request has no mapped-field wording in v6 and is unchanged before it', () => {
+  const question = INVESTIGATION_QUESTIONS.extraction;
+  assert.doesNotMatch(recoveryQuestion(question, protocol), /mapped/i);
+  assert.match(recoveryQuestion(question, protocol), /the ABI, evaluators and recipient adapter are human assistance/);
+  assert.equal(recoveryQuestion(question, createRecoveryProtocol()), question);
+  const report = { recoveryProtocol: protocol, toolCalls: [], session: { recovery: { protocol, selections: [], attempts: [] } } };
+  assert.doesNotMatch(recoveryGuidance(report, { remainingRequests: 32 }), /event and timer observations/);
+});
+
+test('refusals give the model their real cause, and only state problems get state advice', () => {
+  const refused = inconclusiveFeedback({ reason: 'verification-error', error: 'Exhaustive search requires module constants to be JSON literals' });
+  assert.match(refused, /module constants/); assert.doesNotMatch(refused, /timers and direction/);
+  assert.match(inconclusiveFeedback({ reason: 'candidate-execution', error: 'Component returned invalid normalized timers' }), /invalid normalized timers/);
+  for (const reason of ['position-affects-behavior', 'search-cap', 'time-limit']) assert.match(inconclusiveFeedback({ reason }), /timers and direction/);
 });

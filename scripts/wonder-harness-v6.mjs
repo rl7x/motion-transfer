@@ -55,16 +55,24 @@ export async function loadV6Plan(directory) {
   let revisionBytes;
   try { revisionBytes = await readFile(join(directory, 'plan-revision-1.json')); }
   catch (error) { if (error.code === 'ENOENT') return { plan: original, file: 'plan.json' }; throw error; }
-  const revision = validateV6Plan(JSON.parse(revisionBytes));
-  assert.equal(revision.supersedesPlanSha256, digest(originalBytes), 'Plan revision must bind the exact preserved original');
-  assert.ok(typeof revision.revisionReason === 'string' && revision.revisionReason.length > 0);
-  assert.equal(revision.previousPlanStartedSessions, 0, 'Only an unstarted plan can be superseded');
-  assert.equal(revision.plannedTrials, original.plannedTrials);
-  assert.equal(revision.budget.since, original.budget.since);
-  assert.notEqual(revision.workspace, original.workspace);
-  assert.notEqual(revision.output, original.output);
-  assert.ok(Date.parse(revision.createdAt) >= Date.parse(original.createdAt));
-  return { plan: revision, file: 'plan-revision-1.json', superseded: original };
+  const assertRevision = (revision, previous, previousBytes) => {
+    assert.equal(revision.supersedesPlanSha256, digest(previousBytes), 'Plan revision must bind the exact preserved plan before it');
+    assert.ok(typeof revision.revisionReason === 'string' && revision.revisionReason.length > 0);
+    assert.equal(revision.previousPlanStartedSessions, 0, 'Only an unstarted plan can be superseded');
+    assert.equal(revision.plannedTrials, previous.plannedTrials);
+    assert.equal(revision.budget.since, previous.budget.since);
+    assert.notEqual(revision.workspace, previous.workspace);
+    assert.notEqual(revision.output, previous.output);
+    assert.ok(Date.parse(revision.createdAt) >= Date.parse(previous.createdAt));
+  };
+  const first = validateV6Plan(JSON.parse(revisionBytes));
+  assertRevision(first, original, originalBytes);
+  let secondBytes;
+  try { secondBytes = await readFile(join(directory, 'plan-revision-2.json')); }
+  catch (error) { if (error.code === 'ENOENT') return { plan: first, file: 'plan-revision-1.json', superseded: [original] }; throw error; }
+  const second = validateV6Plan(JSON.parse(secondBytes));
+  assertRevision(second, first, revisionBytes);
+  return { plan: second, file: 'plan-revision-2.json', superseded: [original, first] };
 }
 
 export function v6Verification(report) {
