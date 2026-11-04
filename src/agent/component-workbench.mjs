@@ -2,7 +2,9 @@ import {randomBytes} from 'node:crypto';
 import {SUBMIT_MOTION,validateMotionCandidate} from '../component/contract.mjs';
 import {compileMotion,digest} from '../component/build.mjs';
 import {evaluateMotion} from '../evaluator/motion.mjs';
-import {DEVELOPMENT_CASES,MOTION_REGRESSIONS,RECOVERY_DEVELOPMENT_CASES,acceptanceCases} from '../evaluator/cases.mjs';
+import {evaluateRecoveryMotion} from '../evaluator/recovery-motion.mjs';
+import {DEVELOPMENT_CASES,MOTION_REGRESSIONS,acceptanceCases} from '../evaluator/cases.mjs';
+import {RECOVERY_DEVELOPMENT_CASES} from '../evaluator/recovery-cases.mjs';
 import {developmentFeedback} from './development-feedback.mjs';
 import {recoveryPolicy} from './recovery-protocol.mjs';
 
@@ -18,9 +20,10 @@ export const COMPONENT_TOOLS=[{
   parameters:{type:'object',properties:{candidateId:{type:'string',pattern:'^[a-f0-9]{64}$'}},required:['candidateId'],additionalProperties:false},
 }))];
 
-export function createComponentWorkbench(session,{evaluate=evaluateMotion,seed=()=>randomBytes(4).readUInt32LE()}={}){
+export function createComponentWorkbench(session,{evaluate,seed=()=>randomBytes(4).readUInt32LE()}={}){
   const state=session.recovery;
   const policy=recoveryPolicy(state.protocol);
+  evaluate??=policy.developmentSuite==='motion-development-v3'?evaluateRecoveryMotion:evaluateMotion;
   for(const entry of state.attempts)if(entry.sourceSha256!==digest(entry.candidate.source)||entry.candidateId!==digest(JSON.stringify({candidate:entry.candidate,timerFields:entry.timerFields})))throw Error('Component development identity mismatch');
   const candidate=id=>{const value=state.attempts.find(item=>item.candidateId===id);if(!value)throw Error('Unknown component candidate');return value;};
   const frozen=()=>{if(state.frozenCandidateId)throw Error('Candidate is frozen; development and selection cannot be revised after acceptance begins');};

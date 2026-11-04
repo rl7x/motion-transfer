@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
-import { evaluateMotion } from '../src/evaluator/motion.mjs';
-import { DEVELOPMENT_CASES, MOTION_REGRESSIONS, RECOVERY_DEVELOPMENT_CASES } from '../src/evaluator/cases.mjs';
+import { evaluateRecoveryMotion as evaluateMotion } from '../src/evaluator/recovery-motion.mjs';
+import { DEVELOPMENT_CASES, MOTION_REGRESSIONS } from '../src/evaluator/cases.mjs';
+import { RECOVERY_DEVELOPMENT_CASES } from '../src/evaluator/recovery-cases.mjs';
 import { developmentFeedback, developmentHistory } from '../src/agent/development-feedback.mjs';
 import { createRecoveryProtocol, validateRecoveryProtocol } from '../src/agent/recovery-protocol.mjs';
 import { createCartridgeTools } from '../src/agent/tools.mjs';

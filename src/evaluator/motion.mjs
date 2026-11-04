@@ -29,18 +29,13 @@ export async function evaluateMotion(source, config, cases, { suite = 'developme
       maxPositionError = Math.max(maxPositionError, error);
       const sample = {
         tick: frame.tick, buttons: frame.buttons,
-        expected: { position: frame.observation.position, ...(suite === 'development' ? { displacement: frame.output.displacement } : {}), ownsMotion: frame.output.ownsMotion, events: frame.output.events,...(timerFields?{timers:{cooldown:frame.observation.cooldown,remaining:frame.observation.remaining}}:{}) },
-        actual: { position: { ...position }, ...(suite === 'development' ? { displacement: output.displacement } : {}), ownsMotion: output.ownsMotion, events: output.events,...(timerFields?{timers}:{}) },
+        expected: { position: frame.observation.position, ownsMotion: frame.output.ownsMotion, events: frame.output.events,...(timerFields?{timers:{cooldown:frame.observation.cooldown,remaining:frame.observation.remaining}}:{}) },
+        actual: { position: { ...position }, ownsMotion: output.ownsMotion, events: output.events,...(timerFields?{timers}:{}) },
       };
-      if (suite === 'development' && firstDivergence && firstDivergence.following.length < 2) {
-        firstDivergence.following.push(sample);
-      }
       if (!firstDivergence && (error > POSITION_TOLERANCE || output.ownsMotion !== frame.output.ownsMotion
         || JSON.stringify(output.events) !== JSON.stringify(frame.output.events)||timerMismatch)) {
         firstDivergence = { ...sample,
-          ...(suite === 'development' ? { preceding: [...preceding], following: [], inputs: reference.steps,
-            initial: { position: reference.initial.position, cooldown: reference.initial.cooldown, remaining: reference.initial.remaining },
-            tickConvention: 'Tick 1 is the first gameplay update after the title-screen start input. Samples are after each update; preceding timers are the next update\'s starting timers.' } : {}) };
+          ...(suite === 'development' ? { preceding: [...preceding], inputs: reference.steps } : {}) };
       }
       preceding.push(sample);
       if (preceding.length > 2) preceding.shift();
