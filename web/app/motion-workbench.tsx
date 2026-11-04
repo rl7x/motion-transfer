@@ -23,6 +23,7 @@ import { MetaChip } from './ai-lab/meta-chip';
 import { PipelineRibbon } from './ai-lab/pipeline-ribbon';
 import { PixelSprite } from './ai-lab/pixel-sprite';
 import { PortedGames, portedCount, portedPlayers } from './ai-lab/ported-games';
+import { FootagePanel } from './ai-lab/footage-panel';
 import { RecoveryPanel } from './ai-lab/recovery-panel';
 
 interface Baseline {
@@ -321,6 +322,7 @@ export function MotionWorkbench() {
       <Hero playback={playback} savedCount={catalog.loading ? null : catalog.versions.length} />
       <PipelineRibbon onPlayDonor={() => setDonorOpen(true)} />
       <RecoveryPanel />
+      <FootagePanel playback={playback} />
       <section className="stage" id="stage" aria-label="PARALLAXIA movement workbench">
         <aside className="component-card" aria-labelledby="component-title">
           <p className="eyebrow">STEP 1 · THE COMPONENT</p>

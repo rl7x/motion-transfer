@@ -1,17 +1,24 @@
 import type { ReactNode } from 'react';
 
+const NAMES = {
+  spark: 'MUSE SPARK',
+  wonder: 'MUSE WONDER',
+  sam: 'SAM 3.1',
+  open: 'MUSE SPARK OPEN',
+};
+
 /** Marks work a Meta model produced, so it can be found at a glance. */
 export function MetaChip({
   model = 'spark',
   children,
 }: {
-  model?: 'spark' | 'wonder';
+  model?: keyof typeof NAMES;
   children?: ReactNode;
 }) {
   return (
     <span className={'meta-chip meta-chip--' + model}>
       <span className="meta-chip__dot" aria-hidden="true" />
-      {model === 'wonder' ? 'MUSE WONDER' : 'MUSE SPARK'}
+      {NAMES[model]}
       {children ? <span className="meta-chip__note">{children}</span> : null}
     </span>
   );

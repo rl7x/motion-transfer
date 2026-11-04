@@ -2,6 +2,9 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { applyPatches } from '../src/auto-port/patches.mjs';
+import { acceptanceCases } from '../src/evaluator/cases.mjs';
+import { footageSummary } from '../src/footage/summary.mjs';
+import { evaluateMotion } from '../src/evaluator/motion.mjs';
 import { verifyWonderHarness } from './verify-wonder-harness.mjs';
 
 // Recomputes every headline number from committed files. Makes no model request, and needs no gitignored reports.
@@ -52,6 +55,49 @@ const eligible = ports.games.filter(game => game.status !== 'excluded'), passed 
 const responses = eligible.reduce((sum, game) => sum + game.attempts.length, 0), cost = eligible.reduce((sum, game) => sum + game.estimatedCostUsd, 0);
 assert.ok(readme.includes(`${passed.length} of ${eligible.length} eligible games`), 'README must state the port result');
 lines.push(`Auto-port: ${passed.length} of ${eligible.length} eligible games, ${ports.games.length - eligible.length} excluded, ${responses} Spark responses, $${cost.toFixed(4)}`);
+
+const open = await json('assets/evidence/open-port.json');
+const openPlan = await json('src/benchmark/open-port-tasks.json');
+assert.deepEqual(open.games.map(game => game.id), openPlan.games.map(game => game.id), 'Every frozen game is reported, in order');
+assert.deepEqual(openPlan.games, manifest.games, 'Both models face the same games');
+for (const [path, hash] of Object.entries(manifest.sources)) assert.equal(openPlan.sources[path], hash, `${path} differs between the two campaigns`);
+for (const game of open.games) {
+  if (game.status === 'excluded') continue;
+  near(game.attempts.reduce((sum, attempt) => sum + attempt.estimatedCostUsd, 0), game.estimatedCostUsd, `${game.id} open cost`);
+  const last = game.attempts[game.attempts.length - 1];
+  assert.equal(game.status === 'passed', last.checks.length === 7 && last.checks.every(check => check.passed), `${game.id} status must follow its recorded checks`);
+}
+const openEligible = open.games.filter(game => game.status !== 'excluded'), openPassed = openEligible.filter(game => game.status === 'passed');
+const openCost = openEligible.reduce((sum, game) => sum + game.estimatedCostUsd, 0);
+assert.ok(readme.includes(`Muse Spark Open passed ${openPassed.length} of ${openEligible.length}`), 'README must state the open-weight result');
+lines.push(`Open-weight port: ${openPassed.length} of ${openEligible.length} eligible games on ${open.model}, $${openCost.toFixed(4)}`);
+
+// The exam runs again here, from the committed controller and seed, against the real cartridge.
+const footage = await json('assets/evidence/footage-recovery.json');
+const examScore = async ({ source, config, seed, total }) => {
+  const cases = acceptanceCases(seed, total);
+  let passedTraces = 0;
+  for (let offset = 0; offset < cases.length; offset += 20) {
+    const { results } = await evaluateMotion(source, config, cases.slice(offset, offset + 20), { suite: 'fidelity-comparison' });
+    passedTraces += results.filter(result => result.passed).length;
+  }
+  return passedTraces;
+};
+assert.equal(await examScore({ ...footage.latest.controller, ...footage.latest.exam }), footage.latest.exam.fromFootage, 'Footage exam score');
+assert.equal(footage.latest.exam.savedRecovery, footage.latest.exam.total, 'Saved recovery exam score');
+const repeatPlans = [await json('src/benchmark/footage-repeat-tasks.json'), await json('src/benchmark/footage-repeat-v2-tasks.json')];
+footage.repeats.forEach((run, index) => {
+  assert.equal(run.name, repeatPlans[index].name, 'Repeat runs match their frozen plans');
+  assert.equal(run.sessions.length, repeatPlans[index].sessions, 'Every planned session is reported');
+  for (const session of run.sessions) assert.ok(session.exam || session.failure, `Session ${session.session} needs a score or a reason`);
+});
+assert.deepEqual(await json('assets/evidence/footage-summary.json'), footageSummary(footage), 'The site summary must match the full record');
+const finalSessions = footage.repeats[1].sessions, accepted = finalSessions.filter(session => session.exam);
+assert.ok(accepted.every(session => session.exam.passed === session.exam.total), 'The README says every accepted session scored in full');
+assert.ok(readme.includes(`${accepted.length} of ${finalSessions.length} fresh footage sessions scored ${footage.latest.exam.total}/${footage.latest.exam.total}`), 'README must state the footage result');
+const footagePlan = await json('src/benchmark/footage-tasks.json');
+assert.equal(footagePlan.name, footage.latest.name, 'The evidence must come from the frozen plan');
+lines.push(`Footage: ${accepted.length} of ${finalSessions.length} final sessions accepted, all scoring ${footage.latest.exam.total}/${footage.latest.exam.total}; ${footage.latest.bursts.found} of ${footage.latest.bursts.real} bursts measured, worst step error ${footage.latest.tracking.all.worst} px`);
 
 const outside = await json('assets/evidence/port-example.json');
 const outsideLock = await json('assets/port-example/lock.json');

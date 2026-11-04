@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import results from '../../../assets/evidence/auto-port.json';
+import openResults from '../../../assets/evidence/open-port.json';
 import { MetaChip } from './meta-chip';
 import type { SavedGame } from './saved-game-player';
 
@@ -60,6 +61,9 @@ const passed = games.filter((game) => game.status === 'passed');
 const name = (id: string) => NAMES[id] ?? id;
 const keyName = (code = 'KeyC') => code.replace('Key', '');
 const totalCost = eligible.reduce((sum, game) => sum + (game.estimatedCostUsd ?? 0), 0);
+const openEligible = openResults.games.filter((game) => game.status !== 'excluded');
+const openPassed = openEligible.filter((game) => game.status === 'passed');
+const openCost = openEligible.reduce((sum, game) => sum + (game.estimatedCostUsd ?? 0), 0);
 
 /** Before and after frames for a port, played sandboxed like every other generated page. */
 export function portedPlayers(): SavedGame[] {
@@ -185,6 +189,10 @@ export function PortedGames({ onPlay }: { onPlay(id: string): void }) {
       </ul>
       <p className="ported__foot">
         ${totalCost.toFixed(2)} estimated across the campaign · games by Kenta Cho / ABA Games (MIT)
+      </p>
+      <p className="ported__foot">
+        Same games, same frozen checks, open weights: <MetaChip model="open" /> passed{' '}
+        {openPassed.length} of {openEligible.length} for ${openCost.toFixed(2)}, served on Baseten.
       </p>
     </section>
   );

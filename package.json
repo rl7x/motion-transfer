@@ -50,7 +50,7 @@
     "verify:evidence": "node scripts/verify-evidence.mjs",
     "build:evidence": "node scripts/build-evidence.mjs",
     "auto-port:campaign": "node scripts/auto-port-campaign.mjs",
-    "test:auto-port": "node --test --test-concurrency=1 --test-timeout=450000 tests/auto-port.test.mjs tests/port-command.test.mjs",
+    "test:auto-port": "node --test --test-concurrency=1 --test-timeout=450000 tests/auto-port.test.mjs tests/port-command.test.mjs tests/footage.test.mjs tests/footage-evidence.test.mjs tests/footage-port.test.mjs tests/open-client.test.mjs tests/intent-reading.test.mjs",
     "port": "node scripts/port.mjs",
     "recover": "node scripts/recover.mjs",
     "verify:hosting": "node --test --test-concurrency=1 tests/hosting.test.mjs",
