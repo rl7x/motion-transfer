@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
+import { gunzipSync } from 'node:zlib';
 import wabtFactory from 'wabt';
 import { assertSelfContained, BOOT_STATES, createDonor, describeOutput, enumerateFirmware, INPUTS, loadFirmware } from '../src/firmware/state-space.mjs';
 import { verifyFirmwareCandidate } from '../src/firmware/verify.mjs';
@@ -168,6 +170,20 @@ test('failures stay failures: ceiling, exhausted submissions and a silent model'
   assert.equal(wrong.status, 'failed'); assert.match(wrong.error, /All 5 submissions failed/); assert.equal(wrong.acceptedAttempt, undefined);
   const silent = await runFirmwareSession({ bytes, client: mockClient([null]).client });
   assert.equal(silent.status, 'failed'); assert.match(silent.error, /stopped without a matching submission/);
+});
+
+test('the failed first session stays on the record exactly', async () => {
+  const root = new URL('../assets/benchmark/firmware-recovery/', import.meta.url);
+  const [plan, results, bytes] = await Promise.all([readFile(new URL('plan.json', root), 'utf8').then(JSON.parse),
+    readFile(new URL('results.json', root), 'utf8').then(JSON.parse), readFile(new URL('report-1.json.gz', root)).then(gunzipSync)]);
+  const report = JSON.parse(bytes);
+  assert.equal(createHash('sha256').update(bytes).digest('hex'), results.reportSha256);
+  assert.equal(plan.protocol.name, 'firmware-recovery-v1');
+  assert.deepEqual(report.protocol, plan.protocol);
+  assert.deepEqual([results.status, results.accepted, results.acceptedAttempt], ['failed', false, null]);
+  assert.equal(report.estimatedCostUsd, results.estimatedCostUsd);
+  assert.deepEqual([report.toolCalls.length, report.attempts.length, report.usage.reasoningTokens], [0, 0, 11998]);
+  assert.equal(FIRMWARE_PROTOCOL.name === plan.protocol.name, false, 'A changed control needs a new name');
 });
 
 test('every boot state is a declared root', () => assert.deepEqual([...BOOT_STATES], [0, 1, 2, 3, 4, 5]));
