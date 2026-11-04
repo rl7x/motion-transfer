@@ -30,7 +30,7 @@ npm run build:frontend
 npm run test:frontend
 ```
 
-`npm run format` reformats maintained frontend source, stylesheet, shell and frontend configuration. The formatter excludes pinned engines, compiled components, saved evidence and exported project templates because exact bytes are bound to their verification identities. TypeScript, React Hooks lint rules and a no-explicit-any rule apply to the application. Automatic pull-request checks are off. The workflow has a manual trigger only; if it is disabled in GitHub Actions, enable it before dispatching a run. Manual runs use the same checks with browser tests and no API credentials.
+`npm run format` reformats maintained frontend source, stylesheet, shell and frontend configuration. The formatter excludes pinned engines, compiled components, saved evidence and exported project templates because exact bytes are bound to their verification identities. TypeScript, React Hooks lint rules and a no-explicit-any rule apply to the application. The workflow runs on every push and pull request with browser tests and no API credentials. A second job checks the committed evidence and the auto-port verifier.
 
 `build:frontend` writes the shell, stylesheet and bundle under ignored `reports/frontend-build/`. Those files require the preview server's game and API routes; the build is not an independent deployment. The independent JUJUMP export remains a separate, verified deliverable.
 
