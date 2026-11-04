@@ -1,0 +1,497 @@
+{
+  "label": "footage match",
+  "camera": "follows the player",
+  "measurements": {
+    "framesMeasured": 763,
+    "framesPerSecond": 60,
+    "usualMovingSpeed": 2,
+    "diagonalMovingSpeed": 1.51,
+    "shortestGapBetweenBurstStarts": 33,
+    "burstsSeen": 16,
+    "framesOfPlayBeforeFirstBurst": 10,
+    "practiceBursts": [
+      {
+        "startFrame": 11,
+        "frames": 8,
+        "distance": 60.13,
+        "direction": [
+          1,
+          0.002
+        ],
+        "perFrame": [
+          8,
+          7,
+          8,
+          7,
+          8.13,
+          7,
+          8,
+          7
+        ],
+        "startedFrom": "moving"
+      },
+      {
+        "startFrame": 108,
+        "frames": 8,
+        "distance": 60.99,
+        "direction": [
+          -0.706,
+          -0.708
+        ],
+        "perFrame": [
+          8.53,
+          7.12,
+          7.16,
+          7.07,
+          8.49,
+          7.16,
+          6.98,
+          8.49
+        ],
+        "startedFrom": "moving"
+      },
+      {
+        "startFrame": 184,
+        "frames": 8,
+        "distance": 60.06,
+        "direction": [
+          0,
+          -1
+        ],
+        "perFrame": [
+          7,
+          8,
+          7,
+          8,
+          7,
+          8,
+          7,
+          8.06
+        ],
+        "startedFrom": "moving"
+      },
+      {
+        "startFrame": 260,
+        "frames": 8,
+        "distance": 59.94,
+        "direction": [
+          -1,
+          0.002
+        ],
+        "perFrame": [
+          7,
+          8,
+          7,
+          8,
+          7,
+          7.94,
+          7,
+          8
+        ],
+        "startedFrom": "moving"
+      },
+      {
+        "startFrame": 443,
+        "frames": 8,
+        "distance": 58.44,
+        "direction": [
+          1,
+          0.001
+        ],
+        "perFrame": [
+          7,
+          7,
+          7.44,
+          7,
+          8,
+          7,
+          8,
+          7
+        ],
+        "startedFrom": "standing still"
+      },
+      {
+        "startFrame": 542,
+        "frames": 8,
+        "distance": 59.94,
+        "direction": [
+          0,
+          1
+        ],
+        "perFrame": [
+          7,
+          8,
+          7,
+          8,
+          7,
+          8,
+          7,
+          7.94
+        ],
+        "startedFrom": "moving"
+      },
+      {
+        "startFrame": 644,
+        "frames": 8,
+        "distance": 59.4,
+        "direction": [
+          -0.708,
+          -0.706
+        ],
+        "perFrame": [
+          7.03,
+          8.53,
+          6.98,
+          7.16,
+          8.4,
+          7.16,
+          7.07,
+          7.07
+        ],
+        "startedFrom": "moving"
+      },
+      {
+        "startFrame": 715,
+        "frames": 8,
+        "distance": 60,
+        "direction": [
+          1,
+          0
+        ],
+        "perFrame": [
+          7,
+          8,
+          7,
+          8,
+          7,
+          8,
+          7,
+          8
+        ],
+        "startedFrom": "moving"
+      }
+    ]
+  },
+  "heldOut": {
+    "bursts": [
+      {
+        "startFrame": 70,
+        "frames": 8,
+        "measured": {
+          "ticks": 8,
+          "distance": 60,
+          "angle": 0.1
+        },
+        "passed": true,
+        "failures": []
+      },
+      {
+        "startFrame": 146,
+        "frames": 8,
+        "measured": {
+          "ticks": 8,
+          "distance": 60,
+          "angle": 0
+        },
+        "passed": true,
+        "failures": []
+      },
+      {
+        "startFrame": 222,
+        "frames": 8,
+        "measured": {
+          "ticks": 8,
+          "distance": 60,
+          "angle": 0.1
+        },
+        "passed": true,
+        "failures": []
+      },
+      {
+        "startFrame": 298,
+        "frames": 8,
+        "measured": {
+          "ticks": 8,
+          "distance": 60,
+          "angle": 0.6
+        },
+        "passed": true,
+        "failures": []
+      },
+      {
+        "startFrame": 476,
+        "frames": 8,
+        "measured": {
+          "ticks": 8,
+          "distance": 60,
+          "angle": 0
+        },
+        "passed": true,
+        "failures": []
+      },
+      {
+        "startFrame": 578,
+        "frames": 8,
+        "measured": {
+          "ticks": 8,
+          "distance": 60,
+          "angle": 0.8
+        },
+        "passed": true,
+        "failures": []
+      },
+      {
+        "startFrame": 682,
+        "frames": 8,
+        "measured": {
+          "ticks": 8,
+          "distance": 60,
+          "angle": 0
+        },
+        "passed": true,
+        "failures": []
+      },
+      {
+        "startFrame": 748,
+        "frames": 8,
+        "measured": {
+          "ticks": 8,
+          "distance": 60,
+          "angle": 0
+        },
+        "passed": true,
+        "failures": []
+      }
+    ],
+    "recharge": {
+      "name": "recharge",
+      "expected": 33,
+      "measured": 33,
+      "passed": true,
+      "failures": []
+    },
+    "start": {
+      "name": "first-burst",
+      "expected": 10,
+      "measured": 10,
+      "passed": true,
+      "failures": []
+    }
+  },
+  "sections": [
+    {
+      "from": 1,
+      "count": 50,
+      "landmarks": 8,
+      "objectsTracked": 9
+    },
+    {
+      "from": 50,
+      "count": 50,
+      "landmarks": 9,
+      "objectsTracked": 10
+    },
+    {
+      "from": 99,
+      "count": 50,
+      "landmarks": 9,
+      "objectsTracked": 10
+    },
+    {
+      "from": 148,
+      "count": 50,
+      "landmarks": 10,
+      "objectsTracked": 11
+    },
+    {
+      "from": 197,
+      "count": 50,
+      "landmarks": 9,
+      "objectsTracked": 10
+    },
+    {
+      "from": 246,
+      "count": 50,
+      "landmarks": 10,
+      "objectsTracked": 11
+    },
+    {
+      "from": 295,
+      "count": 50,
+      "landmarks": 9,
+      "objectsTracked": 10
+    },
+    {
+      "from": 344,
+      "count": 50,
+      "landmarks": 8,
+      "objectsTracked": 9
+    },
+    {
+      "from": 393,
+      "count": 50,
+      "landmarks": 12,
+      "objectsTracked": 13
+    },
+    {
+      "from": 442,
+      "count": 50,
+      "landmarks": 10,
+      "objectsTracked": 11
+    },
+    {
+      "from": 491,
+      "count": 50,
+      "landmarks": 7,
+      "objectsTracked": 8
+    },
+    {
+      "from": 540,
+      "count": 50,
+      "landmarks": 7,
+      "objectsTracked": 8
+    },
+    {
+      "from": 589,
+      "count": 50,
+      "landmarks": 7,
+      "objectsTracked": 8
+    },
+    {
+      "from": 638,
+      "count": 50,
+      "landmarks": 9,
+      "objectsTracked": 10
+    },
+    {
+      "from": 687,
+      "count": 50,
+      "landmarks": 12,
+      "objectsTracked": 13
+    },
+    {
+      "from": 736,
+      "count": 41,
+      "landmarks": 9,
+      "objectsTracked": 10
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "estimatedCostUsd": 0.0119196,
+      "summary": "Walking speed 2 cardinal normalized diagonal, dash 8 frames total distance ~60 (7.5/frame) with direction locked at start and default right when no input, cooldown 25 ticks after dash (33 gap) and initial 10 ticks.",
+      "failures": [],
+      "bursts": [
+        {
+          "startFrame": 70,
+          "frames": 8,
+          "measured": {
+            "ticks": 8,
+            "distance": 60,
+            "angle": 0.1
+          },
+          "passed": true,
+          "failures": []
+        },
+        {
+          "startFrame": 146,
+          "frames": 8,
+          "measured": {
+            "ticks": 8,
+            "distance": 60,
+            "angle": 0
+          },
+          "passed": true,
+          "failures": []
+        },
+        {
+          "startFrame": 222,
+          "frames": 8,
+          "measured": {
+            "ticks": 8,
+            "distance": 60,
+            "angle": 0.1
+          },
+          "passed": true,
+          "failures": []
+        },
+        {
+          "startFrame": 298,
+          "frames": 8,
+          "measured": {
+            "ticks": 8,
+            "distance": 60,
+            "angle": 0.6
+          },
+          "passed": true,
+          "failures": []
+        },
+        {
+          "startFrame": 476,
+          "frames": 8,
+          "measured": {
+            "ticks": 8,
+            "distance": 60,
+            "angle": 0
+          },
+          "passed": true,
+          "failures": []
+        },
+        {
+          "startFrame": 578,
+          "frames": 8,
+          "measured": {
+            "ticks": 8,
+            "distance": 60,
+            "angle": 0.8
+          },
+          "passed": true,
+          "failures": []
+        },
+        {
+          "startFrame": 682,
+          "frames": 8,
+          "measured": {
+            "ticks": 8,
+            "distance": 60,
+            "angle": 0
+          },
+          "passed": true,
+          "failures": []
+        },
+        {
+          "startFrame": 748,
+          "frames": 8,
+          "measured": {
+            "ticks": 8,
+            "distance": 60,
+            "angle": 0
+          },
+          "passed": true,
+          "failures": []
+        }
+      ],
+      "recharge": {
+        "name": "recharge",
+        "expected": 33,
+        "measured": 33,
+        "passed": true,
+        "failures": []
+      },
+      "start": {
+        "name": "first-burst",
+        "expected": 10,
+        "measured": 10,
+        "passed": true,
+        "failures": []
+      },
+      "passed": true
+    }
+  ],
+  "estimatedCostUsd": {
+    "tracking": 0.16,
+    "controller": 0.0119196,
+    "total": 0.1719196
+  }
+}

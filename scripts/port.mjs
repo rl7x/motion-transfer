@@ -5,9 +5,11 @@ import { loadEnvFile } from 'node:process';
 import { parseArgs } from 'node:util';
 import { PRICES, readUsage, tokenCost } from '../src/agent/accounting.mjs';
 import { createMetaClient } from '../src/agent/meta-client.mjs';
+import { createOpenClient, OPEN_MODEL_NAME, OPEN_PRICE } from '../src/agent/open-client.mjs';
 import { ledgerGenerator } from '../src/auto-port/ledger-generate.mjs';
 import { CHECKED, NOT_CHECKED, portGame, revision } from '../src/auto-port/port-game.mjs';
 import { AUTO_PORT } from '../src/auto-port/request.mjs';
+import { loadRecoveredMove } from '../src/footage/component.mjs';
 
 const USAGE = `Add the recovered dash to your own browser game.
 
@@ -21,6 +23,8 @@ const USAGE = `Add the recovered dash to your own browser game.
   --key <code>      The dash key, as a KeyboardEvent.code. Defaults to KeyX
   --revise <dir>    A previous port to send back to Muse Spark, with --note
   --note <text>     What you found when you played it
+  --open            Use ${OPEN_MODEL_NAME}, Meta's open-weight model, on your BASETEN_API_KEY
+  --component <dir> Port a move from npm run recover instead of the recovered dash
 
 Each attempt is capped at $${AUTO_PORT.maxAttemptCostUsd.toFixed(2)}, with at most ${AUTO_PORT.maxAttempts} attempts. Your original game is not changed.`;
 
@@ -38,8 +42,18 @@ function directGenerator() {
   };
 }
 
+/** One request to the open-weight model on Baseten. */
+function openGenerator() {
+  if (existsSync('.env')) loadEnvFile('.env');
+  const client = createOpenClient(process.env.BASETEN_API_KEY);
+  return async request => {
+    const response = await client.respond(request);
+    return { response, estimatedCostUsd: tokenCost(readUsage(response.usage), OPEN_PRICE) };
+  };
+}
+
 const { values, positionals } = parseArgs({ allowPositionals: true, options: {
-  core: { type: 'string' }, out: { type: 'string' }, key: { type: 'string', default: 'KeyX' }, revise: { type: 'string' }, note: { type: 'string' }, 'allow-paid': { type: 'boolean' }, help: { type: 'boolean' },
+  open: { type: 'boolean' }, component: { type: 'string' }, core: { type: 'string' }, out: { type: 'string' }, key: { type: 'string', default: 'KeyX' }, revise: { type: 'string' }, note: { type: 'string' }, 'allow-paid': { type: 'boolean' }, help: { type: 'boolean' },
 } });
 const [directory] = positionals;
 if (values.help || !directory) { console.log(USAGE); process.exit(0); }
@@ -47,12 +61,14 @@ if (!values.core || !values['allow-paid'] || Boolean(values.revise) !== Boolean(
 
 try {
   // The marker means this checkout's spending belongs to the cloud ledger, so it must not start a second allowance.
-  const cloud = existsSync('.vercel/remote-generation.json');
-  const generate = cloud ? await ledgerGenerator(basename(resolve(directory))) : directGenerator();
+  const cloud = !values.open && existsSync('.vercel/remote-generation.json');
+  const generate = values.open ? openGenerator() : cloud ? await ledgerGenerator(basename(resolve(directory))) : directGenerator();
+  const model = values.open ? OPEN_MODEL_NAME : 'Muse Spark';
+  const move = values.component ? await loadRecoveredMove(values.component) : null;
   const previous = values.revise ? JSON.parse(await readFile(join(values.revise, 'motion-port.json'), 'utf8')).attempts.at(-1) : null;
-  const report = await portGame({ directory, core: values.core, dashKey: values.key, ...(values.out ? { out: values.out } : {}), revise: previous && revision(previous, values.note), generate, log: console.log });
+  const report = await portGame({ directory, core: values.core, dashKey: values.key, ...(values.out ? { out: values.out } : {}), model, ...(move ? { component: move.component, guidance: move.guidance } : {}), revise: previous && revision(previous, values.note), generate, log: console.log });
   const last = report.attempts[report.attempts.length - 1];
-  console.log(`\nMuse Spark: ${last.summary}`);
+  console.log(`\n${model}: ${last.summary}`);
   console.log(`Patched copy: ${report.out}`);
   console.log(`Cost: $${report.estimatedCostUsd.toFixed(4)} estimated over ${report.attempts.length} attempt${report.attempts.length === 1 ? '' : 's'}${cloud ? ', recorded in the cloud ledger' : ''}`);
   console.log(`Play it from any static web server, then hold ${values.key.replace('Key', '')} to dash.`);

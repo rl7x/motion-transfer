@@ -1,0 +1,24 @@
+{
+  "game": "tiny-platformer",
+  "core": "platformer.js",
+  "model": "Muse Spark Open",
+  "componentId": "aeed5e1c77c645de9f445032f71fb52979d5dda7c725774836ff22904744fc7c",
+  "browser": "522 live updates, dash fired from KeyX",
+  "estimatedCostUsd": 0.0088737,
+  "attempts": 1,
+  "summary": "Integrated MotionDash into updateEntity; passes game state with steering direction, applies dash via sub-stepped movement with collision checks per direction of dash to prevent wall clipping. S=0.45 gives 27px total (60*0.45).",
+  "unitsPerSourcePixel": 0.45,
+  "patches": [
+    {
+      "anchor": "    entity.x  = entity.x  + (dt * entity.dx);\n    entity.y  = entity.y  + (dt * entity.dy);",
+      "replacement": "    var _dash = typeof MotionDash !== 'undefined' ? MotionDash.update(entity.player ? entity : {motionDash: null, __dummy:true}, { left: !!entity.left, right: !!entity.right, up: !!entity.jump, down: false }) : {owns:false,dx:0,dy:0};\n    var _S = 0.45;\n    var _addX = _dash.owns ? _dash.dx * _S : 0;\n    var _addY = _dash.owns ? _dash.dy * _S : 0;\n    if (entity.player && _dash.owns) {\n      var _steps = 4;\n      var _origX = entity.x, _origY = entity.y;\n      var _baseVX = dt * entity.dx;\n      var _baseVY = dt * entity.dy;\n      var _totVX = _baseVX + _addX;\n      var _totVY = _baseVY + _addY;\n      entity.x = _origX;\n      entity.y = _origY;\n      for (var _si=0; _si<_steps; _si++) {\n        entity.x += _totVX / _steps;\n        entity.y += _totVY / _steps;\n        var _tx = p2t(entity.x), _ty = p2t(entity.y), _nx = entity.x%TILE, _ny = entity.y%TILE;\n        var _cell = tcell(_tx,_ty), _cellright = tcell(_tx+1,_ty), _celldown = tcell(_tx,_ty+1), _celldiag = tcell(_tx+1,_ty+1);\n        var _moveX = _totVX > 0 ? 1 : (_totVX < 0 ? -1 : 0);\n        var _moveY = _totVY > 0 ? 1 : (_totVY < 0 ? -1 : 0);\n        if (_moveY > 0) { if ((_celldown && !_cell) || (_celldiag && !_cellright && _nx)) { entity.y = t2p(_ty); entity.dy = 0; entity.falling=false; entity.jumping=false; }}\n        else if (_moveY < 0) { if ((_cell && !_celldown) || (_cellright && !_celldiag && _nx)) { entity.y = t2p(_ty+1); entity.dy=0; }}\n        if (_moveX > 0) { if ((_cellright && !_cell) || (_celldiag && !_celldown && _ny)) { entity.x = t2p(_tx); entity.dx=0; }}\n        else if (_moveX < 0) { if ((_cell && !_cellright) || (_celldown && !_celldiag && _ny)) { entity.x = t2p(_tx+1); entity.dx=0; }}\n      }\n    } else {\n    entity.x  = entity.x  + (dt * entity.dx);\n    entity.y  = entity.y  + (dt * entity.dy);\n    }"
+    }
+  ],
+  "sweep": {
+    "dashes": 2007,
+    "fired": 2007,
+    "enteredWalls": 0,
+    "leftMap": 0
+  },
+  "noDashDivergence": null
+}

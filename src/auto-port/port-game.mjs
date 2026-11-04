@@ -35,20 +35,20 @@ export function revision(previous, note) {
  * Ports the recovered dash into one browser game. `generate` makes one paid request and returns
  * { response, estimatedCostUsd }. Generated code only ever runs inside a browser page.
  */
-export async function portGame({ directory, core, out = `${resolve(directory)}-dash`, dashKey = 'KeyX', revise = null, generate, log = () => {} }) {
+export async function portGame({ directory, core, out = `${resolve(directory)}-dash`, dashKey = 'KeyX', revise = null, generate, log = () => {}, component = null, guidance = '', model = AUTO_PORT.model }) {
   const { root, core: file } = checkInputs(directory, core, out);
   if (existsSync(out) && (await readdir(out)).length > 0) throw Error(`${out} is not empty; choose a new --out`);
   const source = await readFile(join(root, file), 'utf8');
-  const component = await loadPinnedComponent(ACCEPTED_COMPONENT_ID);
-  const runtime = await buildRuntime({ component, dashKey });
+  const move = component ?? await loadPinnedComponent(ACCEPTED_COMPONENT_ID);
+  const runtime = await buildRuntime({ component: move, dashKey });
   const work = await mkdtemp(join(tmpdir(), 'motion-port-'));
   const attempts = [];
   try {
     await cp(root, work, { recursive: true, filter: path => !SKIPPED.has(basename(path)) });
     let feedback = revise, detail = null, failure = null;
     for (let attempt = 1; attempt <= AUTO_PORT.maxAttempts && detail === null; attempt += 1) {
-      log(`Asking ${AUTO_PORT.model} to connect the dash to ${file} (attempt ${attempt} of ${AUTO_PORT.maxAttempts})`);
-      const { response, estimatedCostUsd } = await generate(autoPortRequest({ file, source, feedback: { guidance: PORT_GUIDANCE, ...feedback } }), attempt);
+      log(`Asking ${model} to connect the dash to ${file} (attempt ${attempt} of ${AUTO_PORT.maxAttempts})`);
+      const { response, estimatedCostUsd } = await generate(autoPortRequest({ file, source, feedback: { guidance: [PORT_GUIDANCE, guidance].filter(Boolean).join(' '), ...feedback } }), attempt);
       const record = { attempt, estimatedCostUsd, status: 'no-submission', summary: null, unitsPerSourcePixel: null, patches: [], failure: null };
       attempts.push(record);
       let submission;
@@ -60,7 +60,7 @@ export async function portGame({ directory, core, out = `${resolve(directory)}-d
         continue;
       }
       Object.assign(record, { status: submission.status, summary: submission.summary, unitsPerSourcePixel: submission.unitsPerSourcePixel, patches: submission.patches });
-      if (submission.status === 'unsupported') throw Error(`Muse Spark declined this game: ${submission.summary}`);
+      if (submission.status === 'unsupported') throw Error(`${model} declined this game: ${submission.summary}`);
       try {
         await writeFile(join(work, file), applyPatches(source, submission.patches));
         ({ detail } = await runPortInBrowser({ directory: work, runtime, driver: { dashKey } }));
@@ -76,7 +76,7 @@ export async function portGame({ directory, core, out = `${resolve(directory)}-d
     const html = await readFile(join(work, 'index.html'), 'utf8');
     await writeFile(join(work, 'index.html'), injectRuntime(html).replace('/__motion-dash.js', 'motion-dash.js'));
     await writeFile(join(work, 'motion-dash.js'), runtime);
-    const report = { model: AUTO_PORT.model, componentId: ACCEPTED_COMPONENT_ID, game: basename(root), core: file, dashKey, status: 'passed', browser: detail, estimatedCostUsd, attempts, checked: CHECKED, notChecked: NOT_CHECKED };
+    const report = { model, componentId: move.provenance.id, game: basename(root), core: file, dashKey, status: 'passed', browser: detail, estimatedCostUsd, attempts, checked: CHECKED, notChecked: NOT_CHECKED };
     await writeFile(join(work, 'motion-port.json'), JSON.stringify(report, null, 2) + '\n');
     await cp(work, out, { recursive: true });
     return { ...report, out: resolve(out) };
