@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "gate": "paku-browser-integration",
+  "passed": true,
+  "sourceSha256": "ac16fdc9e4a47816b7fc5ac9b060d75cfdff52b6d5537e1d2c587812c8810f91",
+  "javascriptSha256": "17054a5ef235b21f00abc6b3de004f20dee924a8073449dd69bb2f61d91dc438",
+  "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+  "recipientRevision": "6fea4eefe2deaa42706051d96a04ec9e36104696",
+  "tickRate": 60,
+  "defaultUnitScale": 0.5,
+  "environment": {
+    "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+    "recipient": {
+      "schemaVersion": 1,
+      "id": "paku-paku",
+      "name": "PAKU PAKU",
+      "author": "Kenta Cho / ABA Games",
+      "repository": "https://github.com/abagames/crisp-game-lib-11-games",
+      "revision": "6fea4eefe2deaa42706051d96a04ec9e36104696",
+      "license": "MIT",
+      "files": [
+        {
+          "path": "docs/pakupaku/main.js",
+          "local": "upstream/main.js",
+          "bytes": 3313,
+          "sha256": "465b4baaa64bb3c3d3fed5a31788611b49420406acf655d998dc8dda9cbbbe87"
+        },
+        {
+          "path": "LICENSE.txt",
+          "local": "upstream/LICENSE.txt",
+          "bytes": 1066,
+          "sha256": "52ca6d86736a899b1e235eea0b7ff064f7dff44133f1dc317169feca6ab8af0e"
+        },
+        {
+          "path": "README.md",
+          "local": "upstream/README.md",
+          "bytes": 3586,
+          "sha256": "2136a0d2d7adc3e8fc7b1c0c7fe8cb2d07f0a53e9fdb8e829c8e17471638d8b6"
+        }
+      ],
+      "runtime": {
+        "name": "crisp-game-lib",
+        "version": "1.1.1"
+      },
+      "sound": {
+        "name": "sounds-some-sounds",
+        "version": "3.0.0"
+      }
+    },
+    "runtimeSha256": "3cb200a6e7d8f191562c8c5e91e9395fbe9098b4f335f2ee6233f03f0b4a25b1",
+    "soundSha256": "52fe5525fe1dd2a7bdeaf4049a6d945ed3da596950fc1d6b4bea707312af95e1",
+    "policy": {
+      "tickRate": 60,
+      "sourceBodyWidth": 8,
+      "unitScale": 0.5,
+      "seed": 9,
+      "controls": "Space or tap reverses facing; hold D to dash",
+      "collisionOrder": "recipient dot processing, then ghost contact; swept player hitboxes; final-position wrap"
+    },
+    "files": {
+      "runtime/paku-browser.mjs": "94aa691f1e741bc95889398bf507308edfb63d46977bbfa7b882f8132c6238f4",
+      "web/clock.js": "d51578500d68583173a3cfb0aa1702033e2fe363092aa72da39ea5c1ac483a21",
+      "web/boot.js": "55c2b14e556c2a6c10104d0afa729f84eafdb3a23faf402641ee3efc3f91f1a6",
+      "web/port.js": "95a9bf1e97318e85dcf0d329e974c31c1290b25df6af15f4b86a60389668f727",
+      "web/play.html": "98f9896351e50f08c548d15135192264919d6c956eb5f57939ab59dddafbf67b",
+      "web/server.mjs": "bc3cced868d22b2f0f99d92ac7c0698571d1ce3b01f497aede64a3a81cb4725a",
+      "transfer/output.mjs": "c7b7d0f1cc35950923112f7800ca6d10de46dc5781e3eed7a3da4674df677355",
+      "transfer/adapter.mjs": "b43b0e995baff692087872194de4a6be43d1646f83900cd252334d9eea2b7edb",
+      "transfer/worker.mjs": "38e34c4c58b9f8090770ca2ff6baee0e14c16536402861378fe0e121e5c04c4e",
+      "transfer/paku-policy.mjs": "04c3011c8142e68f8d757d3845ad0377bd6afc733b82903caf1bde20a21e842a",
+      "evaluator/paku-adapter.mjs": "334d261b72441456655ce23a9bf47fd911f8665880260c413f4244523d399ffa",
+      "evaluator/paku-browser.mjs": "472948a88b3bddd781b58076f849072b867ef237fe5af2a720811c6235145ae2",
+      "evaluator/browser-harness.mjs": "ee84b3bae7929aa33c4031e23f0f7e997a266144ba73cbb7e7991ac62ba8f268"
+    }
+  },
+  "results": [
+    {
+      "name": "ordinary-play-matches-original",
+      "passed": true,
+      "checkpoints": 4
+    },
+    {
+      "name": "dash-output-and-frozen-direction-match-component",
+      "passed": true,
+      "activeTicks": 8,
+      "recipientDistance": 30,
+      "events": [
+        "dash-start",
+        "dash-end"
+      ]
+    },
+    {
+      "name": "held-dash-retriggers-without-turning",
+      "passed": true,
+      "activationTicks": [
+        11,
+        44,
+        77
+      ],
+      "endTicks": [
+        18,
+        51,
+        84
+      ]
+    },
+    {
+      "name": "swept-ghost-contact-and-restart",
+      "passed": true,
+      "fixtureScale": 2,
+      "endpointSeparation": 7.448472222222222,
+      "sweptContact": true,
+      "restart": true
+    },
+    {
+      "name": "power-cookie-retains-recipient-ghost-rule",
+      "passed": true,
+      "fixtureScale": 2,
+      "ghostEaten": true
+    },
+    {
+      "name": "wrap-teleport-does-not-sweep-across-the-lane",
+      "passed": true,
+      "wrappedTo": -3,
+      "falseGhostContact": false
+    },
+    {
+      "name": "dash-input-is-preserved-in-attract-replay",
+      "passed": true,
+      "replayedTicks": 20,
+      "lifecycleEndFixture": true
+    },
+    {
+      "name": "active-transfer-is-invariant-to-display-rate",
+      "passed": true,
+      "displayRates": [
+        30,
+        60,
+        144
+      ],
+      "simulationTicks": 60
+    }
+  ]
+}

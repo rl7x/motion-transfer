@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "gate": "adapter-conformance",
+  "passed": true,
+  "componentId": "1bc4250c3ca3c1e9a59849d0fd1335e9f7a02a95184d7d51fd6ac678d83226a2",
+  "sourceSha256": "ac16fdc9e4a47816b7fc5ac9b060d75cfdff52b6d5537e1d2c587812c8810f91",
+  "javascriptSha256": "17054a5ef235b21f00abc6b3de004f20dee924a8073449dd69bb2f61d91dc438",
+  "results": [
+    {
+      "name": "idle-and-turn",
+      "ticks": 40,
+      "passed": true,
+      "firstDivergence": null
+    },
+    {
+      "name": "early-held",
+      "ticks": 100,
+      "passed": true,
+      "firstDivergence": null
+    },
+    {
+      "name": "left-tap",
+      "ticks": 51,
+      "passed": true,
+      "firstDivergence": null
+    },
+    {
+      "name": "release-during-dash",
+      "ticks": 31,
+      "passed": true,
+      "firstDivergence": null
+    },
+    {
+      "name": "turn-during-dash",
+      "ticks": 58,
+      "passed": true,
+      "firstDivergence": null
+    },
+    {
+      "name": "recipient-speed",
+      "ticks": 100,
+      "passed": true,
+      "firstDivergence": null
+    },
+    {
+      "name": "cooldown-boundary",
+      "ticks": 54,
+      "passed": true,
+      "firstDivergence": null
+    },
+    {
+      "name": "scale-without-timer-change",
+      "ticks": 100,
+      "passed": true,
+      "firstDivergence": null
+    },
+    {
+      "name": "restart",
+      "ticks": 30,
+      "passed": true,
+      "firstDivergence": null
+    },
+    {
+      "name": "restart-again",
+      "ticks": 30,
+      "passed": true,
+      "firstDivergence": null
+    },
+    {
+      "name": "counterfactual-component-output",
+      "ticks": 8,
+      "passed": true,
+      "firstDivergence": null
+    }
+  ]
+}
