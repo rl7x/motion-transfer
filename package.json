@@ -2,7 +2,7 @@
   "name": "meta-ai-developer-hackathon",
   "version": "0.1.0",
   "private": true,
-  "description": "Local WASM-4 player for game targets",
+  "description": "Recover a move from a compiled game, check it, and port it into new games with Meta's models",
   "scripts": {
     "typecheck": "tsc -p web/tsconfig.json --noEmit",
     "lint": "eslint web/app",

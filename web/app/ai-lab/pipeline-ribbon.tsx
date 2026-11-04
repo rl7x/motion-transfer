@@ -47,10 +47,10 @@ export function PipelineRibbon({ onPlayDonor }: { onPlayDonor?(): void }) {
     <section className="ribbon" id="how" aria-labelledby="how-title">
       <div className="ribbon__intro">
         <p className="eyebrow">HOW IT WORKS</p>
-        <h2 id="how-title">One move, lifted out of a compiled game and rehomed by Meta.</h2>
+        <h2 id="how-title">One move, recovered from a compiled game and carried into new ones.</h2>
         <p>
           87% of classic US games released 1960–2009 are out of release, and often only the binary
-          survives. Motion Transfer lifts one behavior out of a compiled cartridge and makes it
+          survives. Motion Transfer recovers one behavior from a compiled cartridge and makes it
           playable somewhere new.
         </p>
       </div>
@@ -80,6 +80,14 @@ export function PipelineRibbon({ onPlayDonor }: { onPlayDonor?(): void }) {
         PARALLAXIA adapters and the bounded host rule; the destination keeps its own enemies, shots
         and collisions.
       </p>
+      <div className="ribbon__purpose">
+        <h3>What this is for</h3>
+        <ul>
+          <li>Use your own game, an openly licensed one, or one you have permission to work on.</li>
+          <li>It recovers how a move travels. It doesn&apos;t copy art, sound or original code.</li>
+          <li>Credit the source. Every game on this site keeps its upstream notice.</li>
+        </ul>
+      </div>
     </section>
   );
 }
