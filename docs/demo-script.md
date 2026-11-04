@@ -1,5 +1,7 @@
 # Three-minute demo script
 
+> **Historical.** This records the project as it stood earlier in the hackathon, and some of it is out of date. For the current state, see the [README](../README.md).
+
 Record this from the local preview. The edit is three minutes. Several source clips are longer than their slots because each saved landing is about 13 seconds of game time. Cut to the result line. Play any full landing you keep at normal speed, and leave a caption that the wait was not shortened.
 
 This cut uses **saved** playback. It does not show a fresh recovery, a fresh remix generation, a public URL, or a phone. Those fallbacks are at the end.

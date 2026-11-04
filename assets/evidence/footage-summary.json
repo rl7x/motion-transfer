@@ -1,0 +1,32 @@
+{
+  "firstRun": "No controller was accepted. Sections of 120 frames lost landmarks during fast scrolling, and only 495 of 724 frames were measured, so bursts reached the model in fragments.",
+  "looseChecks": 2,
+  "exactChecks": [
+    40,
+    40,
+    40,
+    16,
+    14,
+    0
+  ],
+  "finalChecks": [
+    40,
+    40,
+    40,
+    40
+  ],
+  "refused": 2,
+  "sessions": 6,
+  "worstError": 1.354,
+  "framesCompared": 763,
+  "burstsFound": 16,
+  "burstsReal": 20,
+  "measured": {
+    "walkingSpeed": 2,
+    "dashTicks": 8,
+    "dashDistance": 60,
+    "repeatGap": 33,
+    "firstDash": 10
+  },
+  "realDashTicks": 8
+}

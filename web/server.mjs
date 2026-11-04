@@ -76,6 +76,7 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
       assets.set(`/artifact/${key}.json`, ['application/json', JSON.stringify(adapter[key], null, 2)]);
     }
   }
+  assets.set('/media/footage-tracking.mp4', ['video/mp4', await readFile(new URL('../docs/media/footage-tracking.mp4', import.meta.url))]);
   const server = createServer(async (request, response) => {
     const send = (status, type, body) => {
       response.writeHead(status, { 'Content-Type': type + (Buffer.isBuffer(body) ? '' : '; charset=utf-8'), 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });

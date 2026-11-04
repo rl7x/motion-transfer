@@ -28,6 +28,7 @@ const REQUIRED = [
   '/api/remixes/status',
   '/api/parallaxia/base',
   '/donor/play',
+  '/media/footage-tracking.mp4',
 ];
 
 const saved = new Map();

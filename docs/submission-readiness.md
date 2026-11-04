@@ -1,5 +1,7 @@
 # Submission readiness
 
+> **Historical.** This records the project as it stood earlier in the hackathon, and some of it is out of date. For the current state, see the [README](../README.md).
+
 Inventory for November 2, 2026, branch `codex/playable-motion-remixes` at `eaff839`. No rubric score and no user count.
 
 The participant guide weighs Impact 30%, Meta AI tooling 25%, technical depth and execution 20%, and demo 25%. Submission in that guide is November 4, 2026, 9:00 p.m. ET, and it asks for a public repository, a public three-minute video, and every contributor listed. Those publication steps are pending by direction. This pass did not query GitHub visibility and did not change it. The earlier inventory recorded the repository as private.

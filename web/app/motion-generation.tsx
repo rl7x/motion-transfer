@@ -5,7 +5,7 @@ import { ExperimentResults, type ExperimentReceipt } from './motion-experiment';
 import { readSession, writeSession } from './creator/session';
 import type { PendingRemix } from './creator/types';
 import { Celebrate } from './ai-lab/celebrate';
-import { diffIntent, type DashIntent } from './ai-lab/intent';
+import { diffIntent, type DashIntent, intentBadges, readRequest } from './ai-lab/intent';
 import { MetaChip } from './ai-lab/meta-chip';
 import { MetaOutputPanel, attemptsOf, checksOf, useArtifactEvidence } from './ai-lab/meta-output';
 import { PipelineTrack, type JobEvent } from './ai-lab/pipeline-track';
@@ -244,6 +244,9 @@ export function MotionGeneration({
     return () => clearInterval(timer);
   }, [job]);
   const busy = Boolean(pending && (!job || !terminal(job.status)));
+  const reading =
+    parentIntent && !experiment && !composition ? readRequest(prompt, parentIntent) : undefined;
+  const unreadable = reading === null;
   if (playback)
     return (
       <section className="console console--offline" id="motion-creation">
@@ -283,7 +286,7 @@ export function MotionGeneration({
         className="console__form"
         onSubmit={(event) => {
           event.preventDefault();
-          if (busy || !enabled) return;
+          if (busy || !enabled || unreadable) return;
           const next = {
             experiment,
             composition: experiment ? null : composition || null,
@@ -366,11 +369,27 @@ export function MotionGeneration({
             ))}
           </div>
         )}
+        {reading ? (
+          <p className="console__reading">
+            Muse Spark will read this as:{' '}
+            <b>
+              {intentBadges(reading)
+                .map((badge) => badge.label)
+                .join(' · ')}
+            </b>
+          </p>
+        ) : null}
+        {unreadable ? (
+          <p className="console__reading console__reading--stuck">
+            Try a change this version supports: backward or forward, a fresh press or hold, half or
+            twice as far, or a distance from 1.5 to 12 units.
+          </p>
+        ) : null}
         <div className="console__submit">
           <button
             id="motion-submit"
             className="btn btn--primary btn--large"
-            disabled={!enabled || busy}
+            disabled={!enabled || busy || unreadable}
           >
             {experiment
               ? '⚡ Generate alternative · frozen checkpoint'

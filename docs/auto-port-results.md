@@ -62,6 +62,31 @@ Every saved port played identically to the original over 3,600 ticks with no das
 
 `tests/port-command.test.mjs` reproduces every number in this table from the saved patches, with no model request. The measurement itself is in [the test fixture](../tests/fixtures/port-example-sweep.mjs).
 
+## Open weights
+
+We ran the same eight games through Muse Spark Open, Meta's open-weight model, served on [Baseten](https://www.baseten.co). [The frozen plan](../src/benchmark/open-port-tasks.json) changes only the model. The request text, attempt limit, games, drivers and seven checks are the same, and `npm run verify:evidence` confirms both campaigns pinned the same measuring files. The plan was committed before the first game was sent.
+
+**Muse Spark Open passed 4 of 8 for an estimated $0.15, against 7 of 8 for $0.33 with Muse Spark 1.3.**
+
+| Game | Muse Spark 1.3 | Muse Spark Open | What went wrong for Muse Spark Open |
+| --- | --- | --- | --- |
+| SKYHAUL | Passed | Passed | |
+| UNDERTOW | Passed | Passed | |
+| WRECKFALL | Passed | Passed | |
+| ZIG SABER | Passed | Passed | |
+| HEAD RUSH | Passed on repair | Failed | Both tries had a burst too small for the 700-unit field, and a second dash could start after 16 ticks instead of 33 |
+| PILEUP | Passed | Failed | Its patch used a variable that doesn't exist, then it declined the game, wrongly saying it had no player |
+| BLINK SCOPE | Passed | Failed | The distance was right, but a second dash could start after 32 ticks instead of 33, and its repair sent the same scale again |
+| DRAFT LINE | Failed | Failed | It declined the game. Muse Spark 1.3 failed this one too |
+
+The checks caught all of these, so a failed port is never published. This is one run each at the same low reasoning effort, on one author's games, so it's a comparison of these runs and not of the two models in general.
+
+To use it on your own game:
+
+```sh
+npm run port -- ./my-game --core game.js --open --allow-paid
+```
+
 ## Limits
 
 - All ten games come from one author and collection, and they share a clean structure: deterministic simulation, seeded randomness and a separate core file. This is not a success rate for arbitrary games.

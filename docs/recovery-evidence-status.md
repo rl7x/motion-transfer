@@ -1,8 +1,10 @@
 # Recovery evidence status
 
+> **Historical.** This records the project as it stood earlier in the hackathon, and some of it is out of date. For the current state, see the [README](../README.md).
+
 Checked November 2, 2026, on branch `codex/playable-motion-remixes` at `f6cc28251a42ad61dda25d28fe47ccf2787baf72`. This page records which historical files are on disk and what a later run must leave untouched. It assigns no rubric score and no user metric.
 
-The original checkout `/Users/richardliu/code/meta-ai-developer-hackathon` is absent. The reports backup supplied for this import is `/Users/richardliu/Downloads/reports`. It was copied into gitignored `reports/` with `rsync -a --ignore-existing` at `2026-11-02T19:41:35-0500`. 613 files were added. 11 paths already existed and were not replaced. Six of those differ and the local bytes were kept: four `product-review` screenshots, `frontend-build/style.css`, and `frontend-build/assets/app.js`. Their backup copies remain in Downloads. Thirteen local lab job and session files were already here and were preserved. No source file was left uncopied. Details and hashes are in `/private/tmp/motion-transfer-cursor-next/evidence.handoff.md`.
+The original checkout `` is absent. The reports backup supplied for this import is `~/Downloads/reports`. It was copied into gitignored `reports/` with `rsync -a --ignore-existing` at `2026-11-02T19:41:35-0500`. 613 files were added. 11 paths already existed and were not replaced. Six of those differ and the local bytes were kept: four `product-review` screenshots, `frontend-build/style.css`, and `frontend-build/assets/app.js`. Their backup copies remain in Downloads. Thirteen local lab job and session files were already here and were preserved. No source file was left uncopied. Details and hashes are in `/private/tmp/motion-transfer-cursor-next/evidence.handoff.md`.
 
 The ledger figures below are that import snapshot. They are not a claim that `reports/motion-transfer-phase/phase-budget.json` stays byte-identical after later jobs. This page does not re-open the live ledger. After the snapshot, root video 001 completed with known cost `$0.02293425` on the contact-sheet fallback. No other paid call was performed.
 

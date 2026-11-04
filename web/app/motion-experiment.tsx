@@ -42,7 +42,7 @@ export function CheckpointGoals({
   const [frozen, setFrozen] = useState(false);
   return (
     <section className="lab" id="lab" aria-label="Checkpoint experiment">
-      <p className="eyebrow">OPTIONAL · SOLVE A MOMENT</p>
+      <p className="eyebrow">LIVE · SOLVE A MOMENT</p>
       <h2>Pause and compare alternatives</h2>
       <p>
         Use your current native flight, or a curated seed-7 checkpoint at tick 40. Experiments

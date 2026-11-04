@@ -1,3 +1,4 @@
+import { footageSummary } from '../src/footage/summary.mjs';
 import { existsSync, readdirSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -64,6 +65,49 @@ async function autoPort() {
   await write('auto-port.json', { name: results.name, commit: results.commit, model: manifest.generation.model, upstream: manifest.upstream, componentId: manifest.componentId, games });
 }
 
+async function openPort() {
+  const path = 'reports/open-port/campaign-v1/results.json';
+  if (!existsSync(path)) return;
+  const results = await json(path);
+  const manifest = await json('src/benchmark/open-port-tasks.json');
+  const games = results.games.map(game => game.status === 'excluded' ? game : {
+    id: game.id, status: game.status, failure: game.failure, estimatedCostUsd: game.estimatedCostUsd,
+    attempts: game.attempts.map(attempt => ({
+      attempt: attempt.attempt, status: attempt.submission?.status ?? 'no-submission', summary: attempt.submission?.summary ?? null,
+      unitsPerSourcePixel: attempt.submission?.unitsPerSourcePixel ?? null, patches: attempt.submission?.patches ?? [],
+      usage: attempt.usage, estimatedCostUsd: attempt.estimatedCostUsd, wallMs: attempt.wallMs,
+      checks: attempt.report?.checks ?? [], measurements: attempt.report?.measurements ?? {},
+    })),
+  });
+  await write('open-port.json', { name: results.name, commit: results.commit, model: manifest.model, provider: manifest.provider, comparedWith: manifest.comparedWith, games });
+}
+
+async function footage() {
+  const directory = 'reports/footage';
+  const run = async name => {
+    const evidence = await json(join(directory, name, 'evidence.json'));
+    const score = id => evidence.exam.results.find(result => result.id === id).passed;
+    return {
+      name: evidence.name, commit: evidence.commit, frames: evidence.frames, tracking: evidence.tracking, bursts: evidence.bursts,
+      controller: { ...evidence.controller, attempts: evidence.controller.attempts.map(({ attempt, estimatedCostUsd, summary, passed, failures }) => ({ attempt, estimatedCostUsd, summary, passed, failures })) },
+      heldOut: evidence.heldOut, estimatedCostUsd: evidence.estimatedCostUsd,
+      exam: { seed: evidence.exam.seed, studyId: evidence.exam.studyId, total: 40, fromFootage: score('from-footage'), savedRecovery: score('saved-recovery') },
+    };
+  };
+  if (!existsSync(join(directory, 'calibration-v3/evidence.json'))) return;
+  const record = {
+    tracker: 'sam-3.1', controllerModel: 'meta-models/muse-spark-open-1026',
+    earlier: [
+      { name: 'footage-calibration-v1', outcome: 'failed', detail: 'No controller was accepted. Sections of 120 frames lost landmarks during fast scrolling, and only 495 of 724 frames were measured, so bursts reached the model in fragments.', estimatedCostUsd: 0.1899 },
+      await run('calibration-v2'),
+    ],
+    latest: await run('calibration-v3'),
+    repeats: [await json(join(directory, 'repeats-v1/results.json')), await json(join(directory, 'repeats-v2/results.json'))],
+  };
+  await write('footage-recovery.json', record);
+  await write('footage-summary.json', footageSummary(record));
+}
+
 async function wonderRepeat() {
   const plan = await json('src/benchmark/wonder-repeat-tasks.json');
   const read = async (path, label, kind) => {
@@ -91,5 +135,5 @@ async function wonderRepeat() {
     repeatCostUsd, remainingUsd, sessions });
 }
 
-await recovery(); await liveMechanics(); await autoPort(); await wonderRepeat();
+await recovery(); await liveMechanics(); await autoPort(); await openPort(); await footage(); await wonderRepeat();
 console.log(readdirSync(OUT).join(', '));

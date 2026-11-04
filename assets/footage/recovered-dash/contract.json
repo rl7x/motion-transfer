@@ -1,0 +1,11 @@
+{
+  "name": "Motion recovered from footage",
+  "defaults": {
+    "walkingSpeed": 2,
+    "dashDistance": 60,
+    "cooldownTicks": 25,
+    "initialCooldownTicks": 10
+  },
+  "label": "footage match",
+  "scope": "Matches how a move travels in one clip. This is not a recovery of the game's code or its hidden rules, and it has not been checked against the game itself."
+}

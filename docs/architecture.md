@@ -49,6 +49,10 @@ flowchart TD
 - **The worker never holds the key.** It refuses to run if credentials appear in its environment.
 - **Publication is content-addressed.** A version's identity is the hash of its bytes, and a parent never changes when a child is published.
 
+## Recovering from footage
+
+[Footage recovery](footage-recovery.md) needs no binary. SAM 3.1 tracks a clip, measuring code in this repository turns the tracks into the player's motion, and Muse Spark Open writes a controller from those numbers. The same trust rules apply: the model's code runs in a sandbox, half the bursts are held back from it, and the measuring code isn't generated.
+
 ## Spending
 
 Every Meta call reserves its full ceiling on the shared ledger first, then settles measured usage. If a call fails in a way that may still have billed, its whole ceiling stays held. The ledger has one owner at a time. It lives with the hosted backend, so campaigns send their model calls there rather than spending from a second copy.
@@ -58,6 +62,7 @@ Every Meta call reserves its full ceiling on the shared ledger first, then settl
 | Folder | Status | Contents |
 | --- | --- | --- |
 | `web/app/` | Current | React interface |
+| `src/footage/` | Current | Recovering a move from a clip: SAM tracking, motion measurement, held-out checks |
 | `src/auto-port/` | Current | Porting unseen games: drivers, host runtime, verifier, Spark request |
 | `src/parallaxia/`, `src/hosting/`, `src/evaluator/` | Current | PARALLAXIA integration, coordinator, isolated worker and gates |
 | `src/agent/`, `src/campaign/` | Current | Recovery agent, Meta client, spending ledger |

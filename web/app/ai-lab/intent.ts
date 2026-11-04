@@ -57,6 +57,50 @@ export function intentBadges(intent: DashIntent | null): IntentBadge[] {
   ];
 }
 
+const SMALLEST_SCALE = 0.025;
+const LARGEST_SCALE = 0.2;
+const SAFETY_WORDS = /invulnerab|immun|shield|enemy|enemies|collision/;
+const KEEPS_RULES = /keep|preserve|no added|without/;
+
+/**
+ * Reads a request the same way the server's own check does, so people see what will count before
+ * they spend a request. It stays in step with requestedParallaxiaIntent in recipient-request.mjs.
+ */
+export function readRequest(prompt: string, parent: DashIntent): DashIntent | null {
+  const text = prompt.toLowerCase();
+  if (SAFETY_WORDS.test(text) && !KEEPS_RULES.test(text)) return null;
+  const intent = { ...parent };
+  let changed = false;
+  if (/backward|opposite/.test(text)) {
+    intent.direction = 'opposite';
+    changed = true;
+  } else if (/forward|facing/.test(text)) {
+    intent.direction = 'facing';
+    changed = true;
+  }
+  if (/fresh[ -]press|on a press/.test(text)) {
+    intent.activation = 'press';
+    changed = true;
+  } else if (/held|hold/.test(text)) {
+    intent.activation = 'held';
+    changed = true;
+  }
+  const units = text.match(/(\d+(?:\.\d+)?)\s*(?:world[ -]units?|units?)/);
+  if (/half/.test(text)) {
+    intent.unitScale /= 2;
+    changed = true;
+  } else if (/double|twice/.test(text)) {
+    intent.unitScale *= 2;
+    changed = true;
+  } else if (units) {
+    intent.unitScale = Number(units[1]) / DONOR_PIXELS;
+    changed = true;
+  }
+  return changed && intent.unitScale >= SMALLEST_SCALE && intent.unitScale <= LARGEST_SCALE
+    ? intent
+    : null;
+}
+
 export interface IntentChange {
   key: string;
   label: string;

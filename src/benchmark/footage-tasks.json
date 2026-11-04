@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 1,
+  "name": "footage-calibration-v3",
+  "follows": [
+    {
+      "name": "footage-calibration-v1",
+      "outcome": "Failed. Sections of 120 frames lost landmarks during fast scrolling, so bursts reached the model in fragments."
+    },
+    {
+      "name": "footage-calibration-v2",
+      "outcome": "2 of 40. The controller passed its checks, but they allowed a recharge one tick too short, and the clip never showed how soon the ability is first available."
+    }
+  ],
+  "question": "From footage alone, how close can SAM 3.1 and Muse Spark Open get to a move whose true behavior is known?",
+  "tracker": "sam-3.1",
+  "controllerModel": "meta-models/muse-spark-open-1026",
+  "maxAttempts": 3,
+  "clipSteps": [
+    [
+      1,
+      1
+    ],
+    [
+      33,
+      36
+    ],
+    [
+      0,
+      24
+    ],
+    [
+      128,
+      9
+    ],
+    [
+      129,
+      1
+    ],
+    [
+      128,
+      5
+    ],
+    [
+      0,
+      23
+    ],
+    [
+      80,
+      9
+    ],
+    [
+      81,
+      1
+    ],
+    [
+      80,
+      5
+    ],
+    [
+      0,
+      23
+    ],
+    [
+      32,
+      9
+    ],
+    [
+      33,
+      1
+    ],
+    [
+      32,
+      5
+    ],
+    [
+      0,
+      23
+    ],
+    [
+      64,
+      9
+    ],
+    [
+      65,
+      1
+    ],
+    [
+      64,
+      5
+    ],
+    [
+      0,
+      23
+    ],
+    [
+      144,
+      9
+    ],
+    [
+      145,
+      1
+    ],
+    [
+      144,
+      5
+    ],
+    [
+      0,
+      23
+    ],
+    [
+      16,
+      9
+    ],
+    [
+      17,
+      1
+    ],
+    [
+      16,
+      5
+    ],
+    [
+      0,
+      23
+    ],
+    [
+      96,
+      9
+    ],
+    [
+      97,
+      1
+    ],
+    [
+      96,
+      5
+    ],
+    [
+      0,
+      23
+    ],
+    [
+      160,
+      9
+    ],
+    [
+      161,
+      1
+    ],
+    [
+      160,
+      5
+    ],
+    [
+      0,
+      23
+    ],
+    [
+      0,
+      33
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      0,
+      44
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      0,
+      30
+    ],
+    [
+      129,
+      95
+    ],
+    [
+      0,
+      9
+    ],
+    [
+      81,
+      95
+    ],
+    [
+      0,
+      9
+    ],
+    [
+      33,
+      95
+    ]
+  ],
+  "exam": "the existing 40-trace fidelity comparison, generated after the candidate is frozen",
+  "disclosed": "Only tracker measurements of practice bursts, the shortest gap and how long play ran before the first burst. No source, binary, button log, true positions or timing defaults.",
+  "sources": {
+    "src/footage/calibration.mjs": "456ec71eb086fa4f01cfa6c220081842e799ea297b94bb1bfb08e4376a9e41af",
+    "src/footage/clip.mjs": "5bba1112533a0eba050047a0dd0a945651f315f2bcdac3444cdb779aee62302e",
+    "src/footage/grade.mjs": "4000adc5761dcae617fab300adaed47fad12649ced4b6d88ad5013b1ebab2292",
+    "src/footage/landmarks.mjs": "e03285b3abdc6cfb2f6e8be19bbc980a6096271de082620e5aa8e292a118df3e",
+    "src/footage/recover.mjs": "eac30e909356e5d537a43b6b0c26ac0250407127d59a7579ae620fc519d98c7f",
+    "src/footage/request.mjs": "23004a7db9479e01988a87b1a42e552fefe636de9733fce3632ca40eb34f0078",
+    "src/footage/sam.mjs": "4f378485231f851488b11f5b53a13be5f6b92ce3aeb8544f0caa865ffbae2340",
+    "src/footage/trajectory.mjs": "6605af3d27b9c7c7791fabebbdb75e3d27dc2fc5f9fefbfd781543a24dd825c9",
+    "src/agent/open-client.mjs": "34bc5a7d1d528af9368fc15c4857a830cf0cc9d1bb238d3b17b698c396c8cc75",
+    "scripts/footage-calibration.mjs": "51504dd3760fa5158f6480629f59efd6014391a096354d707367d492339f9d91"
+  }
+}

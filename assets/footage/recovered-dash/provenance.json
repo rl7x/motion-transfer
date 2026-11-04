@@ -1,0 +1,21 @@
+{
+  "id": "aeed5e1c77c645de9f445032f71fb52979d5dda7c725774836ff22904744fc7c",
+  "label": "footage match",
+  "recoveredAt": "2026-11-04T13:24:14.561Z",
+  "rights": {
+    "basis": "open-license",
+    "statement": "This game is under an open license that allows this use.",
+    "source": "Dashy Dango by samX500 and willGuimont (ISC)",
+    "note": "This records what the person running the tool stated. It was not verified."
+  },
+  "clip": {
+    "sha256": "bc312874358d8d9e752c67c7b1fea548b1fa553db7641d84a585c468b9b60ca7",
+    "frames": 777,
+    "fps": 60,
+    "note": "The clip itself is not kept. Only this hash and the motion numbers are."
+  },
+  "models": {
+    "tracking": "sam-3.1",
+    "controller": "Muse Spark Open"
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "name": "open-port-v1",
+  "question": "With only the model changed, can Muse Spark Open connect the recovered dash to the eight games Muse Spark faced?",
+  "model": "meta-models/muse-spark-open-1026",
+  "provider": "baseten",
+  "comparedWith": "auto-port-v1",
+  "componentId": "544657417fe9752f91b0b72a451cd9cb8d2650839824be35881e52f81f223858",
+  "generation": {
+    "effort": "low",
+    "maxOutputTokens": 10000,
+    "maxAttempts": 2
+  },
+  "verification": {
+    "seeds": [
+      11,
+      22,
+      33
+    ],
+    "ticks": 1200,
+    "settleTicks": 30,
+    "measureTicks": 12,
+    "holdTicks": 90,
+    "burstPixels": 60,
+    "minShare": 0.02,
+    "maxShare": 0.5,
+    "relativeTolerance": 0.1,
+    "fieldTolerance": 0.02,
+    "testTimeoutMs": 180000
+  },
+  "games": [
+    {
+      "id": "skyhaul",
+      "status": "eligible",
+      "core": "core.js",
+      "tests": [
+        "tests/core.test.cjs"
+      ],
+      "dashKey": "KeyX",
+      "field": 320
+    },
+    {
+      "id": "undertow",
+      "status": "eligible",
+      "core": "core.js",
+      "tests": [
+        "tests/core.test.cjs"
+      ],
+      "dashKey": "KeyC",
+      "field": 256
+    },
+    {
+      "id": "wreckfall",
+      "status": "eligible",
+      "core": "core.js",
+      "tests": [
+        "tests/core.test.cjs"
+      ],
+      "dashKey": "KeyC",
+      "field": 224
+    },
+    {
+      "id": "head-rush",
+      "status": "eligible",
+      "core": "core.js",
+      "tests": [
+        "tests/rules.cjs"
+      ],
+      "dashKey": "KeyC",
+      "field": 700
+    },
+    {
+      "id": "pileup",
+      "status": "eligible",
+      "core": "core.js",
+      "tests": [
+        "tests/rules.cjs"
+      ],
+      "dashKey": "KeyC",
+      "field": 5040
+    },
+    {
+      "id": "zig-saber",
+      "status": "eligible",
+      "core": "core.js",
+      "tests": [
+        "tests/rules.cjs"
+      ],
+      "dashKey": "KeyC",
+      "field": 224
+    },
+    {
+      "id": "blink-scope",
+      "status": "eligible",
+      "core": "game-core.js",
+      "tests": [
+        "tests/core.test.mjs"
+      ],
+      "dashKey": "KeyC",
+      "field": 560
+    },
+    {
+      "id": "draft-line",
+      "status": "eligible",
+      "core": "src/sim.js",
+      "tests": [
+        "test/sim.test.mjs",
+        "test/chain.test.mjs"
+      ],
+      "dashKey": "KeyC",
+      "field": 3.8
+    },
+    {
+      "id": "overturn",
+      "status": "excluded",
+      "reason": "Flipperless pinball: the only control rotates the table, so there is no steerable avatar to dash."
+    },
+    {
+      "id": "twin-vector",
+      "status": "excluded",
+      "reason": "The avatar moves between discrete lanes, so a measured pixel burst has no defined meaning."
+    }
+  ],
+  "sources": {
+    "assets/auto-port/lock.json": "910a26e9106ac00f22703b345407e13f681f8da5a66cc69e1df0af7414c9abb6",
+    "src/auto-port/browser.mjs": "5fef56b13efe9957fd00c3d901d8ea25133ac304e0f9343a13d1e91042693bfc",
+    "src/auto-port/drivers.mjs": "f4c92df923f9f7193776dcc068fad973ea8e1b6f9e53ee85e8c39ee4a250473e",
+    "src/auto-port/patches.mjs": "3266b1cb4e890692947ac090fed8abfea99b5531a307976e2c207158e9bbff25",
+    "src/auto-port/request.mjs": "e6dd856b132edda246a37c33352c46d80174302827b1967c73a3b5ae07cf1df6",
+    "src/auto-port/runtime.mjs": "c245fd3f5fb57018b5b4cb0cf8a567236cae13b74a744b0b494d9cba221c6529",
+    "src/auto-port/verify.mjs": "3c3feb9d4809575986a3e3dc24e945a34c14ebc9173b4642e1d62fa4f9e35a3b",
+    "scripts/auto-port-generate.mjs": "57f846df90dcc53fc2d98d8b1cc69bc54cb1ca9da432f3c600dd0dd93bcba15c",
+    "src/agent/open-client.mjs": "34bc5a7d1d528af9368fc15c4857a830cf0cc9d1bb238d3b17b698c396c8cc75",
+    "scripts/open-port-campaign.mjs": "8aac8f5b20eb8f7fe1c5918b77e0953154a3d3050f7286e530f6174e5734b4b2",
+    "src/benchmark/auto-port-tasks.json": "d82d894484e077142a93ec82fde321e458d3265613c68776aa7c085834bd2295"
+  }
+}

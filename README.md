@@ -2,15 +2,15 @@
 
 [![Checks](https://github.com/rl7x/meta-ai-developer-hackathon/actions/workflows/frontend.yml/badge.svg)](https://github.com/rl7x/meta-ai-developer-hackathon/actions/workflows/frontend.yml)
 
-**Recover a move from a compiled game, then port it into games the model has never seen.**
+**Recover a move from a compiled game, or from a clip of it, then port it into games the model has never seen.**
 
-Muse Wonder rebuilt Dashy Dango's dash from the compiled WebAssembly game. It succeeded in 1 of 3 full sessions at first, and in 2 of 3 fresh sessions after we improved the harness. Muse Spark then wrote the code that connects that dash to a game, and ported it into 7 of 8 eligible games it had never seen. It's for developers who lost the source to their own games, and for preservation teams working with games they have the rights to use.
+Muse Wonder rebuilt Dashy Dango's dash from the compiled WebAssembly game. It succeeded in 1 of 3 full sessions at first, and in 2 of 3 fresh sessions after we improved the harness. Muse Spark then wrote the code that connects that dash to a game, and ported it into 7 of 8 eligible games it had never seen. Then we took the binary away: SAM 3.1 tracked a gameplay clip, and Muse Spark Open, an open-weight model, rebuilt the same dash from those measurements. With the final checks, 4 of 6 fresh footage sessions scored 40/40 on the same exam, and the other 2 were refused. It's for developers who lost the source to their own games, and for preservation teams working with games they have the rights to use.
 
 ![A borrowed dash firing in a game Muse Spark ported it into](docs/media/demo.gif)
 
 **[Play it live](https://motion-transfer-rl7x.vercel.app)** · [Architecture](docs/architecture.md) · [Port results](docs/auto-port-results.md)
 
-Hackathon problem statement: **Push the Frontier**. Models used through the Meta Model API: Muse Wonder 1.0 and Muse Spark 1.3.
+Hackathon problem statement: **Push the Frontier**. Models used through the Meta Model API: Muse Wonder 1.0, Muse Spark 1.3 and SAM 3.1. Open-weight model, served on Baseten: Muse Spark Open.
 
 ## What this is for
 
@@ -22,13 +22,15 @@ Use your own game, an openly licensed one, or one you have permission to work on
 | --- | --- | --- |
 | Recover a behavior from a binary | Accepted in 1 of 3 full sessions. The first scored 0/13, 11/13, then 13/13 and passed all 20 separate acceptance checks. Both frozen repeats were rejected. On an improved harness, 2 of 3 fresh sessions passed 32/32 and 20/20 | [Recovery record](docs/fresh-recovery.md) · [Repeat trials](docs/wonder-repeat-results.md) · [Harness results](docs/wonder-harness-results.md) |
 | Port it into unseen games | 7 of 8 eligible games, 2 excluded up front, $0.33 estimated | [Port results](docs/auto-port-results.md) |
+| Do it with open weights | Muse Spark Open passed 4 of 8 on the same games and frozen checks, $0.15 estimated | [Open-weight comparison](docs/auto-port-results.md#open-weights) |
+| Recover it from footage alone | 4 of 6 fresh sessions scored 40/40 on the exam the binary passed, with no source, binary or button log, and the other 2 were refused. Earlier runs did worse and stay on the record | [Footage recovery](docs/footage-recovery.md) |
 | Remix it from a sentence | 8/9 positive tasks passed, and the deliberately impossible task was correctly refused | [Task results](docs/live-mechanics-results.md) |
 
 People chose the motion to recover and wrote the checks. The models wrote the controller, the adapters and the patches, and nothing they write is trusted on its word. Generated code runs in an isolated worker with no network or credentials, and the port and remix campaigns were frozen before their first request. Failures stay on the record, so these results are not a general reliability estimate. Run `npm run verify:evidence` to recompute them from committed files, without a model request.
 
 ## Try it
 
-On [the live site](https://motion-transfer-rl7x.vercel.app) you can play Dashy Dango itself, play the dash in each game, and read exactly what Spark wrote for every saved version. Remixing PARALLAXIA from a sentence took about 12 seconds in the measured run, and every checked version stays in a shared library that replays without a model request.
+On [the live site](https://motion-transfer-rl7x.vercel.app) you can play Dashy Dango itself, play the dash in each game, and read exactly what Spark wrote for every saved version. Remixing PARALLAXIA from a sentence took about 27 seconds in a timed run on the live site, and about 12 seconds in the measured local campaign, and every checked version stays in a shared library that replays without a model request.
 
 To run it locally, see [running it, measured results and limits](docs/running-and-limits.md).
 
@@ -48,6 +50,18 @@ npm run port -- ./my-game --core game.js --allow-paid --out ./my-game-v2 --revis
 
 We tested it on [Tiny Platformer](https://github.com/jakesgordon/javascript-tiny-platformer), an MIT game from outside the campaign. Spark's first port passed every automatic check but went through walls in 632 of 2,007 measured dashes. Two playtest notes brought that to 0, and that lesson now goes out with every request. See [the trial](docs/auto-port-results.md#the-port-command-on-an-outside-game).
 
+## Recover a move from a clip
+
+```sh
+npm run recover -- ./clip.mp4 --rights own --source "My Game, my own work" \
+  --player 14:322,322 --out ./recovered-move --allow-paid
+npm run port -- ./my-game --core game.js --component ./recovered-move --open --allow-paid
+```
+
+You need a local 60 fps clip showing the move at least twice, plus `MODEL_API_KEY` for SAM 3.1 and `BASETEN_API_KEY` for Muse Spark Open. It works with a fixed camera or one that follows the player, because SAM tracks the scenery as well as the player. Half the bursts are held back as a check the model never sees.
+
+The command won't start unless you state your right to use the game, and it won't download clips from the web. It keeps motion numbers and generated code, never frames, art or sound. The result is labeled a footage match: it shows how a move travels, for dash-like moves, and it's a weaker check than the binary recovery. See [the full results and limits](docs/footage-recovery.md).
+
 ## Built during the hackathon
 
 The building period ran from October 27 to November 4, 2026, and this repository's first commit is from October 27. The left column was built in that period.
@@ -55,6 +69,7 @@ The building period ran from October 27 to November 4, 2026, and this repository
 | Built during the hackathon | Upstream, used under license |
 | --- | --- |
 | Recovery tooling, evaluators and the recovered controller | Dashy Dango cartridge |
+| Footage recovery and the open-weight comparison | |
 | Adapters, host hooks and the auto-port pipeline | PARALLAXIA, JUJUMP, PAKU PAKU, RDSTR Stunts and the ten auto-port games |
 | Isolated verification, spending ledger and publication | WASM-4, crisp-game-lib, three.js and other libraries listed below |
 | The web interface, library and hosted backend | |
@@ -123,7 +138,7 @@ Every other installed npm package is MIT, ISC, Apache-2.0, BSD or BlueOak-1.0.0,
 
 ### Hosted services
 
-Muse Wonder 1.0 and Muse Spark 1.3 are used through the [Meta Model API](https://dev.meta.ai/products/meta-model-api), and the site runs on [Vercel](https://vercel.com). Both are used under their service terms. They are not open-source components of this repository.
+Muse Wonder 1.0, Muse Spark 1.3 and SAM 3.1 are used through the [Meta Model API](https://dev.meta.ai/products/meta-model-api). Muse Spark Open is served by [Baseten](https://www.baseten.co), and the site runs on [Vercel](https://vercel.com). All are used under their service terms. They are not open-source components of this repository.
 
 ### Design inspiration
 
