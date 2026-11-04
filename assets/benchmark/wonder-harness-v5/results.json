@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "protocolId": "2dfbb66771a52142c0643824b7cf499b65e4e3a65396cb0245c07d496ce282b0",
+  "accepted": 2,
+  "interrupted": 0,
+  "estimatedCostUsd": 4.7712136,
+  "trials": [
+    {
+      "ordinal": 1,
+      "status": "delivered",
+      "failureCategory": null,
+      "error": null,
+      "sessionId": "6259c10f-798c-4000-bf53-310782aa6da7",
+      "campaignId": "0d67690c-92f4-4e54-b96c-b9ee75d917d4",
+      "reportFile": "report-1.json.gz",
+      "reportSha256": "017553ed8d889b327666ba4507b3c23d817a1562ed40cd4248f0c724836e1cd1",
+      "requests": 21,
+      "estimatedCostUsd": 1.7221968,
+      "reservedCostUsd": 0,
+      "elapsedMs": 248382,
+      "attempts": [
+        {
+          "candidateId": "aed2327da4bbf0ad81f9c7514988f997b4dc6347b1dd36771e344e051447e881",
+          "developmentPassed": 0,
+          "acceptancePassed": null
+        },
+        {
+          "candidateId": "ced857726d6ad5cbb2de3dbc38cfef38b6230774a03ed6d89bf666edb7959741",
+          "developmentPassed": 19,
+          "acceptancePassed": null
+        },
+        {
+          "candidateId": "33fbf96db526a4e98d8b0c41c684c97e6c05e8a9dec80cbb6a29f254432b4e6d",
+          "developmentPassed": 32,
+          "acceptancePassed": 20
+        }
+      ],
+      "integration": {
+        "id": "5b43a9af4b2a435c14a4ccfeb2261a965a3658c296b601b3f4d47a92cc00712f",
+        "componentId": "96893bfc84148f89d0d7da2b542c8d35783f40a8e1d4628c646cd57d3200b5b6",
+        "candidateId": "33fbf96db526a4e98d8b0c41c684c97e6c05e8a9dec80cbb6a29f254432b4e6d",
+        "packageId": "a6bd19cce7b137f3eda4a255c1c3e3bcedd36c1c9dd3c770d85c36067c580878",
+        "zipSha256": "630eb3071144e926296c1eb4173adede5ec4bcd7a3690fc392e1d4cca8f111f1",
+        "archiveBytes": 1893145,
+        "fileCount": 38
+      },
+      "verificationFile": "verification-1.json",
+      "verificationSha256": "87a6691fced72023ba338f460a3392ca5b794833c0b9e86c0a771f40fd9dd238"
+    },
+    {
+      "ordinal": 2,
+      "status": "failed",
+      "failureCategory": "recovery-incomplete",
+      "error": "Model ended without an inspection and two contrasting, cited experiments",
+      "sessionId": "9771cccc-7796-4826-b2af-e34a631f109e",
+      "campaignId": "944a4a58-ab2b-4248-af32-1220a32c1a54",
+      "reportFile": "report-2.json.gz",
+      "reportSha256": "aca2b79b46324440bf0f65e05f77d639f2fd87ad0498d1dee899de4c360e5b30",
+      "requests": 13,
+      "estimatedCostUsd": 1.331024,
+      "reservedCostUsd": 0,
+      "elapsedMs": 175872,
+      "attempts": [],
+      "integration": null
+    },
+    {
+      "ordinal": 3,
+      "status": "delivered",
+      "failureCategory": null,
+      "error": null,
+      "sessionId": "6c342b92-f75b-48bb-8247-07c4a416be5d",
+      "campaignId": "685d3e20-bc80-468e-b26b-e9dbe0a758f6",
+      "reportFile": "report-3.json.gz",
+      "reportSha256": "0b23491eb3e0823c388ab7559628ec67c61277d5ff43db558f28bf565423bc73",
+      "requests": 17,
+      "estimatedCostUsd": 1.7179928000000002,
+      "reservedCostUsd": 0,
+      "elapsedMs": 197982,
+      "attempts": [
+        {
+          "candidateId": "f717c829f350429a2a14e5f2fc8cb2b41b2b2a6e5d258af01a1e302d6ddf5f6d",
+          "developmentPassed": 0,
+          "acceptancePassed": null
+        },
+        {
+          "candidateId": "24a13dfd8473ebd1069ef9a7304f813386d96030d27fbb66fd2270328a4c97b2",
+          "developmentPassed": 12,
+          "acceptancePassed": null
+        },
+        {
+          "candidateId": "f29bf5337022eae517bced51abc15b6d2b4fd5f3e64f9b1db34454fe227164e0",
+          "developmentPassed": 32,
+          "acceptancePassed": 20
+        }
+      ],
+      "integration": {
+        "id": "3149e507788cd656c7c35748486c0e0cd9ad9f0af1011c8bf89cf32bd1d736ce",
+        "componentId": "7f9208722e4dd562c23b0165537488d30da21202c826ce332fcdf95c7998b25d",
+        "candidateId": "f29bf5337022eae517bced51abc15b6d2b4fd5f3e64f9b1db34454fe227164e0",
+        "packageId": "6f769e6184e6cfce13a633e72e6c2907c53c817b3f22f65cf78ea3bec9b735cf",
+        "zipSha256": "5a3da446635f1c737462d89e9a00483fba59eade62e0a6c78cca1d9f4f43ea77",
+        "archiveBytes": 2543530,
+        "fileCount": 38
+      },
+      "verificationFile": "verification-3.json",
+      "verificationSha256": "93c17df87e2a086a633a5f8f7e8ebe80bd747fbb5940aaf2b7a94de8d033d66e"
+    }
+  ]
+}

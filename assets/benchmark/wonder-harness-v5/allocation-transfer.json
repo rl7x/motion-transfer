@@ -1,0 +1,24 @@
+{
+  "from": "public",
+  "to": "wonder",
+  "amountUsd": 2,
+  "reason": "Continue user-authorized $8 Wonder sessions after fixing the observed context overflow; preserve the $50 total and all prior spending.",
+  "at": "2026-11-04T02:48:42.097Z",
+  "previousDefinition": {
+    "schemaVersion": 1,
+    "name": "motion-transfer-additional-inference-v2",
+    "maxCostUsd": 50,
+    "allocations": {
+      "recovery": 6,
+      "wonder": 24,
+      "video": 2,
+      "remix": 5,
+      "public": 3,
+      "reserve": 10
+    },
+    "historicalSpendingIncluded": false,
+    "id": "ecf86ad5218e4fa9c908dfe8308d1a7baa5e0a7f3650e51f47271c6428a6acaf"
+  },
+  "nextDefinitionId": "346776392641fb8e0439807c8d139ee830a3919f933fb03f106d56b7f5e66c55",
+  "previousJournalSha256": "23b6043dcefba773e24ba99ab3484ebd8fe399af5243038c7ccc0ee65c62737d"
+}
