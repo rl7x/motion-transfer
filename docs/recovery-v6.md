@@ -42,7 +42,7 @@ node scripts/verify-wonder-harness.mjs --v6 --plan-only
 
 # Only after explicit approval, from the frozen isolated worktree.
 node scripts/wonder-harness.mjs run --version v6 --trial 1 --allow-paid \
-  --deployment-root /Users/richardliu/code/meta-ai-developer-hackathon
+  --deployment-root <path to your main checkout>
 ```
 
 Every start must be collected and reported, including failure or interruption. After approved runs, finalize the results, run `node scripts/verify-wonder-harness.mjs --v6 --replay`, add that command to `verify:wonder`, extend `verify:evidence`, and publish the measured outcome in `docs/wonder-harness-results.md`. Until then, there is no v6 recovery-rate claim.
