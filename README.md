@@ -21,10 +21,13 @@ Use your own game, an openly licensed one, or one you have permission to work on
 | Claim | Measured result | Evidence |
 | --- | --- | --- |
 | Recover a behavior from a binary | Accepted in 1 of 3 full sessions. The first scored 0/13, 11/13, then 13/13 and passed all 20 separate acceptance checks. Both frozen repeats were rejected. On an improved harness, 2 of 3 fresh sessions passed 32/32 and 20/20 | [Recovery record](docs/fresh-recovery.md) · [Repeat trials](docs/wonder-repeat-results.md) · [Harness results](docs/wonder-harness-results.md) |
+| Check every reachable dash transition | All 4 accepted controllers match the binary on all 17,600 reachable transitions across 275 states. All 12 known-bad candidates are rejected with shortest counterexamples of 1–11 ticks | [Exhaustive verification](docs/exhaustive-verification.md) |
 | Port it into unseen games | 7 of 8 eligible games, 2 excluded up front, $0.33 estimated | [Port results](docs/auto-port-results.md) |
 | Do it with open weights | Muse Spark Open passed 4 of 8 on the same games and frozen checks, $0.15 estimated | [Open-weight comparison](docs/auto-port-results.md#open-weights) |
 | Recover it from footage alone | 4 of 6 fresh sessions scored 40/40 on the exam the binary passed, with no source, binary or button log, and the other 2 were refused. Earlier runs did worse and stay on the record | [Footage recovery](docs/footage-recovery.md) |
 | Remix it from a sentence | 8/9 positive tasks passed, and the deliberately impossible task was correctly refused | [Task results](docs/live-mechanics-results.md) |
+
+The exhaustive match uses four state fields chosen by humans and checked empirically. It covers default configuration and body width 8 only; combat is out of scope, and float behavior beyond the tested positions is unverified.
 
 People chose the motion to recover and wrote the checks. The models wrote the controller, the adapters and the patches, and nothing they write is trusted on its word. Generated code runs in an isolated worker with no network or credentials, and the port and remix campaigns were frozen before their first request. Failures stay on the record, so these results are not a general reliability estimate. Run `npm run verify:evidence` to recompute them from committed files, without a model request.
 

@@ -6,6 +6,7 @@ import { acceptanceCases } from '../src/evaluator/cases.mjs';
 import { footageSummary } from '../src/footage/summary.mjs';
 import { evaluateMotion } from '../src/evaluator/motion.mjs';
 import { verifyWonderHarness } from './verify-wonder-harness.mjs';
+import { verifyExhaustiveEvidence } from './verify-exhaustive.mjs';
 
 // Recomputes every headline number from committed files. Makes no model request, and needs no gitignored reports.
 const json = async path => JSON.parse(await readFile(path, 'utf8'));
@@ -127,5 +128,6 @@ const latest = await json('assets/benchmark/wonder-harness-v5/results.json');
 const latestStarted = latest.trials.filter(trial => trial.status !== 'not-run').length;
 assert.ok(readme.includes(`${latest.accepted} of ${latestStarted} fresh sessions`), 'README must state the latest harness result');
 
+lines.push(await verifyExhaustiveEvidence());
 console.log(lines.join('\n'));
 console.log('Evidence verified from committed files. No model request was made.');

@@ -1,0 +1,3480 @@
+{
+  "schemaVersion": 1,
+  "claim": "matches the compiled binary on every reachable dash state and button combination (275 states, 17,600 transitions).",
+  "limitations": [
+    "The four state fields were chosen by humans and checked empirically.",
+    "Covers default configuration and body width 8 only.",
+    "Combat is out of scope.",
+    "Float behavior beyond the tested positions is unverified."
+  ],
+  "modelRequests": 0,
+  "inputs": {
+    "assets/benchmark/wonder-harness-v3/report-1.json.gz": "4b21c9b9fd869c91230f304149260bfd5afcf51b5d0d2943237de134688c8737",
+    "assets/benchmark/wonder-harness-v3/report-3.json.gz": "9e9a7bb43656064f11c3728bd906b1958db7004f3d3095e13e70d5d377f406aa",
+    "assets/benchmark/wonder-harness-v4/report-1.json.gz": "0b2fdecf5f85b1c2c6b4283b3070cd67a5d703282ba87c21932dd773c224fcf5",
+    "assets/benchmark/wonder-harness-v5/report-1.json.gz": "bb2ee235895886a4f625828f3f6a01fd00c1acba6232570577d74e7ec20a3234",
+    "assets/benchmark/wonder-harness-v5/report-3.json.gz": "a2859ca73907e3c20586e3d98560afe0641aa8e3e6a8312486c841b2d444be7d",
+    "assets/components/dashy-dango-dash/component.ts": "7cfd9475696ca744982fb7c00d988aae982840d06b0fa198f111d42bba2d18bc",
+    "assets/components/dashy-dango-dash/contract.json": "12df22049fefce63b0c7595cba3f83371f33e2f6016e8bb91f12b8d9439b1e73",
+    "assets/integration/recordings/recoveries/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/project.json": "9d43437b85bdb0f23b734215310310a421f73772bd8f5b177989279340e9bf29",
+    "assets/targets/dashy-dango/cart.wasm": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+    "package-lock.json": "4fee1006cd84f8c1178a75134d802fca282db87889048f8f8375a919ae5c87af",
+    "src/agent/target.mjs": "66ecb1c9d50a67ab8c35221b1568ed30d1fe05866a519c80f264266cecee12d4",
+    "src/component/build.mjs": "7f04316154f9221b5f94042330235a485f964ba50673d78a4ce8686731540703",
+    "src/component/run.mjs": "8054e190e9ccf07788196a1fb43bf7b5ed81ad61d84a916970ad933f53caaddb",
+    "src/component/worker.mjs": "067929e728e8d13f3f76b5ecd408f165a61c7614f6f06ea8cfed963aa0a6f95d",
+    "src/evaluator/cases.mjs": "e1460c0af1c2bd6da2d2a29046484d5406e9c1abbc8655888a45f4fa2cbe5bc4",
+    "src/evaluator/dashy-dango.mjs": "7cb83d242acc738a9ffff2ca600250c367989ee973b3bfd86f1a36cdfe0c5832",
+    "src/evaluator/exhaustive-candidate.mjs": "f76a61b9422dbf4cbabf658d55bd48571913285e805dc9cb807400fd5cc14244",
+    "src/evaluator/exhaustive-evidence.mjs": "acc3ceed68ec7a2061dc19c85f1bf16685b93c9ca9ac342fabbada0c8f762ee6",
+    "src/evaluator/exhaustive-worker.mjs": "0db4709f424facc1582a8aba96adc7b1e30acb0c211ec051856073753444e6d9",
+    "src/evaluator/exhaustive.mjs": "0339333e5b1a143fe4930c6a64c40ee10bf3bbdb3dd0382940544b345b78ac53",
+    "src/evaluator/recovery-cases.mjs": "ebb57f437c0869034c112ea8b8d91576230b8897acde18b052a913027ad8f288",
+    "src/evaluator/recovery-motion.mjs": "72ec5ea8fe374751427aed27f312eb16dec833d3a41ee0de9c5a689a17687dbf",
+    "src/evaluator/state-space.mjs": "bb3479b3c91fef435fd1661fdadf618b011083210fa3a0c98422d03dd9a73273",
+    "src/runtime/donor-observation.mjs": "600a72c97311042e4a536a36152e3f9044e6d72dd8075fa62b883430a292f0ea",
+    "src/runtime/investigation-session.mjs": "26871c1815065e35c5ed429f0a58295c1a2752753a3e247019b577a5a52823d6",
+    "src/runtime/memory.mjs": "8241686da1f97eb603fb9c66aa93949435078744d123e19ff1fdcf84d968d0b5",
+    "src/runtime/replay.mjs": "e7a39e4b5f8eb792562f29c402cffe593c87063c23bda7d2a0dc11e6a4294124",
+    "src/runtime/wasm4-core.mjs": "5ee6ce048553b79319d70273499a6698bbdfa8070e566ecf529c110e3c9461bd",
+    "tests/fixtures/wonder-recovery-failures.json": "4e86b0be02cb632d2a8d3964b8b8ef448b693bad486099e1e37acce313b47f1f"
+  },
+  "donor": {
+    "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+    "globals": {
+      "mutableGlobals": [
+        "$g0"
+      ],
+      "stackPointerInitial": 14752
+    },
+    "restore": {
+      "comparedFrames": 200,
+      "byteIdenticalFrames": 200,
+      "includes": [
+        "linear-memory",
+        "host-disk",
+        "disk-size",
+        "frame"
+      ]
+    },
+    "states": 275,
+    "transitions": 17600,
+    "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+    "alternateStates": 548,
+    "concreteSteps": 154048,
+    "contexts": [
+      {
+        "seed": 11,
+        "frames": 120,
+        "position": {
+          "x": 160.52694702148438,
+          "y": -12.526947021484375
+        },
+        "states": 264,
+        "conflicts": 0
+      },
+      {
+        "seed": 23,
+        "frames": 300,
+        "position": {
+          "x": 368.30877685546875,
+          "y": 99.65689086914062
+        },
+        "states": 264,
+        "conflicts": 0
+      },
+      {
+        "seed": 37,
+        "frames": 600,
+        "position": {
+          "x": 843.5690307617188,
+          "y": -98.12490844726562
+        },
+        "states": 264,
+        "conflicts": 0
+      },
+      {
+        "seed": 41,
+        "frames": 1200,
+        "position": {
+          "x": 1733.237548828125,
+          "y": 138.076171875
+        },
+        "states": 264,
+        "conflicts": 0
+      },
+      {
+        "seed": 53,
+        "frames": 2400,
+        "position": {
+          "x": 3738.386962890625,
+          "y": 336.2773742675781
+        },
+        "states": 264,
+        "conflicts": 0
+      },
+      {
+        "seed": 67,
+        "frames": 4800,
+        "position": {
+          "x": 7226.8173828125,
+          "y": 618.7486572265625
+        },
+        "states": 264,
+        "conflicts": 0
+      }
+    ],
+    "conflicts": 0,
+    "maxDisplacementDifference": 0.000152587890625,
+    "displacementTolerance": 0.001
+  },
+  "coverage": {
+    "developmentCases": 32,
+    "acceptanceCases": 20,
+    "acceptanceSeed": 1348471918,
+    "development": {
+      "transitions": 550,
+      "total": 17600,
+      "percent": 3.1,
+      "withoutZ": {
+        "transitions": 550,
+        "total": 8800,
+        "percent": 6.3
+      }
+    },
+    "acceptance": {
+      "transitions": 1605,
+      "total": 17600,
+      "percent": 9.1,
+      "withoutZ": {
+        "transitions": 1605,
+        "total": 8800,
+        "percent": 18.2
+      }
+    },
+    "combined": {
+      "transitions": 1878,
+      "total": 17600,
+      "percent": 10.7,
+      "withoutZ": {
+        "transitions": 1878,
+        "total": 8800,
+        "percent": 21.3
+      }
+    }
+  },
+  "candidates": [
+    {
+      "id": "first-session",
+      "origin": "assets/integration/recordings/recoveries/f1c783c3994175ac6014d0b5414fc47418f35b868a91122844d9455557971f57/project.json",
+      "accepted": true,
+      "schemaVersion": 1,
+      "sourceSha256": "eefb0547a7cfd4cf41be2da138a74367bedac46e12ffcfad6942096e7755fce1",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "proved",
+      "pairs": 275,
+      "checked": 17600,
+      "complete": true,
+      "maxDisplacementError": 0.0000026993147909541367,
+      "projection": {
+        "fields": [],
+        "checked": 0,
+        "failures": 0,
+        "firstFailure": null
+      }
+    },
+    {
+      "id": "v3-session-1-attempt-1",
+      "origin": "assets/benchmark/wonder-harness-v3/report-1.json.gz",
+      "accepted": false,
+      "schemaVersion": 1,
+      "sourceSha256": "74938b2828d31b88e88ccc82042af50a1cb312cf0df2ecdf596f1cc0b9697fda",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "counterexample",
+      "pairs": 6,
+      "checked": 6,
+      "complete": false,
+      "maxDisplacementError": 0.8284271589747322,
+      "projection": {
+        "fields": [],
+        "checked": 0,
+        "failures": 0,
+        "firstFailure": null
+      },
+      "counterexample": {
+        "length": 1,
+        "buttons": [
+          80
+        ],
+        "reasons": [
+          "displacement"
+        ],
+        "expected": {
+          "next": "0|9|0|0",
+          "displacement": {
+            "x": -1.4142135381698608,
+            "y": -1.4142135381698608
+          },
+          "ownsMotion": false,
+          "events": [],
+          "timers": {
+            "remaining": 0,
+            "cooldown": 9
+          }
+        },
+        "actual": {
+          "output": {
+            "ownsMotion": false,
+            "displacement": {
+              "x": -2,
+              "y": -2
+            },
+            "events": []
+          },
+          "timers": {
+            "cooldown": 9,
+            "remaining": 0
+          }
+        },
+        "trace": {
+          "name": "exhaustive-counterexample",
+          "steps": [
+            {
+              "buttons": 80,
+              "frames": 1
+            },
+            {
+              "buttons": 0,
+              "frames": 12
+            }
+          ]
+        },
+        "confirmation": {
+          "schemaVersion": 1,
+          "suite": "development",
+          "sourceSha256": "74938b2828d31b88e88ccc82042af50a1cb312cf0df2ecdf596f1cc0b9697fda",
+          "javascriptSha256": "1e98c0ca793d210c28cb25573eca0fb8cf9a18477a9d75ba1c2fa8ac21f9f8f5",
+          "passed": false,
+          "positionTolerance": 0.25,
+          "eventTiming": "exact",
+          "positionAccumulation": "closed-loop-f32",
+          "results": [
+            {
+              "name": "exhaustive-counterexample",
+              "ticks": 13,
+              "passed": false,
+              "maxPositionError": 0.8284271589747322,
+              "firstDivergence": {
+                "tick": 1,
+                "buttons": 80,
+                "expected": {
+                  "position": {
+                    "x": -1.4142135381698608,
+                    "y": -1.4142135381698608
+                  },
+                  "displacement": {
+                    "x": -1.4142135381698608,
+                    "y": -1.4142135381698608
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 9,
+                    "remaining": 0
+                  }
+                },
+                "actual": {
+                  "position": {
+                    "x": -2,
+                    "y": -2
+                  },
+                  "displacement": {
+                    "x": -2,
+                    "y": -2
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 9,
+                    "remaining": 0
+                  }
+                },
+                "preceding": [],
+                "following": [
+                  {
+                    "tick": 2,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": -1.4142135381698608,
+                        "y": -1.4142135381698608
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 8,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": -2,
+                        "y": -2
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 8,
+                        "remaining": 0
+                      }
+                    }
+                  },
+                  {
+                    "tick": 3,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": -1.4142135381698608,
+                        "y": -1.4142135381698608
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 7,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": -2,
+                        "y": -2
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 7,
+                        "remaining": 0
+                      }
+                    }
+                  }
+                ],
+                "inputs": [
+                  {
+                    "buttons": 80,
+                    "frames": 1
+                  },
+                  {
+                    "buttons": 0,
+                    "frames": 12
+                  }
+                ],
+                "initial": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "cooldown": 10,
+                  "remaining": 0
+                },
+                "tickConvention": "Tick 1 is the first gameplay update after the title-screen start input. Samples are after each update; preceding timers are the next update's starting timers."
+              }
+            }
+          ],
+          "normalizedTimers": "exact cooldown and remaining after every update",
+          "timerFields": {
+            "cooldown": "cooldown",
+            "remaining": "remaining"
+          }
+        }
+      }
+    },
+    {
+      "id": "v3-session-1-attempt-2",
+      "origin": "assets/benchmark/wonder-harness-v3/report-1.json.gz",
+      "accepted": true,
+      "schemaVersion": 1,
+      "sourceSha256": "9e3cb56e29986b1a88d6f8b192ba7e9e4c2a3595e0ea3b93615202e9482595fb",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "proved",
+      "pairs": 275,
+      "checked": 17600,
+      "complete": true,
+      "maxDisplacementError": 0.0000026993147909541367,
+      "projection": {
+        "fields": [],
+        "checked": 0,
+        "failures": 0,
+        "firstFailure": null
+      }
+    },
+    {
+      "id": "v3-session-3-attempt-1",
+      "origin": "assets/benchmark/wonder-harness-v3/report-3.json.gz",
+      "accepted": false,
+      "schemaVersion": 1,
+      "sourceSha256": "0981e9a37208ddb2578c12171f5b21e53ad2695e6a88d57f374fdf75ce6a9520",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "counterexample",
+      "pairs": 1,
+      "checked": 1,
+      "complete": false,
+      "maxDisplacementError": 0,
+      "projection": {
+        "fields": [
+          "x",
+          "y"
+        ],
+        "checked": 1,
+        "failures": 0,
+        "firstFailure": null
+      },
+      "counterexample": {
+        "length": 1,
+        "buttons": [
+          0
+        ],
+        "reasons": [
+          "cooldown"
+        ],
+        "expected": {
+          "next": "0|9|0|0",
+          "displacement": {
+            "x": 0,
+            "y": 0
+          },
+          "ownsMotion": false,
+          "events": [],
+          "timers": {
+            "remaining": 0,
+            "cooldown": 9
+          }
+        },
+        "actual": {
+          "output": {
+            "ownsMotion": false,
+            "displacement": {
+              "x": 0,
+              "y": 0
+            },
+            "events": []
+          },
+          "timers": {
+            "cooldown": 0,
+            "remaining": 0
+          }
+        },
+        "trace": {
+          "name": "exhaustive-counterexample",
+          "steps": [
+            {
+              "buttons": 0,
+              "frames": 13
+            }
+          ]
+        },
+        "confirmation": {
+          "schemaVersion": 1,
+          "suite": "development",
+          "sourceSha256": "0981e9a37208ddb2578c12171f5b21e53ad2695e6a88d57f374fdf75ce6a9520",
+          "javascriptSha256": "007ccbe4c8a7271d862a87e2fe5f0cad23f0c3cee79916455ff84a01ade996ef",
+          "passed": false,
+          "positionTolerance": 0.25,
+          "eventTiming": "exact",
+          "positionAccumulation": "closed-loop-f32",
+          "results": [
+            {
+              "name": "exhaustive-counterexample",
+              "ticks": 13,
+              "passed": false,
+              "maxPositionError": 0,
+              "firstDivergence": {
+                "tick": 1,
+                "buttons": 0,
+                "expected": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "displacement": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 9,
+                    "remaining": 0
+                  }
+                },
+                "actual": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "displacement": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 0,
+                    "remaining": 0
+                  }
+                },
+                "preceding": [],
+                "following": [
+                  {
+                    "tick": 2,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 8,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 0,
+                        "remaining": 0
+                      }
+                    }
+                  },
+                  {
+                    "tick": 3,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 7,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 0,
+                        "remaining": 0
+                      }
+                    }
+                  }
+                ],
+                "inputs": [
+                  {
+                    "buttons": 0,
+                    "frames": 13
+                  }
+                ],
+                "initial": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "cooldown": 10,
+                  "remaining": 0
+                },
+                "tickConvention": "Tick 1 is the first gameplay update after the title-screen start input. Samples are after each update; preceding timers are the next update's starting timers."
+              }
+            }
+          ],
+          "normalizedTimers": "exact cooldown and remaining after every update",
+          "timerFields": {
+            "cooldown": "cooldown",
+            "remaining": "remaining"
+          }
+        }
+      }
+    },
+    {
+      "id": "v3-session-3-attempt-2",
+      "origin": "assets/benchmark/wonder-harness-v3/report-3.json.gz",
+      "accepted": false,
+      "schemaVersion": 1,
+      "sourceSha256": "ce0035c9eaa6f76f4dcd82d167c7cbf11daec2ed7df3131c5e419bc3aa5fa836",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "counterexample",
+      "pairs": 609,
+      "checked": 32865,
+      "complete": false,
+      "maxDisplacementError": 7.5,
+      "projection": {
+        "fields": [
+          "x",
+          "y"
+        ],
+        "checked": 32865,
+        "failures": 14360,
+        "firstFailure": {
+          "state": {
+            "x": 0,
+            "y": 0,
+            "dirX": 0,
+            "dirY": 0,
+            "cooldown": 10,
+            "remaining": 0,
+            "prevButtons": 0
+          },
+          "buttons": 80,
+          "original": {
+            "state": {
+              "x": -1.4142135381698608,
+              "y": -1.4142135381698608,
+              "dirX": 0,
+              "dirY": 0,
+              "cooldown": 9,
+              "remaining": 0,
+              "prevButtons": 80
+            },
+            "output": {
+              "ownsMotion": false,
+              "displacement": {
+                "x": -1.4142135381698608,
+                "y": -1.4142135381698608
+              },
+              "events": []
+            }
+          },
+          "perturbed": {
+            "state": {
+              "x": 998.5858154296875,
+              "y": 998.5858154296875,
+              "dirX": 0,
+              "dirY": 0,
+              "cooldown": 9,
+              "remaining": 0,
+              "prevButtons": 80
+            },
+            "output": {
+              "ownsMotion": false,
+              "displacement": {
+                "x": -1.4141845703125,
+                "y": -1.4141845703125
+              },
+              "events": []
+            }
+          }
+        }
+      },
+      "counterexample": {
+        "length": 10,
+        "buttons": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "reasons": [
+          "displacement",
+          "ownsMotion",
+          "events",
+          "cooldown",
+          "remaining"
+        ],
+        "expected": {
+          "next": "0|0|0|0",
+          "displacement": {
+            "x": 0,
+            "y": 0
+          },
+          "ownsMotion": false,
+          "events": [],
+          "timers": {
+            "remaining": 0,
+            "cooldown": 0
+          }
+        },
+        "actual": {
+          "output": {
+            "ownsMotion": true,
+            "displacement": {
+              "x": 7.5,
+              "y": 0
+            },
+            "events": [
+              "dash-start"
+            ]
+          },
+          "timers": {
+            "cooldown": 25,
+            "remaining": 7
+          }
+        },
+        "trace": {
+          "name": "exhaustive-counterexample",
+          "steps": [
+            {
+              "buttons": 0,
+              "frames": 9
+            },
+            {
+              "buttons": 1,
+              "frames": 1
+            },
+            {
+              "buttons": 0,
+              "frames": 12
+            }
+          ]
+        },
+        "confirmation": {
+          "schemaVersion": 1,
+          "suite": "development",
+          "sourceSha256": "ce0035c9eaa6f76f4dcd82d167c7cbf11daec2ed7df3131c5e419bc3aa5fa836",
+          "javascriptSha256": "b192561f4730eb13fec84d9c66124c11594f71ad08d39a8ec2971a16181959fe",
+          "passed": false,
+          "positionTolerance": 0.25,
+          "eventTiming": "exact",
+          "positionAccumulation": "closed-loop-f32",
+          "results": [
+            {
+              "name": "exhaustive-counterexample",
+              "ticks": 22,
+              "passed": false,
+              "maxPositionError": 60,
+              "firstDivergence": {
+                "tick": 10,
+                "buttons": 1,
+                "expected": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "displacement": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 0,
+                    "remaining": 0
+                  }
+                },
+                "actual": {
+                  "position": {
+                    "x": 7.5,
+                    "y": 0
+                  },
+                  "displacement": {
+                    "x": 7.5,
+                    "y": 0
+                  },
+                  "ownsMotion": true,
+                  "events": [
+                    "dash-start"
+                  ],
+                  "timers": {
+                    "cooldown": 25,
+                    "remaining": 7
+                  }
+                },
+                "preceding": [
+                  {
+                    "tick": 8,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 2,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 2,
+                        "remaining": 0
+                      }
+                    }
+                  },
+                  {
+                    "tick": 9,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 1,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 1,
+                        "remaining": 0
+                      }
+                    }
+                  }
+                ],
+                "following": [
+                  {
+                    "tick": 11,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 0,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 15,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 7.5,
+                        "y": 0
+                      },
+                      "ownsMotion": true,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 25,
+                        "remaining": 6
+                      }
+                    }
+                  },
+                  {
+                    "tick": 12,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 0,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 22.5,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 7.5,
+                        "y": 0
+                      },
+                      "ownsMotion": true,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 25,
+                        "remaining": 5
+                      }
+                    }
+                  }
+                ],
+                "inputs": [
+                  {
+                    "buttons": 0,
+                    "frames": 9
+                  },
+                  {
+                    "buttons": 1,
+                    "frames": 1
+                  },
+                  {
+                    "buttons": 0,
+                    "frames": 12
+                  }
+                ],
+                "initial": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "cooldown": 10,
+                  "remaining": 0
+                },
+                "tickConvention": "Tick 1 is the first gameplay update after the title-screen start input. Samples are after each update; preceding timers are the next update's starting timers."
+              }
+            }
+          ],
+          "normalizedTimers": "exact cooldown and remaining after every update",
+          "timerFields": {
+            "cooldown": "cooldown",
+            "remaining": "remaining"
+          }
+        }
+      }
+    },
+    {
+      "id": "v3-session-3-attempt-3",
+      "origin": "assets/benchmark/wonder-harness-v3/report-3.json.gz",
+      "accepted": false,
+      "schemaVersion": 1,
+      "sourceSha256": "9ecb552f659aef68108eb2d9072e8baa42089430d14b84caa8db1ab5375671dc",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "inconclusive",
+      "pairs": 17057,
+      "checked": 1091648,
+      "complete": true,
+      "maxDisplacementError": 0.0000053947966093944364,
+      "projection": {
+        "fields": [
+          "x",
+          "y"
+        ],
+        "checked": 1091648,
+        "failures": 721840,
+        "firstFailure": {
+          "state": {
+            "x": 0,
+            "y": 0,
+            "dirX": 0,
+            "dirY": 0,
+            "cooldown": 10,
+            "remaining": 0,
+            "prevButtons": 0
+          },
+          "buttons": 80,
+          "original": {
+            "state": {
+              "x": -1.4142135381698608,
+              "y": -1.4142135381698608,
+              "dirX": 0,
+              "dirY": 0,
+              "cooldown": 9,
+              "remaining": 0,
+              "prevButtons": 80
+            },
+            "output": {
+              "ownsMotion": false,
+              "displacement": {
+                "x": -1.4142135381698608,
+                "y": -1.4142135381698608
+              },
+              "events": []
+            }
+          },
+          "perturbed": {
+            "state": {
+              "x": 998.5858154296875,
+              "y": 998.5858154296875,
+              "dirX": 0,
+              "dirY": 0,
+              "cooldown": 9,
+              "remaining": 0,
+              "prevButtons": 80
+            },
+            "output": {
+              "ownsMotion": false,
+              "displacement": {
+                "x": -1.4141845703125,
+                "y": -1.4141845703125
+              },
+              "events": []
+            }
+          }
+        }
+      },
+      "reason": "position-affects-behavior"
+    },
+    {
+      "id": "v4-session-1-attempt-1",
+      "origin": "assets/benchmark/wonder-harness-v4/report-1.json.gz",
+      "accepted": false,
+      "schemaVersion": 1,
+      "sourceSha256": "d242d5f481f98fbae15cc6f1a12704c1d60ffc49143b39c49d61df1cc2190f17",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "counterexample",
+      "pairs": 1,
+      "checked": 1,
+      "complete": false,
+      "maxDisplacementError": 0,
+      "projection": {
+        "fields": [
+          "x",
+          "y"
+        ],
+        "checked": 1,
+        "failures": 0,
+        "firstFailure": null
+      },
+      "counterexample": {
+        "length": 1,
+        "buttons": [
+          0
+        ],
+        "reasons": [
+          "cooldown"
+        ],
+        "expected": {
+          "next": "0|9|0|0",
+          "displacement": {
+            "x": 0,
+            "y": 0
+          },
+          "ownsMotion": false,
+          "events": [],
+          "timers": {
+            "remaining": 0,
+            "cooldown": 9
+          }
+        },
+        "actual": {
+          "output": {
+            "ownsMotion": false,
+            "displacement": {
+              "x": 0,
+              "y": 0
+            },
+            "events": []
+          },
+          "timers": {
+            "cooldown": 0,
+            "remaining": 0
+          }
+        },
+        "trace": {
+          "name": "exhaustive-counterexample",
+          "steps": [
+            {
+              "buttons": 0,
+              "frames": 13
+            }
+          ]
+        },
+        "confirmation": {
+          "schemaVersion": 1,
+          "suite": "development",
+          "sourceSha256": "d242d5f481f98fbae15cc6f1a12704c1d60ffc49143b39c49d61df1cc2190f17",
+          "javascriptSha256": "8fe6a57e4f7220057550242fab12a52bd13965c46d0705dad5c32089ad81007a",
+          "passed": false,
+          "positionTolerance": 0.25,
+          "eventTiming": "exact",
+          "positionAccumulation": "closed-loop-f32",
+          "results": [
+            {
+              "name": "exhaustive-counterexample",
+              "ticks": 13,
+              "passed": false,
+              "maxPositionError": 0,
+              "firstDivergence": {
+                "tick": 1,
+                "buttons": 0,
+                "expected": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "displacement": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 9,
+                    "remaining": 0
+                  }
+                },
+                "actual": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "displacement": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 0,
+                    "remaining": 0
+                  }
+                },
+                "preceding": [],
+                "following": [
+                  {
+                    "tick": 2,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 8,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 0,
+                        "remaining": 0
+                      }
+                    }
+                  },
+                  {
+                    "tick": 3,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 7,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 0,
+                        "remaining": 0
+                      }
+                    }
+                  }
+                ],
+                "inputs": [
+                  {
+                    "buttons": 0,
+                    "frames": 13
+                  }
+                ],
+                "initial": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "cooldown": 10,
+                  "remaining": 0
+                },
+                "tickConvention": "Tick 1 is the first gameplay update after the title-screen start input. Samples are after each update; preceding timers are the next update's starting timers."
+              }
+            }
+          ],
+          "normalizedTimers": "exact cooldown and remaining after every update",
+          "timerFields": {
+            "cooldown": "cooldown",
+            "remaining": "remaining"
+          }
+        }
+      }
+    },
+    {
+      "id": "v4-session-1-attempt-2",
+      "origin": "assets/benchmark/wonder-harness-v4/report-1.json.gz",
+      "accepted": false,
+      "schemaVersion": 1,
+      "sourceSha256": "9d06b000ae1b95457a96cfebe1c5d208a6f28dbc111b29b06d1e2d16498f8870",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "counterexample",
+      "pairs": 6,
+      "checked": 6,
+      "complete": false,
+      "maxDisplacementError": 0.8284271589747322,
+      "projection": {
+        "fields": [
+          "x",
+          "y"
+        ],
+        "checked": 6,
+        "failures": 0,
+        "firstFailure": null
+      },
+      "counterexample": {
+        "length": 1,
+        "buttons": [
+          80
+        ],
+        "reasons": [
+          "displacement"
+        ],
+        "expected": {
+          "next": "0|9|0|0",
+          "displacement": {
+            "x": -1.4142135381698608,
+            "y": -1.4142135381698608
+          },
+          "ownsMotion": false,
+          "events": [],
+          "timers": {
+            "remaining": 0,
+            "cooldown": 9
+          }
+        },
+        "actual": {
+          "output": {
+            "ownsMotion": false,
+            "displacement": {
+              "x": -2,
+              "y": -2
+            },
+            "events": []
+          },
+          "timers": {
+            "cooldown": 9,
+            "remaining": 0
+          }
+        },
+        "trace": {
+          "name": "exhaustive-counterexample",
+          "steps": [
+            {
+              "buttons": 80,
+              "frames": 1
+            },
+            {
+              "buttons": 0,
+              "frames": 12
+            }
+          ]
+        },
+        "confirmation": {
+          "schemaVersion": 1,
+          "suite": "development",
+          "sourceSha256": "9d06b000ae1b95457a96cfebe1c5d208a6f28dbc111b29b06d1e2d16498f8870",
+          "javascriptSha256": "718464da1470f5cbb47895c7016223f512dd83bf11068604a5423c71e884fedd",
+          "passed": false,
+          "positionTolerance": 0.25,
+          "eventTiming": "exact",
+          "positionAccumulation": "closed-loop-f32",
+          "results": [
+            {
+              "name": "exhaustive-counterexample",
+              "ticks": 13,
+              "passed": false,
+              "maxPositionError": 0.8284271589747322,
+              "firstDivergence": {
+                "tick": 1,
+                "buttons": 80,
+                "expected": {
+                  "position": {
+                    "x": -1.4142135381698608,
+                    "y": -1.4142135381698608
+                  },
+                  "displacement": {
+                    "x": -1.4142135381698608,
+                    "y": -1.4142135381698608
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 9,
+                    "remaining": 0
+                  }
+                },
+                "actual": {
+                  "position": {
+                    "x": -2,
+                    "y": -2
+                  },
+                  "displacement": {
+                    "x": -2,
+                    "y": -2
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 9,
+                    "remaining": 0
+                  }
+                },
+                "preceding": [],
+                "following": [
+                  {
+                    "tick": 2,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": -1.4142135381698608,
+                        "y": -1.4142135381698608
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 8,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": -2,
+                        "y": -2
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 8,
+                        "remaining": 0
+                      }
+                    }
+                  },
+                  {
+                    "tick": 3,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": -1.4142135381698608,
+                        "y": -1.4142135381698608
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 7,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": -2,
+                        "y": -2
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 7,
+                        "remaining": 0
+                      }
+                    }
+                  }
+                ],
+                "inputs": [
+                  {
+                    "buttons": 80,
+                    "frames": 1
+                  },
+                  {
+                    "buttons": 0,
+                    "frames": 12
+                  }
+                ],
+                "initial": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "cooldown": 10,
+                  "remaining": 0
+                },
+                "tickConvention": "Tick 1 is the first gameplay update after the title-screen start input. Samples are after each update; preceding timers are the next update's starting timers."
+              }
+            }
+          ],
+          "normalizedTimers": "exact cooldown and remaining after every update",
+          "timerFields": {
+            "cooldown": "cooldown",
+            "remaining": "remaining"
+          }
+        }
+      }
+    },
+    {
+      "id": "v5-session-1-attempt-1",
+      "origin": "assets/benchmark/wonder-harness-v5/report-1.json.gz",
+      "accepted": false,
+      "schemaVersion": 1,
+      "sourceSha256": "3904ec65ed6a9524f2759efec19c2d3ff78d366377d64086cfee96ffa38d0b46",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "counterexample",
+      "pairs": 1,
+      "checked": 1,
+      "complete": false,
+      "maxDisplacementError": 0,
+      "projection": {
+        "fields": [],
+        "checked": 0,
+        "failures": 0,
+        "firstFailure": null
+      },
+      "counterexample": {
+        "length": 1,
+        "buttons": [
+          0
+        ],
+        "reasons": [
+          "cooldown"
+        ],
+        "expected": {
+          "next": "0|9|0|0",
+          "displacement": {
+            "x": 0,
+            "y": 0
+          },
+          "ownsMotion": false,
+          "events": [],
+          "timers": {
+            "remaining": 0,
+            "cooldown": 9
+          }
+        },
+        "actual": {
+          "output": {
+            "ownsMotion": false,
+            "displacement": {
+              "x": 0,
+              "y": 0
+            },
+            "events": []
+          },
+          "timers": {
+            "cooldown": 24,
+            "remaining": 0
+          }
+        },
+        "trace": {
+          "name": "exhaustive-counterexample",
+          "steps": [
+            {
+              "buttons": 0,
+              "frames": 13
+            }
+          ]
+        },
+        "confirmation": {
+          "schemaVersion": 1,
+          "suite": "development",
+          "sourceSha256": "3904ec65ed6a9524f2759efec19c2d3ff78d366377d64086cfee96ffa38d0b46",
+          "javascriptSha256": "1cdc6c1a5174534250b0438f6f4b9df1562536187ad956be90e324fa2acb563d",
+          "passed": false,
+          "positionTolerance": 0.25,
+          "eventTiming": "exact",
+          "positionAccumulation": "closed-loop-f32",
+          "results": [
+            {
+              "name": "exhaustive-counterexample",
+              "ticks": 13,
+              "passed": false,
+              "maxPositionError": 0,
+              "firstDivergence": {
+                "tick": 1,
+                "buttons": 0,
+                "expected": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "displacement": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 9,
+                    "remaining": 0
+                  }
+                },
+                "actual": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "displacement": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 24,
+                    "remaining": 0
+                  }
+                },
+                "preceding": [],
+                "following": [
+                  {
+                    "tick": 2,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 8,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 23,
+                        "remaining": 0
+                      }
+                    }
+                  },
+                  {
+                    "tick": 3,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 7,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 22,
+                        "remaining": 0
+                      }
+                    }
+                  }
+                ],
+                "inputs": [
+                  {
+                    "buttons": 0,
+                    "frames": 13
+                  }
+                ],
+                "initial": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "cooldown": 10,
+                  "remaining": 0
+                },
+                "tickConvention": "Tick 1 is the first gameplay update after the title-screen start input. Samples are after each update; preceding timers are the next update's starting timers."
+              }
+            }
+          ],
+          "normalizedTimers": "exact cooldown and remaining after every update",
+          "timerFields": {
+            "cooldown": "cooldown",
+            "remaining": "remaining"
+          }
+        }
+      }
+    },
+    {
+      "id": "v5-session-1-attempt-2",
+      "origin": "assets/benchmark/wonder-harness-v5/report-1.json.gz",
+      "accepted": false,
+      "schemaVersion": 1,
+      "sourceSha256": "a9ac29797bf84850cf29ce26353b0def76b6b70e30867e5df628d9aa83c147bd",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "counterexample",
+      "pairs": 4,
+      "checked": 6,
+      "complete": false,
+      "maxDisplacementError": 0.8284271589747322,
+      "projection": {
+        "fields": [],
+        "checked": 0,
+        "failures": 0,
+        "firstFailure": null
+      },
+      "counterexample": {
+        "length": 1,
+        "buttons": [
+          80
+        ],
+        "reasons": [
+          "displacement"
+        ],
+        "expected": {
+          "next": "0|9|0|0",
+          "displacement": {
+            "x": -1.4142135381698608,
+            "y": -1.4142135381698608
+          },
+          "ownsMotion": false,
+          "events": [],
+          "timers": {
+            "remaining": 0,
+            "cooldown": 9
+          }
+        },
+        "actual": {
+          "output": {
+            "ownsMotion": false,
+            "displacement": {
+              "x": -2,
+              "y": -2
+            },
+            "events": []
+          },
+          "timers": {
+            "cooldown": 9,
+            "remaining": 0
+          }
+        },
+        "trace": {
+          "name": "exhaustive-counterexample",
+          "steps": [
+            {
+              "buttons": 80,
+              "frames": 1
+            },
+            {
+              "buttons": 0,
+              "frames": 12
+            }
+          ]
+        },
+        "confirmation": {
+          "schemaVersion": 1,
+          "suite": "development",
+          "sourceSha256": "a9ac29797bf84850cf29ce26353b0def76b6b70e30867e5df628d9aa83c147bd",
+          "javascriptSha256": "85ec7dc5b14d94fb83d5d0fdfabc3a0ab33173d014846556bc98a6db78d431b5",
+          "passed": false,
+          "positionTolerance": 0.25,
+          "eventTiming": "exact",
+          "positionAccumulation": "closed-loop-f32",
+          "results": [
+            {
+              "name": "exhaustive-counterexample",
+              "ticks": 13,
+              "passed": false,
+              "maxPositionError": 0.8284271589747322,
+              "firstDivergence": {
+                "tick": 1,
+                "buttons": 80,
+                "expected": {
+                  "position": {
+                    "x": -1.4142135381698608,
+                    "y": -1.4142135381698608
+                  },
+                  "displacement": {
+                    "x": -1.4142135381698608,
+                    "y": -1.4142135381698608
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 9,
+                    "remaining": 0
+                  }
+                },
+                "actual": {
+                  "position": {
+                    "x": -2,
+                    "y": -2
+                  },
+                  "displacement": {
+                    "x": -2,
+                    "y": -2
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 9,
+                    "remaining": 0
+                  }
+                },
+                "preceding": [],
+                "following": [
+                  {
+                    "tick": 2,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": -1.4142135381698608,
+                        "y": -1.4142135381698608
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 8,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": -2,
+                        "y": -2
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 8,
+                        "remaining": 0
+                      }
+                    }
+                  },
+                  {
+                    "tick": 3,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": -1.4142135381698608,
+                        "y": -1.4142135381698608
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 7,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": -2,
+                        "y": -2
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 7,
+                        "remaining": 0
+                      }
+                    }
+                  }
+                ],
+                "inputs": [
+                  {
+                    "buttons": 80,
+                    "frames": 1
+                  },
+                  {
+                    "buttons": 0,
+                    "frames": 12
+                  }
+                ],
+                "initial": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "cooldown": 10,
+                  "remaining": 0
+                },
+                "tickConvention": "Tick 1 is the first gameplay update after the title-screen start input. Samples are after each update; preceding timers are the next update's starting timers."
+              }
+            }
+          ],
+          "normalizedTimers": "exact cooldown and remaining after every update",
+          "timerFields": {
+            "cooldown": "cooldown",
+            "remaining": "remaining"
+          }
+        }
+      }
+    },
+    {
+      "id": "v5-session-1-attempt-3",
+      "origin": "assets/benchmark/wonder-harness-v5/report-1.json.gz",
+      "accepted": true,
+      "schemaVersion": 1,
+      "sourceSha256": "6395ecd5a070fc5faa1159b182857840587211f6c3035f96c0796a494d01f62c",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "proved",
+      "pairs": 275,
+      "checked": 17600,
+      "complete": true,
+      "maxDisplacementError": 0.0000026993147909541367,
+      "projection": {
+        "fields": [],
+        "checked": 0,
+        "failures": 0,
+        "firstFailure": null
+      }
+    },
+    {
+      "id": "v5-session-3-attempt-1",
+      "origin": "assets/benchmark/wonder-harness-v5/report-3.json.gz",
+      "accepted": false,
+      "schemaVersion": 1,
+      "sourceSha256": "304b4d048607543f667ffcb56b9e4b0dfbd8245cd398dc98ffdfc65cca232631",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "counterexample",
+      "pairs": 1,
+      "checked": 1,
+      "complete": false,
+      "maxDisplacementError": 0,
+      "projection": {
+        "fields": [
+          "x",
+          "y"
+        ],
+        "checked": 1,
+        "failures": 0,
+        "firstFailure": null
+      },
+      "counterexample": {
+        "length": 1,
+        "buttons": [
+          0
+        ],
+        "reasons": [
+          "cooldown"
+        ],
+        "expected": {
+          "next": "0|9|0|0",
+          "displacement": {
+            "x": 0,
+            "y": 0
+          },
+          "ownsMotion": false,
+          "events": [],
+          "timers": {
+            "remaining": 0,
+            "cooldown": 9
+          }
+        },
+        "actual": {
+          "output": {
+            "ownsMotion": false,
+            "displacement": {
+              "x": 0,
+              "y": 0
+            },
+            "events": []
+          },
+          "timers": {
+            "cooldown": 0,
+            "remaining": 0
+          }
+        },
+        "trace": {
+          "name": "exhaustive-counterexample",
+          "steps": [
+            {
+              "buttons": 0,
+              "frames": 13
+            }
+          ]
+        },
+        "confirmation": {
+          "schemaVersion": 1,
+          "suite": "development",
+          "sourceSha256": "304b4d048607543f667ffcb56b9e4b0dfbd8245cd398dc98ffdfc65cca232631",
+          "javascriptSha256": "149948a1ba3852d0e9cf7ce70c7a1382c5175a830ea2aa6aaabb77f2a30dac0b",
+          "passed": false,
+          "positionTolerance": 0.25,
+          "eventTiming": "exact",
+          "positionAccumulation": "closed-loop-f32",
+          "results": [
+            {
+              "name": "exhaustive-counterexample",
+              "ticks": 13,
+              "passed": false,
+              "maxPositionError": 0,
+              "firstDivergence": {
+                "tick": 1,
+                "buttons": 0,
+                "expected": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "displacement": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 9,
+                    "remaining": 0
+                  }
+                },
+                "actual": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "displacement": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 0,
+                    "remaining": 0
+                  }
+                },
+                "preceding": [],
+                "following": [
+                  {
+                    "tick": 2,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 8,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 0,
+                        "remaining": 0
+                      }
+                    }
+                  },
+                  {
+                    "tick": 3,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 7,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 0,
+                        "remaining": 0
+                      }
+                    }
+                  }
+                ],
+                "inputs": [
+                  {
+                    "buttons": 0,
+                    "frames": 13
+                  }
+                ],
+                "initial": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "cooldown": 10,
+                  "remaining": 0
+                },
+                "tickConvention": "Tick 1 is the first gameplay update after the title-screen start input. Samples are after each update; preceding timers are the next update's starting timers."
+              }
+            }
+          ],
+          "normalizedTimers": "exact cooldown and remaining after every update",
+          "timerFields": {
+            "cooldown": "cooldown",
+            "remaining": "remaining"
+          }
+        }
+      }
+    },
+    {
+      "id": "v5-session-3-attempt-2",
+      "origin": "assets/benchmark/wonder-harness-v5/report-3.json.gz",
+      "accepted": false,
+      "schemaVersion": 1,
+      "sourceSha256": "2e26f133ae8f91e714f674af99f077b826e8b0fdf095b22709f8282d7025ae1a",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "counterexample",
+      "pairs": 5,
+      "checked": 6,
+      "complete": false,
+      "maxDisplacementError": 0.8284271589747322,
+      "projection": {
+        "fields": [
+          "x",
+          "y"
+        ],
+        "checked": 6,
+        "failures": 0,
+        "firstFailure": null
+      },
+      "counterexample": {
+        "length": 1,
+        "buttons": [
+          80
+        ],
+        "reasons": [
+          "displacement"
+        ],
+        "expected": {
+          "next": "0|9|0|0",
+          "displacement": {
+            "x": -1.4142135381698608,
+            "y": -1.4142135381698608
+          },
+          "ownsMotion": false,
+          "events": [],
+          "timers": {
+            "remaining": 0,
+            "cooldown": 9
+          }
+        },
+        "actual": {
+          "output": {
+            "ownsMotion": false,
+            "displacement": {
+              "x": -2,
+              "y": -2
+            },
+            "events": []
+          },
+          "timers": {
+            "cooldown": 9,
+            "remaining": 0
+          }
+        },
+        "trace": {
+          "name": "exhaustive-counterexample",
+          "steps": [
+            {
+              "buttons": 80,
+              "frames": 1
+            },
+            {
+              "buttons": 0,
+              "frames": 12
+            }
+          ]
+        },
+        "confirmation": {
+          "schemaVersion": 1,
+          "suite": "development",
+          "sourceSha256": "2e26f133ae8f91e714f674af99f077b826e8b0fdf095b22709f8282d7025ae1a",
+          "javascriptSha256": "64a963c9a0c405b8819b63c8cb53f146ec1f76fb62bb3435d568c1463ea756a9",
+          "passed": false,
+          "positionTolerance": 0.25,
+          "eventTiming": "exact",
+          "positionAccumulation": "closed-loop-f32",
+          "results": [
+            {
+              "name": "exhaustive-counterexample",
+              "ticks": 13,
+              "passed": false,
+              "maxPositionError": 0.8284271589747322,
+              "firstDivergence": {
+                "tick": 1,
+                "buttons": 80,
+                "expected": {
+                  "position": {
+                    "x": -1.4142135381698608,
+                    "y": -1.4142135381698608
+                  },
+                  "displacement": {
+                    "x": -1.4142135381698608,
+                    "y": -1.4142135381698608
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 9,
+                    "remaining": 0
+                  }
+                },
+                "actual": {
+                  "position": {
+                    "x": -2,
+                    "y": -2
+                  },
+                  "displacement": {
+                    "x": -2,
+                    "y": -2
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 9,
+                    "remaining": 0
+                  }
+                },
+                "preceding": [],
+                "following": [
+                  {
+                    "tick": 2,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": -1.4142135381698608,
+                        "y": -1.4142135381698608
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 8,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": -2,
+                        "y": -2
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 8,
+                        "remaining": 0
+                      }
+                    }
+                  },
+                  {
+                    "tick": 3,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": -1.4142135381698608,
+                        "y": -1.4142135381698608
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 7,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": -2,
+                        "y": -2
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 7,
+                        "remaining": 0
+                      }
+                    }
+                  }
+                ],
+                "inputs": [
+                  {
+                    "buttons": 80,
+                    "frames": 1
+                  },
+                  {
+                    "buttons": 0,
+                    "frames": 12
+                  }
+                ],
+                "initial": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "cooldown": 10,
+                  "remaining": 0
+                },
+                "tickConvention": "Tick 1 is the first gameplay update after the title-screen start input. Samples are after each update; preceding timers are the next update's starting timers."
+              }
+            }
+          ],
+          "normalizedTimers": "exact cooldown and remaining after every update",
+          "timerFields": {
+            "cooldown": "cooldown",
+            "remaining": "remaining"
+          }
+        }
+      }
+    },
+    {
+      "id": "v5-session-3-attempt-3",
+      "origin": "assets/benchmark/wonder-harness-v5/report-3.json.gz",
+      "accepted": true,
+      "schemaVersion": 1,
+      "sourceSha256": "1650b68a4f39adf24e30eeec47c017d94f7e2a2a74c19901405e5198257deafd",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "proved",
+      "pairs": 275,
+      "checked": 17600,
+      "complete": true,
+      "maxDisplacementError": 0.0000026973983046972182,
+      "projection": {
+        "fields": [
+          "x",
+          "y"
+        ],
+        "checked": 17600,
+        "failures": 0,
+        "firstFailure": null
+      }
+    },
+    {
+      "id": "fixture-premature-activation",
+      "origin": "tests/fixtures/wonder-recovery-failures.json",
+      "accepted": false,
+      "schemaVersion": 1,
+      "sourceSha256": "a2ba98f7b9ebd854e7a84a2423cad466a25dc176f6280b11de6ef2bf4fc75369",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "counterexample",
+      "pairs": 609,
+      "checked": 32865,
+      "complete": false,
+      "maxDisplacementError": 7.5,
+      "projection": {
+        "fields": [],
+        "checked": 0,
+        "failures": 0,
+        "firstFailure": null
+      },
+      "counterexample": {
+        "length": 10,
+        "buttons": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "reasons": [
+          "displacement",
+          "ownsMotion",
+          "events",
+          "cooldown",
+          "remaining"
+        ],
+        "expected": {
+          "next": "0|0|0|0",
+          "displacement": {
+            "x": 0,
+            "y": 0
+          },
+          "ownsMotion": false,
+          "events": [],
+          "timers": {
+            "remaining": 0,
+            "cooldown": 0
+          }
+        },
+        "actual": {
+          "output": {
+            "ownsMotion": true,
+            "displacement": {
+              "x": 7.5,
+              "y": 0
+            },
+            "events": [
+              "dash-start"
+            ]
+          },
+          "timers": {
+            "cooldown": 25,
+            "remaining": 7
+          }
+        },
+        "trace": {
+          "name": "exhaustive-counterexample",
+          "steps": [
+            {
+              "buttons": 0,
+              "frames": 9
+            },
+            {
+              "buttons": 1,
+              "frames": 1
+            },
+            {
+              "buttons": 0,
+              "frames": 12
+            }
+          ]
+        },
+        "confirmation": {
+          "schemaVersion": 1,
+          "suite": "development",
+          "sourceSha256": "a2ba98f7b9ebd854e7a84a2423cad466a25dc176f6280b11de6ef2bf4fc75369",
+          "javascriptSha256": "4221ec6133343b75fcd537f5a09df44ec63dbaf6affd1bbcab160eb6f772aff5",
+          "passed": false,
+          "positionTolerance": 0.25,
+          "eventTiming": "exact",
+          "positionAccumulation": "closed-loop-f32",
+          "results": [
+            {
+              "name": "exhaustive-counterexample",
+              "ticks": 22,
+              "passed": false,
+              "maxPositionError": 60,
+              "firstDivergence": {
+                "tick": 10,
+                "buttons": 1,
+                "expected": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "displacement": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 0,
+                    "remaining": 0
+                  }
+                },
+                "actual": {
+                  "position": {
+                    "x": 7.5,
+                    "y": 0
+                  },
+                  "displacement": {
+                    "x": 7.5,
+                    "y": 0
+                  },
+                  "ownsMotion": true,
+                  "events": [
+                    "dash-start"
+                  ],
+                  "timers": {
+                    "cooldown": 25,
+                    "remaining": 7
+                  }
+                },
+                "preceding": [
+                  {
+                    "tick": 8,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 2,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 2,
+                        "remaining": 0
+                      }
+                    }
+                  },
+                  {
+                    "tick": 9,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 1,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 1,
+                        "remaining": 0
+                      }
+                    }
+                  }
+                ],
+                "following": [
+                  {
+                    "tick": 11,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 0,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 15,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 7.5,
+                        "y": 0
+                      },
+                      "ownsMotion": true,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 25,
+                        "remaining": 6
+                      }
+                    }
+                  },
+                  {
+                    "tick": 12,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 0,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 22.5,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 7.5,
+                        "y": 0
+                      },
+                      "ownsMotion": true,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 25,
+                        "remaining": 5
+                      }
+                    }
+                  }
+                ],
+                "inputs": [
+                  {
+                    "buttons": 0,
+                    "frames": 9
+                  },
+                  {
+                    "buttons": 1,
+                    "frames": 1
+                  },
+                  {
+                    "buttons": 0,
+                    "frames": 12
+                  }
+                ],
+                "initial": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "cooldown": 10,
+                  "remaining": 0
+                },
+                "tickConvention": "Tick 1 is the first gameplay update after the title-screen start input. Samples are after each update; preceding timers are the next update's starting timers."
+              }
+            }
+          ],
+          "normalizedTimers": "exact cooldown and remaining after every update",
+          "timerFields": {
+            "cooldown": "cooldown",
+            "remaining": "remaining"
+          }
+        }
+      }
+    },
+    {
+      "id": "fixture-edge-trigger-oscillation",
+      "origin": "tests/fixtures/wonder-recovery-failures.json",
+      "accepted": false,
+      "schemaVersion": 1,
+      "sourceSha256": "c64d9ae043c066019ace2b91b100d655d7edcbef9074ce5f0c9f4e297f6a49ff",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "counterexample",
+      "pairs": 609,
+      "checked": 32865,
+      "complete": false,
+      "maxDisplacementError": 7.5,
+      "projection": {
+        "fields": [],
+        "checked": 0,
+        "failures": 0,
+        "firstFailure": null
+      },
+      "counterexample": {
+        "length": 10,
+        "buttons": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "reasons": [
+          "displacement",
+          "ownsMotion",
+          "events",
+          "cooldown",
+          "remaining"
+        ],
+        "expected": {
+          "next": "0|0|0|0",
+          "displacement": {
+            "x": 0,
+            "y": 0
+          },
+          "ownsMotion": false,
+          "events": [],
+          "timers": {
+            "remaining": 0,
+            "cooldown": 0
+          }
+        },
+        "actual": {
+          "output": {
+            "ownsMotion": true,
+            "displacement": {
+              "x": 7.5,
+              "y": 0
+            },
+            "events": [
+              "dash-start"
+            ]
+          },
+          "timers": {
+            "cooldown": 25,
+            "remaining": 7
+          }
+        },
+        "trace": {
+          "name": "exhaustive-counterexample",
+          "steps": [
+            {
+              "buttons": 0,
+              "frames": 9
+            },
+            {
+              "buttons": 1,
+              "frames": 1
+            },
+            {
+              "buttons": 0,
+              "frames": 12
+            }
+          ]
+        },
+        "confirmation": {
+          "schemaVersion": 1,
+          "suite": "development",
+          "sourceSha256": "c64d9ae043c066019ace2b91b100d655d7edcbef9074ce5f0c9f4e297f6a49ff",
+          "javascriptSha256": "f641cb4ea76a05fa691538f548e55acb4bda1d8420ab8a5a961c9699cb9d1ca8",
+          "passed": false,
+          "positionTolerance": 0.25,
+          "eventTiming": "exact",
+          "positionAccumulation": "closed-loop-f32",
+          "results": [
+            {
+              "name": "exhaustive-counterexample",
+              "ticks": 22,
+              "passed": false,
+              "maxPositionError": 60,
+              "firstDivergence": {
+                "tick": 10,
+                "buttons": 1,
+                "expected": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "displacement": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "ownsMotion": false,
+                  "events": [],
+                  "timers": {
+                    "cooldown": 0,
+                    "remaining": 0
+                  }
+                },
+                "actual": {
+                  "position": {
+                    "x": 7.5,
+                    "y": 0
+                  },
+                  "displacement": {
+                    "x": 7.5,
+                    "y": 0
+                  },
+                  "ownsMotion": true,
+                  "events": [
+                    "dash-start"
+                  ],
+                  "timers": {
+                    "cooldown": 25,
+                    "remaining": 7
+                  }
+                },
+                "preceding": [
+                  {
+                    "tick": 8,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 2,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 2,
+                        "remaining": 0
+                      }
+                    }
+                  },
+                  {
+                    "tick": 9,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 1,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 1,
+                        "remaining": 0
+                      }
+                    }
+                  }
+                ],
+                "following": [
+                  {
+                    "tick": 11,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 0,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 15,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 7.5,
+                        "y": 0
+                      },
+                      "ownsMotion": true,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 25,
+                        "remaining": 6
+                      }
+                    }
+                  },
+                  {
+                    "tick": 12,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 0,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 22.5,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 7.5,
+                        "y": 0
+                      },
+                      "ownsMotion": true,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 25,
+                        "remaining": 5
+                      }
+                    }
+                  }
+                ],
+                "inputs": [
+                  {
+                    "buttons": 0,
+                    "frames": 9
+                  },
+                  {
+                    "buttons": 1,
+                    "frames": 1
+                  },
+                  {
+                    "buttons": 0,
+                    "frames": 12
+                  }
+                ],
+                "initial": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "cooldown": 10,
+                  "remaining": 0
+                },
+                "tickConvention": "Tick 1 is the first gameplay update after the title-screen start input. Samples are after each update; preceding timers are the next update's starting timers."
+              }
+            }
+          ],
+          "normalizedTimers": "exact cooldown and remaining after every update",
+          "timerFields": {
+            "cooldown": "cooldown",
+            "remaining": "remaining"
+          }
+        }
+      }
+    },
+    {
+      "id": "fixture-walking-facing-assumption",
+      "origin": "tests/fixtures/wonder-recovery-failures.json",
+      "accepted": false,
+      "schemaVersion": 1,
+      "sourceSha256": "12aae08e10646d5e70d2234d00291fcf05034f022cd27ba302c05fed16b85c09",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "counterexample",
+      "pairs": 1681,
+      "checked": 94369,
+      "complete": false,
+      "maxDisplacementError": 15,
+      "projection": {
+        "fields": [],
+        "checked": 0,
+        "failures": 0,
+        "firstFailure": null
+      },
+      "counterexample": {
+        "length": 11,
+        "buttons": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          16,
+          1
+        ],
+        "reasons": [
+          "displacement"
+        ],
+        "expected": {
+          "next": "7|25|1|0",
+          "displacement": {
+            "x": 7.5,
+            "y": 0
+          },
+          "ownsMotion": true,
+          "events": [
+            "dash-start"
+          ],
+          "timers": {
+            "remaining": 7,
+            "cooldown": 25
+          }
+        },
+        "actual": {
+          "output": {
+            "ownsMotion": true,
+            "displacement": {
+              "x": -7.5,
+              "y": 0
+            },
+            "events": [
+              "dash-start"
+            ]
+          },
+          "timers": {
+            "cooldown": 25,
+            "remaining": 7
+          }
+        },
+        "trace": {
+          "name": "exhaustive-counterexample",
+          "steps": [
+            {
+              "buttons": 0,
+              "frames": 9
+            },
+            {
+              "buttons": 16,
+              "frames": 1
+            },
+            {
+              "buttons": 1,
+              "frames": 1
+            },
+            {
+              "buttons": 0,
+              "frames": 12
+            }
+          ]
+        },
+        "confirmation": {
+          "schemaVersion": 1,
+          "suite": "development",
+          "sourceSha256": "12aae08e10646d5e70d2234d00291fcf05034f022cd27ba302c05fed16b85c09",
+          "javascriptSha256": "f1d478e89f04834635d369d8d320eccc679600d89501268007636cd2afc259cb",
+          "passed": false,
+          "positionTolerance": 0.25,
+          "eventTiming": "exact",
+          "positionAccumulation": "closed-loop-f32",
+          "results": [
+            {
+              "name": "exhaustive-counterexample",
+              "ticks": 23,
+              "passed": false,
+              "maxPositionError": 120,
+              "firstDivergence": {
+                "tick": 11,
+                "buttons": 1,
+                "expected": {
+                  "position": {
+                    "x": 5.5,
+                    "y": 0
+                  },
+                  "displacement": {
+                    "x": 7.5,
+                    "y": 0
+                  },
+                  "ownsMotion": true,
+                  "events": [
+                    "dash-start"
+                  ],
+                  "timers": {
+                    "cooldown": 25,
+                    "remaining": 7
+                  }
+                },
+                "actual": {
+                  "position": {
+                    "x": -9.5,
+                    "y": 0
+                  },
+                  "displacement": {
+                    "x": -7.5,
+                    "y": 0
+                  },
+                  "ownsMotion": true,
+                  "events": [
+                    "dash-start"
+                  ],
+                  "timers": {
+                    "cooldown": 25,
+                    "remaining": 7
+                  }
+                },
+                "preceding": [
+                  {
+                    "tick": 9,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 1,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 1,
+                        "remaining": 0
+                      }
+                    }
+                  },
+                  {
+                    "tick": 10,
+                    "buttons": 16,
+                    "expected": {
+                      "position": {
+                        "x": -2,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": -2,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 0,
+                        "remaining": 0
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": -2,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": -2,
+                        "y": 0
+                      },
+                      "ownsMotion": false,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 0,
+                        "remaining": 0
+                      }
+                    }
+                  }
+                ],
+                "following": [
+                  {
+                    "tick": 12,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 13,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 7.5,
+                        "y": 0
+                      },
+                      "ownsMotion": true,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 25,
+                        "remaining": 6
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": -17,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": -7.5,
+                        "y": 0
+                      },
+                      "ownsMotion": true,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 25,
+                        "remaining": 6
+                      }
+                    }
+                  },
+                  {
+                    "tick": 13,
+                    "buttons": 0,
+                    "expected": {
+                      "position": {
+                        "x": 20.5,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": 7.5,
+                        "y": 0
+                      },
+                      "ownsMotion": true,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 25,
+                        "remaining": 5
+                      }
+                    },
+                    "actual": {
+                      "position": {
+                        "x": -24.5,
+                        "y": 0
+                      },
+                      "displacement": {
+                        "x": -7.5,
+                        "y": 0
+                      },
+                      "ownsMotion": true,
+                      "events": [],
+                      "timers": {
+                        "cooldown": 25,
+                        "remaining": 5
+                      }
+                    }
+                  }
+                ],
+                "inputs": [
+                  {
+                    "buttons": 0,
+                    "frames": 9
+                  },
+                  {
+                    "buttons": 16,
+                    "frames": 1
+                  },
+                  {
+                    "buttons": 1,
+                    "frames": 1
+                  },
+                  {
+                    "buttons": 0,
+                    "frames": 12
+                  }
+                ],
+                "initial": {
+                  "position": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "cooldown": 10,
+                  "remaining": 0
+                },
+                "tickConvention": "Tick 1 is the first gameplay update after the title-screen start input. Samples are after each update; preceding timers are the next update's starting timers."
+              }
+            }
+          ],
+          "normalizedTimers": "exact cooldown and remaining after every update",
+          "timerFields": {
+            "cooldown": "cooldown",
+            "remaining": "remaining"
+          }
+        }
+      }
+    },
+    {
+      "id": "older-spark-1bc4250c",
+      "origin": "assets/components/dashy-dango-dash/component.ts",
+      "accepted": false,
+      "schemaVersion": 1,
+      "sourceSha256": "7cfd9475696ca744982fb7c00d988aae982840d06b0fa198f111d42bba2d18bc",
+      "displacementTolerance": 0.001,
+      "maxChecks": 12000000,
+      "cartridgeSha256": "152d44c6e9ef48a254125cd5ebe266998a9bc74ea104692f5d2280fca6e9b42f",
+      "transitionsSha256": "4ad36f3147287a32b7609271a62366d71143ef7a3b0539b26a16dc347599fe3a",
+      "verdict": "proved",
+      "pairs": 275,
+      "checked": 17600,
+      "complete": true,
+      "maxDisplacementError": 0.0000026973983046972182,
+      "projection": {
+        "fields": [],
+        "checked": 0,
+        "failures": 0,
+        "firstFailure": null
+      }
+    }
+  ]
+}
