@@ -78,7 +78,7 @@ test('the challenge keeps one 3D player, a local share address, and the saved ab
   } finally { await harness.close(); }
 });
 
-test('an 18+ confirmation blocks a new adaptation and a rejected request leaves the parent playing', async () => {
+test('a rejected adaptation request leaves the parent playing', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'product-age-'));
   const base = await loadSavedRoadster();
   let calls = 0;
@@ -97,16 +97,6 @@ test('an 18+ confirmation blocks a new adaptation and a rejected request leaves 
     await page.goto(harness.origin+'/?destination=roadster');
     await page.waitForFunction(() => window.currentRoadsterArtifact && document.querySelector('#transfer-game') && !document.querySelector('#roadster-submit').disabled, undefined, { timeout: 90000 });
     await page.locator('#roadster-prompt').fill('Give me one air dash, and restore it when I land.');
-    await page.locator('#roadster-submit').click();
-    await page.waitForFunction(() => document.querySelector('#age-required')?.textContent.includes('18 or older'));
-    assert.equal(calls, 0);
-    assert.deepEqual(posts, []);
-    assert.equal(await page.locator('.games iframe').count(), 1);
-    await page.keyboard.press('Escape');
-    assert.equal(await page.getByRole('dialog').count(), 0);
-    assert.equal(calls, 0);
-    await page.locator('#roadster-submit').click();
-    await page.locator('#confirm-age').press('Space');
     await page.locator('#roadster-submit').click();
     await page.waitForFunction(() => /No new version was saved/.test(document.querySelector('#roadster-progress')?.textContent ?? ''), undefined, { timeout: 30000 });
     assert.equal(calls, 1);

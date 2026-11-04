@@ -1590,9 +1590,6 @@ body.player-expanded::before {
   margin: 2px 0 0;
   flex: none;
 }
-.age-required {
-  color: #edc48a;
-}
 .supported-capabilities,
 .inherited-intent {
   margin: 8px 0 0;
@@ -1678,17 +1675,6 @@ body.player-expanded::before {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
-}
-.creation-confirmation {
-  width: min(420px, calc(100% - 32px));
-  padding: 24px;
-  border: 1px solid #6b8552;
-  border-radius: 12px;
-  background: #172016;
-  color: #e7f0df;
-}
-.creation-confirmation::backdrop {
-  background: #000a;
 }
 @media (max-width: 600px) {
   .experiment-comparison {
@@ -4378,37 +4364,6 @@ html:has(.ai-lab) body {
 }
 .ai-lab .ai-lab-footer .meta-chip {
   margin: 0 2px;
-}
-.ai-lab .creation-confirmation {
-  color: var(--ink);
-  background: var(--panel);
-  border: 1.5px solid var(--meta);
-  border-radius: 16px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
-}
-.ai-lab .creation-confirmation h2 {
-  font: 800 22px/1.2 var(--display);
-}
-.ai-lab .creation-confirmation p {
-  color: var(--mute);
-}
-.ai-lab .creation-confirmation .toolbar {
-  margin: 16px 0 0;
-}
-.ai-lab .creation-confirmation button {
-  min-height: 0;
-  font: 700 14px var(--display);
-  color: var(--ink);
-  background: transparent;
-  border: 0;
-  border-radius: 12px;
-  padding: 11px 16px;
-  box-shadow: inset 0 0 0 1.5px var(--line-2);
-}
-.ai-lab .creation-confirmation #confirm-age {
-  color: var(--lime-ink);
-  background: var(--lime);
-  box-shadow: 0 4px 0 var(--lime-shadow);
 }
 
 @media (max-width: 1180px) {

@@ -24,7 +24,7 @@ try{
   if(index>0)await page.locator('#motion-freeze').click();
   await page.locator('#motion-goal').selectOption(goal);await page.locator('#motion-freeze').click();
   const prompt=index===0?'Reach the frozen right region. Preserve the parent mapping if timing alone suffices.':'Try one supported dash against the frozen out-of-bounds target, even if it cannot succeed. Preserve the target and all constraints; let the worker record the actual failed outcome.';
-  await page.locator('#motion-prompt').fill(prompt);await page.locator('#motion-submit').click();if(await page.getByRole('dialog',{name:'Confirm before creating'}).isVisible())await page.locator('#confirm-age').click();
+  await page.locator('#motion-prompt').fill(prompt);await page.locator('#motion-submit').click();
   await page.waitForFunction(previous=>{const pending=JSON.parse(sessionStorage.getItem('motion-creator-session'))?.pending;return Boolean(pending?.jobId&&pending.jobId!==previous);},evidence.jobs.at(-1)?.id??null);
   const id=await page.evaluate(()=>JSON.parse(sessionStorage.getItem('motion-creator-session')).pending.jobId);console.log('Experiment submitted',goal,id);
   const job=await local.coordinator.wait(id);evidence.jobs.push(job);await writeFile(join(directory,'development-evidence.json'),JSON.stringify(evidence,null,2));

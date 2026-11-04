@@ -294,6 +294,9 @@ test('production admission is an exact host, origin, and proxy allowlist', () =>
   assert.equal(admitProductionRequest({ ...base, headers: { ...headers, 'x-invite-code': 'nope-nope' } }).status, 401);
   assert.equal(admitProductionRequest({ ...base, bodyLength: 5000, headers }).status, 413);
   assert.throws(() => parseRemixBody({ ...remix('ab'.repeat(32)), adultConfirmed: false }), /18 and older/);
+  const { adultConfirmed: _sent, ...unconfirmed } = remix('ab'.repeat(32));
+  assert.equal(parseRemixBody(unconfirmed).prompt, unconfirmed.prompt);
+  assert.throws(() => parseRemixBody(unconfirmed, { adultRequired: true }), /18 and older/);
   assert.throws(() => parseRemixBody({ ...remix('ab'.repeat(32)), model: 'muse-spark-1.3-contributor' }), /Invalid remix request/);
   assert.throws(() => parseRemixBody({ ...remix('ab'.repeat(32)), source: 'export {}' }), /Invalid remix request/);
   assert.equal(admitProductionRequest({ ...base, method: 'GET', path: '/api/catalog', headers }).ok, true);
@@ -502,6 +505,12 @@ test('the production server enforces remix limits and does not redirect', async 
     body: JSON.stringify({ ...remix(parentId), adultConfirmed: false }),
   });
   assert.equal(young.status, 403);
+  const { adultConfirmed: _sent, ...unconfirmed } = remix(parentId);
+  const unstated = await send('POST', '/api/remixes', {
+    headers: { Origin: 'https://play.example', 'Content-Type': 'application/json', 'x-invite-code': 'test-invite-code' },
+    body: JSON.stringify(unconfirmed),
+  });
+  assert.equal(unstated.status, 403);
   const foreign = await send('POST', '/api/remixes', {
     headers: { Host: 'localhost:8080', Origin: 'http://localhost:8080', 'Content-Type': 'application/json', 'x-invite-code': 'test-invite-code' },
     body: JSON.stringify(remix(parentId)),

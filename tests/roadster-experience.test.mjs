@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {createPakuBrowser} from '../src/evaluator/browser-harness.mjs';
-import {prepareVisitor,reveal} from './helpers/app-navigation.mjs';
+import {reveal} from './helpers/app-navigation.mjs';
 import {readRoadsterArtifact} from '../src/roadster/artifact.mjs';
 import {fileURLToPath} from 'node:url';
 
@@ -11,7 +11,6 @@ test('the historical Roadster transfer and guided comparison execute without mod
     const {page,errors}=await harness.page();await page.setViewportSize({width:1500,height:1000});
     const posts=[];page.on('request',request=>{if(request.method()==='POST')posts.push(request.url());});
     await page.goto(harness.origin+'/?destination=roadster');await page.waitForFunction(()=>window.currentDestination==='roadster'&&document.querySelector('#transfer-status').textContent==='VERIFIED TRANSFER');
-    await prepareVisitor(page);
     assert.equal(await page.locator('[data-destination]').count(),3);assert.equal(await page.locator('#remix-details').isHidden(),true);
     assert.equal(await page.locator('.games iframe').count(),1,'The featured experience keeps one active 3D canvas');
     assert.equal(await page.locator('#original-game').count(),0);
@@ -51,7 +50,6 @@ test('Roadster touch dash reaches the isolated frame and large player preserves 
   try{
     const {page:seed}=await harness.page();context=await seed.context().browser().newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true});
     const page=await context.newPage();await page.goto(harness.origin+'/?destination=roadster');await page.waitForFunction(()=>window.currentDestination==='roadster'&&document.querySelector('#transfer-status').textContent==='VERIFIED TRANSFER');
-    await prepareVisitor(page);
     const frame=await(await page.$('#transfer-game')).contentFrame(),url=new URL(frame.url());url.searchParams.set('test','1');await frame.goto(url.href);await frame.waitForFunction(()=>window.roadsterReady);
     await frame.evaluate(()=>{roadsterChallengeStart({borrow:true});roadsterChallengeAdvance(636);});
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));

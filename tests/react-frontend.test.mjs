@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import test from 'node:test';
 import { createLabService } from '../src/lab/service.mjs';
 import { createPakuBrowser } from '../src/evaluator/browser-harness.mjs';
-import { prepareVisitor, reveal } from './helpers/app-navigation.mjs';
+import { reveal } from './helpers/app-navigation.mjs';
 
 test('an offscreen Roadster receives visibility after delayed player initialization', async () => {
   const harness = await createPakuBrowser();
@@ -26,7 +26,6 @@ test('an offscreen Roadster receives visibility after delayed player initializat
     });
     await page.goto(harness.origin+'/?destination=roadster');
     await page.waitForFunction(() => document.querySelector('#transfer-status').textContent === 'VERIFIED TRANSFER');
-    await prepareVisitor(page);
     const frame = await (await page.$('#transfer-game')).contentFrame();
     await frame.waitForFunction(() => window.visibilityEvidence.some(event => event.ready && event.visible === false));
     assert.equal(await frame.evaluate(() => window.visibilityEvidence.at(-1).visible), false);
@@ -65,7 +64,6 @@ test('React status renders preserve the running iframe and browser navigation se
     page.on('response', response => { if (response.url().endsWith('/api/lab/status')) reads++; });
     await page.goto(harness.origin + '/?destination=paku-paku');
     await page.waitForFunction(() => window.currentDestination === 'paku-paku' && document.querySelector('#transfer-status').textContent === 'VERIFIED TRANSFER');
-    await prepareVisitor(page);
     const frame = await (await page.$('#transfer-game')).contentFrame();
     await frame.evaluate(() => { window.reactPlayerSession = 'retained'; });
     const initial = reads;

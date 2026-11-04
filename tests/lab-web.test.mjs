@@ -5,7 +5,7 @@ import {join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {createLabService} from '../src/lab/service.mjs';
 import {createPakuBrowser} from '../src/evaluator/browser-harness.mjs';
-import {prepareVisitor,reveal} from './helpers/app-navigation.mjs';
+import {reveal} from './helpers/app-navigation.mjs';
 import {loadSavedRoadster} from '../src/roadster/saved.mjs';
 
 test('the investigation form shows actual public tool events and a qualified conclusion',async()=>{
@@ -49,12 +49,12 @@ test('a lost Roadster response retains its request across refresh and reconnects
   const harness=await createPakuBrowser({lab});
   try{
     const {page}=await harness.page();await page.goto(harness.origin+'/?destination=roadster');
-    await page.waitForFunction(()=>window.currentRoadsterArtifact);await prepareVisitor(page);
+    await page.waitForFunction(()=>window.currentRoadsterArtifact);
     await page.waitForFunction(()=>!document.querySelector('#roadster-submit').disabled);
     await page.route('**/api/roadster/transfers',async route=>{await route.fetch();await route.abort('failed');},{times:1});
     await page.locator('#roadster-prompt').fill('Injected reconnect fixture');await page.locator('#roadster-submit').click();
     await page.waitForFunction(()=>document.querySelector('#roadster-submit').textContent.includes('Reconnect'));
-    await page.reload();await page.waitForFunction(()=>document.querySelector('#roadster-submit')?.textContent.includes('Reconnect'));await prepareVisitor(page);await page.waitForFunction(()=>document.querySelector('#roadster-submit').textContent.includes('Reconnect')&&!document.querySelector('#roadster-submit').disabled);
+    await page.reload();await page.waitForFunction(()=>document.querySelector('#roadster-submit')?.textContent.includes('Reconnect'));await page.waitForFunction(()=>document.querySelector('#roadster-submit').textContent.includes('Reconnect')&&!document.querySelector('#roadster-submit').disabled);
     await page.locator('#roadster-submit').click();await page.waitForFunction(()=>window.currentRoadsterArtifact?.summary==='Injected reconnect fixture; no model call');
     assert.equal(calls,1);assert.equal((await page.evaluate(()=>window.currentRoadsterArtifact)).parentArtifactId,base.id);
     await page.waitForFunction(()=>document.querySelector('#transfer-status').textContent==='CHECKED REMIX');

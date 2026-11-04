@@ -4,7 +4,6 @@ import { ApiError, fetchJson, postJson, errorMessage } from './api';
 import { ExperimentResults, type ExperimentReceipt } from './motion-experiment';
 import { readSession, writeSession } from './creator/session';
 import type { PendingRemix } from './creator/types';
-import { useAgeAcknowledgment } from './components/age-acknowledgment';
 import { Celebrate } from './ai-lab/celebrate';
 import { diffIntent, type DashIntent } from './ai-lab/intent';
 import { MetaChip } from './ai-lab/meta-chip';
@@ -146,7 +145,6 @@ export function MotionGeneration({
   parentIntent?: DashIntent | null;
   parentLabel?: string;
 }) {
-  const age = useAgeAcknowledgment();
   const playback = readGenerationMode() === 'playback-only';
   const [session] = useState(readSession);
   const [pending, setPending] = useState<PendingRemix | null>(playback ? null : session.pending);
@@ -197,7 +195,6 @@ export function MotionGeneration({
                 parentArtifactId: pending.parentArtifactId,
                 prompt: pending.prompt,
                 sessionId: session.sessionId,
-                adultConfirmed: true,
                 ...(pending.experiment ? { experiment: pending.experiment } : {}),
                 ...(pending.composition ? { composition: pending.composition } : {}),
               }),
@@ -287,22 +284,19 @@ export function MotionGeneration({
         onSubmit={(event) => {
           event.preventDefault();
           if (busy || !enabled) return;
-          const submit = () => {
-            const next = {
-              experiment,
-              composition: experiment ? null : composition || null,
-              idempotencyKey: crypto.randomUUID(),
-              parentArtifactId: parentId,
-              prompt: prompt.trim(),
-              jobId: null,
-            };
-            writeSession({ ...session, pending: next });
-            setJob(null);
-            setPending(next);
-            setError('');
-            setReconnecting(false);
+          const next = {
+            experiment,
+            composition: experiment ? null : composition || null,
+            idempotencyKey: crypto.randomUUID(),
+            parentArtifactId: parentId,
+            prompt: prompt.trim(),
+            jobId: null,
           };
-          if (age.allow(false, submit)) submit();
+          writeSession({ ...session, pending: next });
+          setJob(null);
+          setPending(next);
+          setError('');
+          setReconnecting(false);
         }}
       >
         {experiment ? (

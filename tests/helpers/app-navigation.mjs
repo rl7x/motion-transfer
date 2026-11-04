@@ -1,17 +1,3 @@
-// Non-admission tests start with an acknowledged adult session. Dedicated
-// product tests exercise the real creation-only dialog and cancellation.
-export async function acknowledgeAge(page) {
-  await page.evaluate(() => {
-    try { sessionStorage.setItem('motion-transfer-age', JSON.stringify('18+')); } catch { /* Opaque game frames have no storage. */ }
-  });
-  const dialog = page.getByRole('dialog', {name:'Confirm before creating'});
-  if (await dialog.isVisible()) await dialog.locator('#confirm-age').click();
-}
-
-export async function prepareVisitor(page) {
-  await acknowledgeAge(page);
-}
-
 async function openOutermostClosedDetails(page, selector) {
   const text = await page.locator(selector).first().evaluate(element => {
     let node = element instanceof HTMLDetailsElement ? element : element.parentElement;
@@ -47,11 +33,9 @@ async function openOutermostClosedDetails(page, selector) {
 export async function reveal(page, selector) {
   const target = page.locator(selector).first();
   await target.waitFor({ state: 'attached' });
-  await acknowledgeAge(page);
   for (let step = 0; step < 8; step += 1) {
     if (!(await openOutermostClosedDetails(page, selector))) break;
   }
-  await acknowledgeAge(page);
   await target.scrollIntoViewIfNeeded();
   await target.waitFor({ state: 'visible' });
 }

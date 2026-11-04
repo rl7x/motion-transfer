@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createPakuBrowser } from '../src/evaluator/browser-harness.mjs';
-import { prepareVisitor } from './helpers/app-navigation.mjs';
 
 test('the preview starts both games and its dash button calls the verified component without turning', async () => {
   const harness = await createPakuBrowser();
@@ -10,7 +9,6 @@ test('the preview starts both games and its dash button calls the verified compo
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto(harness.origin+'/?destination=paku-paku');
     await page.waitForFunction(() => document.querySelector('#transfer-status')?.textContent === 'VERIFIED TRANSFER');
-    await prepareVisitor(page);
     const frames = [];
     for (const [id, mode] of [['original-game', 'original'], ['transfer-game', 'transfer']]) {
       const frame = await (await page.$('#' + id)).contentFrame();

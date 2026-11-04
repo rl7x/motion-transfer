@@ -117,19 +117,20 @@ export function acceptInvite(policy, code) {
   return policy.invites.some(expected => timingSafeEqual(actual, expected));
 }
 
-export function parseRemixBody(value) {
+export function parseRemixBody(value, { adultRequired = false } = {}) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw Error('Invalid remix request');
-  const keys = Object.keys(value).sort().join(',');
-  if (!['adultConfirmed,idempotencyKey,parentArtifactId,prompt,sessionId','adultConfirmed,experiment,idempotencyKey,parentArtifactId,prompt,sessionId','adultConfirmed,composition,idempotencyKey,parentArtifactId,prompt,sessionId'].includes(keys)) throw Error('Invalid remix request');
+  const { adultConfirmed, ...fields } = value;
+  const keys = Object.keys(fields).sort().join(',');
+  if (!['idempotencyKey,parentArtifactId,prompt,sessionId','experiment,idempotencyKey,parentArtifactId,prompt,sessionId','composition,idempotencyKey,parentArtifactId,prompt,sessionId'].includes(keys)) throw Error('Invalid remix request');
   if(value.composition!=null&&!['dash-end-shot','none'].includes(value.composition))throw Error('Unsupported composition');
-  if (value.adultConfirmed !== true) throw Error('Remix creation is limited to adults 18 and older');
+  if (adultConfirmed === undefined ? adultRequired : adultConfirmed !== true) throw Error('Remix creation is limited to adults 18 and older');
   if (typeof value.prompt !== 'string' || !value.prompt.trim() || value.prompt.length > PROMPT_LIMIT) throw Error('Invalid remix prompt');
   if (!hex.test(value.parentArtifactId)) throw Error('Invalid parent artifact');
   if (!uuid.test(value.idempotencyKey) || !uuid.test(value.sessionId)) throw Error('Invalid remix identity');
   if (value.model && value.model !== PUBLIC_MODEL) throw Error('Public traffic uses Standard Muse Spark 1.3');
   return {
     prompt: value.prompt, parentArtifactId: value.parentArtifactId,
-    idempotencyKey: value.idempotencyKey.toLowerCase(), sessionId: value.sessionId.toLowerCase(), adultConfirmed: true,
+    idempotencyKey: value.idempotencyKey.toLowerCase(), sessionId: value.sessionId.toLowerCase(),
     ...(value.experiment ? {experiment:value.experiment} : {}), ...(value.composition ? {composition:value.composition}:{}), model: PUBLIC_MODEL,
   };
 }

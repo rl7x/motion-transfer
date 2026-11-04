@@ -1,14 +1,13 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createPakuBrowser } from '../src/evaluator/browser-harness.mjs';
-import { prepareVisitor, reveal } from './helpers/app-navigation.mjs';
+import { reveal } from './helpers/app-navigation.mjs';
 
 test('visitors can play the compiled donor and move one frozen ability between both working destinations',async()=>{
   const harness=await createPakuBrowser();
   try{
     const {page,errors}=await harness.page();await page.setViewportSize({width:1440,height:1050});await page.goto(harness.origin+'/?destination=paku-paku');
     await page.waitForFunction(()=>window.currentDestination==='paku-paku'&&document.querySelector('#transfer-status').textContent==='VERIFIED TRANSFER');
-    await prepareVisitor(page);
     assert.equal(await page.locator('.games iframe').count(),3);
     assert.equal(await page.locator('[data-destination]').count(),3);
     await reveal(page,'#trace-comparison svg');
@@ -66,7 +65,6 @@ test('mobile touch controls operate the transferred ability without viewport ove
     const page=await context.newPage();const errors=[];page.on('pageerror',error=>errors.push(error.message));
     await page.goto(harness.origin+'/?destination=jujump');
     await page.waitForFunction(()=>window.currentDestination==='jujump'&&document.querySelector('#transfer-status').textContent==='VERIFIED TRANSFER');
-    await prepareVisitor(page);
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
     await page.locator('[data-turn="transfer-game"]').tap();
     const frame=await(await page.$('#transfer-game')).contentFrame();
@@ -87,7 +85,6 @@ test('expanding a player enlarges its actual canvas and preserves the current ga
     const {page,errors}=await harness.page();await page.setViewportSize({width:1440,height:1050});
     await page.goto(harness.origin+'/?destination=jujump');
     await page.waitForFunction(()=>window.currentDestination==='jujump'&&document.querySelector('#transfer-status').textContent==='VERIFIED TRANSFER');
-    await prepareVisitor(page);
     const frame=await(await page.$('#transfer-game')).contentFrame();
     await frame.goto(frame.url()+'&test=1');await frame.waitForFunction(()=>window.jujumpReady===true);
     await page.locator('[data-turn="transfer-game"]').click();await frame.evaluate(()=>gameClock.advance(11));
@@ -120,7 +117,6 @@ test('the large touch player works when browser fullscreen is unavailable',async
     await context.addInitScript(()=>Object.defineProperty(document,'fullscreenEnabled',{get:()=>false}));
     const page=await context.newPage();await page.goto(harness.origin+'/?destination=jujump');
     await page.waitForFunction(()=>window.currentDestination==='jujump'&&document.querySelector('#transfer-status').textContent==='VERIFIED TRANSFER');
-    await prepareVisitor(page);
     const frame=await(await page.$('#transfer-game')).contentFrame();
     await frame.evaluate(()=>{window.playSession='retained';});
     await page.locator('[data-expand="transfer-game"]').tap();

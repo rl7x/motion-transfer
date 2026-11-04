@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { errorMessage, fetchJson } from '../api';
-import { modelFailure } from '../data-source';
+import { modelFailure, readGenerationMode } from '../data-source';
 import { linkHref } from '../links';
-import { useAgeAcknowledgment } from './age-acknowledgment';
 import { useJob } from '../hooks/use-job';
 import type { InvestigationReport, Job, ServiceStatus } from '../types';
 import { InvestigationView } from './investigation-view';
@@ -45,7 +44,7 @@ export function InvestigationPanel({ status }: { status: ServiceStatus | null })
   const { data: recoveryRecordings } = useResource<{ id: string; title: string }[]>(
     '/api/investigations/recordings',
   );
-  const { allow } = useAgeAcknowledgment();
+  const playbackOnly = readGenerationMode() === 'playback-only';
   const flow = useJob<Request, InvestigationReport>({
     storageKey: 'motion-transfer-investigation',
     submitPath: '/api/investigations',
@@ -124,7 +123,7 @@ export function InvestigationPanel({ status }: { status: ServiceStatus | null })
           const continuing = Boolean(
             flow.reconnect && flow.pending?.request.questionId === 'extraction',
           );
-          if (!allow(continuing)) return;
+          if (playbackOnly && !continuing) return;
           setSaved(null);
           setQuestion('extraction');
           void flow.submit({ questionId: 'extraction', idempotencyKey: crypto.randomUUID() });
@@ -171,7 +170,7 @@ export function InvestigationPanel({ status }: { status: ServiceStatus | null })
         className="lab-form"
         onSubmit={(event) => {
           event.preventDefault();
-          if (!allow(flow.reconnect || Boolean(flow.pending?.id))) return;
+          if (playbackOnly && !flow.reconnect && !flow.pending?.id) return;
           setSaved(null);
           void flow.submit({ questionId: question, idempotencyKey: crypto.randomUUID() });
         }}

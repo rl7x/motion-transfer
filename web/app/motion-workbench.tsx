@@ -11,7 +11,6 @@ import {
 import { MotionGeneration, type MotionJob } from './motion-generation';
 import { LiveMechanicsEvidence } from './live-mechanics-evidence';
 import { HoldButton } from './components/hold-button';
-import { AgeAcknowledgment, AgeProvider } from './components/age-acknowledgment';
 import { Afterimage, useDashPulse } from './ai-lab/afterimage';
 import { DestinationPicker, type Destination } from './ai-lab/destination-picker';
 import { DonorPlayer } from './ai-lab/donor-player';
@@ -317,359 +316,350 @@ export function MotionWorkbench() {
         : 'SAVED META-GENERATED CHILD · REUSE'
       : 'VERIFIED REUSE · NO MODEL REQUEST';
   return (
-    <AgeProvider>
-      <main className="motion-workbench ai-lab">
-        <TopBar playback={playback} />
-        <AgeAcknowledgment />
-        <Hero playback={playback} savedCount={catalog.loading ? null : catalog.versions.length} />
-        <PipelineRibbon onPlayDonor={() => setDonorOpen(true)} />
-        <RecoveryPanel />
-        <section className="stage" id="stage" aria-label="PARALLAXIA movement workbench">
-          <aside className="component-card" aria-labelledby="component-title">
-            <p className="eyebrow">STEP 1 · THE COMPONENT</p>
-            <button
-              type="button"
-              className="component-card__art"
-              onClick={() => setDonorOpen(true)}
-              onPointerEnter={dashComponent}
-              onFocus={dashComponent}
-              aria-label="Play Dashy Dango, the original game"
-            >
-              <Afterimage pulse={componentPulse} trail>
-                <PixelSprite name="courier" size={132} />
-              </Afterimage>
-              <span className="component-card__play" aria-hidden="true">
-                ▶ PLAY THE ORIGINAL
-              </span>
-            </button>
-            <h2 id="component-title">
-              The dash <span>from Dashy Dango</span>
-            </h2>
-            <button
-              type="button"
-              className="btn btn--light component-card__cta"
-              onClick={() => setDonorOpen(true)}
-            >
-              ▶ Play Dashy Dango
-            </button>
-            <MetaChip model="wonder">recovered from compiled WebAssembly</MetaChip>
-            <dl className="component-card__specs">
-              <div>
-                <dt>active</dt>
-                <dd>8 ticks</dd>
-              </div>
-              <div>
-                <dt>burst</dt>
-                <dd>60 px</dd>
-              </div>
-              <div>
-                <dt>recharge</dt>
-                <dd>25 ticks</dd>
-              </div>
-              <div>
-                <dt>first ready</dt>
-                <dd>10 ticks</dd>
-              </div>
-            </dl>
-            <p>
-              A light-speed burst that leaves afterimages: direction locks for the whole dash, then
-              it recharges. It runs without the donor&apos;s binary, renderer or assets.
-            </p>
-            <p className="component-card__id" title={base?.componentId}>
-              Component <code>{base ? base.componentId.slice(0, 16) + '…' : 'Loading…'}</code>
-            </p>
-            {base ? (
-              <p className="component-card__mapping">
-                Default mapping: {base.recipient.unitMapping}
-              </p>
-            ) : null}
-            <p className="component-card__links">
-              <a href={linkHref('/donor/play')}>Compiled donor</a>
-              {base ? (
-                <>
-                  {' '}
-                  ·{' '}
-                  <a href={linkHref(`/parallaxia/artifacts/${base.id}/adapter.ts`)}>
-                    Adapter source
-                  </a>{' '}
-                  ·{' '}
-                  <a href={linkHref(`/parallaxia/artifacts/${base.id}/notices.txt`)}>
-                    Licenses and notices
-                  </a>
-                </>
-              ) : null}
-            </p>
-          </aside>
+    <main className="motion-workbench ai-lab">
+      <TopBar playback={playback} />
+      <Hero playback={playback} savedCount={catalog.loading ? null : catalog.versions.length} />
+      <PipelineRibbon onPlayDonor={() => setDonorOpen(true)} />
+      <RecoveryPanel />
+      <section className="stage" id="stage" aria-label="PARALLAXIA movement workbench">
+        <aside className="component-card" aria-labelledby="component-title">
+          <p className="eyebrow">STEP 1 · THE COMPONENT</p>
+          <button
+            type="button"
+            className="component-card__art"
+            onClick={() => setDonorOpen(true)}
+            onPointerEnter={dashComponent}
+            onFocus={dashComponent}
+            aria-label="Play Dashy Dango, the original game"
+          >
+            <Afterimage pulse={componentPulse} trail>
+              <PixelSprite name="courier" size={132} />
+            </Afterimage>
+            <span className="component-card__play" aria-hidden="true">
+              ▶ PLAY THE ORIGINAL
+            </span>
+          </button>
+          <h2 id="component-title">
+            The dash <span>from Dashy Dango</span>
+          </h2>
+          <button
+            type="button"
+            className="btn btn--light component-card__cta"
+            onClick={() => setDonorOpen(true)}
+          >
+            ▶ Play Dashy Dango
+          </button>
+          <MetaChip model="wonder">recovered from compiled WebAssembly</MetaChip>
+          <dl className="component-card__specs">
+            <div>
+              <dt>active</dt>
+              <dd>8 ticks</dd>
+            </div>
+            <div>
+              <dt>burst</dt>
+              <dd>60 px</dd>
+            </div>
+            <div>
+              <dt>recharge</dt>
+              <dd>25 ticks</dd>
+            </div>
+            <div>
+              <dt>first ready</dt>
+              <dd>10 ticks</dd>
+            </div>
+          </dl>
+          <p>
+            A light-speed burst that leaves afterimages: direction locks for the whole dash, then it
+            recharges. It runs without the donor&apos;s binary, renderer or assets.
+          </p>
+          <p className="component-card__id" title={base?.componentId}>
+            Component <code>{base ? base.componentId.slice(0, 16) + '…' : 'Loading…'}</code>
+          </p>
           {base ? (
-            <GameCabinet
-              frameRef={frame}
-              channel={channel}
-              practice={practice}
-              heading={
-                practice ? 'Practice challenge · shield enabled' : 'PARALLAXIA · native collisions'
-              }
-              versionLabel={
-                practice ? 'Shielded practice · baseline integration' : labelFor(currentId)
-              }
-              badge={badge}
-              badgeTone={practice || !active ? 'reuse' : active.fresh ? 'fresh' : 'saved'}
-              frame={
-                <iframe
-                  key={practice ? 'practice:' + base.id : (active?.id ?? base.id)}
-                  ref={frame}
-                  id="parallaxia-game"
-                  title="PARALLAXIA with accepted recovered dash"
-                  src={linkHref(
-                    (practice ? base.practice : (active?.play ?? base.play)) +
-                      '#channel=' +
-                      channel,
-                  )}
-                  sandbox="allow-scripts"
-                  allow="autoplay"
-                />
-              }
-              controls={
-                <>
-                  <div className="keys">
-                    {!practice &&
-                      [
-                        ['left', '←'],
-                        ['up', '↑'],
-                        ['down', '↓'],
-                        ['right', '→'],
-                      ].map(([control, label]) => (
-                        <HoldButton
-                          key={control}
-                          className={'key key--' + control}
-                          aria-label={'Ship ' + control}
-                          onHold={(pressed) => send('parallaxia-input', { control, pressed })}
-                        >
-                          {label}
-                        </HoldButton>
-                      ))}
-                  </div>
-                  <div className="keys keys--actions">
-                    {!practice && (
-                      <HoldButton
-                        className="key key--action"
-                        aria-label="Ship shot"
-                        onHold={(pressed) => send('parallaxia-input', { control: 'shot', pressed })}
-                      >
-                        Shoot <kbd>Z</kbd>
-                      </HoldButton>
-                    )}
-                    <HoldButton
-                      className="key key--action key--dash"
-                      onHold={(pressed) => send('dash', { pressed })}
-                    >
-                      Dash <kbd>X</kbd>
-                    </HoldButton>
-                  </div>
-                  <div className="cabinet__buttons">
-                    <button
-                      className="btn btn--light btn--small"
-                      onClick={() =>
-                        send(practice ? 'challenge-command' : 'roadster-restart', {
-                          action: 'start',
-                        })
-                      }
-                    >
-                      Restart
-                    </button>
-                    {practice && (
-                      <button
-                        className="btn btn--light btn--small"
-                        onClick={() => send('challenge-command', { action: 'borrow' })}
-                      >
-                        Borrow dash
-                      </button>
-                    )}
-                    <button
-                      className="btn btn--ghost btn--small"
-                      onClick={() => setPractice((value) => !value)}
-                    >
-                      {practice ? 'Play with native collisions' : 'Open shielded practice'}
-                    </button>
-                    {active && (
-                      <button
-                        className="btn btn--ghost btn--small"
-                        onClick={() => {
-                          if (base) selectVersion(base.id);
-                        }}
-                      >
-                        Keep original integration
-                      </button>
-                    )}
-                  </div>
-                </>
-              }
-            >
-              {practice && (
-                <p className="cabinet__note">
-                  Shielded practice reuses the baseline integration. Return to native play to use
-                  your selected child.
-                </p>
-              )}
-              {active?.intent && !practice && (
-                <p className="cabinet__note">
-                  Selected version: {worldUnits(active.intent)} world-unit nominal burst ·{' '}
-                  {active.intent.direction} · {active.intent.activation}. Native bounds and
-                  collisions still apply.
-                </p>
-              )}
-              {active?.rule?.kind === 'dash-end-shot' && (
-                <p className="cabinet__note">
-                  Host composition: dash-end → one next-tick native shot attempt, subject to the
-                  native cooldown and projectile cap.
-                </p>
-              )}
-              <p className="cabinet__help">
-                Click the game to focus it. Arrows/WASD move; Space/Z shoots; X dashes. Native mode
-                adds no invulnerability. Practice measures position with a shield, not survival.
-              </p>
-              <p className="cabinet__links">
-                <a
-                  href={linkHref(
-                    practice
-                      ? (base.practiceDownload ?? base.download)
-                      : (active?.download ?? base.download),
-                  )}
-                  download
-                >
-                  Download this exact game
+            <p className="component-card__mapping">Default mapping: {base.recipient.unitMapping}</p>
+          ) : null}
+          <p className="component-card__links">
+            <a href={linkHref('/donor/play')}>Compiled donor</a>
+            {base ? (
+              <>
+                {' '}
+                ·{' '}
+                <a href={linkHref(`/parallaxia/artifacts/${base.id}/adapter.ts`)}>
+                  Adapter source
                 </a>{' '}
                 ·{' '}
-                <a
-                  href={linkHref(
-                    practice
-                      ? (base.practiceReport ?? base.report)
-                      : (active?.report ?? base.report),
-                  )}
-                >
-                  Recipient verification
+                <a href={linkHref(`/parallaxia/artifacts/${base.id}/notices.txt`)}>
+                  Licenses and notices
                 </a>
-              </p>
-            </GameCabinet>
-          ) : (
-            <article className="cabinet cabinet--loading">
-              <p role="status">{error || 'Loading the verified integration…'}</p>
-            </article>
-          )}
-          <DestinationPicker
-            destinations={destinations}
-            onPlayLive={() => scrollToId('stage')}
-            onOpen={setGameOpen}
-            portedCount={portedCount}
-          />
-        </section>
-        {error && base && (
-          <p role="alert" className="workbench-alert">
-            {error}
+              </>
+            ) : null}
           </p>
-        )}
-        {savedExperiment && (
-          <ExperimentResults
-            receipt={savedExperiment.receipt}
-            parentPlay={savedExperiment.parent}
-            candidatePlay={savedExperiment.candidate}
-            download={savedExperiment.download}
-          />
-        )}
-        {base && (
-          <div className="workshop">
-            <MotionGeneration
-              onPublished={refreshHistory}
-              experiment={experiment}
-              parentId={active?.id ?? base.id}
-              parentIntent={active?.intent ?? base.intent ?? null}
-              parentLabel={labelFor(active?.id ?? base.id)}
-              onPlay={(job: MotionJob) => {
-                if (!job.artifactId || !job.urls) return;
-                setPractice(false);
-                setCheckpoint(null);
-                setExperiment(null);
-                setSavedExperiment(null);
-                setViewedId(job.artifactId);
-                setActive({
-                  id: job.artifactId,
-                  play: job.urls.play,
-                  download: '/artifacts/' + job.artifactId + '/download.zip',
-                  report: '/artifacts/' + job.artifactId + '/receipt.json',
-                  fresh: true,
-                  rule: job.rule,
-                  intent: job.intent,
-                });
-                history.pushState({}, '', linkHref('/?artifact=' + job.artifactId));
-                scrollToId('stage');
-              }}
-            />
-            {!practice && !playback && (
-              <CheckpointGoals
-                checkpoint={checkpoint}
-                capture={(curated) =>
-                  send(curated ? 'parallaxia-curated-checkpoint' : 'parallaxia-checkpoint')
-                }
-                resume={() => send('parallaxia-resume')}
-                onFreeze={setExperiment}
-              />
-            )}
-          </div>
-        )}
-        <PortedGames onPlay={setGameOpen} />
-        {base && (
-          <Library
-            baseline={base}
-            catalog={catalog}
-            activeId={viewedId ?? active?.id ?? base.id}
-            onSelect={(id) => {
-              selectVersion(id);
-              scrollToId('stage');
-            }}
-            onRemix={
-              playback
-                ? undefined
-                : (id) => {
-                    selectVersion(id);
-                    scrollToId('motion-creation', 'motion-prompt');
-                  }
+        </aside>
+        {base ? (
+          <GameCabinet
+            frameRef={frame}
+            channel={channel}
+            practice={practice}
+            heading={
+              practice ? 'Practice challenge · shield enabled' : 'PARALLAXIA · native collisions'
             }
-          />
+            versionLabel={
+              practice ? 'Shielded practice · baseline integration' : labelFor(currentId)
+            }
+            badge={badge}
+            badgeTone={practice || !active ? 'reuse' : active.fresh ? 'fresh' : 'saved'}
+            frame={
+              <iframe
+                key={practice ? 'practice:' + base.id : (active?.id ?? base.id)}
+                ref={frame}
+                id="parallaxia-game"
+                title="PARALLAXIA with accepted recovered dash"
+                src={linkHref(
+                  (practice ? base.practice : (active?.play ?? base.play)) + '#channel=' + channel,
+                )}
+                sandbox="allow-scripts"
+                allow="autoplay"
+              />
+            }
+            controls={
+              <>
+                <div className="keys">
+                  {!practice &&
+                    [
+                      ['left', '←'],
+                      ['up', '↑'],
+                      ['down', '↓'],
+                      ['right', '→'],
+                    ].map(([control, label]) => (
+                      <HoldButton
+                        key={control}
+                        className={'key key--' + control}
+                        aria-label={'Ship ' + control}
+                        onHold={(pressed) => send('parallaxia-input', { control, pressed })}
+                      >
+                        {label}
+                      </HoldButton>
+                    ))}
+                </div>
+                <div className="keys keys--actions">
+                  {!practice && (
+                    <HoldButton
+                      className="key key--action"
+                      aria-label="Ship shot"
+                      onHold={(pressed) => send('parallaxia-input', { control: 'shot', pressed })}
+                    >
+                      Shoot <kbd>Z</kbd>
+                    </HoldButton>
+                  )}
+                  <HoldButton
+                    className="key key--action key--dash"
+                    onHold={(pressed) => send('dash', { pressed })}
+                  >
+                    Dash <kbd>X</kbd>
+                  </HoldButton>
+                </div>
+                <div className="cabinet__buttons">
+                  <button
+                    className="btn btn--light btn--small"
+                    onClick={() =>
+                      send(practice ? 'challenge-command' : 'roadster-restart', {
+                        action: 'start',
+                      })
+                    }
+                  >
+                    Restart
+                  </button>
+                  {practice && (
+                    <button
+                      className="btn btn--light btn--small"
+                      onClick={() => send('challenge-command', { action: 'borrow' })}
+                    >
+                      Borrow dash
+                    </button>
+                  )}
+                  <button
+                    className="btn btn--ghost btn--small"
+                    onClick={() => setPractice((value) => !value)}
+                  >
+                    {practice ? 'Play with native collisions' : 'Open shielded practice'}
+                  </button>
+                  {active && (
+                    <button
+                      className="btn btn--ghost btn--small"
+                      onClick={() => {
+                        if (base) selectVersion(base.id);
+                      }}
+                    >
+                      Keep original integration
+                    </button>
+                  )}
+                </div>
+              </>
+            }
+          >
+            {practice && (
+              <p className="cabinet__note">
+                Shielded practice reuses the baseline integration. Return to native play to use your
+                selected child.
+              </p>
+            )}
+            {active?.intent && !practice && (
+              <p className="cabinet__note">
+                Selected version: {worldUnits(active.intent)} world-unit nominal burst ·{' '}
+                {active.intent.direction} · {active.intent.activation}. Native bounds and collisions
+                still apply.
+              </p>
+            )}
+            {active?.rule?.kind === 'dash-end-shot' && (
+              <p className="cabinet__note">
+                Host composition: dash-end → one next-tick native shot attempt, subject to the
+                native cooldown and projectile cap.
+              </p>
+            )}
+            <p className="cabinet__help">
+              Click the game to focus it. Arrows/WASD move; Space/Z shoots; X dashes. Native mode
+              adds no invulnerability. Practice measures position with a shield, not survival.
+            </p>
+            <p className="cabinet__links">
+              <a
+                href={linkHref(
+                  practice
+                    ? (base.practiceDownload ?? base.download)
+                    : (active?.download ?? base.download),
+                )}
+                download
+              >
+                Download this exact game
+              </a>{' '}
+              ·{' '}
+              <a
+                href={linkHref(
+                  practice ? (base.practiceReport ?? base.report) : (active?.report ?? base.report),
+                )}
+              >
+                Recipient verification
+              </a>
+            </p>
+          </GameCabinet>
+        ) : (
+          <article className="cabinet cabinet--loading">
+            <p role="status">{error || 'Loading the verified integration…'}</p>
+          </article>
         )}
-        {openGame && (
-          <SavedGamePlayer
-            game={openGame}
-            onClose={() => setGameOpen(null)}
-            onTryLive={() => {
-              setGameOpen(null);
-              scrollToId('motion-creation', 'motion-prompt');
-            }}
-          />
-        )}
-        {donorOpen && (
-          <DonorPlayer
-            onClose={() => setDonorOpen(false)}
-            onTryTransfer={() => {
-              setDonorOpen(false);
+        <DestinationPicker
+          destinations={destinations}
+          onPlayLive={() => scrollToId('stage')}
+          onOpen={setGameOpen}
+          portedCount={portedCount}
+        />
+      </section>
+      {error && base && (
+        <p role="alert" className="workbench-alert">
+          {error}
+        </p>
+      )}
+      {savedExperiment && (
+        <ExperimentResults
+          receipt={savedExperiment.receipt}
+          parentPlay={savedExperiment.parent}
+          candidatePlay={savedExperiment.candidate}
+          download={savedExperiment.download}
+        />
+      )}
+      {base && (
+        <div className="workshop">
+          <MotionGeneration
+            onPublished={refreshHistory}
+            experiment={experiment}
+            parentId={active?.id ?? base.id}
+            parentIntent={active?.intent ?? base.intent ?? null}
+            parentLabel={labelFor(active?.id ?? base.id)}
+            onPlay={(job: MotionJob) => {
+              if (!job.artifactId || !job.urls) return;
+              setPractice(false);
+              setCheckpoint(null);
+              setExperiment(null);
+              setSavedExperiment(null);
+              setViewedId(job.artifactId);
+              setActive({
+                id: job.artifactId,
+                play: job.urls.play,
+                download: '/artifacts/' + job.artifactId + '/download.zip',
+                report: '/artifacts/' + job.artifactId + '/receipt.json',
+                fresh: true,
+                rule: job.rule,
+                intent: job.intent,
+              });
+              history.pushState({}, '', linkHref('/?artifact=' + job.artifactId));
               scrollToId('stage');
             }}
           />
-        )}
-        <LiveMechanicsEvidence />
-        <footer className="ai-lab-footer">
-          <p>
-            <span className="ai-lab-footer__mark">
-              motion<span>/</span>transfer
-            </span>{' '}
-            · built on <MetaChip model="wonder" /> <MetaChip /> through the Meta Model API.
-          </p>
-          <p>
-            Dashy Dango by samX500 and willGuimont · PARALLAXIA and JUJUMP by Kenta Cho / ABA Games
-            · RDSTR Stunts by sebayaki. Recovery tooling, adapters, host hooks, experiments,
-            composition and verification are this project&apos;s added work.{' '}
-            {base && <a href={linkHref(`/parallaxia/artifacts/${base.id}/notices.txt`)}>Notices</a>}
-          </p>
-        </footer>
-      </main>
-    </AgeProvider>
+          {!practice && !playback && (
+            <CheckpointGoals
+              checkpoint={checkpoint}
+              capture={(curated) =>
+                send(curated ? 'parallaxia-curated-checkpoint' : 'parallaxia-checkpoint')
+              }
+              resume={() => send('parallaxia-resume')}
+              onFreeze={setExperiment}
+            />
+          )}
+        </div>
+      )}
+      <PortedGames onPlay={setGameOpen} />
+      {base && (
+        <Library
+          baseline={base}
+          catalog={catalog}
+          activeId={viewedId ?? active?.id ?? base.id}
+          onSelect={(id) => {
+            selectVersion(id);
+            scrollToId('stage');
+          }}
+          onRemix={
+            playback
+              ? undefined
+              : (id) => {
+                  selectVersion(id);
+                  scrollToId('motion-creation', 'motion-prompt');
+                }
+          }
+        />
+      )}
+      {openGame && (
+        <SavedGamePlayer
+          game={openGame}
+          onClose={() => setGameOpen(null)}
+          onTryLive={() => {
+            setGameOpen(null);
+            scrollToId('motion-creation', 'motion-prompt');
+          }}
+        />
+      )}
+      {donorOpen && (
+        <DonorPlayer
+          onClose={() => setDonorOpen(false)}
+          onTryTransfer={() => {
+            setDonorOpen(false);
+            scrollToId('stage');
+          }}
+        />
+      )}
+      <LiveMechanicsEvidence />
+      <footer className="ai-lab-footer">
+        <p>
+          <span className="ai-lab-footer__mark">
+            motion<span>/</span>transfer
+          </span>{' '}
+          · built on <MetaChip model="wonder" /> <MetaChip /> through the Meta Model API.
+        </p>
+        <p>
+          Dashy Dango by samX500 and willGuimont · PARALLAXIA and JUJUMP by Kenta Cho / ABA Games ·
+          RDSTR Stunts by sebayaki. Recovery tooling, adapters, host hooks, experiments, composition
+          and verification are this project&apos;s added work.{' '}
+          {base && <a href={linkHref(`/parallaxia/artifacts/${base.id}/notices.txt`)}>Notices</a>}
+        </p>
+      </footer>
+    </main>
   );
 }
