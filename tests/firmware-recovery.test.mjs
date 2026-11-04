@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import wabtFactory from 'wabt';
 import { assertSelfContained, BOOT_STATES, createDonor, describeOutput, enumerateFirmware, INPUTS, loadFirmware } from '../src/firmware/state-space.mjs';
 import { verifyFirmwareCandidate } from '../src/firmware/verify.mjs';
-import { disassemble, FIRMWARE_INSTRUCTIONS, FIRMWARE_PROTOCOL, FIRMWARE_TOOLS, runFirmwareSession, submissionFeedback } from '../src/firmware/session.mjs';
+import { disassemble, FIRMWARE_INSTRUCTIONS, FIRMWARE_PROTOCOL, FIRMWARE_TOOLS, firstHistory, runFirmwareSession, submissionFeedback } from '../src/firmware/session.mjs';
 
 const reference = await readFile(new URL('fixtures/px4-arming-reference.ts', import.meta.url), 'utf8');
 const { bytes, lock } = await loadFirmware();
@@ -94,9 +94,10 @@ test('cartridges with imports or hidden globals are refused', async () => {
 });
 
 test('the model is not told what the binary is', async () => {
-  const visible = FIRMWARE_INSTRUCTIONS + JSON.stringify(FIRMWARE_TOOLS);
+  const visible = FIRMWARE_INSTRUCTIONS + JSON.stringify(FIRMWARE_TOOLS) + JSON.stringify(await firstHistory(bytes));
   assert.doesNotMatch(visible, /px4|arm|drone|flight|autopilot|standby|lockdown|preflight/i);
-  assert.equal(FIRMWARE_PROTOCOL.limits.maxCostUsd, 1.45);
+  assert.equal(FIRMWARE_PROTOCOL.limits.maxCostUsd, 1.19);
+  assert.equal(FIRMWARE_PROTOCOL.name, 'firmware-recovery-v2');
   assert.match(await disassemble(bytes), /\(export "step"/);
 });
 
@@ -104,11 +105,38 @@ function mockClient(sources, usage = { input_tokens: 4000, output_tokens: 1500 }
   const requests = [];
   let turn = 0;
   return { requests, client: { countInputTokens: async request => { requests.push(request); return Math.ceil(JSON.stringify(request.input).length / 4); },
-    respond: async () => { const step = sources[turn++]; return { id: 'mock-' + turn, status: 'completed', usage,
+    respond: async () => { const step = sources[turn++]; if (step === 'cut') return { id: 'mock-' + turn, status: 'incomplete', incomplete_details: { reason: 'max_output_tokens' }, usage, output: [] };
+      return { id: 'mock-' + turn, status: 'completed', usage,
       output: step === null ? [{ type: 'message', content: [{ type: 'output_text', text: 'Done.' }] }]
         : [{ type: 'function_call', call_id: 'call-' + turn, ...step }] }; } } };
 }
 const submit = source => ({ name: 'submit_candidate', arguments: JSON.stringify({ source }) });
+
+test('the first request carries no disassembly, and the tool returns it in pieces', { timeout: 170000 }, async () => {
+  const { client, requests } = mockClient([{ name: 'read_disassembly', arguments: JSON.stringify({ startLine: 1, lineCount: 120 }) },
+    { name: 'read_disassembly', arguments: JSON.stringify({ startLine: 1, lineCount: 500 }) }, submit(reference)]);
+  const report = await runFirmwareSession({ client, bytes });
+  assert.equal(report.status, 'completed', report.error);
+  assert.doesNotMatch(JSON.stringify(requests[0].input), /i32\.const/);
+  const replies = requests.at(-1).input.filter(item => item.type === 'function_call_output').map(item => JSON.parse(item.output));
+  assert.equal(replies[0].lines.length, 120);
+  assert.ok(replies[0].totalLines > 300);
+  assert.match(replies[1].error, /1 to 120/);
+  assert.equal(report.toolCalls[0].output.lines, 120, 'The report keeps the count, not the text');
+});
+
+test('a truncated response is paid for and survived, but only within its limit', { timeout: 170000 }, async () => {
+  const survived = await runFirmwareSession({ bytes, client: mockClient(['cut', submit(reference)]).client });
+  assert.equal(survived.status, 'completed', survived.error);
+  assert.equal(survived.truncations, 1);
+  assert.equal(survived.requests[0].incompleteReason, 'max_output_tokens');
+  assert.equal(survived.requests.length, 2);
+  assert.ok(survived.estimatedCostUsd > 0, 'A truncated response still costs money');
+  const exhausted = await runFirmwareSession({ bytes, client: mockClient(['cut', 'cut', 'cut']).client });
+  assert.equal(exhausted.status, 'failed');
+  assert.match(exhausted.error, /status incomplete/);
+  assert.equal(exhausted.truncations, 2);
+});
 
 test('a mocked session reaches proved through a real counterexample and a real run', { timeout: 170000 }, async () => {
   const { client, requests } = mockClient([

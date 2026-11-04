@@ -21,6 +21,8 @@ const USAGE = `node scripts/firmware-recovery.mjs <command> --deployment-root <m
   plan               Freeze assets/benchmark/firmware-recovery/plan.json. Spends nothing
   run --allow-paid   Run the one planned session and save its exact report. This spends Meta credits`;
 const target = 'assets/benchmark/firmware-recovery', LEDGER = '/app/reports/motion-transfer-phase';
+// Session 1 is frozen in plan.json under firmware-recovery-v1, at commit 233661e. It failed and stays on the record.
+const PLAN = 'plan-2.json', V6_RESERVE = 2.5;
 const SINCE = '2026-11-04T05:00:00Z', CUTOFF = '2026-11-04T21:00:00Z', ceiling = FIRMWARE_PROTOCOL.limits.maxCostUsd;
 const FROZEN = ['src/firmware/session.mjs', 'src/firmware/state-space.mjs', 'src/firmware/verify.mjs', 'src/firmware/verify-worker.mjs',
   'src/evaluator/exhaustive-candidate.mjs', 'src/component/build.mjs', 'src/agent/accounting.mjs', 'src/agent/meta-client.mjs',
@@ -78,21 +80,24 @@ console.log(JSON.stringify({firstRequestInputTokens:tokens,referenceVerdict:resu
 }
 
 async function plan() {
-  assert.ok(!existsSync(join(target, 'plan.json')), 'The frozen plan already exists');
+  assert.ok(!existsSync(join(target, PLAN)), 'The frozen plan already exists');
   const sandbox = await backend(), budget = await ledger(sandbox);
   assertAdmissible(budget);
+  assert.ok(budget.remainingUsd - ceiling >= V6_RESERVE - 1e-9, 'This ceiling must leave the full v6 session inside the working limit');
   const sourceHashes = {};
   for (const path of FROZEN) sourceHashes[path] = sha256(await readFile(path));
   const createdAt = new Date().toISOString(), name = 'firmware-recovery-' + createdAt.slice(0, 16).replace(/[:T]/g, '-');
   const { countedReservations, ...observed } = budget;
   await mkdir(target, { recursive: true });
-  await writeFile(join(target, 'plan.json'), JSON.stringify({ schemaVersion: 1, name, createdAt, plannedSessions: 1, protocol: FIRMWARE_PROTOCOL,
+  await writeFile(join(target, PLAN), JSON.stringify({ schemaVersion: 1, name, createdAt, plannedSessions: 1, protocol: FIRMWARE_PROTOCOL,
+    previousSession: { plan: 'plan.json', protocol: 'firmware-recovery-v1', status: 'failed', estimatedCostUsd: 0.25494,
+      reason: 'The first response used its whole 12,000 token limit reasoning and made no tool call, and the harness ended the session.' },
     success: 'proved', sourceHashes, workspace: '/tmp/' + name, output: '/app/reports/' + name, phaseLedger: LEDGER, startCutoff: CUTOFF,
     budget: { ...observed, observedAt: createdAt, category: 'wonder', ceilingUsd: ceiling,
       accounting: 'Count all Meta reservations since midnight ET on November 4, the same rule as the v6 plan. Settled costs and full holds count. No category is reallocated.' },
     rules: ['One session. A started session is never repeated, whatever it returns.', 'Reserve the full ceiling under the ledger lock, enforcing the $5 working limit.',
       'Success means proved. A cost ceiling, an exhausted allowance or an inconclusive verdict is a failure, and is published as one.', 'No model is told what the binary is.'] }, null, 2) + '\n', { flag: 'wx' });
-  console.log(`Frozen ${name}. Used $${budget.usedUsd.toFixed(4)} of $5 since midnight ET. Commit the plan before running.`);
+  console.log(`Frozen ${PLAN} as ${name}. Used $${budget.usedUsd.toFixed(4)} of $5 since midnight ET. Commit the plan before running.`);
 }
 
 const runner = `import {createHash} from 'node:crypto';
@@ -120,7 +125,7 @@ console.log(JSON.stringify({status:report.status,cost:report.estimatedCostUsd,at
 
 async function run() {
   assert.ok(values['allow-paid'], 'Pass --allow-paid to spend through the authoritative ledger');
-  const frozen = JSON.parse(await readFile(join(target, 'plan.json'), 'utf8'));
+  const frozen = JSON.parse(await readFile(join(target, PLAN), 'utf8'));
   assert.deepEqual(frozen.protocol, JSON.parse(JSON.stringify(FIRMWARE_PROTOCOL)), 'The protocol changed after freezing');
   assert.equal(execFileSync('git', ['status', '--porcelain', '--', 'src', 'scripts', 'assets/targets/px4-arming', target, 'package-lock.json'], { encoding: 'utf8' }), '', 'Commit everything before a paid run');
   assert.ok(Date.now() < Date.parse(frozen.startCutoff), 'No paid session may start after the frozen cutoff');
@@ -131,7 +136,7 @@ async function run() {
   assert.equal(running.out, '0', 'Another paid job is running');
   assertAdmissible(await ledger(sandbox));
   await restoreSource(sandbox, frozen.workspace);
-  await sandbox.writeFiles([{ path: frozen.workspace + '/plan.json', content: await readFile(join(target, 'plan.json')) },
+  await sandbox.writeFiles([{ path: frozen.workspace + '/plan.json', content: await readFile(join(target, PLAN)) },
     { path: frozen.workspace + '/run-firmware.mjs', content: Buffer.from(runner) }]);
   const stem = '/tmp/' + frozen.name;
   await sandbox.runCommand({ cmd: 'sh', args: ['-c', `rm -f ${stem}.exit; node run-firmware.mjs > ${stem}.log 2>&1; echo $? > ${stem}.exit`], cwd: frozen.workspace, detached: true });
@@ -143,10 +148,10 @@ async function run() {
   assert.notEqual(exit, '', 'The session is still running');
   const reportBytes = await sandbox.readFileToBuffer({ path: frozen.output + '/report.json' });
   const report = JSON.parse(reportBytes);
-  await writeFile(join(target, 'report-1.json.gz'), gzipSync(reportBytes));
-  await writeFile(join(target, 'results.json'), JSON.stringify({ schemaVersion: 1, planName: frozen.name, reportSha256: sha256(reportBytes), status: report.status,
+  await writeFile(join(target, 'report-2.json.gz'), gzipSync(reportBytes));
+  await writeFile(join(target, 'results-2.json'), JSON.stringify({ schemaVersion: 1, planName: frozen.name, reportSha256: sha256(reportBytes), status: report.status,
     accepted: report.status === 'completed', acceptedAttempt: report.acceptedAttempt ?? null, attempts: report.attempts.map(item => ({ attempt: item.attempt, sourceSha256: item.result.sourceSha256, verdict: item.result.verdict, reason: item.result.reason ?? null, counterexampleLength: item.result.counterexample?.length ?? null })),
-    requests: report.requests.length, binaryRuns: report.binaryRuns, estimatedCostUsd: report.estimatedCostUsd, reservedCostUsd: report.reservedCostUsd, error: report.error ?? null }, null, 2) + '\n');
+    requests: report.requests.length, binaryRuns: report.binaryRuns, truncations: report.truncations, estimatedCostUsd: report.estimatedCostUsd, reservedCostUsd: report.reservedCostUsd, error: report.error ?? null }, null, 2) + '\n');
   console.log(`Session ${report.status}; $${report.estimatedCostUsd.toFixed(4)}; ${report.attempts.length} submissions.`);
 }
 

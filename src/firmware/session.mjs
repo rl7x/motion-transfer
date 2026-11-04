@@ -6,13 +6,13 @@ import { verifyFirmwareCandidate } from './verify.mjs';
 
 /** A changed control needs a new name. Nothing here tells the model what the binary is. */
 export const FIRMWARE_PROTOCOL = Object.freeze({
-  name: 'firmware-recovery-v1', model: 'muse-wonder-1.0', reasoningEffort: 'high',
-  maxSubmissions: 5, maxBinaryRuns: 16, maxInputsPerRun: 64,
-  limits: Object.freeze({ maxModelCalls: 14, maxToolCalls: 24, maxInputTokens: 32_000, maxOutputTokens: 12_000, maxCostUsd: 1.45, timeoutMs: 600_000, requestTimeoutMs: 120_000 }),
+  name: 'firmware-recovery-v2', model: 'muse-wonder-1.0', reasoningEffort: 'medium',
+  maxSubmissions: 5, maxBinaryRuns: 16, maxInputsPerRun: 64, maxDisassemblyLines: 120, maxTruncations: 2,
+  limits: Object.freeze({ maxModelCalls: 16, maxToolCalls: 30, maxInputTokens: 32_000, maxOutputTokens: 6_000, maxCostUsd: 1.19, timeoutMs: 600_000, requestTimeoutMs: 120_000 }),
   success: 'proved',
 });
 
-export const FIRMWARE_INSTRUCTIONS = `You are recovering the behavior of a compiled WebAssembly module. You have its disassembly and no source code.
+export const FIRMWARE_INSTRUCTIONS = `You are recovering the behavior of a compiled WebAssembly module. You can read its disassembly and you have no source code.
 The module exports boot(s) and step(a,b,c,d,e). Call boot once, then step any number of times.
 Inputs: s is 0..5. a is 0..5. b, c and d are 0 or 1. e is 0..14. step returns one unsigned 32-bit integer.
 Write a standalone TypeScript module with two named exports:
@@ -21,10 +21,13 @@ Write a standalone TypeScript module with two named exports:
 input is [a,b,c,d,e]. output must equal what the module returns, and state must hold everything that carries over between steps.
 No imports, randomness or dates. Module scope may hold only function declarations and JSON-literal constants, so write 16 rather than 1 << 4, and use a function rather than an arrow constant. Keep all mutable state in the returned JSON state.
 Each submission is compared with the real module from every boot value, on every reachable state and every input in the domain. A mismatch returns the shortest failing sequence with expected and actual outputs.
-Tools: run_binary executes the real module on inputs you choose. submit_candidate checks your source. You have ${FIRMWARE_PROTOCOL.maxSubmissions} submissions and ${FIRMWARE_PROTOCOL.maxBinaryRuns} runs. The session ends when a submission matches. Work from the disassembly and your measurements; read the data section byte by byte, and test what you read.`;
+Tools: read_disassembly returns lines of the disassembly. run_binary executes the real module on inputs you choose. submit_candidate checks your source. You have ${FIRMWARE_PROTOCOL.maxSubmissions} submissions and ${FIRMWARE_PROTOCOL.maxBinaryRuns} runs. The session ends when a submission matches.
+Work in small steps and make a tool call in every response. Output is limited, so do not try to derive everything before acting. Read, measure, then submit an early candidate: a shortest failing sequence teaches you more than long reasoning does. Read the data section too, and test what you read.`;
 
 const inputSchema = { type: 'array', items: { type: 'integer' }, minItems: 5, maxItems: 5 };
 export const FIRMWARE_TOOLS = Object.freeze([
+  { type: 'function', name: 'read_disassembly', strict: true, description: 'Return lines of the module disassembly, starting at startLine (1 is the first line). At most 120 lines.',
+    parameters: { type: 'object', properties: { startLine: { type: 'integer' }, lineCount: { type: 'integer' } }, required: ['startLine', 'lineCount'], additionalProperties: false } },
   { type: 'function', name: 'run_binary', strict: true, description: 'Boot a fresh instance of the real module with boot, run the inputs in order, and return each output. At most 64 inputs.',
     parameters: { type: 'object', properties: { boot: { type: 'integer' }, inputs: { type: 'array', items: inputSchema, minItems: 1, maxItems: 64 } }, required: ['boot', 'inputs'], additionalProperties: false } },
   { type: 'function', name: 'submit_candidate', strict: true, description: 'Check TypeScript source against the real module on every reachable state and every input. Uses one submission.',
@@ -44,7 +47,8 @@ function validInputs({ boot, inputs }) {
 }
 
 export async function firstHistory(bytes) {
-  return [{ role: 'user', content: [{ type: 'input_text', text: 'Disassembly of the module:\n\n' + await disassemble(bytes) }] }];
+  const lines = (await disassemble(bytes)).split('\n').length;
+  return [{ role: 'user', content: [{ type: 'input_text', text: `The disassembly has ${lines} lines. Begin with read_disassembly.` }] }];
 }
 export const firmwareRequest = (history, protocol = FIRMWARE_PROTOCOL) => ({ model: protocol.model, instructions: FIRMWARE_INSTRUCTIONS, input: history, tools: FIRMWARE_TOOLS, store: false,
   include: ['reasoning.encrypted_content'], reasoning: { effort: protocol.reasoningEffort }, max_output_tokens: protocol.limits.maxOutputTokens, parallel_tool_calls: false });
@@ -59,13 +63,19 @@ export const submissionFeedback = result => result.verdict === 'proved'
 /** One bounded session. Every request is reserved before it is sent, and nothing is retried. */
 export async function runFirmwareSession({ client, bytes, signal, verify = verifyFirmwareCandidate, onUpdate = async () => {}, protocol = FIRMWARE_PROTOCOL }) {
   const price = PRICES[protocol.model], limits = protocol.limits, history = await firstHistory(bytes);
+  const disassembly = (await disassemble(bytes)).split('\n');
   const report = { schemaVersion: 1, protocol, firmwareSha256: digest(bytes), startedAt: new Date().toISOString(), status: 'running',
     usage: { inputTokens: 0, outputTokens: 0, cachedInputTokens: 0, reasoningTokens: 0 }, estimatedCostUsd: 0, reservedCostUsd: 0,
-    requests: [], toolCalls: [], attempts: [], binaryRuns: 0, messages: [] };
+    requests: [], toolCalls: [], attempts: [], binaryRuns: 0, truncations: 0, messages: [] };
   const deadline = AbortSignal.timeout(limits.timeoutMs), bound = signal ? AbortSignal.any([signal, deadline]) : deadline;
   async function runTool(call) {
     let args;
     try { args = JSON.parse(call.arguments); } catch { return { error: 'Tool arguments must be valid JSON.' }; }
+    if (call.name === 'read_disassembly') {
+      const { startLine, lineCount } = args;
+      if (!Number.isInteger(startLine) || !Number.isInteger(lineCount) || startLine < 1 || lineCount < 1 || lineCount > protocol.maxDisassemblyLines) return { error: 'Ask for 1 to 120 lines from line 1 onward.' };
+      return { startLine, totalLines: disassembly.length, lines: disassembly.slice(startLine - 1, startLine - 1 + lineCount).map(line => line.slice(0, 4000)) };
+    }
     if (call.name === 'run_binary') {
       if (report.binaryRuns >= protocol.maxBinaryRuns) return { error: 'No binary runs remain.' };
       if (!validInputs(args)) return { error: 'Inputs are outside the declared domain.' };
@@ -102,6 +112,13 @@ export async function runFirmwareSession({ client, bytes, signal, verify = verif
       report.estimatedCostUsd += record.estimatedCostUsd;
       for (const key of Object.keys(report.usage)) report.usage[key] += usage[key];
       await onUpdate(report);
+      // A response cut off before it acted is paid for and discarded. It need not end the session.
+      if (response.status === 'incomplete' && report.truncations < protocol.maxTruncations) {
+        report.truncations++;
+        record.incompleteReason = response.incomplete_details?.reason ?? null;
+        history.push({ role: 'user', content: [{ type: 'input_text', text: 'Your last response ran out of output tokens before it acted, so it was discarded. Make a tool call now and keep your reasoning short.' }] });
+        continue;
+      }
       if (response.status !== 'completed') throw Error(`Meta response ended with status ${response.status}; stopping without retry`);
       if (report.estimatedCostUsd > limits.maxCostUsd) throw Error('Reported usage exceeded the session cost ceiling; stopping');
       if (!Array.isArray(response.output)) throw Error('Meta response is missing its output array');
@@ -114,7 +131,7 @@ export async function runFirmwareSession({ client, bytes, signal, verify = verif
       for (const call of calls) {
         if (report.toolCalls.length >= limits.maxToolCalls) throw Error('Tool call limit reached');
         const output = await runTool(call);
-        report.toolCalls.push({ name: call.name, requestAttempt: turn + 1, ok: !output.error, ...(call.name === 'run_binary' ? { arguments: JSON.parse(call.arguments), output } : { output: { ...output, trace: output.trace?.length } }) });
+        report.toolCalls.push({ name: call.name, requestAttempt: turn + 1, ok: !output.error, ...(call.name === 'run_binary' ? { arguments: JSON.parse(call.arguments), output } : { output: { ...output, trace: output.trace?.length, lines: output.lines?.length } }) });
         history.push({ type: 'function_call_output', call_id: call.call_id, output: JSON.stringify(output) });
         await onUpdate(report);
       }
