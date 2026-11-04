@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { buildExhaustiveEvidence } from '../src/evaluator/exhaustive-evidence.mjs';
+import { verifyExhaustiveDemo } from './build-exhaustive-demo.mjs';
 
 const evidenceFile = new URL('../assets/evidence/exhaustive.json', import.meta.url);
 
@@ -9,6 +10,7 @@ export async function verifyExhaustiveEvidence({ onCandidate } = {}) {
   const expected = JSON.parse(await readFile(evidenceFile, 'utf8'));
   const actual = await buildExhaustiveEvidence({ onCandidate });
   assert.deepEqual(actual, expected, 'Exhaustive evidence must recompute from the committed binary and candidates');
+  await verifyExhaustiveDemo();
   return `Exhaustive: ${actual.donor.states} states, ${actual.donor.transitions} transitions, ${actual.donor.conflicts} abstraction conflicts; `
     + `${actual.candidates.filter(candidate => candidate.verdict === 'proved').length} proved, `
     + `${actual.candidates.filter(candidate => candidate.verdict === 'counterexample').length} counterexamples, `

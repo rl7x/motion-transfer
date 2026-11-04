@@ -81,6 +81,8 @@ None of those cases presses Z. Excluding Z combinations, coverage is 1,878 of 8,
 
 The 11-tick example is nine idle ticks, one left-walking tick, then X with no direction. The binary dashes right, while the historical candidate dashes left because it incorrectly reuses walking direction. The independent evaluator confirms the divergence at tick 11.
 
+The standalone demo is available at `/?view=exhaustive` on the preview server (`npm run dev:transfer`). It animates the recorded state enumeration and replays the counterexample alongside actual cartridge framebuffers and measured candidate positions. Play, pause, scrub and show-result controls make it suitable for a short recording. The animation does not run verification or make a model request. `scripts/build-exhaustive-demo.mjs` derives its frames from the original sources; `verify:exhaustive` and `verify:evidence` recompute them.
+
 ## Baseline
 
 Work began in a separate worktree from `origin/main` at `7879e6b` on November 4, 2026. Before edits, `npm ci`, `npm run verify:evidence` and `npm run verify:wonder` all exited successfully. The Wonder output explicitly named v3, v4 and v5 and replayed the accepted v3/v5 sources. The throwaway prototype was rerun against this checkout and reproduced the supplied state counts, coverage and candidate verdicts.

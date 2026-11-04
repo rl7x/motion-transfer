@@ -13,6 +13,7 @@ import { InvestigationPanel } from './components/investigation-panel';
 import { RemixPanel } from './components/remix-panel';
 import { ArtifactDetails } from './components/artifact-details';
 import { MotionWorkbench } from './motion-workbench';
+import { ExhaustiveDemo } from './exhaustive-demo';
 
 class AppBoundary extends Component<{ children: ReactNode }, { error: boolean }> {
   state = { error: false };
@@ -66,6 +67,7 @@ function Experience() {
   );
 }
 export function App() {
+  if (new URL(location.href).searchParams.get('view') === 'exhaustive') return <ExhaustiveDemo />;
   if (window.__MOTION_TRANSFER__?.featuredRecipient === 'parallaxia') return <MotionWorkbench />;
   if (
     !window.__MOTION_TRANSFER__ &&
