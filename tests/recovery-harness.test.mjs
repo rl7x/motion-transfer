@@ -14,7 +14,7 @@ const fixtures = JSON.parse(await readFile(new URL('fixtures/wonder-recovery-fai
 const timerFields = { cooldown: 'cooldown', remaining: 'remaining' };
 
 test('new protocols record the expanded suite while historical v2 protocols still validate', () => {
-  const modern = createRecoveryProtocol({ model: 'muse-wonder-1.0', maxCostUsd: 2.4 });
+  const modern = createRecoveryProtocol({ name: 'motion-recovery-v3', model: 'muse-wonder-1.0', maxCostUsd: 2.4 });
   assert.equal(modern.name, 'motion-recovery-v3');
   assert.equal(modern.development.caseCount, RECOVERY_DEVELOPMENT_CASES.length);
   assert.equal(modern.limits.maxCostUsd, 2.4);

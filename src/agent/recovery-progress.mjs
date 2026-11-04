@@ -31,7 +31,10 @@ export function recoveryInstructions(protocol) {
   const policy = recoveryPolicy(protocol);
   const instructions = protocol ? RECOVERY_INSTRUCTIONS.replace('Three behavioral development attempts', `${policy.maxDevelopmentAttempts} behavioral development attempts`)
     : RECOVERY_INSTRUCTIONS;
-  return instructions + (protocol?.development ? `
+  return instructions + (protocol?.completion ? `
+After development passes, the host freezes the exact source and runs separate acceptance automatically.
+No further model request is needed for these mechanical checks or the host's factual verification summary.
+Your job is to choose evidence, write and revise the candidate until development passes.` : '') + (protocol?.development ? `
 Development starts immediately after one title-screen start update, not at your later experiment checkpoint.
 Read each failure's preceding AND following frames. A premature event and a missing event imply different bugs.
 Compare prior development failures before revising; do not alternate between previously disproven rules.

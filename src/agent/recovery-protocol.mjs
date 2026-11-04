@@ -27,12 +27,13 @@ const modelCeilings = Object.freeze({
 
 /** A new identity is required whenever any recorded recovery control changes. */
 export function createRecoveryProtocol({
-  name = 'motion-recovery-v3', model = 'muse-spark-1.3-contributor',
-  maxCostUsd = modelCeilings[model], sourceHashes = {},
+  name = 'motion-recovery-v4', model = 'muse-spark-1.3-contributor',
+  maxCostUsd = name === 'motion-recovery-v4' && model === 'muse-wonder-1.0' ? 8 : modelCeilings[model], sourceHashes = {},
 } = {}) {
   if (!Object.hasOwn(modelCeilings, model) || !Object.hasOwn(PRICES, model)) throw Error('Unsupported recovery model');
   if (typeof name !== 'string' || !/^[a-z0-9][a-z0-9-]{0,79}$/.test(name)) throw Error('Invalid recovery protocol name');
-  if (!Number.isFinite(maxCostUsd) || maxCostUsd <= 0 || maxCostUsd > modelCeilings[model]) throw Error('Invalid recovery protocol cost ceiling');
+  const ceiling = name === 'motion-recovery-v4' && model === 'muse-wonder-1.0' ? 8 : modelCeilings[model];
+  if (!Number.isFinite(maxCostUsd) || maxCostUsd <= 0 || maxCostUsd > ceiling) throw Error('Invalid recovery protocol cost ceiling');
   if (!sourceHashes || Array.isArray(sourceHashes) || typeof sourceHashes !== 'object'
     || Object.entries(sourceHashes).some(([path, sha]) => !/^[a-z][a-z0-9/.-]+$/.test(path)
       || path.split('/').some(part => !part || part === '..' || part === '.') || !/^[a-f0-9]{64}$/.test(sha))) {
@@ -44,9 +45,10 @@ export function createRecoveryProtocol({
     pricingPerMillionTokens: { ...PRICES[model] },
     maxDevelopmentAttempts: 5, maxSelections: 3, developmentRequestReserve: 14,
     requestTimeoutMs: 120_000,
-    ...(name === 'motion-recovery-v3' ? { development: {
+    ...(['motion-recovery-v3', 'motion-recovery-v4'].includes(name) ? { development: {
       suite: 'motion-development-v3', caseCount: 32, feedback: 'transition-windows-v1',
     } } : {}),
+    ...(name === 'motion-recovery-v4' ? { completion: 'host-after-development-v1' } : {}),
     acceptance: { generator: 'acceptanceCases-v1', caseCount: 20, seedPolicy: 'generate-after-freeze-once' },
     limits: { maxModelCalls: 32, maxToolCalls: 48, maxInputTokens: 32_000,
       maxOutputTokens: 12_000, maxCostUsd, timeoutMs: 720_000 },

@@ -20,6 +20,15 @@ const alive = pid => {
   catch (error) { if (error.code === 'ESRCH') return false; throw error; }
 };
 
+function transferredDefinition(previous, { from, to, amountUsd }) {
+  assert.ok(Object.hasOwn(PHASE_ALLOCATIONS, from) && Object.hasOwn(PHASE_ALLOCATIONS, to) && from !== to, 'Invalid allocation categories');
+  assert.ok(validCost(amountUsd) && amountUsd > 0 && amountUsd <= previous.allocations[from], 'Invalid allocation amount');
+  const { id, ...body } = previous;
+  const next = { ...body, allocations: { ...body.allocations,
+    [from]: body.allocations[from] - amountUsd, [to]: body.allocations[to] + amountUsd } };
+  return { ...next, id: digest(JSON.stringify(next)) };
+}
+
 function summary(journal) {
   const categories = Object.fromEntries(Object.entries(journal.definition.allocations).map(([name, limitUsd]) => [name,
     { limitUsd, settledUsd: 0, reservedUsd: 0, remainingUsd: limitUsd }]));
@@ -42,8 +51,9 @@ function summary(journal) {
 
 function validate(journal) {
   assert.equal(journal.schemaVersion, 1, 'Unsupported phase budget journal');
-  if (journal.definition.id === increasedDefinition.id) {
-    assert.deepEqual(journal.definition, increasedDefinition, 'Phase budget controls changed');
+  const baseDefinition = journal.allocationTransfers?.[0]?.previousDefinition ?? journal.definition;
+  if (baseDefinition.id === increasedDefinition.id) {
+    assert.deepEqual(baseDefinition, increasedDefinition, 'Phase budget controls changed');
     assert.equal(journal.allowanceMigrations?.length, 1, 'The allowance increase requires its audit record');
     const migration = journal.allowanceMigrations[0];
     assert.deepEqual(migration.previousDefinition, definition);
@@ -51,9 +61,18 @@ function validate(journal) {
     assert.ok(validReason(migration.reason) && Number.isFinite(Date.parse(migration.at)));
     assert.match(migration.previousJournalSha256, /^[a-f0-9]{64}$/);
   } else {
-    assert.deepEqual(journal.definition, definition, 'Phase budget controls changed; existing spending cannot be reset');
+    assert.deepEqual(baseDefinition, definition, 'Phase budget controls changed; existing spending cannot be reset');
     assert.equal(journal.allowanceMigrations?.length ?? 0, 0, 'Unexpected allowance migration');
   }
+  let expectedDefinition = baseDefinition;
+  for (const transfer of journal.allocationTransfers ?? []) {
+    assert.deepEqual(transfer.previousDefinition, expectedDefinition, 'Allocation transfer chain changed');
+    assert.ok(validReason(transfer.reason) && Number.isFinite(Date.parse(transfer.at)), 'Allocation transfer requires its audit record');
+    assert.match(transfer.previousJournalSha256, /^[a-f0-9]{64}$/);
+    expectedDefinition = transferredDefinition(expectedDefinition, transfer);
+    assert.equal(transfer.nextDefinitionId, expectedDefinition.id, 'Allocation transfer identity changed');
+  }
+  assert.deepEqual(journal.definition, expectedDefinition, 'Phase allocation controls changed');
   assert.ok(Array.isArray(journal.reservations));
   const ids = new Set();
   for (const entry of journal.reservations) {
@@ -161,11 +180,30 @@ export async function createPhaseBudget(directory) {
       if (maxCostUsd !== 50 || !validReason(reason)) throw Error('Only an explicit $50 allowance with a reason is supported');
       return locked(async () => {
         const journal = await read();
-        if (journal.definition.id === increasedDefinition.id) return structuredClone(journal.definition);
+        if (journal.definition.maxCostUsd === 50) return structuredClone(journal.definition);
+        if (journal.allocationTransfers?.length) throw Error('Increase the total allowance before transferring allocations');
         const migration = { previousDefinition: journal.definition, nextDefinitionId: increasedDefinition.id,
           previousJournalSha256: digest(JSON.stringify(journal)), at: new Date().toISOString(), reason: reason.trim() };
         journal.allowanceMigrations = [migration]; journal.definition = increasedDefinition;
         await save(journal); return structuredClone(journal.definition);
+      });
+    },
+    async reallocate({ from, to, amountUsd, reason }) {
+      if (!validReason(reason)) throw Error('Allocation transfer requires a reason');
+      return locked(async () => {
+        const journal = await read(), next = transferredDefinition(journal.definition, { from, to, amountUsd });
+        const totals = summary(journal);
+        if (totals.uncertain || totals.overrun) throw Error('Resolve uncertain billing before transferring allocations');
+        if (amountUsd > totals.categories[from].remainingUsd + 1e-9
+          || journal.reservations.some(entry => entry.category === from && entry.maxCostUsd > next.allocations[from])) {
+          throw Error('Allocation transfer would consume reserved spending or invalidate a historical ceiling');
+        }
+        const transfer = { from, to, amountUsd, reason: reason.trim(), at: new Date().toISOString(),
+          previousDefinition: journal.definition, nextDefinitionId: next.id, previousJournalSha256: digest(JSON.stringify(journal)) };
+        (journal.allocationTransfers ??= []).push(transfer);
+        journal.definition = next;
+        await save(journal);
+        return structuredClone(transfer);
       });
     },
     async reconcileBoundedUnknown({ id, reason }) {

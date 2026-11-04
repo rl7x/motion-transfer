@@ -19,4 +19,3 @@ export const RECOVERY_DEVELOPMENT_CASES = [
       [step(direction | 1, frames), step(direction, 1)])],
   })),
 ];
-

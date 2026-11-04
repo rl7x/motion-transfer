@@ -54,7 +54,7 @@ export function createJournalToolExecutor({
   const ids = new Set(report.toolCalls.map(call => call.callId));
   let experiments = report.toolCalls.filter(call => call.experimentId).length;
 
-  return async function runToolCall(call, turn) {
+  return async function runToolCall(call, turn, { actor } = {}) {
     checkTime();
     if (!Number.isSafeInteger(turn) || turn < 0 || turn >= limits.maxModelCalls) throw Error('A trusted model turn within the request limit is required');
     if (report.toolCalls.some(entry => Number.isSafeInteger(entry.requestAttempt) && entry.requestAttempt > turn + 1)) throw Error('Trusted model turns cannot move backwards');
@@ -73,6 +73,7 @@ export function createJournalToolExecutor({
     const entry = {
       callId: call.call_id, name: call.type === 'tool_search_call' ? 'tool_search' : call.name,
       namespace: call.namespace ?? null, requestAttempt: turn + 1, ok: false,
+      ...(actor ? { actor } : {}),
     };
     report.toolCalls.push(entry);
     let selectedImages = [], output;

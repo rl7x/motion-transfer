@@ -1,8 +1,8 @@
-# Wonder recovery harness v3
+# Wonder recovery harness
 
 The original Wonder repeats exposed two different problems. One session alternated between an early level-triggered dash and a missing edge-triggered dash. The other passed all 13 development cases with an incorrect rule that a neutral dash uses the last walking direction, then failed unseen acceptance. Both also encountered a writer-trace callback limit while trying to locate the relevant binary code.
 
-New recovery sessions default to `motion-recovery-v3`. The model still chooses code to inspect, experiments, candidate source and revisions. The harness supplies measurements and checks:
+The v3 harness adds the following changes. The model still chooses code to inspect, experiments, candidate source and revisions. The harness supplies measurements and checks:
 
 - Writer tracing filters the selected address range inside the instrumented WASM. Unrelated rendering writes no longer exhaust the callback allowance. Replay happens before recording; original and instrumented execution are still compared on every measured frame.
 - Development failures include two preceding and two following frames, per-frame displacement, initial observed timers and the tick convention. An early activation now shows the frame when the donor actually activates.
@@ -12,17 +12,21 @@ New recovery sessions default to `motion-recovery-v3`. The model still chooses c
 
 Acceptance remains 20 separately generated cases, seeded only after the candidate is frozen. Acceptance failure ends the session. The old v2 protocol still validates and retains its 13-case development suite. Historical results and their frozen manifests are unchanged.
 
+New sessions default to `motion-recovery-v4`, which retains the v3 checks and gives the host responsibility for freezing, acceptance and a factual verification summary. These use the same journal executor and evaluator; the calls are explicitly recorded with `actor: host-verifier`. Model evidence selection and candidate generation still precede these gates. Acceptance failure is terminal. This avoids paying for model requests to perform deterministic verification after development has passed. Model interpretations remain unverified (`conclusionVerified: false`).
+
+The user authorized an $8 maximum per Wonder session. That ceiling applies to v4; the v2/v3 ceilings retain their original values so historical protocols remain valid. Source hashes still distinguish every executable change. Recovery evaluation lives in separate files so the earlier fidelity study keeps its pinned evaluator bytes.
+
 ## Running a new development session
 
 ```sh
 npm run recover:campaign -- --development \
   --model muse-wonder-1.0 \
-  --max-cost-usd 2.40 \
-  --out reports/wonder-v3-development-001 \
+  --max-cost-usd 8 \
+  --out reports/wonder-v4-development-001 \
   --phase-ledger <existing-authoritative-ledger-directory>
 ```
 
-This makes paid model requests. The lower ceiling is optional; Wonder's default ceiling remains $6. The protocol, ceiling and executable inputs are frozen before the first request. Use the authoritative ledger where it lives; do not spend from a copied ledger. Run from an isolated copy when other code changes are ongoing. A resumed campaign cannot change its model, protocol or supplied cost ceiling and never repeats a started trial.
+This makes paid model requests. The protocol, ceiling and executable inputs are frozen before the first request. Use the authoritative ledger where it lives; do not spend from a copied ledger. Run from an isolated copy when other code changes are ongoing. Check that the sandbox has at least 16 minutes remaining before starting each session. A resumed campaign cannot change its model, protocol or supplied cost ceiling and never repeats a started trial.
 
 Use `--protocol motion-recovery-v2` only when deliberately selecting the earlier development suite. A source change still changes the protocol hash, so selecting the old name does not reproduce a historical frozen protocol by itself.
 
