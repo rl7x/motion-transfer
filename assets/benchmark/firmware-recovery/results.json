@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "planName": "firmware-recovery-2026-11-04-18-14",
+  "reportSha256": "64ba1b4605902cfd56d9718de516f402a57b8042e6da4314ec154fb297fd73e0",
+  "status": "failed",
+  "accepted": false,
+  "acceptedAttempt": null,
+  "attempts": [],
+  "requests": 1,
+  "binaryRuns": 0,
+  "estimatedCostUsd": 0.25494,
+  "reservedCostUsd": 0,
+  "error": "Meta response ended with status incomplete; stopping without retry"
+}
