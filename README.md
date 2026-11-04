@@ -10,7 +10,7 @@ Muse Wonder rebuilt Dashy Dango's dash from the compiled WebAssembly game. It su
 
 **[Play it live](https://motion-transfer-rl7x.vercel.app)** · [Architecture](docs/architecture.md) · [Port results](docs/auto-port-results.md)
 
-Hackathon problem statement: **Push the Frontier**. Models used through the Meta Model API: Muse Wonder 1.0, Muse Spark 1.3 and SAM 3.1. Open-weight model, served on Baseten: Muse Spark Open.
+Hackathon problem statement: **Build for Your World**. Models used through the Meta Model API: Muse Wonder 1.0, Muse Spark 1.3 and SAM 3.1. Open-weight model, served on Baseten: Muse Spark Open.
 
 ## What this is for
 
