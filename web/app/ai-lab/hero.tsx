@@ -1,3 +1,4 @@
+import footage from '../../../assets/evidence/footage-summary.json';
 import { useCallback, useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { Afterimage, useDashPulse } from './afterimage';
@@ -120,8 +121,20 @@ export function Hero({ playback, savedCount }: { playback: boolean; savedCount: 
           <li>
             <MetaChip>writes and repairs each PARALLAXIA adapter, live</MetaChip>
           </li>
+          <li>
+            <MetaChip model="sam">tracked the move through gameplay footage</MetaChip>
+          </li>
+          <li>
+            <MetaChip model="open">rebuilt it from that footage, with no binary</MetaChip>
+          </li>
         </ul>
         <dl className="hero__stats">
+          <div>
+            <dt>footage sessions at 40/40</dt>
+            <dd>
+              {footage.finalChecks.length} of {footage.sessions}
+            </dd>
+          </div>
           <div>
             <dt>unseen games ported</dt>
             <dd>
@@ -130,7 +143,7 @@ export function Hero({ playback, savedCount }: { playback: boolean; savedCount: 
           </div>
           <div>
             <dt>prompt → playable</dt>
-            <dd>~12 s</dd>
+            <dd>~27 s</dd>
           </div>
           <div>
             <dt>per remix</dt>
@@ -146,7 +159,7 @@ export function Hero({ playback, savedCount }: { playback: boolean; savedCount: 
           </div>
         </dl>
         <p className="hero__footnote">
-          Times and costs are from the measured task campaign: Standard Muse Spark, Meta Model API.
+          The time is one timed run on this site. The cost is from the measured task campaign. Both use Standard Muse Spark on the Meta Model API.
         </p>
       </div>
       <Courier />
