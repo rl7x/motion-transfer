@@ -38,10 +38,35 @@ The drivers that measure each game are hand-written and Spark never sees them, s
 - **HEAD RUSH passed on repair.** Spark's first patch projected the dash onto the direction of the track, and one dash measured 37.5 of 60 units. The verifier reported the shortfall, and Spark's second patch added the burst's full size along the track, which measured 60 of 60.
 - **DRAFT LINE failed.** Spark aimed the dash forward along the road. Its first scale gave a 300-unit burst, far outside the 3.8-unit road width. Its repair fixed the scale, but the frozen driver applies no steering and reads only sideways position, so a forward dash measured 0. A forward dash is a reasonable design for a racer, so this failure is partly a limit of the driver. It stays a failure, because changing a frozen driver after seeing a result would invalidate the campaign.
 
+## The port command on an outside game
+
+`npm run port` runs Spark on a game with no hand-written driver. To test it, we used [Tiny Platformer](https://github.com/jakesgordon/javascript-tiny-platformer), an MIT game by Jake Gordon from outside the campaign collection. This is one small trial on one game. It is separate from the frozen campaign, and the guidance changed between runs.
+
+Without a driver, the command can only check that the patches apply, the page runs and the dash fires. So this game was measured separately: 2,007 dashes from all 223 standing spots in 9 situations, including reversing, jumping and mid-air dashes. The sweep follows the player along each tick's whole path. The same moves with no dash raise no alarms.
+
+| Run | Playtest note | Dashes into walls | Left the map | Estimated cost |
+| --- | --- | ---: | ---: | ---: |
+| First port, before any guidance | No | 632 | 265 | $0.0246 |
+| Revised with a playtest note | Yes | 74 | 0 | $0.0280 |
+| Fresh port with early guidance | No | 83 | 0 | $0.0316 |
+| Revised with a second playtest note | Yes | 0 | 0 | $0.0183 |
+| Fresh port with final guidance, stopped at the output limit | No | No port | — | $0.0436 |
+| Fresh port with final guidance | No | 0 | 0 | $0.0485 |
+
+Every saved port played identically to the original over 3,600 ticks with no dash, and every dash fired. The six runs cost an estimated $0.19.
+
+- **The first port passed every automatic check and was still broken.** It moved the player directly, so the game's collision code never saw the dash.
+- **Playtest notes fixed it in two rounds.** The first note stopped the player leaving the map. The second made collision follow the direction of the dash when it disagreed with the player's velocity.
+- **That lesson now goes out with every request.** With it, a fresh port reached 0 on its first attempt. That is one clean run, and the fresh run before it spent its whole output limit and submitted nothing.
+- **The incomplete run stays held at its ceiling.** The ledger keeps its full $0.25 reservation, because it cannot prove the final bill.
+
+`tests/port-command.test.mjs` reproduces every number in this table from the saved patches, with no model request. The measurement itself is in [the test fixture](../tests/fixtures/port-example-sweep.mjs).
+
 ## Limits
 
 - All ten games come from one author and collection, and they share a clean structure: deterministic simulation, seeded randomness and a separate core file. This is not a success rate for arbitrary games.
 - This is one run with one model. It is not a reliability estimate.
+- The seven checks measure a dash in open space. They do not test whether walls stop it, so a campaign port could still pass through one. Tiny Platformer exposed this blind spot after the campaign was frozen.
 - The check for a game measures what its driver reads. Passing means the dash works and native behavior is unchanged when unused, not that the dash is well balanced.
 - BLINK SCOPE steps its simulation at 120 Hz in the browser, so the dash and its recharge run at double speed in that page. The tick-based checks don't show this.
 - OVERTURN has no avatar, and TWIN VECTOR moves between discrete lanes, so a measured pixel burst has no meaning there.

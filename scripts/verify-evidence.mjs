@@ -52,5 +52,15 @@ const responses = eligible.reduce((sum, game) => sum + game.attempts.length, 0),
 assert.ok(readme.includes(`${passed.length} of ${eligible.length} eligible games`), 'README must state the port result');
 lines.push(`Auto-port: ${passed.length} of ${eligible.length} eligible games, ${ports.games.length - eligible.length} excluded, ${responses} Spark responses, $${cost.toFixed(4)}`);
 
+const outside = await json('assets/evidence/port-example.json');
+const outsideLock = await json('assets/port-example/lock.json');
+for (const file of outsideLock.files) assert.equal(digest(await readFile(`assets/port-example/${file.local}`)), file.sha256, file.local);
+const platformer = await readFile('assets/port-example/tiny-platformer/platformer.js', 'utf8');
+for (const run of outside.runs) if (run.sweep) applyPatches(platformer, run.patches);
+const [first, finalPort] = [outside.runs[0], outside.runs[outside.runs.length - 1]];
+assert.equal(finalPort.sweep.enteredWalls, 0);
+assert.ok(readme.includes(`${first.sweep.enteredWalls} of ${outside.sweep.dashes.toLocaleString('en-US')} measured dashes`), 'README must state the port command trial');
+lines.push(`Port command: ${first.sweep.enteredWalls} then ${finalPort.sweep.enteredWalls} of ${outside.sweep.dashes} dashes into walls, ${outside.runs.length} runs, $${outside.runs.reduce((sum, run) => sum + run.estimatedCostUsd, 0).toFixed(4)}`);
+
 console.log(lines.join('\n'));
 console.log('Evidence verified from committed files. No model request was made.');

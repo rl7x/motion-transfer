@@ -28,6 +28,22 @@ On [the live site](https://motion-transfer-rl7x.vercel.app) you can play Dashy D
 
 To run it locally, see [running it, measured results and limits](docs/running-and-limits.md).
 
+## Use it on your own game
+
+```sh
+npm run port -- ./my-game --core game.js --allow-paid
+```
+
+Muse Spark reads the file that moves your player and writes the patches, and you get a patched copy with the dash on X. Your original game is not changed. It needs a game that runs from a static `index.html` with a canvas, and a `MODEL_API_KEY`. Each attempt is capped at $0.25, with at most two attempts, and generated code only runs in a browser page.
+
+The command checks that the patches apply, the page runs and the dash fires. It can't prove your game still plays the same, because that takes a driver written for your game, so play it yourself. If something is wrong, send it back:
+
+```sh
+npm run port -- ./my-game --core game.js --allow-paid --out ./my-game-v2 --revise ./my-game-dash --note "the dash goes through walls"
+```
+
+We tested it on [Tiny Platformer](https://github.com/jakesgordon/javascript-tiny-platformer), an MIT game from outside the campaign. Spark's first port passed every automatic check but went through walls in 632 of 2,007 measured dashes. Two playtest notes brought that to 0, and that lesson now goes out with every request. See [the trial](docs/auto-port-results.md#the-port-command-on-an-outside-game).
+
 ## Built during the hackathon
 
 The building period ran from October 27 to November 4, 2026, and this repository's first commit is from October 27. The left column was built in that period.
@@ -70,6 +86,7 @@ Dashy Dango is upstream work by samX500 and willGuimont. PARALLAXIA, JUJUMP and 
 | [PAKU PAKU](https://github.com/abagames/crisp-game-lib-11-games) | Saved transfer | Kenta Cho / ABA Games | MIT | [LICENSE.txt](assets/recipients/paku-paku/upstream/LICENSE.txt) |
 | [RDSTR Stunts](https://github.com/sebayaki/roadster) at `8486687` | Saved transfer | sebayaki | MIT | [LICENSE](assets/recipients/roadster/upstream/LICENSE) |
 | [BLINK SCOPE, DRAFT LINE, HEAD RUSH, OVERTURN, PILEUP, SKYHAUL, TWIN VECTOR, UNDERTOW, WRECKFALL and ZIG SABER](https://github.com/abagames/agentic-gamedev-games) at `f30b52a` | Unseen games for the auto-port campaign | Kenta Cho / ABA Games | MIT | [LICENSE](assets/auto-port/LICENSE) |
+| [Tiny Platformer](https://github.com/jakesgordon/javascript-tiny-platformer) at `50cbd06` | Outside test of `npm run port` | Jake Gordon and contributors | MIT | [LICENSE](assets/port-example/tiny-platformer/LICENSE) |
 
 The Dashy Dango repository has no `LICENSE` file, so GitHub shows no license for it. The authors declare ISC in the `wapm.toml` at the pinned revision and in the [Wasmer package](https://wasmer.io/willguimont/dashy-dango), and that package's cartridge is byte-identical to the one used here.
 
@@ -81,6 +98,7 @@ The Dashy Dango repository has no `LICENSE` file, so GitHub shows no license for
 | [crisp-game-lib](https://github.com/abagames/crisp-game-lib) 1.1.1 | JUJUMP and PAKU PAKU runtime | MIT |
 | [sounds-some-sounds](https://github.com/abagames/sounds-some-sounds) 3.0.0 | JUJUMP and PAKU PAKU audio | MIT |
 | [three.js](https://github.com/mrdoob/three.js) 0.186.1 | RDSTR Stunts rendering | MIT |
+| [FPSMeter](https://github.com/Darsain/fpsmeter) 0.3.1 | Bundled with Tiny Platformer | MIT |
 | [React and React DOM](https://github.com/facebook/react) 19.3.1 | Web interface | MIT |
 
 ### Tools used to build, test and host
