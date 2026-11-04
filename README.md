@@ -14,7 +14,7 @@ Hackathon problem statement: **Push the Frontier**. Models used through the Meta
 
 ## What this is for
 
-Use your own game, an openly licensed one, or one you have permission to work on. Motion Transfer recovers how a move travels, not a game's art, sound or original code, and every game in this repository is credited below under its own license. Don't use it on work you don't have the rights to.
+Motion Transfer is for developers who want a specific feel in a game, without rebuilding it by hand. Use your own game, an openly licensed one, or one you have permission to work on. It recovers how a move travels, not a game's art, sound or original code, and every game in this repository is credited below under its own license. Don't use it on work you don't have the rights to.
 
 ## What it does
 

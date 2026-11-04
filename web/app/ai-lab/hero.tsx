@@ -90,9 +90,9 @@ export function Hero({ playback, savedCount }: { playback: boolean; savedCount: 
           </Afterimage>
         </h1>
         <p className="hero__tagline">
-          <strong>Source code gets lost. Great moves don&apos;t have to be.</strong> Meta&apos;s
-          models recover a move from a compiled game and carry it into new ones, and every result is
-          checked. Every game here is openly licensed and credited.
+          <strong>Love how a move feels in one game? Put it in yours.</strong> Meta&apos;s models
+          recover a move from a compiled game or a gameplay clip and port it into new games, and
+          every result is checked. Every game here is openly licensed and credited.
         </p>
         <div className="hero__actions">
           <a className="btn btn--primary btn--large" href="#stage">
