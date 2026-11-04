@@ -16,12 +16,16 @@ export async function createExperimentWorkbench(session,{saved,persist=async()=>
   for(const [key,ceiling]of Object.entries(EXPERIMENT_LIMITS))if(!Number.isSafeInteger(limits[key])||limits[key]<1||limits[key]>ceiling)throw Error('Invalid experiment limit: '+key);
   const engineSha256=digest((await Promise.all(['workbench.mjs','compare.mjs','schema.mjs','interpreter.mjs'].map(name=>readFile(new URL(name,import.meta.url),'utf8')))).join('\n'));
   let state=saved?structuredClone(saved):{schemaVersion:1,sessionId:session.id,identity:session.identity,engineSha256,requests:[],targets:[],artifacts:[],programs:[],usage:{operations:0,experiments:0,frames:0,captures:0,evidenceBytes:0}};
+  const executionCompatible=state.engineSha256===engineSha256;
+  function assertExecutionCompatible(){assert.ok(executionCompatible,'Experiment engine changed; old evidence remains readable but execution cannot resume');}
   if(saved){
-    assert.equal(state.schemaVersion,1);assert.equal(state.sessionId,session.id);assert.deepEqual(state.identity,session.identity,'Experiment runtime identity mismatch');assert.equal(state.engineSha256,engineSha256,'Experiment engine changed; old evidence remains readable but execution cannot resume');
+    assert.equal(state.schemaVersion,1);assert.equal(state.sessionId,session.id);assert.deepEqual(state.identity,session.identity,'Experiment runtime identity mismatch');
     for(const artifact of state.artifacts)if(digest(JSON.stringify(artifact.payload))!==artifact.id)throw Error('Experiment evidence integrity mismatch');
     for(const program of state.programs??[])if(typeof program.source!=='string'||digest(program.source)!==program.sourceSha256)throw Error('Experiment program source identity mismatch');
-    for(const request of state.requests)if(request.status==='running'){request.status='interrupted';request.error='Execution was interrupted; completed artifacts are retained. No interpreter stack or partial experiment is resumed.';}
-    for(const program of state.programs??[])if(program.status==='running'){program.status='interrupted';program.error='Interpreter stack was not restored. Completed experiment artifacts remain available.';}
+    if(executionCompatible){
+      for(const request of state.requests)if(request.status==='running'){request.status='interrupted';request.error='Execution was interrupted; completed artifacts are retained. No interpreter stack or partial experiment is resumed.';}
+      for(const program of state.programs??[])if(program.status==='running'){program.status='interrupted';program.error='Interpreter stack was not restored. Completed experiment artifacts remain available.';}
+    }
   }
   state.programs??=[];
   function checkpoint(id){const value=session.snapshot().checkpoints.find(item=>item.id===id);if(!value)throw Error('Unknown checkpoint');assert.deepEqual(value.identity,session.identity);return value;}
@@ -155,15 +159,17 @@ export async function createExperimentWorkbench(session,{saved,persist=async()=>
     return{result,images};
   });}
   const api={
+    executionCompatible,assertExecutionCompatible,
     snapshot:()=>structuredClone(state),
     async execute(name,args){
       validateExperimentInput(name,args);
+      if(name!=='read_experiment')assertExecutionCompatible();
       if(name==='run_experiment_program')return runProgram(args);
       if(name==='run_experiment')return runExperiment(args);
       if(name==='capture_experiment')return captureExperiment(args);
       if(name==='read_experiment'){
-        charge();const artifact=artifactById(args.artifactId),payload=artifact.payload;
-        const frames=payload.trace.slice(args.startFrame-1,args.startFrame-1+args.frameCount);await persist();
+        if(executionCompatible)charge();const artifact=artifactById(args.artifactId),payload=artifact.payload;
+        const frames=payload.trace.slice(args.startFrame-1,args.startFrame-1+args.frameCount);if(executionCompatible)await persist();
         return{result:{experimentId:payload.experimentId,artifactRef:{id:artifact.id,sessionId:session.id,bytes:artifact.bytes},initialEditDifference:payload.initialEditDifference,frames,final:payload.final,totalFrames:payload.trace.length,notice:'This is a bounded page of actual observations. Full evidence remains in the artifact.'}};
       }
       if(name==='read_checkpoint'){const result=await readCheckpoint(args);await persist();return{result};}
