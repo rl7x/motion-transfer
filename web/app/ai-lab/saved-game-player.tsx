@@ -165,7 +165,7 @@ function GameFrame({ game, frame }: { game: SavedGame; frame: SavedGameFrame }) 
 }
 
 /**
- * A saved, verified transfer played inside the arcade: the recipient before and after it borrowed
+ * A saved, verified transfer played inside the AI Lab: the recipient before and after it borrowed
  * the recovered dash. Mounted only while open; it makes no model request.
  */
 export function SavedGamePlayer({

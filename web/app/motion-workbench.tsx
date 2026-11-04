@@ -12,19 +12,19 @@ import { MotionGeneration, type MotionJob } from './motion-generation';
 import { LiveMechanicsEvidence } from './live-mechanics-evidence';
 import { HoldButton } from './components/hold-button';
 import { AgeAcknowledgment, AgeProvider } from './components/age-acknowledgment';
-import { Afterimage, useDashPulse } from './arcade/afterimage';
-import { DestinationPicker, type Destination } from './arcade/destination-picker';
-import { DonorPlayer } from './arcade/donor-player';
-import { SavedGamePlayer, type SavedGame } from './arcade/saved-game-player';
-import { GameCabinet } from './arcade/game-cabinet';
-import { Hero, TopBar } from './arcade/hero';
-import { shortTitle, worldUnits, type DashIntent } from './arcade/intent';
-import { Library, useCatalog } from './arcade/library';
-import { MetaChip } from './arcade/meta-chip';
-import { PipelineRibbon } from './arcade/pipeline-ribbon';
-import { PixelSprite } from './arcade/pixel-sprite';
-import { PortedGames, portedCount, portedPlayers } from './arcade/ported-games';
-import { RecoveryPanel } from './arcade/recovery-panel';
+import { Afterimage, useDashPulse } from './ai-lab/afterimage';
+import { DestinationPicker, type Destination } from './ai-lab/destination-picker';
+import { DonorPlayer } from './ai-lab/donor-player';
+import { SavedGamePlayer, type SavedGame } from './ai-lab/saved-game-player';
+import { GameCabinet } from './ai-lab/game-cabinet';
+import { Hero, TopBar } from './ai-lab/hero';
+import { shortTitle, worldUnits, type DashIntent } from './ai-lab/intent';
+import { Library, useCatalog } from './ai-lab/library';
+import { MetaChip } from './ai-lab/meta-chip';
+import { PipelineRibbon } from './ai-lab/pipeline-ribbon';
+import { PixelSprite } from './ai-lab/pixel-sprite';
+import { PortedGames, portedCount, portedPlayers } from './ai-lab/ported-games';
+import { RecoveryPanel } from './ai-lab/recovery-panel';
 
 interface Baseline {
   id: string;
@@ -318,7 +318,7 @@ export function MotionWorkbench() {
       : 'VERIFIED REUSE · NO MODEL REQUEST';
   return (
     <AgeProvider>
-      <main className="motion-workbench arcade">
+      <main className="motion-workbench ai-lab">
         <TopBar playback={playback} />
         <AgeAcknowledgment />
         <Hero playback={playback} savedCount={catalog.loading ? null : catalog.versions.length} />
@@ -655,9 +655,9 @@ export function MotionWorkbench() {
           />
         )}
         <LiveMechanicsEvidence />
-        <footer className="arcade-footer">
+        <footer className="ai-lab-footer">
           <p>
-            <span className="arcade-footer__mark">
+            <span className="ai-lab-footer__mark">
               motion<span>/</span>transfer
             </span>{' '}
             · built on <MetaChip model="wonder" /> <MetaChip /> through the Meta Model API.

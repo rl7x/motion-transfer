@@ -11,9 +11,9 @@ import {
 import { intentLines, statusText, terminalStatus } from './format';
 import { readSession, writeSession } from './session';
 import type { Catalog, CatalogVersion, CreatorSession, RemixJob } from './types';
-import { MetaChip } from '../arcade/meta-chip';
-import { MetaOutputPanel } from '../arcade/meta-output';
-import { PipelineTrack } from '../arcade/pipeline-track';
+import { MetaChip } from '../ai-lab/meta-chip';
+import { MetaOutputPanel } from '../ai-lab/meta-output';
+import { PipelineTrack } from '../ai-lab/pipeline-track';
 
 const EXAMPLES = [
   ['Half as long', 'Make the dash half as long.'],
@@ -252,7 +252,7 @@ export function CreatorPage() {
     !active;
 
   return (
-    <main id="creator" className="arcade creator">
+    <main id="creator" className="ai-lab creator">
       <header className="creator__bar">
         <p className="wordmark">
           motion<span>/</span>transfer

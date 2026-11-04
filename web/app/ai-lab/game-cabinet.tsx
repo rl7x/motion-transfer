@@ -92,7 +92,7 @@ export function DashMeter({
 }
 
 /**
- * The game frame in a portrait arcade bezel, sized to PARALLAXIA's 220×336 canvas.
+ * The game frame in a portrait game bezel, sized to PARALLAXIA's 220×336 canvas.
  * It listens to the frame's 80 ms status samples for the dash meter. In practice mode only
  * `challenge-status` is read, so the two status streams no longer alternate.
  */

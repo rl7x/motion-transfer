@@ -25,7 +25,7 @@ function readDonor(state: DonorState | null): DashReading {
 }
 
 /**
- * The original compiled Dashy Dango cartridge in a modal arcade cabinet, so players can feel the
+ * The original compiled Dashy Dango cartridge in a modal game cabinet, so players can feel the
  * dash at its source before trying it in PARALLAXIA. Mounted only while open; no model request.
  */
 export function DonorPlayer({

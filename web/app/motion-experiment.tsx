@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { linkHref } from './links';
-import { TrajectoryPlot } from './arcade/trajectory-plot';
+import { TrajectoryPlot } from './ai-lab/trajectory-plot';
 
 export interface Checkpoint {
   tick: number;
