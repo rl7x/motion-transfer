@@ -10,5 +10,5 @@ await build({ entryPoints: ['src/hosting/vercel-function.mjs'], outfile: directo
   bundle: true, platform: 'node', target: 'node22', format: 'esm', packages: 'bundle',
   banner: { js: "import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);" } });
 await writeFile(directory + '/.vc-config.json', JSON.stringify({ runtime: 'nodejs22.x', handler: 'index.mjs', launcherType: 'Nodejs', maxDuration: 60 }));
-await writeFile('.vercel/output/config.json', JSON.stringify({ version: 3, routes: [{ src: '/(.*)', dest: '/proxy' }] }));
+await writeFile('.vercel/output/config.json', JSON.stringify({ version: 3, routes: [{ handle: 'filesystem' }, { src: '/(.*)', dest: '/proxy' }] }));
 console.log('Built the Vercel gateway for the persistent app and isolated verifier sandboxes.');

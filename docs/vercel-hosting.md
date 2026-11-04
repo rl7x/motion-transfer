@@ -16,11 +16,19 @@ Nested Docker starts on Vercel but its memory cgroup controls were incompatible 
 
 Persistent Sandbox snapshots retain the application filesystem across stops and resumes. Only the latest application snapshot is retained. A restart marks interrupted jobs failed without repeating inference; completed publications and request keys remain available. The Function retrieves the existing named backend rather than creating a replacement allowance if its data is unavailable.
 
+## When the backend is asleep or paused
+
+The page, its CSS and its JavaScript are static files, so they load without running the Function or waking the Sandbox. Saved versions and playable games are stored beside the Function, so they don't wake it either.
+
+Only the live catalog, generation status and new generations need the Sandbox. If it takes more than 4 seconds to wake, the visitor gets the saved catalog while the wake finishes in the background. If it can't start at all, for example once a Hobby quota is used up, the saved site keeps working and generation shows as unavailable.
+
+A remix that ends without a confirmed bill keeps its whole ceiling held, and the next visitor can still generate. An uncertain charge from anything other than a remix job still stops inference until it's reconciled.
+
 ## Costs and limits
 
 - The project uses the Hobby plan, with no Pro upgrade or paid add-on. Vercel's included quotas apply; exceeding them pauses usage rather than charging Hobby overages. See [Sandbox pricing](https://vercel.com/docs/sandbox/pricing).
-- The public cap is **$5 for the complete job**, including at most one repair. The coordinator reserves the full amount before contacting Meta and settles measured usage afterward. Uncertain charges remain reserved.
-- Each browser session receives two requests; only one job runs at a time. The existing overall $50 definition, allocation limits and historical reservations are retained. Five-dollar envelopes use the reserve category so historical remix charges do not make the full reservation impossible.
+- The public cap is **$0.50 for the complete job**, including at most one repair. The coordinator reserves the full amount before contacting Meta and settles measured usage afterward. Uncertain charges remain reserved.
+- Each browser session receives two requests; only one job runs at a time. The existing overall $50 definition, allocation limits and historical reservations are retained. Older five-dollar envelopes used the reserve category so historical remix charges do not make the full reservation impossible.
 - Meta calls consume API credits. Deployment-time billing showed free credits active and a $0 billed balance. The application ledger is an additional usage bound, not an authoritative provider credit balance.
 - Hobby Sandbox sessions have a maximum duration of 45 minutes. The persistent backend wakes on demand and may have a cold start. Quota exhaustion can make the app unavailable until the quota resets.
 
@@ -37,6 +45,7 @@ The deployment SDK is pinned in `src/hosting/vercel/package.json` with its own l
 ```sh
 npm ci
 npm run build:vercel
+npm run snapshot:site
 npx vercel@65.11.0 deploy --prebuilt --prod
 ```
 

@@ -403,9 +403,7 @@ export function MotionGeneration({
       </form>
       {!enabled && (
         <p className="console__offline-note">
-          Generation is unavailable in this process. Saved play remains available. Start the
-          configured local preview with Docker and Standard Meta credentials to create a new
-          version.
+          Live generation is paused right now. Saved versions and games still play.
         </p>
       )}
       {job && (

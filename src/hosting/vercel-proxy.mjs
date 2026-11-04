@@ -3,6 +3,9 @@ import { timingSafeEqual } from 'node:crypto';
 
 const BODY_LIMIT = 4096;
 const RESPONSE_LIMIT = 4 * 1024 * 1024;
+// These change as people generate, so the running backend answers them when it can.
+const LIVE = new Set(['/api/catalog', '/api/remixes/status']);
+const WAKE_BUDGET_MS = 4000;
 const WRITES = /^\/api\/remixes(?:\/[a-f0-9-]{36}\/cancel)?$/;
 const forwardedHeaders = ['content-type', 'content-disposition', 'content-security-policy', 'x-content-type-options', 'access-control-allow-origin'];
 
@@ -46,8 +49,36 @@ async function forward(request, response, { origin, headers, body, fetchImpl = f
   response.end(bytes);
 }
 
+function sendSaved(request, response, saved, { live = false, paused = false } = {}) {
+  let bytes = saved.bytes;
+  if (paused) bytes = Buffer.from(JSON.stringify({ ...JSON.parse(bytes.toString('utf8')), generationConfigured: false }));
+  response.writeHead(200, { ...saved.headers, 'X-Content-Type-Options': 'nosniff', 'X-Motion-Snapshot': '1',
+    'Cache-Control': live ? 'no-store' : 'public, max-age=3600, s-maxage=31536000' });
+  response.end(request.method === 'HEAD' ? undefined : bytes);
+}
+
+/**
+ * Answers a live read from the backend. If it is still waking after the budget, the saved copy
+ * goes out and the wake carries on. If it can't start at all, generation is reported as paused.
+ */
+async function liveOrSaved(request, response, { saved, getBackend, background, forwardTo }) {
+  let timer;
+  const wake = getBackend();
+  const waited = new Promise(resolve => { timer = setTimeout(resolve, WAKE_BUDGET_MS, null); });
+  try {
+    const origin = await Promise.race([wake, waited]);
+    clearTimeout(timer);
+    if (origin) { await forwardTo(origin); return; }
+    background?.(wake.catch(() => {}));
+    sendSaved(request, response, saved, { live: true });
+  } catch {
+    clearTimeout(timer);
+    sendSaved(request, response, saved, { live: true, paused: true });
+  }
+}
+
 /** The public Function validates browser writes before adding the private sandbox credential. */
-export function createVercelProxy({ getBackend, proxyKey, hosts, fetchImpl = fetch }) {
+export function createVercelProxy({ getBackend, proxyKey, hosts, fetchImpl = fetch, snapshot = null, background = null }) {
   if (typeof proxyKey !== 'string' || proxyKey.length < 32 || !Array.isArray(hosts) || hosts.length === 0) {
     throw Error('Vercel backend configuration is incomplete');
   }
@@ -64,11 +95,14 @@ export function createVercelProxy({ getBackend, proxyKey, hosts, fetchImpl = fet
         fail(response, 403, 'A same-origin JSON remix request is required'); return;
       }
       const body = request.method === 'POST' ? await requestBody(request) : undefined;
-      const origin = await getBackend();
-      await forward(request, response, { origin, body, fetchImpl, headers: {
+      const forwardTo = origin => forward(request, response, { origin, body, fetchImpl, headers: {
         'x-motion-proxy-key': proxyKey, 'x-motion-public-host': host,
         ...(request.method === 'POST' ? { 'content-type': 'application/json', 'x-motion-public-origin': request.headers.origin } : {}),
       } });
+      const saved = request.method === 'POST' ? null : await snapshot?.read(request.url);
+      if (saved && LIVE.has(path)) { await liveOrSaved(request, response, { saved, getBackend, background, forwardTo }); return; }
+      if (saved) { sendSaved(request, response, saved); return; }
+      await forwardTo(await getBackend());
     } catch (error) {
       fail(response, error.status ?? 503, error.status === 413 ? error.message : 'The free backend is starting or temporarily unavailable. Please retry shortly.');
     }

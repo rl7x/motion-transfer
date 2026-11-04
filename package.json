@@ -2,7 +2,7 @@
   "name": "meta-ai-developer-hackathon",
   "version": "0.1.0",
   "private": true,
-  "description": "Local WASM-4 player for game targets",
+  "description": "Recover a move from a compiled game, check it, and port it into new games with Meta's models",
   "scripts": {
     "typecheck": "tsc -p web/tsconfig.json --noEmit",
     "lint": "eslint web/app",
@@ -38,6 +38,7 @@
     "test": "node --test --test-concurrency=1 tests/*.test.mjs",
     "build:frontend": "npm run typecheck && node scripts/build-frontend.mjs",
     "build:vercel": "node scripts/build-vercel.mjs",
+    "snapshot:site": "node scripts/snapshot-site.mjs",
     "build:release": "node scripts/build-release.mjs",
     "verify:release": "node scripts/verify-release.mjs",
     "smoke:hosted": "node scripts/smoke-hosted.mjs",

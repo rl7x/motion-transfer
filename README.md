@@ -4,13 +4,17 @@
 
 **Recover a move from a compiled game, or from a clip of it, then port it into games the model has never seen.**
 
-Muse Wonder rebuilt Dashy Dango's dash from the compiled WebAssembly game. It succeeded in 1 of 3 full sessions at first, and in 2 of 3 fresh sessions after we improved the harness. Muse Spark then wrote the code that connects that dash to a game, and ported it into 7 of 8 eligible games it had never seen. Then we took the binary away: SAM 3.1 tracked a gameplay clip, and Muse Spark Open, an open-weight model, rebuilt the same dash from those measurements. With the final checks, 4 of 6 fresh footage sessions scored 40/40 on the same exam, and the other 2 were refused. It's for game developers who want a mechanic from a game whose source they don't have, and for keeping behavior alive when only the binary survives.
+Muse Wonder rebuilt Dashy Dango's dash from the compiled WebAssembly game. It succeeded in 1 of 3 full sessions at first, and in 2 of 3 fresh sessions after we improved the harness. Muse Spark then wrote the code that connects that dash to a game, and ported it into 7 of 8 eligible games it had never seen. Then we took the binary away: SAM 3.1 tracked a gameplay clip, and Muse Spark Open, an open-weight model, rebuilt the same dash from those measurements. With the final checks, 4 of 6 fresh footage sessions scored 40/40 on the same exam, and the other 2 were refused. It's for developers who lost the source to their own games, and for preservation teams working with games they have the rights to use.
 
 ![A borrowed dash firing in a game Muse Spark ported it into](docs/media/demo.gif)
 
 **[Play it live](https://motion-transfer-rl7x.vercel.app)** · [Architecture](docs/architecture.md) · [Port results](docs/auto-port-results.md)
 
 Hackathon problem statement: **Push the Frontier**. Models used through the Meta Model API: Muse Wonder 1.0, Muse Spark 1.3 and SAM 3.1. Open-weight model, served on Baseten: Muse Spark Open.
+
+## What this is for
+
+Use your own game, an openly licensed one, or one you have permission to work on. Motion Transfer recovers how a move travels, not a game's art, sound or original code, and every game in this repository is credited below under its own license. Don't use it on work you don't have the rights to.
 
 ## What it does
 
