@@ -2,7 +2,8 @@ import {randomBytes} from 'node:crypto';
 import {SUBMIT_MOTION,validateMotionCandidate} from '../component/contract.mjs';
 import {compileMotion,digest} from '../component/build.mjs';
 import {evaluateMotion} from '../evaluator/motion.mjs';
-import {DEVELOPMENT_CASES,MOTION_REGRESSIONS,acceptanceCases} from '../evaluator/cases.mjs';
+import {DEVELOPMENT_CASES,MOTION_REGRESSIONS,RECOVERY_DEVELOPMENT_CASES,acceptanceCases} from '../evaluator/cases.mjs';
+import {developmentFeedback} from './development-feedback.mjs';
 import {recoveryPolicy} from './recovery-protocol.mjs';
 
 export const COMPONENT_TOOLS=[{
@@ -46,9 +47,10 @@ export function createComponentWorkbench(session,{evaluate=evaluateMotion,seed=(
       // do not consume one of the recorded behavioral evaluations.
       await compileMotion(args.source);
       const entry={attempt:state.attempts.length+1,selectionId:selection.id,candidate:submitted,timerFields:args.timerFields,sourceSha256:digest(args.source),candidateId:digest(JSON.stringify({candidate:submitted,timerFields:args.timerFields}))};state.attempts.push(entry);
-      try{entry.development=await evaluate(args.source,args.contract.defaults,[...DEVELOPMENT_CASES,...MOTION_REGRESSIONS],{suite:'development',timerFields:args.timerFields});}
+      const expanded=policy.developmentSuite==='motion-development-v3';
+      try{entry.development=await evaluate(args.source,args.contract.defaults,expanded?RECOVERY_DEVELOPMENT_CASES:[...DEVELOPMENT_CASES,...MOTION_REGRESSIONS],{suite:'development',timerFields:args.timerFields});}
       catch(error){entry.development={passed:false,error:String(error.message).slice(0,1000)};}
-      return{result:{candidateId:entry.candidateId,attempt:entry.attempt,sourceSha256:entry.sourceSha256,development:entry.development,canRevise:!entry.development.passed&&state.attempts.length<policy.maxDevelopmentAttempts,acceptanceRun:false}};
+      return{result:{candidateId:entry.candidateId,attempt:entry.attempt,sourceSha256:entry.sourceSha256,development:expanded?developmentFeedback(entry.development):entry.development,canRevise:!entry.development.passed&&state.attempts.length<policy.maxDevelopmentAttempts,acceptanceRun:false}};
     }
     const entry=candidate(args.candidateId);
     if(name==='freeze_component'){

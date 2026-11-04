@@ -1,0 +1,62 @@
+[
+  {
+    "label": "premature-activation",
+    "origin": "Historical Muse Wonder output; regression fixture only, never supplied to live synthesis.",
+    "trial": 1,
+    "attempt": 4,
+    "protocolId": "da119ff83d909d5154373a1c16002cb4dbb02d2176e618dd2b259cd446841080",
+    "candidateId": "88caae7cf0e2aef0f1c5b223a6a51f06347dc41471a81a6ad999bf110c5a61c0",
+    "sourceSha256": "a2ba98f7b9ebd854e7a84a2423cad466a25dc176f6280b11de6ef2bf4fc75369",
+    "source": "type Config = { walkingSpeed?: number; dashDistance?: number; cooldownTicks?: number; initialCooldownTicks?: number };\ntype Input = { buttons?: number; sourceBodyWidth?: number };\ntype State = { cooldown: number; remaining: number; dashDirX: number; dashDirY: number; facingX: number; facingY: number; prevButtons: number; [key: string]: unknown };\nconst DEFAULTS = { walkingSpeed: 2, dashDistance: 60, cooldownTicks: 25, initialCooldownTicks: 10 };\nconst DASH_FRAMES = 8;\nfunction cfg(config?: Config) { const c = config || {}; return { walkingSpeed: Number.isFinite(c.walkingSpeed as number) ? Number(c.walkingSpeed) : DEFAULTS.walkingSpeed, dashDistance: Number.isFinite(c.dashDistance as number) ? Number(c.dashDistance) : DEFAULTS.dashDistance, cooldownTicks: Number.isFinite(c.cooldownTicks as number) ? Math.trunc(Number(c.cooldownTicks)) : DEFAULTS.cooldownTicks, initialCooldownTicks: Number.isFinite(c.initialCooldownTicks as number) ? Math.trunc(Number(c.initialCooldownTicks)) : DEFAULTS.initialCooldownTicks }; }\nfunction intOr(v: unknown, d: number): number { const n = Number(v); return Number.isFinite(n) ? Math.trunc(n) : d; }\nfunction numOr(v: unknown, d: number): number { const n = Number(v); return Number.isFinite(n) ? n : d; }\nexport function init(config?: Config): State { const c = cfg(config); return { cooldown: c.initialCooldownTicks, remaining: 0, dashDirX: 1, dashDirY: 0, facingX: 1, facingY: 0, prevButtons: 0 }; }\nexport function step(state: State, input: Input, config?: Config) {\n  const c = cfg(config);\n  const s: State = { ...(state || ({} as State)), cooldown: Math.max(0, intOr(state && state.cooldown, c.initialCooldownTicks)), remaining: Math.max(0, intOr(state && state.remaining, 0)), dashDirX: numOr(state && state.dashDirX, 1), dashDirY: numOr(state && state.dashDirY, 0), facingX: numOr(state && state.facingX, 1), facingY: numOr(state && state.facingY, 0), prevButtons: intOr(state && state.prevButtons, 0) };\n  const buttons = intOr(input && input.buttons, 0) & 255;\n  const ix = ((buttons & 32) ? 1 : 0) - ((buttons & 16) ? 1 : 0);\n  const iy = ((buttons & 128) ? 1 : 0) - ((buttons & 64) ? 1 : 0);\n  const len = Math.hypot(ix, iy);\n  const ux = len > 0 ? ix / len : 0; const uy = len > 0 ? iy / len : 0;\n  const dashSpeed = c.dashDistance / DASH_FRAMES;\n  const events: string[] = []; let x = 0; let y = 0; let ownsMotion = false;\n  const xHeld = (buttons & 1) !== 0;\n  if (s.remaining > 0) {\n    x = s.dashDirX * dashSpeed; y = s.dashDirY * dashSpeed; ownsMotion = true;\n    s.remaining -= 1; if (s.remaining === 0) events.push(\"dash-end\");\n  } else {\n    if (s.cooldown > 0) s.cooldown -= 1;\n    if (xHeld && s.cooldown === 0) {\n      let dx = ux; let dy = uy;\n      if (len === 0) { dx = 1; dy = 0; }\n      s.dashDirX = dx; s.dashDirY = dy;\n      s.cooldown = c.cooldownTicks; s.remaining = DASH_FRAMES - 1;\n      x = dx * dashSpeed; y = dy * dashSpeed; ownsMotion = true; events.push(\"dash-start\");\n    } else {\n      x = ux * c.walkingSpeed; y = uy * c.walkingSpeed;\n    }\n  }\n  s.prevButtons = buttons;\n  return { state: s, output: { ownsMotion, displacement: { x, y }, events } };\n}\n",
+    "defaults": {
+      "cooldownTicks": 25,
+      "dashDistance": 60,
+      "initialCooldownTicks": 10,
+      "walkingSpeed": 2
+    },
+    "timerFields": {
+      "cooldown": "cooldown",
+      "remaining": "remaining"
+    }
+  },
+  {
+    "label": "edge-trigger-oscillation",
+    "origin": "Historical Muse Wonder output; regression fixture only, never supplied to live synthesis.",
+    "trial": 1,
+    "attempt": 5,
+    "protocolId": "da119ff83d909d5154373a1c16002cb4dbb02d2176e618dd2b259cd446841080",
+    "candidateId": "c3b65705478df9622920e7a6e449ddc2f7f1612250e931ec0d8b75ee20dfd899",
+    "sourceSha256": "c64d9ae043c066019ace2b91b100d655d7edcbef9074ce5f0c9f4e297f6a49ff",
+    "source": "type Config = { walkingSpeed?: number; dashDistance?: number; cooldownTicks?: number; initialCooldownTicks?: number };\ntype Input = { buttons?: number; sourceBodyWidth?: number };\ntype State = { cooldown: number; remaining: number; dashDirX: number; dashDirY: number; facingX: number; facingY: number; prevButtons: number; [key: string]: unknown };\nconst DEFAULTS = { walkingSpeed: 2, dashDistance: 60, cooldownTicks: 25, initialCooldownTicks: 10 };\nconst DASH_FRAMES = 8;\nfunction cfg(config?: Config) { const c = config || {}; return { walkingSpeed: Number.isFinite(c.walkingSpeed as number) ? Number(c.walkingSpeed) : DEFAULTS.walkingSpeed, dashDistance: Number.isFinite(c.dashDistance as number) ? Number(c.dashDistance) : DEFAULTS.dashDistance, cooldownTicks: Number.isFinite(c.cooldownTicks as number) ? Math.trunc(Number(c.cooldownTicks)) : DEFAULTS.cooldownTicks, initialCooldownTicks: Number.isFinite(c.initialCooldownTicks as number) ? Math.trunc(Number(c.initialCooldownTicks)) : DEFAULTS.initialCooldownTicks }; }\nfunction intOr(v: unknown, d: number): number { const n = Number(v); return Number.isFinite(n) ? Math.trunc(n) : d; }\nfunction numOr(v: unknown, d: number): number { const n = Number(v); return Number.isFinite(n) ? n : d; }\nexport function init(config?: Config): State { const c = cfg(config); return { cooldown: c.initialCooldownTicks, remaining: 0, dashDirX: 1, dashDirY: 0, facingX: 1, facingY: 0, prevButtons: 0 }; }\nexport function step(state: State, input: Input, config?: Config) {\n  const c = cfg(config);\n  const s: State = { ...(state || ({} as State)), cooldown: Math.max(0, intOr(state && state.cooldown, c.initialCooldownTicks)), remaining: Math.max(0, intOr(state && state.remaining, 0)), dashDirX: numOr(state && state.dashDirX, 1), dashDirY: numOr(state && state.dashDirY, 0), facingX: numOr(state && state.facingX, 1), facingY: numOr(state && state.facingY, 0), prevButtons: intOr(state && state.prevButtons, 0) };\n  const buttons = intOr(input && input.buttons, 0) & 255;\n  const ix = ((buttons & 32) ? 1 : 0) - ((buttons & 16) ? 1 : 0);\n  const iy = ((buttons & 128) ? 1 : 0) - ((buttons & 64) ? 1 : 0);\n  const len = Math.hypot(ix, iy);\n  const ux = len > 0 ? ix / len : 0; const uy = len > 0 ? iy / len : 0;\n  const dashSpeed = c.dashDistance / DASH_FRAMES;\n  const events: string[] = []; let x = 0; let y = 0; let ownsMotion = false;\n  const xHeld = (buttons & 1) !== 0;\n  const xPressed = xHeld && ((s.prevButtons & 1) === 0);\n  if (s.remaining > 0) {\n    x = s.dashDirX * dashSpeed; y = s.dashDirY * dashSpeed; ownsMotion = true;\n    s.remaining -= 1; if (s.remaining === 0) events.push(\"dash-end\");\n  } else {\n    if (s.cooldown > 0) s.cooldown -= 1;\n    if (xPressed && s.cooldown === 0) {\n      let dx = ux; let dy = uy;\n      if (len === 0) { dx = 1; dy = 0; }\n      s.dashDirX = dx; s.dashDirY = dy;\n      s.cooldown = c.cooldownTicks; s.remaining = DASH_FRAMES - 1;\n      x = dx * dashSpeed; y = dy * dashSpeed; ownsMotion = true; events.push(\"dash-start\");\n    } else {\n      x = ux * c.walkingSpeed; y = uy * c.walkingSpeed;\n    }\n  }\n  s.prevButtons = buttons;\n  return { state: s, output: { ownsMotion, displacement: { x, y }, events } };\n}\n",
+    "defaults": {
+      "cooldownTicks": 25,
+      "dashDistance": 60,
+      "initialCooldownTicks": 10,
+      "walkingSpeed": 2
+    },
+    "timerFields": {
+      "cooldown": "cooldown",
+      "remaining": "remaining"
+    }
+  },
+  {
+    "label": "walking-facing-assumption",
+    "origin": "Historical Muse Wonder output; regression fixture only, never supplied to live synthesis.",
+    "trial": 2,
+    "attempt": 2,
+    "protocolId": "da119ff83d909d5154373a1c16002cb4dbb02d2176e618dd2b259cd446841080",
+    "candidateId": "57083f411a65be649ecc7c685e1510c92bddf39bae7b1a40a1a1e0c783d95b03",
+    "sourceSha256": "12aae08e10646d5e70d2234d00291fcf05034f022cd27ba302c05fed16b85c09",
+    "source": "export function init(config) {\n  const c = config || {};\n  return {\n    cooldown: (c.initialCooldownTicks != null ? c.initialCooldownTicks : 10) | 0,\n    remaining: 0,\n    dirX: 0,\n    dirY: 0,\n    faceX: 1,\n    faceY: 0,\n    prevButtons: 0\n  };\n}\n\nexport function step(state, input, config) {\n  const c = config || {};\n  const walk = c.walkingSpeed != null ? c.walkingSpeed : 2;\n  const dashDistance = c.dashDistance != null ? c.dashDistance : 60;\n  const cooldownTicks = c.cooldownTicks != null ? c.cooldownTicks : 25;\n  const buttons = (input && input.buttons) ? input.buttons | 0 : 0;\n  const s = {\n    cooldown: state && state.cooldown != null ? state.cooldown | 0 : 0,\n    remaining: state && state.remaining != null ? state.remaining | 0 : 0,\n    dirX: state && state.dirX ? state.dirX : 0,\n    dirY: state && state.dirY ? state.dirY : 0,\n    faceX: state && state.faceX != null ? state.faceX : 1,\n    faceY: state && state.faceY != null ? state.faceY : 0,\n    prevButtons: state && state.prevButtons ? state.prevButtons | 0 : 0\n  };\n  const events = [];\n  let dx = 0;\n  let dy = 0;\n  let ownsMotion = false;\n  const ix = ((buttons & 32) ? 1 : 0) - ((buttons & 16) ? 1 : 0);\n  const iy = ((buttons & 128) ? 1 : 0) - ((buttons & 64) ? 1 : 0);\n  const perFrame = dashDistance / 8;\n\n  if (s.remaining > 0) {\n    dx = s.dirX * perFrame;\n    dy = s.dirY * perFrame;\n    ownsMotion = true;\n    s.remaining -= 1;\n    if (s.remaining === 0) events.push(\"dash-end\");\n  } else if ((buttons & 1) !== 0 && s.cooldown === 0) {\n    let ux = ix;\n    let uy = iy;\n    if (ux === 0 && uy === 0) { ux = s.faceX; uy = s.faceY; }\n    const len = Math.sqrt(ux * ux + uy * uy) || 1;\n    s.dirX = ux / len;\n    s.dirY = uy / len;\n    s.cooldown = cooldownTicks | 0;\n    dx = s.dirX * perFrame;\n    dy = s.dirY * perFrame;\n    ownsMotion = true;\n    s.remaining = 7;\n    events.push(\"dash-start\");\n  } else {\n    if (ix !== 0 || iy !== 0) {\n      const len = Math.sqrt(ix * ix + iy * iy);\n      dx = ix / len * walk;\n      dy = iy / len * walk;\n      s.faceX = ix;\n      s.faceY = iy;\n    }\n    if (s.cooldown > 0) s.cooldown -= 1;\n  }\n  s.prevButtons = buttons;\n  return { state: s, output: { ownsMotion: ownsMotion, displacement: { x: dx, y: dy }, events: events } };\n}\n",
+    "defaults": {
+      "cooldownTicks": 25,
+      "dashDistance": 60,
+      "initialCooldownTicks": 10,
+      "walkingSpeed": 2
+    },
+    "timerFields": {
+      "cooldown": "cooldown",
+      "remaining": "remaining"
+    }
+  }
+]

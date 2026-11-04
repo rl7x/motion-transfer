@@ -3,7 +3,8 @@ import {digest} from '../component/build.mjs';
 
 // Reassemble a separate analysis copy with store callbacks. Original function
 // identities below refer to the pre-instrumentation WAT, never shifted indices.
-export async function instrumentMemoryWrites(bytes,inspection){
+export async function instrumentMemoryWrites(bytes,inspection,range){
+  if(range&&(!Number.isSafeInteger(range.address)||range.address<0||!Number.isSafeInteger(range.byteLength)||range.byteLength<1||range.address+range.byteLength>65536))throw Error('Invalid writer trace range');
   const {lines,functions}=inspection,sites=[],unsupported=[];
   const owners=new Map();
   for(const fn of functions.filter(fn=>!fn.imported))for(let index=fn.startLine-1;index<fn.startLine-1+fn.lineCount;index++)owners.set(index,fn);
@@ -21,7 +22,15 @@ export async function instrumentMemoryWrites(bytes,inspection){
     const width=store[3]?Number(store[3])/8:Number(store[2].slice(1))/8,offset=Number(line.match(/\boffset=(\d+)/)?.[1]??0),functionLine=index-fn.startLine+2;
     sites.push({functionIndex:fn.index,functionLine,instruction:store[1],staticOffset:offset,width});
     const closing=line.match(/\)+\s*$/)?.[0]??'';
-    output.push(`    local.set $analysis_${store[2]}`,'    local.tee $analysis_address',`    local.get $analysis_${store[2]}`,line.slice(0,line.length-closing.length),'    local.get $analysis_address',`    i32.const ${offset}`,'    i32.add',`    i32.const ${width}`,`    i32.const ${fn.index}`,`    i32.const ${functionLine}`,'    call $analysis_write'+closing);
+    output.push(`    local.set $analysis_${store[2]}`,'    local.tee $analysis_address',`    local.get $analysis_${store[2]}`,line.slice(0,line.length-closing.length));
+    // Filter inside WASM so rendering and unrelated stores do not consume the
+    // selected field's callback budget, including while restoring a checkpoint.
+    if(range)output.push('    local.get $analysis_address',`    i32.const ${offset}`,'    i32.add',
+      `    i32.const ${range.address+range.byteLength}`,'    i32.lt_u',
+      '    local.get $analysis_address',`    i32.const ${offset+width}`,'    i32.add',
+      `    i32.const ${range.address}`,'    i32.gt_u','    i32.and','    if');
+    output.push('    local.get $analysis_address',`    i32.const ${offset}`,'    i32.add',`    i32.const ${width}`,`    i32.const ${fn.index}`,`    i32.const ${functionLine}`,'    call $analysis_write'+(range?'':closing));
+    if(range)output.push('    end'+closing);
   }
   if(!imported)throw Error('No defined functions are available for instrumentation');
   const wabt=await wabtFactory(),module=wabt.parseWat('analysis-copy.wat',output.join('\n'));
@@ -33,10 +42,11 @@ export async function instrumentMemoryWrites(bytes,inspection){
 }
 
 export async function traceMemoryWriters(session,inspection,bytes,args){
-  const copy=await instrumentMemoryWrites(bytes,inspection);let recording=false,callbacks=0,matchingWrites=0;const hits=[];
+  const copy=await instrumentMemoryWrites(bytes,inspection,args);let recording=false,callbacks=0,matchingWrites=0;const hits=[];
   const onMemoryWrite=hit=>{
+    if(!recording)return;
     if(++callbacks>250000)throw Error('Writer trace callback limit reached');
-    if(!recording||hit.address>=args.address+args.byteLength||hit.address+hit.width<=args.address)return;
+    if(hit.address>=args.address+args.byteLength||hit.address+hit.width<=args.address)return;
     matchingWrites++;if(hits.length<64)hits.push(hit);
   };
   const original=await session.reconstructCheckpoint(args.checkpointId),analysis=await session.reconstructCheckpoint(args.checkpointId,{bytes:copy.bytes,onMemoryWrite});

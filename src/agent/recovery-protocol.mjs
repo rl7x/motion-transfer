@@ -27,7 +27,7 @@ const modelCeilings = Object.freeze({
 
 /** A new identity is required whenever any recorded recovery control changes. */
 export function createRecoveryProtocol({
-  name = 'motion-recovery-v2', model = 'muse-spark-1.3-contributor',
+  name = 'motion-recovery-v3', model = 'muse-spark-1.3-contributor',
   maxCostUsd = modelCeilings[model], sourceHashes = {},
 } = {}) {
   if (!Object.hasOwn(modelCeilings, model) || !Object.hasOwn(PRICES, model)) throw Error('Unsupported recovery model');
@@ -44,6 +44,9 @@ export function createRecoveryProtocol({
     pricingPerMillionTokens: { ...PRICES[model] },
     maxDevelopmentAttempts: 5, maxSelections: 3, developmentRequestReserve: 14,
     requestTimeoutMs: 120_000,
+    ...(name === 'motion-recovery-v3' ? { development: {
+      suite: 'motion-development-v3', caseCount: 32, feedback: 'transition-windows-v1',
+    } } : {}),
     acceptance: { generator: 'acceptanceCases-v1', caseCount: 20, seedPolicy: 'generate-after-freeze-once' },
     limits: { maxModelCalls: 32, maxToolCalls: 48, maxInputTokens: 32_000,
       maxOutputTokens: 12_000, maxCostUsd, timeoutMs: 720_000 },
@@ -70,6 +73,7 @@ export function recoveryPolicy(protocol) {
   const verified = validateRecoveryProtocol(protocol);
   return { maxDevelopmentAttempts: verified.maxDevelopmentAttempts,
     maxSelections: verified.maxSelections, developmentRequestReserve: verified.developmentRequestReserve,
+    ...(verified.development ? { developmentSuite: verified.development.suite } : {}),
     acceptanceCaseCount: verified.acceptance.caseCount };
 }
 

@@ -1,8 +1,11 @@
 import { discoveryReplay } from './tool-discovery.mjs';
+import { developmentHistory } from './development-feedback.mjs';
 
 const pick = (object, keys) => Object.fromEntries(keys.filter(key => object?.[key] !== undefined).map(key => [key, object[key]]));
 function development(report, retainFailures) {
   if (!report) return report;
+  if (report.observedCases !== undefined) return retainFailures ? report
+    : pick(report, ['passed', 'error', 'suite', 'sourceSha256', 'observedCases', 'failedCases']);
   return { ...pick(report, ['passed', 'error', 'suite', 'sourceSha256', 'javascriptSha256']),
     observedCases: report.results?.length ?? 0, failedCases: report.results?.filter(result => !result.passed).length ?? 0,
     ...(retainFailures ? { firstFailures: report.results?.filter(result => !result.passed) ?? [] } : {}),
@@ -73,6 +76,7 @@ export function recoveryEvidenceHistory(report, capture, { includeDiscovery = tr
     annotations: session.annotations, findings: session.findings,
     latestDevelopmentCandidate: pick(session.recovery?.attempts.at(-1),
       ['attempt', 'candidateId', 'candidate', 'timerFields', 'selectionId', 'sourceSha256', 'frozenAt']),
+    ...(session.recovery?.protocol?.development ? { developmentHistory: developmentHistory(session.recovery.attempts) } : {}),
     frozenCandidateId: session.recovery?.frozenCandidateId,
     experimentPrograms: session.experimentWorkbench.programs.map(program => ({
       ...pick(program, ['id', 'sourceSha256', 'status', 'error', 'artifactId']),

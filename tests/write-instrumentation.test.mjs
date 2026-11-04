@@ -26,6 +26,12 @@ test('analysis-copy callbacks preserve direct/indirect calls, store types and ef
   assert.equal(hits[0].address,8200);assert.equal(hits[0].width,4);assert.equal(hits[0].functionIndex,0);assert.equal(hits[0].frame,1);
   assert.deepEqual(hits.slice(0,5).map(hit=>hit.width),[4,8,4,8,1]);
   assert.notEqual(copy.manifest.analysisSha256,copy.manifest.originalSha256);
+  for(const [address,expected] of [[8202,[8200]],[8204,[]],[8215,[8208]]]){
+    const filtered=await instrumentMemoryWrites(bytes,await createWasmInspection(bytes),{address,byteLength:1}),selected=[];
+    const runtime=await createReplayRuntime(filtered.bytes,{onMemoryWrite:hit=>selected.push(hit.address)});
+    assert.deepEqual(runtime.step(0),(await createReplayRuntime(bytes)).step(0));
+    assert.deepEqual(selected,expected,'Range filtering includes overlapping stores and excludes adjacent stores');
+  }
 });
 
 test('a selected donor timer range reports actual writer functions with matching original behavior',async()=>{
@@ -39,4 +45,17 @@ test('a selected donor timer range reports actual writer functions with matching
   assert.ok(result.matchingWrites>0);assert.ok(result.hits.every(hit=>Number.isInteger(hit.functionIndex)&&hit.functionLine>0));
   assert.match(result.manifest.scope,/No pausing watchpoints/);
   assert.equal(session.snapshot().branches[0].verification.frame,2);
+});
+
+test('writer attribution survives the longer checkpoint and trace that exhausted both Wonder sessions',async()=>{
+  const {bytes}=await loadTarget(),session=await createInvestigationSession(bytes);
+  await session.execute('session_advance',{branchId:'main',hypothesis:'Reproduce the failed Wonder setup.',watches:[],steps:[{buttons:1,frames:2,checkpoint:'start'},{buttons:0,frames:30,checkpoint:'ready'}]});
+  const checkpointId=(await session.execute('checkpoint_state',{branchId:'main',label:'long writer trace'})).result.checkpointId;
+  const runtime=await session.reconstructCheckpoint(checkpointId),address=observeDonorMotion(runtime).pointers.dash+42;
+  const result=await traceMemoryWriters(session,await createWasmInspection(bytes),bytes,{checkpointId,address,byteLength:4,steps:[{buttons:33,frames:120,checkpoint:'held'}]});
+  assert.equal(result.behavioralComparison.passed,true);
+  assert.equal(result.behavioralComparison.framesCompared,120);
+  assert.ok(result.matchingWrites>0);
+  assert.ok(result.hits.every(hit=>hit.frame>32&&hit.address<address+4&&hit.address+hit.width>address));
+  assert.equal(session.snapshot().branches[0].verification.frame,32);
 });

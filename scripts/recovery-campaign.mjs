@@ -10,11 +10,13 @@ export async function main(args = process.argv.slice(2)) {
   const { values } = parseArgs({ args, options: {
     development: { type: 'boolean' }, out: { type: 'string' }, 'phase-ledger': { type: 'string' },
     'development-report': { type: 'string' }, model: { type: 'string' }, 'env-file': { type: 'string' }, help: { type: 'boolean' },
+    protocol: { type: 'string' }, 'max-cost-usd': { type: 'string' },
   } });
   if (values.help) {
     console.log('node scripts/recovery-campaign.mjs --development --out <directory> --phase-ledger <existing-directory> [--model <id>] [--env-file <path>]');
     console.log('Frozen campaign: omit --development and pass --development-report <accepted-development-directory>. Ten predeclared Contributor trials, one at a time; a started trial is never automatically repeated.');
     console.log('This command makes paid Meta calls. It requires the existing additional-spend ledger and preserves all historical ledgers.');
+    console.log('New runs default to motion-recovery-v3. --protocol motion-recovery-v2 retains the earlier development suite; --max-cost-usd <amount> can lower the per-trial model ceiling. Both controls are frozen before generation.');
     return;
   }
   if (!values.out || !values['phase-ledger']) throw Error('--out and --phase-ledger are required');
@@ -30,6 +32,7 @@ export async function main(args = process.argv.slice(2)) {
   try {
     const campaign = await runRecoveryCampaign({ directory: resolve(values.out), phaseBudget, apiKey,
       development: Boolean(values.development), developmentReport: values['development-report'], model: values.model,
+      protocolName: values.protocol, maxCostUsd: values['max-cost-usd'] === undefined ? undefined : Number(values['max-cost-usd']),
       signal: controller.signal, onProgress: console.log });
     console.log(JSON.stringify({ id: campaign.definition.id, status: campaign.status, summary: campaign.summary }));
   } finally { for (const name of ['SIGINT', 'SIGTERM']) process.removeListener(name, stop); }
