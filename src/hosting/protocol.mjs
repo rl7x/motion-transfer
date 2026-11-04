@@ -2,7 +2,7 @@ import { expandInputs, validateScenario } from '../parallaxia/replay.mjs';
 import { JOB_LIMIT, SOURCE_LIMIT, STDOUT_LIMIT } from './constants.mjs';
 
 const OPERATIONS = new Set([
-  'verify-native', 'verify-browser', 'verify-checkpoint', 'verify-experiment', 'probe-egress', 'probe-env', 'probe-write', 'probe-spin', 'probe-memory',
+  'verify-native', 'verify-browser', 'verify-checkpoint', 'verify-experiment', 'auto-port-verify', 'probe-egress', 'probe-env', 'probe-write', 'probe-spin', 'probe-memory',
 ]);
 const VERIFY = new Set(['verify-native', 'verify-browser', 'verify-checkpoint', 'verify-experiment']);
 const PROBES = new Set(['probe-egress', 'probe-env', 'probe-write', 'probe-spin', 'probe-memory']);
@@ -18,11 +18,26 @@ function intentOk(intent) {
     && ['facing', 'opposite'].includes(intent.direction);
 }
 
+/** One generated port for one pinned game. The worker applies its own capability gate. */
+function parseAutoPortJob(value) {
+  for (const key of Object.keys(value)) if (!['operation', 'gameId', 'patches', 'unitsPerSourcePixel', 'componentId'].includes(key)) throw Error('Worker job has an unexpected field');
+  if (typeof value.gameId !== 'string' || !/^[a-z][a-z-]{2,24}$/.test(value.gameId)) throw Error('Unknown auto-port game');
+  if (!Number.isFinite(value.unitsPerSourcePixel) || value.unitsPerSourcePixel <= 0) throw Error('Invalid auto-port scale');
+  if (!hexId.test(value.componentId)) throw Error('Worker job component id is invalid');
+  if (!Array.isArray(value.patches) || value.patches.length > 8) throw Error('Invalid auto-port patches');
+  const patches = value.patches.map(patch => {
+    if (typeof patch?.anchor !== 'string' || typeof patch?.replacement !== 'string') throw Error('Invalid auto-port patches');
+    return { anchor: patch.anchor, replacement: patch.replacement };
+  });
+  return { operation: value.operation, gameId: value.gameId, patches, unitsPerSourcePixel: value.unitsPerSourcePixel, componentId: value.componentId };
+}
+
 /** Typed worker jobs. Anything that could choose a command, image, or environment is rejected. */
 export function parseJob(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw Error('Invalid worker job');
   for (const key of FORBIDDEN) if (Object.hasOwn(value, key)) throw Error('Arbitrary command is not a hosting operation');
   if (!OPERATIONS.has(value.operation)) throw Error('Unknown hosting operation');
+  if (value.operation === 'auto-port-verify') return parseAutoPortJob(value);
   const experiment = ['verify-checkpoint','verify-experiment'].includes(value.operation);
   const allowed = VERIFY.has(value.operation) ? ['operation', 'source', 'intent', 'componentId', 'recipientId', 'ruleSource', ...(experiment ? ['checkpoint','scenario','parentSource','parentIntent','interventionTick','parentRuleSource'] : [])] : ['operation'];
   for (const key of Object.keys(value)) if (!allowed.includes(key)) throw Error('Worker job has an unexpected field');

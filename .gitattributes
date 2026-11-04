@@ -9,3 +9,6 @@ assets/recipients/*/upstream/** linguist-vendored
 # Keep recovered component/adapter source visible in language stats and diffs.
 assets/transfers/roadster/**/*.html linguist-generated
 assets/benchmark/remix-recordings/**/*.html linguist-generated
+
+# The outside game used to test the port command keeps its upstream bytes.
+assets/port-example/tiny-platformer/** -text linguist-vendored

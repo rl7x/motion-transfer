@@ -9,13 +9,13 @@ const entry = join(here, '../web/app/creator/main.tsx');
 const cssPath = join(here, '../web/app/creator/creator.css');
 const sharedCssPath = join(here, '../web/style.css');
 
-/** The shared Afterimage Arcade block from the site stylesheet, so both pages use one design. */
-async function arcadeCss() {
+/** The shared AI Lab block from the site stylesheet, so both pages use one design. */
+async function aiLabCss() {
   const shared = await readFile(sharedCssPath, 'utf8');
-  const start = shared.indexOf('/* arcade:start */');
-  const end = shared.indexOf('/* arcade:end */');
-  if (start === -1 || end === -1) throw Error('The shared arcade stylesheet block is missing');
-  return shared.slice(start, end + '/* arcade:end */'.length);
+  const start = shared.indexOf('/* ai-lab:start */');
+  const end = shared.indexOf('/* ai-lab:end */');
+  if (start === -1 || end === -1) throw Error('The shared AI Lab stylesheet block is missing');
+  return shared.slice(start, end + '/* ai-lab:end */'.length);
 }
 const tsconfig = join(here, '../web/tsconfig.json');
 
@@ -25,7 +25,7 @@ const tsconfig = join(here, '../web/tsconfig.json');
  * execute the script, and the script does not evaluate model output.
  */
 export async function buildCreatorPage() {
-  const css = `${await arcadeCss()}\n${await readFile(cssPath, 'utf8')}`;
+  const css = `${await aiLabCss()}\n${await readFile(cssPath, 'utf8')}`;
   const result = await build({
     entryPoints: [entry],
     bundle: true,

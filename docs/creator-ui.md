@@ -6,7 +6,7 @@ The page does not claim a fresh recovery, invent a public hostname, or show sour
 
 ## Build
 
-`scripts/build-creator.mjs` exports `buildCreatorPage()`. It uses esbuild on `web/app/creator/main.tsx` and returns one HTML document with the CSS and JavaScript inlined. The CSS is the shared Afterimage Arcade block from `web/style.css` followed by `creator.css`, so the coordinator image copies `web/style.css` into its build stage. A job's `events` drive the shared pipeline track, and a published version can open its saved Meta response and checks. The coordinator should send that document as `text/html`. It should not evaluate the script.
+`scripts/build-creator.mjs` exports `buildCreatorPage()`. It uses esbuild on `web/app/creator/main.tsx` and returns one HTML document with the CSS and JavaScript inlined. The CSS is the shared AI Lab block from `web/style.css` followed by `creator.css`, so the coordinator image copies `web/style.css` into its build stage. A job's `events` drive the shared pipeline track, and a published version can open its saved Meta response and checks. The coordinator should send that document as `text/html`. It should not evaluate the script.
 
 ```sh
 node scripts/build-creator.mjs [output-directory]

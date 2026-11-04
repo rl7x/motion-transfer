@@ -264,12 +264,12 @@ export function ChallengePlayer() {
         <p className="eyebrow">THE MOVE COMES FROM ANOTHER GAME</p>
         <h3>Dashy Dango → RDSTR Stunts</h3>
         <p>
-          A dash recovered from compiled WASM-4 bytecode becomes a 60-pixel horizontal phase-dash in
-          Kenta Cho&apos;s bullet-hell shooter.
+          A dash recovered from compiled WASM-4 bytecode becomes an air dash in sebayaki&apos;s
+          stunt-driving game.
         </p>
         <p>
-          The green safe zone is our challenge. RDSTR Stunts&apos;s ship, raster renderer, enemy
-          formations, barrages and NES chiptune synth are upstream work by Kenta Cho (ABA Games).
+          The green safe zone is our challenge. RDSTR Stunts&apos;s car, renderer, track, stunt
+          physics and audio are upstream work by sebayaki.
         </p>
         <p>
           <a href={linkHref('/donor/play')} target="_blank" rel="noreferrer">

@@ -5,12 +5,12 @@ import { ExperimentResults, type ExperimentReceipt } from './motion-experiment';
 import { readSession, writeSession } from './creator/session';
 import type { PendingRemix } from './creator/types';
 import { useAgeAcknowledgment } from './components/age-acknowledgment';
-import { Celebrate } from './arcade/celebrate';
-import { diffIntent, type DashIntent } from './arcade/intent';
-import { MetaChip } from './arcade/meta-chip';
-import { MetaOutputPanel, attemptsOf, checksOf, useArtifactEvidence } from './arcade/meta-output';
-import { PipelineTrack, type JobEvent } from './arcade/pipeline-track';
-import { PixelSprite } from './arcade/pixel-sprite';
+import { Celebrate } from './ai-lab/celebrate';
+import { diffIntent, type DashIntent } from './ai-lab/intent';
+import { MetaChip } from './ai-lab/meta-chip';
+import { MetaOutputPanel, attemptsOf, checksOf, useArtifactEvidence } from './ai-lab/meta-output';
+import { PipelineTrack, type JobEvent } from './ai-lab/pipeline-track';
+import { PixelSprite } from './ai-lab/pixel-sprite';
 
 export interface MotionJob {
   id: string;
@@ -73,7 +73,7 @@ function ResultCard({
       <h3>{job.summary ?? 'New version ready'}</h3>
       {last?.message ? (
         <blockquote className="result__quote">
-          <PixelSprite name="spark" size={36} mood="hop" />
+          <PixelSprite name="spark" size={36} mood="cheer" />
           <span>
             “{last.message}” <cite>— Muse Spark</cite>
           </span>

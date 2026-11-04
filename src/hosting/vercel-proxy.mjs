@@ -4,7 +4,7 @@ import { timingSafeEqual } from 'node:crypto';
 const BODY_LIMIT = 4096;
 const RESPONSE_LIMIT = 4 * 1024 * 1024;
 const WRITES = /^\/api\/remixes(?:\/[a-f0-9-]{36}\/cancel)?$/;
-const forwardedHeaders = ['content-type', 'content-disposition', 'content-security-policy', 'x-content-type-options'];
+const forwardedHeaders = ['content-type', 'content-disposition', 'content-security-policy', 'x-content-type-options', 'access-control-allow-origin'];
 
 function fail(response, status, error) {
   response.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });

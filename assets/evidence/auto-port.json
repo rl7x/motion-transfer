@@ -1,0 +1,691 @@
+{
+  "name": "auto-port-v1",
+  "commit": "d82bf6b2dbbf8ab5ebd9af01f239211097c8f702",
+  "model": "muse-spark-1.3",
+  "upstream": {
+    "repository": "https://github.com/abagames/agentic-gamedev-games",
+    "revision": "f30b52a1707282b1559f7bae1fc301925612f5a6",
+    "license": "MIT"
+  },
+  "componentId": "544657417fe9752f91b0b72a451cd9cb8d2650839824be35881e52f81f223858",
+  "games": [
+    {
+      "id": "skyhaul",
+      "core": "core.js",
+      "dashKey": "KeyX",
+      "status": "passed",
+      "failure": null,
+      "estimatedCostUsd": 0.03587625,
+      "wallMs": 26602,
+      "attempts": [
+        {
+          "attempt": 1,
+          "message": "Your lander is prepped for its dash link — patching the flight code now.",
+          "summary": "Lander dash: MotionDash.update called once in updateLander (play-only, non-docked path) with steering dx/dy; burst 0.5 units/source-px added to L.x/L.y through existing wall/clamp logic. 60*0.5=30px is ~9% of 320px width.",
+          "status": "supported",
+          "unitsPerSourcePixel": 0.5,
+          "patches": [
+            {
+              "anchor": "    const ox = L.x;\n    L.x += L.vx * dt;",
+              "replacement": "    const dash = MotionDash.update(g, { left: dx < 0, right: dx > 0, up: dy < 0, down: dy > 0 });\n    const ox = L.x;\n    L.x += L.vx * dt + (dash.owns ? dash.dx * 0.5 : 0);"
+            },
+            {
+              "anchor": "    L.y += L.vy * dt;",
+              "replacement": "    L.y += L.vy * dt + (dash.owns ? dash.dy * 0.5 : 0);"
+            }
+          ],
+          "inputTokens": 20497,
+          "outputTokens": 2455,
+          "estimatedCostUsd": 0.03587625,
+          "wallMs": 26602,
+          "checks": [
+            {
+              "name": "patches-apply-exactly",
+              "passed": true
+            },
+            {
+              "name": "patched-game-loads",
+              "passed": true
+            },
+            {
+              "name": "no-interference-without-dash",
+              "passed": true,
+              "detail": "3 seeds × 1200 ticks identical"
+            },
+            {
+              "name": "game-tests-pass",
+              "passed": true,
+              "detail": "tests/core.test.cjs"
+            },
+            {
+              "name": "dash-fidelity",
+              "passed": true,
+              "detail": "30.00 of 30 units"
+            },
+            {
+              "name": "recharge-blocks-second-dash",
+              "passed": true,
+              "detail": "recovered gap 33 ticks respected"
+            },
+            {
+              "name": "browser-frame-runs-dash",
+              "passed": true,
+              "detail": "56 live updates, dash fired from KeyX"
+            }
+          ],
+          "measurements": {
+            "expected": 30,
+            "measured": 30,
+            "rechargeTicks": 33
+          }
+        }
+      ]
+    },
+    {
+      "id": "undertow",
+      "core": "core.js",
+      "dashKey": "KeyC",
+      "status": "passed",
+      "failure": null,
+      "estimatedCostUsd": 0.032733,
+      "wallMs": 38654,
+      "attempts": [
+        {
+          "attempt": 1,
+          "message": null,
+          "summary": "Dash wired into updatePlayer: steering ix/iy passed, burst 60px*1=60 units (~7.8% of 768 WORLD ring) added through wrap/clamp.",
+          "status": "supported",
+          "unitsPerSourcePixel": 1,
+          "patches": [
+            {
+              "anchor": "    p.x = wrap(p.x + p.vx * DT);\n    p.y += p.vy * DT;",
+              "replacement": "    const dash = MotionDash.update(g, { left: ix < 0, right: ix > 0, up: iy < 0, down: iy > 0 });\n    p.x = wrap(p.x + p.vx * DT + (dash.owns ? dash.dx * 1 : 0));\n    p.y += p.vy * DT + (dash.owns ? dash.dy * 1 : 0);"
+            }
+          ],
+          "inputTokens": 18557,
+          "outputTokens": 2286,
+          "estimatedCostUsd": 0.032733,
+          "wallMs": 38654,
+          "checks": [
+            {
+              "name": "patches-apply-exactly",
+              "passed": true
+            },
+            {
+              "name": "patched-game-loads",
+              "passed": true
+            },
+            {
+              "name": "no-interference-without-dash",
+              "passed": true,
+              "detail": "3 seeds × 1200 ticks identical"
+            },
+            {
+              "name": "game-tests-pass",
+              "passed": true,
+              "detail": "tests/core.test.cjs"
+            },
+            {
+              "name": "dash-fidelity",
+              "passed": true,
+              "detail": "60.00 of 60 units"
+            },
+            {
+              "name": "recharge-blocks-second-dash",
+              "passed": true,
+              "detail": "recovered gap 33 ticks respected"
+            },
+            {
+              "name": "browser-frame-runs-dash",
+              "passed": true,
+              "detail": "43 live updates, dash fired from KeyC"
+            }
+          ],
+          "measurements": {
+            "expected": 60,
+            "measured": 60,
+            "rechargeTicks": 33
+          }
+        }
+      ]
+    },
+    {
+      "id": "wreckfall",
+      "core": "core.js",
+      "dashKey": "KeyC",
+      "status": "passed",
+      "failure": null,
+      "estimatedCostUsd": 0.0304145,
+      "wallMs": 42501,
+      "attempts": [
+        {
+          "attempt": 1,
+          "message": "Your horizontal cannon is ideal for a single-axis burst — wiring the dash into its movement.",
+          "summary": "Single-axis horizontal dash: calls MotionDash.update in movePlayer during play with steering dir, adds dx*0.5 to player x through existing clamps. 60*0.5=30px is ~14% of 208px travel.",
+          "status": "supported",
+          "unitsPerSourcePixel": 0.5,
+          "patches": [
+            {
+              "anchor": "    p.vx = dir * CFG.playerSpeed;\n    p.x += p.vx * dt;",
+              "replacement": "    p.vx = dir * CFG.playerSpeed;\n    const __dash = (s.mode === \"play\" ? MotionDash.update(s, { left: dir < 0, right: dir > 0, up: false, down: false }) : { owns: false, dx: 0, dy: 0 });\n    p.x += p.vx * dt + (__dash.owns ? __dash.dx * 0.5 : 0);"
+            }
+          ],
+          "inputTokens": 10861,
+          "outputTokens": 4004,
+          "estimatedCostUsd": 0.0304145,
+          "wallMs": 42501,
+          "checks": [
+            {
+              "name": "patches-apply-exactly",
+              "passed": true
+            },
+            {
+              "name": "patched-game-loads",
+              "passed": true
+            },
+            {
+              "name": "no-interference-without-dash",
+              "passed": true,
+              "detail": "3 seeds × 1200 ticks identical"
+            },
+            {
+              "name": "game-tests-pass",
+              "passed": true,
+              "detail": "tests/core.test.cjs"
+            },
+            {
+              "name": "dash-fidelity",
+              "passed": true,
+              "detail": "30.00 of 30 units"
+            },
+            {
+              "name": "recharge-blocks-second-dash",
+              "passed": true,
+              "detail": "recovered gap 33 ticks respected"
+            },
+            {
+              "name": "browser-frame-runs-dash",
+              "passed": true,
+              "detail": "26 live updates, dash fired from KeyC"
+            }
+          ],
+          "measurements": {
+            "expected": 30,
+            "measured": 30,
+            "rechargeTicks": 33
+          }
+        }
+      ]
+    },
+    {
+      "id": "head-rush",
+      "core": "core.js",
+      "dashKey": "KeyC",
+      "status": "passed",
+      "failure": null,
+      "estimatedCostUsd": 0.07393775,
+      "wallMs": 332730,
+      "attempts": [
+        {
+          "attempt": 1,
+          "message": "Mapping your track speed to a single dash burst — adding it once per tick along the racing line.",
+          "summary": "Dash adds along-track burst via tangent projection once per tick; S=1 gives 60 units (~7% of 864 outer perimeter).",
+          "status": "supported",
+          "unitsPerSourcePixel": 1,
+          "patches": [
+            {
+              "anchor": "    const pv = speed(st) * (p.boost ? C.BOOST : 1) * DT / SUB;",
+              "replacement": "    const _t = tan(p.r, p.s);\n    const dash = MotionDash.update(st, { left: _t[0] < 0, right: _t[0] > 0, up: _t[1] < 0, down: _t[1] > 0 });\n    const pv = speed(st) * (p.boost ? C.BOOST : 1) * DT / SUB;"
+            },
+            {
+              "anchor": "      p.s = wrap(p.s + pv, p.r); if (sub === 0 && p.slT > 0) p.slT--;",
+              "replacement": "      p.s = wrap(p.s + pv + (sub === 0 && dash.owns ? (dash.dx * _t[0] + dash.dy * _t[1]) * 1 : 0), p.r); if (sub === 0 && p.slT > 0) p.slT--;"
+            }
+          ],
+          "inputTokens": 18601,
+          "outputTokens": 3483,
+          "estimatedCostUsd": 0.03787525,
+          "wallMs": 166629,
+          "checks": [
+            {
+              "name": "patches-apply-exactly",
+              "passed": true
+            },
+            {
+              "name": "patched-game-loads",
+              "passed": true
+            },
+            {
+              "name": "no-interference-without-dash",
+              "passed": true,
+              "detail": "3 seeds × 1200 ticks identical"
+            },
+            {
+              "name": "game-tests-pass",
+              "passed": true,
+              "detail": "tests/rules.cjs"
+            },
+            {
+              "name": "dash-fidelity",
+              "passed": false,
+              "error": "The dash moved 37.50000000000034 units; expected 60 ± 14"
+            },
+            {
+              "name": "recharge-blocks-second-dash",
+              "passed": true,
+              "detail": "recovered gap 33 ticks respected"
+            },
+            {
+              "name": "browser-frame-runs-dash",
+              "passed": true,
+              "detail": "3761 live updates, dash fired from KeyC"
+            }
+          ],
+          "measurements": {
+            "expected": 60,
+            "measured": 37.50000000000034,
+            "rechargeTicks": 33
+          }
+        },
+        {
+          "attempt": 2,
+          "message": "Fixing the dash projection to preserve the full burst — patching now.",
+          "summary": "Dash adds full burst magnitude along +s track direction once per tick via wrap; steering from tangent; S=1 gives 60 units ~7% of 864 outer perimeter.",
+          "status": "supported",
+          "unitsPerSourcePixel": 1,
+          "patches": [
+            {
+              "anchor": "    const pv = speed(st) * (p.boost ? C.BOOST : 1) * DT / SUB;",
+              "replacement": "    const _t = tan(p.r, p.s);\n    const dash = MotionDash.update(st, { left: _t[0] < 0, right: _t[0] > 0, up: _t[1] < 0, down: _t[1] > 0 });\n    const pv = speed(st) * (p.boost ? C.BOOST : 1) * DT / SUB;"
+            },
+            {
+              "anchor": "      p.s = wrap(p.s + pv, p.r); if (sub === 0 && p.slT > 0) p.slT--;",
+              "replacement": "      p.s = wrap(p.s + pv + (sub === 0 && dash.owns ? (Math.abs(dash.dx) + Math.abs(dash.dy)) * 1 : 0), p.r); if (sub === 0 && p.slT > 0) p.slT--;"
+            }
+          ],
+          "inputTokens": 18929,
+          "outputTokens": 2960,
+          "estimatedCostUsd": 0.0360625,
+          "wallMs": 166101,
+          "checks": [
+            {
+              "name": "patches-apply-exactly",
+              "passed": true
+            },
+            {
+              "name": "patched-game-loads",
+              "passed": true
+            },
+            {
+              "name": "no-interference-without-dash",
+              "passed": true,
+              "detail": "3 seeds × 1200 ticks identical"
+            },
+            {
+              "name": "game-tests-pass",
+              "passed": true,
+              "detail": "tests/rules.cjs"
+            },
+            {
+              "name": "dash-fidelity",
+              "passed": true,
+              "detail": "60.00 of 60 units"
+            },
+            {
+              "name": "recharge-blocks-second-dash",
+              "passed": true,
+              "detail": "recovered gap 33 ticks respected"
+            },
+            {
+              "name": "browser-frame-runs-dash",
+              "passed": true,
+              "detail": "4914 live updates, dash fired from KeyC"
+            }
+          ],
+          "measurements": {
+            "expected": 60,
+            "measured": 60.00000000000034,
+            "rechargeTicks": 33
+          }
+        }
+      ]
+    },
+    {
+      "id": "pileup",
+      "core": "core.js",
+      "dashKey": "KeyC",
+      "status": "passed",
+      "failure": null,
+      "estimatedCostUsd": 0.0364535,
+      "wallMs": 68034,
+      "attempts": [
+        {
+          "attempt": 1,
+          "message": "Linking your getaway-car maze to the recovered dash — tuning the burst and grounding it to the road grid.",
+          "summary": "Dash adds 8 units/source-pixel stepwise after the getaway-car drive, using road() and exit tiles for walls/exits. 60*8=480 units is ~10% of the ~4800-unit field extent.",
+          "status": "supported",
+          "unitsPerSourcePixel": 8,
+          "patches": [
+            {
+              "anchor": "    st.dt++;\n    drive(p, C.PSPD, choosePlayer(st));",
+              "replacement": "    const dashDir = p.want || p.dir;\n    const dash = MotionDash.update(st, { left: dashDir === 4, right: dashDir === 2, up: dashDir === 1, down: dashDir === 3 });\n    st.dt++;\n    drive(p, C.PSPD, choosePlayer(st));\n    if (dash.owns) {\n      let mx = dash.dx * 8;\n      let my = dash.dy * 8;\n      let ax = mx < 0 ? -mx : mx;\n      let ay = my < 0 ? -my : my;\n      let sx = mx > 0 ? 1 : -1;\n      let sy = my > 0 ? 1 : -1;\n      for (let i = 0; i < ax; i++) {\n        let nx = p.x + sx;\n        let ok = road(st, tileOf(nx), tileOf(p.y));\n        if (!ok && st.exit) {\n          let cx0 = tileOf(p.x), cy0 = tileOf(p.y);\n          for (let k = 0; k < 4; k++) { const e = EXITS[k]; if (e.px === cx0 && e.py === cy0 && DX[e.d] === sx && DY[e.d] === 0) { ok = true; break; } }\n        }\n        if (!ok) break;\n        p.x = nx;\n      }\n      for (let j = 0; j < ay; j++) {\n        let ny = p.y + sy;\n        let ok2 = road(st, tileOf(p.x), tileOf(ny));\n        if (!ok2 && st.exit) {\n          let cx1 = tileOf(p.x), cy1 = tileOf(p.y);\n          for (let k = 0; k < 4; k++) { const e2 = EXITS[k]; if (e2.px === cx1 && e2.py === cy1 && DX[e2.d] === 0 && DY[e2.d] === sy) { ok2 = true; break; } }\n        }\n        if (!ok2) break;\n        p.y = ny;\n      }\n    }"
+            }
+          ],
+          "inputTokens": 10565,
+          "outputTokens": 5512,
+          "estimatedCostUsd": 0.0364535,
+          "wallMs": 68034,
+          "checks": [
+            {
+              "name": "patches-apply-exactly",
+              "passed": true
+            },
+            {
+              "name": "patched-game-loads",
+              "passed": true
+            },
+            {
+              "name": "no-interference-without-dash",
+              "passed": true,
+              "detail": "3 seeds × 1200 ticks identical"
+            },
+            {
+              "name": "game-tests-pass",
+              "passed": true,
+              "detail": "tests/rules.cjs"
+            },
+            {
+              "name": "dash-fidelity",
+              "passed": true,
+              "detail": "480.00 of 480 units"
+            },
+            {
+              "name": "recharge-blocks-second-dash",
+              "passed": true,
+              "detail": "recovered gap 33 ticks respected"
+            },
+            {
+              "name": "browser-frame-runs-dash",
+              "passed": true,
+              "detail": "28 live updates, dash fired from KeyC"
+            }
+          ],
+          "measurements": {
+            "expected": 480,
+            "measured": 480,
+            "rechargeTicks": 33
+          }
+        }
+      ]
+    },
+    {
+      "id": "zig-saber",
+      "core": "core.js",
+      "dashKey": "KeyC",
+      "status": "passed",
+      "failure": null,
+      "estimatedCostUsd": 0.034215,
+      "wallMs": 65003,
+      "attempts": [
+        {
+          "attempt": 1,
+          "message": "Dash port for your vertical ship is ready — wiring the burst into its climb.",
+          "summary": "Ship moves only in Y, so dash dy (dx is zero since only up/down steering is passed) is added to sh.y with S=0.5. 60*S=30px is ~14% of the ~208px vertical playfield. Single call site in play phase preserves tick equality when idle and goes through rock collision.",
+          "status": "supported",
+          "unitsPerSourcePixel": 0.5,
+          "patches": [
+            {
+              "anchor": "    sh.y += sh.dir * C.VY; st.camX += C.SCROLL;",
+              "replacement": "    const dash = MotionDash.update(st, { left: false, right: false, up: sh.dir < 0, down: sh.dir > 0 });\n    sh.y += sh.dir * C.VY + (dash.owns ? (dash.dx + dash.dy) * 0.5 : 0); st.camX += C.SCROLL;"
+            }
+          ],
+          "inputTokens": 15360,
+          "outputTokens": 3575,
+          "estimatedCostUsd": 0.034215,
+          "wallMs": 65003,
+          "checks": [
+            {
+              "name": "patches-apply-exactly",
+              "passed": true
+            },
+            {
+              "name": "patched-game-loads",
+              "passed": true
+            },
+            {
+              "name": "no-interference-without-dash",
+              "passed": true,
+              "detail": "3 seeds × 1200 ticks identical"
+            },
+            {
+              "name": "game-tests-pass",
+              "passed": true,
+              "detail": "tests/rules.cjs"
+            },
+            {
+              "name": "dash-fidelity",
+              "passed": true,
+              "detail": "30.00 of 30 units"
+            },
+            {
+              "name": "recharge-blocks-second-dash",
+              "passed": true,
+              "detail": "recovered gap 33 ticks respected"
+            },
+            {
+              "name": "browser-frame-runs-dash",
+              "passed": true,
+              "detail": "41 live updates, dash fired from KeyC"
+            }
+          ],
+          "measurements": {
+            "expected": 30,
+            "measured": 30.000000000000036,
+            "rechargeTicks": 33
+          }
+        }
+      ]
+    },
+    {
+      "id": "blink-scope",
+      "core": "game-core.js",
+      "dashKey": "KeyC",
+      "status": "passed",
+      "failure": null,
+      "estimatedCostUsd": 0.022799,
+      "wallMs": 38173,
+      "attempts": [
+        {
+          "attempt": 1,
+          "message": "Dash port for your blink ship — wiring the recovered burst into its sweep.",
+          "summary": "Dash adds dx,dy to ship px,py each play tick facing sweep theta; S=1 gives 60 units ~11% of 560 scope diameter.",
+          "status": "supported",
+          "unitsPerSourcePixel": 1,
+          "patches": [
+            {
+              "anchor": "  if (press && playing) blink(g);",
+              "replacement": "  if (playing) { const dash = MotionDash.update(g, { left: Math.cos(g.theta) < 0, right: Math.cos(g.theta) >= 0, up: Math.sin(g.theta) < 0, down: Math.sin(g.theta) >= 0 }); if (dash.owns) { g.px += dash.dx * 1; g.py += dash.dy * 1; } }\n  if (press && playing) blink(g);"
+            }
+          ],
+          "inputTokens": 7441,
+          "outputTokens": 3218,
+          "estimatedCostUsd": 0.022799,
+          "wallMs": 38173,
+          "checks": [
+            {
+              "name": "patches-apply-exactly",
+              "passed": true
+            },
+            {
+              "name": "patched-game-loads",
+              "passed": true
+            },
+            {
+              "name": "no-interference-without-dash",
+              "passed": true,
+              "detail": "3 seeds × 1200 ticks identical"
+            },
+            {
+              "name": "game-tests-pass",
+              "passed": true,
+              "detail": "tests/core.test.mjs"
+            },
+            {
+              "name": "dash-fidelity",
+              "passed": true,
+              "detail": "60.00 of 60 units"
+            },
+            {
+              "name": "recharge-blocks-second-dash",
+              "passed": true,
+              "detail": "recovered gap 33 ticks respected"
+            },
+            {
+              "name": "browser-frame-runs-dash",
+              "passed": true,
+              "detail": "136 live updates, dash fired from KeyC"
+            }
+          ],
+          "measurements": {
+            "expected": 60,
+            "measured": 59.999999999999844,
+            "rechargeTicks": 33
+          }
+        }
+      ]
+    },
+    {
+      "id": "draft-line",
+      "core": "src/sim.js",
+      "dashKey": "KeyC",
+      "status": "failed",
+      "failure": "dash-fidelity",
+      "estimatedCostUsd": 0.06230524999999999,
+      "wallMs": 95229,
+      "attempts": [
+        {
+          "attempt": 1,
+          "message": "Linking the recovered dash to your racer's forward drive — one small burst patch.",
+          "summary": "Dash adds -dy*S to forward z (up/forward is -dy since +y is down) and dx*S to lateral x through the same -1.9..1.9 clamp. S=5 gives 300m per full dash. Steering maps steer to left/right and throttle to up/down with neutral throttle counting as up so a neutral dash still drives forward.",
+          "status": "supported",
+          "unitsPerSourcePixel": 5,
+          "patches": [
+            {
+              "anchor": "    // ---- advance and score distance\n    const before = this.z;\n    this.z += this.speed * dt;",
+              "replacement": "    // ---- advance and score distance\n    const dash = MotionDash.update(this, { left: input.steer < 0, right: input.steer > 0, up: input.throttle >= 0, down: input.throttle < 0 });\n    const before = this.z;\n    this.z += this.speed * dt + (dash.owns ? -dash.dy * 5 : 0);\n    if (dash.owns && dash.dx !== 0) { this.x = Math.max(-1.9, Math.min(1.9, this.x + dash.dx * 5)); }"
+            }
+          ],
+          "inputTokens": 11022,
+          "outputTokens": 4719,
+          "estimatedCostUsd": 0.0336545,
+          "wallMs": 53793,
+          "checks": [
+            {
+              "name": "patches-apply-exactly",
+              "passed": true
+            },
+            {
+              "name": "patched-game-loads",
+              "passed": true
+            },
+            {
+              "name": "no-interference-without-dash",
+              "passed": true,
+              "detail": "3 seeds × 1200 ticks identical"
+            },
+            {
+              "name": "game-tests-pass",
+              "passed": true,
+              "detail": "test/sim.test.mjs, test/chain.test.mjs"
+            },
+            {
+              "name": "dash-fidelity",
+              "passed": false,
+              "error": "A 300-unit burst is outside 2–50% of the 3.8-unit field"
+            },
+            {
+              "name": "recharge-blocks-second-dash",
+              "passed": true,
+              "detail": "recovered gap 33 ticks respected"
+            },
+            {
+              "name": "browser-frame-runs-dash",
+              "passed": true,
+              "detail": "556 live updates, dash fired from KeyC"
+            }
+          ],
+          "measurements": {
+            "rechargeTicks": 33
+          }
+        },
+        {
+          "attempt": 2,
+          "message": "Your dash overshot the tiny lateral field — resizing the burst to fit and resubmitting.",
+          "summary": "Dash adds dx to lateral x through 1.9 clamp and -dy to forward z. S=0.01 gives 0.6 units = ~16% of 3.8 lateral field.",
+          "status": "supported",
+          "unitsPerSourcePixel": 0.01,
+          "patches": [
+            {
+              "anchor": "    // ---- advance and score distance\n    const before = this.z;\n    this.z += this.speed * dt;",
+              "replacement": "    // ---- advance and score distance\n    const dash = MotionDash.update(this, { left: input.steer < 0, right: input.steer > 0, up: input.throttle > 0, down: input.throttle < 0 });\n    const before = this.z;\n    this.z += this.speed * dt + (dash.owns ? -dash.dy * 0.01 : 0);\n    this.x = Math.max(-1.9, Math.min(1.9, this.x + (dash.owns ? dash.dx * 0.01 : 0)));"
+            }
+          ],
+          "inputTokens": 11269,
+          "outputTokens": 3469,
+          "estimatedCostUsd": 0.02865075,
+          "wallMs": 41436,
+          "checks": [
+            {
+              "name": "patches-apply-exactly",
+              "passed": true
+            },
+            {
+              "name": "patched-game-loads",
+              "passed": true
+            },
+            {
+              "name": "no-interference-without-dash",
+              "passed": true,
+              "detail": "3 seeds × 1200 ticks identical"
+            },
+            {
+              "name": "game-tests-pass",
+              "passed": true,
+              "detail": "test/sim.test.mjs, test/chain.test.mjs"
+            },
+            {
+              "name": "dash-fidelity",
+              "passed": false,
+              "error": "The dash moved 0 units; expected 0.6 ± 0.076"
+            },
+            {
+              "name": "recharge-blocks-second-dash",
+              "passed": true,
+              "detail": "recovered gap 33 ticks respected"
+            },
+            {
+              "name": "browser-frame-runs-dash",
+              "passed": true,
+              "detail": "553 live updates, dash fired from KeyC"
+            }
+          ],
+          "measurements": {
+            "expected": 0.6,
+            "measured": 0,
+            "rechargeTicks": 33
+          }
+        }
+      ]
+    },
+    {
+      "id": "overturn",
+      "status": "excluded",
+      "reason": "Flipperless pinball: the only control rotates the table, so there is no steerable avatar to dash."
+    },
+    {
+      "id": "twin-vector",
+      "status": "excluded",
+      "reason": "The avatar moves between discrete lanes, so a measured pixel burst has no defined meaning."
+    }
+  ]
+}

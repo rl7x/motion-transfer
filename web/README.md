@@ -11,8 +11,8 @@ Open http://127.0.0.1:4173. The existing esbuild dependency compiles `app/main.t
 
 ## Structure
 
-- `motion-workbench.tsx` is the default PARALLAXIA page. It composes the shared parts in `app/arcade/`: the hero, the how-it-works ribbon, the game cabinet with its live dash meter, the destination picker, the remix console's pipeline track and result card, the library, the “What Meta wrote” panel and the experiment trajectory plot. `useCatalog` and `useArtifactEvidence` read saved versions, `generation.json` and `receipt.json`; neither makes a model request.
-- The Afterimage Arcade styles live in one block of `style.css`, delimited by `/* arcade:start */` and `/* arcade:end */` and scoped under `.arcade`, so the older pages keep their look. CSS cannot be imported from TSX here; `scripts/build-creator.mjs` inlines the same block into the hosted creator page. Decorative layers ignore pointer events, and every animation stops under `prefers-reduced-motion`.
+- `motion-workbench.tsx` is the default PARALLAXIA page. It composes the shared parts in `app/ai-lab/`: the hero, the how-it-works ribbon, the game cabinet with its live dash meter, the destination picker, the remix console's pipeline track and result card, the library, the “What Meta wrote” panel and the experiment trajectory plot. `useCatalog` and `useArtifactEvidence` read saved versions, `generation.json` and `receipt.json`; neither makes a model request.
+- The AI Lab styles live in one block of `style.css`, delimited by `/* ai-lab:start */` and `/* ai-lab:end */` and scoped under `.ai-lab`, so the older pages keep their look. CSS cannot be imported from TSX here; `scripts/build-creator.mjs` inlines the same block into the hosted creator page. Decorative layers ignore pointer events, and every animation stops under `prefers-reduced-motion`.
 
 - `transfer-context.tsx` owns catalog loading, recipient selection, playable routes and browser history. Components use context; the existing window diagnostics remain available for browser automation.
 - `components/` contains the players, evidence comparisons, investigations, developer handoff, remixes and static copy. JSX replaces the previous page-wide DOM mutation scripts.
@@ -30,7 +30,7 @@ npm run build:frontend
 npm run test:frontend
 ```
 
-`npm run format` reformats maintained frontend source, stylesheet, shell and frontend configuration. The formatter excludes pinned engines, compiled components, saved evidence and exported project templates because exact bytes are bound to their verification identities. TypeScript, React Hooks lint rules and a no-explicit-any rule apply to the application. Automatic pull-request checks are off. The workflow has a manual trigger only; if it is disabled in GitHub Actions, enable it before dispatching a run. Manual runs use the same checks with browser tests and no API credentials.
+`npm run format` reformats maintained frontend source, stylesheet, shell and frontend configuration. The formatter excludes pinned engines, compiled components, saved evidence and exported project templates because exact bytes are bound to their verification identities. TypeScript, React Hooks lint rules and a no-explicit-any rule apply to the application. The workflow runs on every push and pull request with browser tests and no API credentials. A second job checks the committed evidence and the auto-port verifier.
 
 `build:frontend` writes the shell, stylesheet and bundle under ignored `reports/frontend-build/`. Those files require the preview server's game and API routes; the build is not an independent deployment. The independent JUJUMP export remains a separate, verified deliverable.
 

@@ -16,6 +16,7 @@ import { buildRoadsterChallenge } from '../src/roadster/challenge.mjs';
 import { buildParallaxiaChallenge } from '../src/parallaxia/challenge.mjs';
 import { loadParallaxiaBaseline } from '../src/parallaxia/artifact.mjs';
 import { acceptedJujumpComparison } from '../src/release/accepted.mjs';
+import { portedSite } from '../src/auto-port/publish.mjs';
 
 export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapter, remixes, lab, coordinator, allowUnverified = false, benchmarks = developerBenchmarkAssets() } = {}) {
   if (adapter === undefined) adapter = await loadPakuTransfer({ optional: true });
@@ -55,6 +56,7 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
     ['/licenses', ['text/plain', recipient.licenses.join('\n\n----------------\n\n')]],
     ['/api/recipient', ['application/json', JSON.stringify(recipient.manifest)]],
   ]);
+  for(const [path,{type,bytes}] of Object.entries(await portedSite({component:parallaxia.component})))assets.set('/'+path,[type,bytes]);
   const acceptedJujump=await acceptedJujumpComparison(parallaxia.componentId);
   for(const [path,bytes] of Object.entries(acceptedJujump.extras)){
     const ext=path.split('.').at(-1),type=({html:'text/html',js:'text/javascript',mjs:'text/javascript',css:'text/css',json:'application/json'})[ext]??'text/plain';
@@ -229,6 +231,11 @@ export async function createPreviewServer({ port = 0, host = '127.0.0.1', adapte
         model:artifact.generation?.model??adapter.receipt.model}); return;
     }
     let asset = assets.get(path);
+    if(path.startsWith('/ported/')){
+      // Spark-written pages stay sandboxed, and their module scripts load from an opaque origin.
+      response.setHeader('Access-Control-Allow-Origin','*');
+      if(path.endsWith('.html'))response.setHeader('Content-Security-Policy','sandbox allow-scripts');
+    }
     if(path==='/donor/play')response.setHeader('Content-Security-Policy','sandbox allow-scripts');
     if(path==='/roadster/play'&&url.searchParams.get('mode')==='transfer'){response.setHeader('Content-Security-Policy','sandbox allow-scripts');asset=assets.get('/roadster/play-transfer');}
     if(path==='/jujump/play'&&url.searchParams.get('mode')==='transfer')asset=assets.get('/jujump/play-transfer');
