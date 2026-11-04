@@ -52,6 +52,7 @@
     "auto-port:campaign": "node scripts/auto-port-campaign.mjs",
     "test:auto-port": "node --test --test-concurrency=1 --test-timeout=450000 tests/auto-port.test.mjs tests/port-command.test.mjs",
     "port": "node scripts/port.mjs",
+    "recover": "node scripts/recover.mjs",
     "verify:hosting": "node --test --test-concurrency=1 tests/hosting.test.mjs",
     "verify:hosting:isolation": "node --test --test-concurrency=1 tests/hosting-isolation.test.mjs",
     "hosting:broker": "node src/hosting/broker-main.mjs",
