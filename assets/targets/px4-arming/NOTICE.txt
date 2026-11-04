@@ -1,0 +1,10 @@
+PX4 Autopilot arming state machine, BSD 3-Clause License
+Copyright (c) 2012 - 2023, PX4 Development Team
+https://github.com/PX4/PX4-Autopilot at tag v1.14.0, commit b8c541dd7277ed735139d7d1bfb829d61fbe29fb
+
+upstream/ holds byte-exact copies of ArmStateMachine.cpp and ArmStateMachine.hpp from
+src/modules/commander/Arming/ArmStateMachine/, with PX4's LICENSE beside them.
+
+arming.wasm is not a copy of PX4's behavior. scripts/build-px4-arming.mjs changes two cells of
+the transition table before compiling, so that an answer recalled from public PX4 fails.
+boundary.cpp and shim/ are this project's work, under this repository's MIT License.

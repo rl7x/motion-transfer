@@ -22,6 +22,7 @@ Motion Transfer is for developers who want a specific feel in a game, without re
 | --- | --- | --- |
 | Recover a behavior from a binary | Accepted in 1 of 3 full sessions. The first scored 0/13, 11/13, then 13/13 and passed all 20 separate acceptance checks. Both frozen repeats were rejected. On an improved harness, 2 of 3 fresh sessions passed 32/32 and 20/20 | [Recovery record](docs/fresh-recovery.md) · [Repeat trials](docs/wonder-repeat-results.md) · [Harness results](docs/wonder-harness-results.md) |
 | Check every reachable dash transition | All 4 accepted controllers match the binary on all 17,600 reachable transitions across 275 states. All 12 known-bad candidates are rejected with shortest counterexamples of 1–11 ticks | [Exhaustive verification](docs/exhaustive-verification.md) |
+| Check compiled robotics code | A search of PX4's compiled arming logic reached all 2,254 states and 1,622,880 transitions with no human-chosen state fields. A hand-written reference matches and 9 wrong versions are rejected. No model has recovered it yet: the first session failed at $0.25 | [Firmware recovery](docs/firmware-recovery.md) |
 | Port it into unseen games | 7 of 8 eligible games, 2 excluded up front, $0.33 estimated | [Port results](docs/auto-port-results.md) |
 | Do it with open weights | Muse Spark Open passed 4 of 8 on the same games and frozen checks, $0.15 estimated | [Open-weight comparison](docs/auto-port-results.md#open-weights) |
 | Recover it from footage alone | 4 of 6 fresh sessions scored 40/40 on the exam the binary passed, with no source, binary or button log, and the other 2 were refused. Earlier runs did worse and stay on the record | [Footage recovery](docs/footage-recovery.md) |
@@ -72,6 +73,7 @@ The building period ran from October 27 to November 4, 2026, and this repository
 | Built during the hackathon | Upstream, used under license |
 | --- | --- |
 | Recovery tooling, evaluators and the recovered controller | Dashy Dango cartridge |
+| Firmware verifier, boundary and stubs | PX4 arming state machine |
 | Footage recovery and the open-weight comparison | |
 | Adapters, host hooks and the auto-port pipeline | PARALLAXIA, JUJUMP, PAKU PAKU, RDSTR Stunts and the ten auto-port games |
 | Isolated verification, spending ledger and publication | WASM-4, crisp-game-lib, three.js and other libraries listed below |
@@ -108,6 +110,7 @@ Dashy Dango is upstream work by samX500 and willGuimont. PARALLAXIA, JUJUMP and 
 | [PAKU PAKU](https://github.com/abagames/crisp-game-lib-11-games) | Saved transfer | Kenta Cho / ABA Games | MIT | [LICENSE.txt](assets/recipients/paku-paku/upstream/LICENSE.txt) |
 | [RDSTR Stunts](https://github.com/sebayaki/roadster) at `8486687` | Saved transfer | sebayaki | MIT | [LICENSE](assets/recipients/roadster/upstream/LICENSE) |
 | [BLINK SCOPE, DRAFT LINE, HEAD RUSH, OVERTURN, PILEUP, SKYHAUL, TWIN VECTOR, UNDERTOW, WRECKFALL and ZIG SABER](https://github.com/abagames/agentic-gamedev-games) at `f30b52a` | Unseen games for the auto-port campaign | Kenta Cho / ABA Games | MIT | [LICENSE](assets/auto-port/LICENSE) |
+| [PX4 Autopilot](https://github.com/PX4/PX4-Autopilot) at `v1.14.0` | Arming state machine for the firmware check, with two table cells changed | PX4 Development Team | BSD-3-Clause | [NOTICE.txt](assets/targets/px4-arming/NOTICE.txt) |
 | [Tiny Platformer](https://github.com/jakesgordon/javascript-tiny-platformer) at `50cbd06` | Outside test of `npm run port` | Jake Gordon and contributors | MIT | [LICENSE](assets/port-example/tiny-platformer/LICENSE) |
 
 The Dashy Dango repository has no `LICENSE` file, so GitHub shows no license for it. The authors declare ISC in the `wapm.toml` at the pinned revision and in the [Wasmer package](https://wasmer.io/willguimont/dashy-dango), and that package's cartridge is byte-identical to the one used here.

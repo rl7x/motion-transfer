@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "px4-arming",
+  "upstream": {
+    "repository": "https://github.com/PX4/PX4-Autopilot",
+    "tag": "v1.14.0",
+    "commit": "b8c541dd7277ed735139d7d1bfb829d61fbe29fb",
+    "files": [
+      "src/modules/commander/Arming/ArmStateMachine/ArmStateMachine.cpp",
+      "src/modules/commander/Arming/ArmStateMachine/ArmStateMachine.hpp"
+    ],
+    "license": "BSD-3-Clause"
+  },
+  "alteredCells": [
+    {
+      "row": "STANDBY",
+      "column": "STANDBY_ERROR",
+      "upstream": false,
+      "built": true
+    },
+    {
+      "row": "SHUTDOWN",
+      "column": "ARMED",
+      "upstream": false,
+      "built": true
+    }
+  ],
+  "compiler": "Homebrew clang version 19.1.6",
+  "sha256": "b481030c5dc08c9bc7596f02706b15a636276c1f17dd6bf518d0019e7b7f58e8",
+  "bytes": 1089,
+  "files": {
+    "upstream/ArmStateMachine.cpp": "ce53ff166ea6459cff2f6e995d0deacf30d397f19316bceb009ed755bcc7fcb3",
+    "upstream/ArmStateMachine.hpp": "41885446d77e5c18e15080a19316644229a97d73531f77c3c41b1a27971f6e04",
+    "upstream/LICENSE": "4f486239f62804b2190ff52b3005f087cf1033342012152e6383bdad6b891cc4",
+    "boundary.cpp": "e2bf6867f02185ae823de7619d522b3e19ce81c25ce44c21f338e70fd3270809",
+    "arming.wasm": "b481030c5dc08c9bc7596f02706b15a636276c1f17dd6bf518d0019e7b7f58e8",
+    "shim/HealthAndArmingChecks.hpp": "be4950d39efe48bb86c50f80096d079487d4c9cdb3109c709a997a93f5a4f32d",
+    "shim/drivers/drv_hrt.h": "b606bd3a5f5eb53e9a18f3341a9314833a6194b256af65c00cf1d1391c8b35e4",
+    "shim/px4_platform_common/events.h": "65677bb13eb3c0a68e37f2a192fc1b6e3f40da8ac2ccbb3d355f031ace8707dd",
+    "shim/systemlib/mavlink_log.h": "de88ee195b957f1ff819b1cbe2a46446d02ceac243a622e114a7025e9e82c61f",
+    "shim/uORB/topics/actuator_armed.h": "ff8ad3f99f3d6ce8711d77ebb727d6c99e23f143e6fa3c82c8d7828f1fba8c7f",
+    "shim/uORB/topics/vehicle_control_mode.h": "5d3af4be11b159026ea62c517b59b01adb1fb57928e4bb8cade64f246c7faac7",
+    "shim/uORB/topics/vehicle_status.h": "9aaeae9a5883ecca20ef22c176cd9cd7cbebcd89401c5d5d29c8d87bd13e8ef4"
+  }
+}
