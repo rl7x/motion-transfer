@@ -15,14 +15,17 @@ export const PLAYER_POINT = Object.freeze({ x: 322, y: 322 });
 
 const { X, LEFT, RIGHT, UP, DOWN } = BUTTONS;
 
-/** What a person might record: walking, dashing every way, standing dashes and holding the button. */
+/**
+ * What a person might record: walking, dashing every way, standing dashes and holding the button.
+ * The tracker was tuned on an earlier clip, so this order and timing are new to it.
+ */
 export function calibrationSteps() {
   const steps = [[X, 1], [0, 12]];
-  for (const direction of [RIGHT, DOWN, LEFT, UP, RIGHT | DOWN, LEFT | UP, RIGHT | UP, LEFT | DOWN]) {
-    steps.push([direction, 10], [direction | X, 1], [direction, 7], [0, 20]);
+  for (const direction of [LEFT, RIGHT | UP, DOWN, RIGHT, LEFT | DOWN, UP, LEFT | UP, RIGHT | DOWN]) {
+    steps.push([direction, 14], [direction | X, 1], [direction, 3], [0, 26]);
   }
-  steps.push([0, 30], [X, 1], [0, 40], [X, 1], [0, 30]);
-  steps.push([RIGHT | X, 100], [0, 10], [LEFT | X, 100], [0, 10], [DOWN | X, 100]);
+  steps.push([0, 40], [X, 1], [0, 35], [X, 1], [0, 35], [X, 1], [0, 20]);
+  steps.push([UP | X, 90], [0, 12], [RIGHT | DOWN | X, 90], [0, 12], [LEFT | X, 90]);
   return steps;
 }
 

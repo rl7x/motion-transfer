@@ -8,14 +8,15 @@ import { gradeController } from './grade.mjs';
 import { chooseLandmarks, findSprites, pointPrompt } from './landmarks.mjs';
 import { footageRequest, readController } from './request.mjs';
 import { parseTracks } from './sam.mjs';
-import { detectBursts, motionSummary, shortestGap, splitBursts, worldSteps } from './trajectory.mjs';
+import { detectBursts, motionSummary, shortestGap, splitBursts, staysOnScreen, worldSteps } from './trajectory.mjs';
 
 export const RIGHTS = Object.freeze({
   own: 'This is my own game.',
   'open-license': 'This game is under an open license that allows this use.',
   permission: 'I have permission from the rights holder.',
 });
-const SECTION_FRAMES = 120;
+// Landmarks scroll away fast during a dash, and SAM bills 50 frames per request at least.
+const SECTION_FRAMES = 50;
 const MAX_ATTEMPTS = 3;
 const MINIMUM_FPS = 50;
 const PLAYER_ID = 1;
@@ -45,22 +46,28 @@ async function trackSection({ clip, info, from, count, player, pixelScale, sam, 
 }
 
 async function measure({ clip, info, from, to, player, pixelScale, sam, work, log }) {
-  const steps = [], sections = [];
+  const tracked = [], options = { ...info, pixelScale };
   let position = player, costUsd = 0;
   for (let start = from; start < to - 1; start += SECTION_FRAMES - 1) {
     const count = Math.min(SECTION_FRAMES, to - start);
     const { tracks, landmarks, estimatedCostUsd } = await trackSection({ clip, info, from: start, count, player: position, pixelScale, sam, work });
     costUsd += estimatedCostUsd;
-    steps.push(...worldSteps(tracks, { playerId: PLAYER_ID, ...info, pixelScale, frameOffset: start }));
-    sections.push({ from: start, count, landmarks, objectsTracked: tracks.size, playerFrames: tracks.get(PLAYER_ID)?.size ?? 0 });
+    tracked.push({ tracks, start, count, landmarks });
     log(`Tracked frames ${start}-${start + count - 1}: ${tracks.size} objects from ${landmarks} landmarks`);
     const playerTrack = tracks.get(PLAYER_ID);
     const last = playerTrack?.get(Math.max(...(playerTrack?.keys() ?? [0])));
     if (!last) throw Error(`SAM lost the player in frames ${start}-${start + count - 1}. Try --player on a clearer frame.`);
-    position = { x: Math.round((last.x1 + last.x2) / 2), y: Math.round((last.y1 + last.y2) / 2) };
+    // A followed player doesn't move on screen, and a dash's afterimage would shift the box's center.
+    if (!staysOnScreen(tracked.map(section => section.tracks.get(PLAYER_ID)), options)) {
+      position = { x: Math.round((last.x1 + last.x2) / 2), y: Math.round((last.y1 + last.y2) / 2) };
+    }
   }
+  // The camera doesn't change mid-clip, so this is decided once, across every section.
+  const followed = staysOnScreen(tracked.map(section => section.tracks.get(PLAYER_ID)), options);
+  const steps = tracked.flatMap(({ tracks, start }) => worldSteps(tracks, { playerId: PLAYER_ID, ...options, frameOffset: start, followed }));
   const unique = [...new Map(steps.map(step => [step.frame, step])).values()].sort((a, b) => a.frame - b.frame);
-  return { steps: unique, sections, costUsd };
+  const sections = tracked.map(({ tracks, start, count, landmarks }) => ({ from: start, count, landmarks, objectsTracked: tracks.size }));
+  return { steps: unique, sections, followed, costUsd };
 }
 
 /** The first thing wrong, in the form the model sees. It never contains the held-out bursts' numbers beyond the mismatch. */
@@ -83,9 +90,9 @@ export async function recoverMove({ clip, out, rights, source, player, pixelScal
   const last = Math.min(to ?? info.frames, info.frames);
   const work = await mkdtemp(join(tmpdir(), 'motion-footage-'));
   try {
-    const { steps, sections, costUsd: samUsd } = await measure({ clip, info, from, to: last, player, pixelScale, sam, work, log });
+    const { steps, sections, followed, costUsd: samUsd } = await measure({ clip, info, from, to: last, player, pixelScale, sam, work, log });
     const { bursts, walkSpeed } = detectBursts(steps);
-    log(`Measured ${steps.length} frames: ${bursts.length} bursts, usual speed ${walkSpeed} pixels per frame`);
+    log(`Measured ${steps.length} frames with ${followed ? 'a follow' : 'a fixed'} camera: ${bursts.length} bursts, usual speed ${walkSpeed} pixels per frame`);
     if (bursts.length < 2) throw Error(`Found ${bursts.length} burst${bursts.length === 1 ? '' : 's'}. Recovery needs at least 2, so one can be held back as a check. Use a clip with the move used several times.`);
     const { practice, heldOut } = splitBursts(bursts);
     const gap = shortestGap(bursts);
@@ -127,7 +134,7 @@ export async function recoverMove({ clip, out, rights, source, player, pixelScal
       clip: { sha256: clipSha256, frames: info.frames, fps: info.fps, note: 'The clip itself is not kept. Only this hash and the motion numbers are.' },
       models: { tracking: 'sam-3.1', controller: modelName },
     };
-    const report = { label: 'footage match', measurements, heldOut: { bursts: grade.bursts, recharge: grade.recharge }, sections, attempts, estimatedCostUsd: { tracking: samUsd, controller: modelUsd, total: samUsd + modelUsd } };
+    const report = { label: 'footage match', camera: followed ? 'follows the player' : 'fixed', measurements, heldOut: { bursts: grade.bursts, recharge: grade.recharge }, sections, attempts, estimatedCostUsd: { tracking: samUsd, controller: modelUsd, total: samUsd + modelUsd } };
     await mkdir(out, { recursive: true });
     await writeFile(join(out, 'component.ts'), submission.source);
     await writeFile(join(out, 'component.js'), grade.compiled.javascript);

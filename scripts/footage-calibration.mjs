@@ -27,7 +27,7 @@ async function definition() {
   const sources = {};
   for (const path of FROZEN) sources[path] = digest(await readFile(path));
   return {
-    schemaVersion: 1, name: 'footage-calibration-v1',
+    schemaVersion: 1, name: 'footage-calibration-v2', follows: { name: 'footage-calibration-v1', outcome: 'Failed. Sections of 120 frames lost landmarks during fast scrolling, so bursts reached the model in fragments.' },
     question: 'From footage alone, how close can SAM 3.1 and Muse Spark Open get to a move whose true behavior is known?',
     tracker: 'sam-3.1', controllerModel: OPEN_MODEL, maxAttempts: 3, clipSteps: calibrationSteps(), exam: 'the existing 40-trace fidelity comparison, generated after the candidate is frozen',
     disclosed: 'Only tracker measurements of practice bursts. No source, binary, button log, true positions or timing defaults.', sources,

@@ -1,6 +1,8 @@
 const EDGE_MARGIN = 4;
+const AGREEMENT = 1;
 const SMALLEST_BOX = 4;
 const STILL = 0.25;
+const SHORTEST_BURST = 3;
 
 const median = values => {
   if (!values.length) return 0;
@@ -19,11 +21,26 @@ function center(box, { width, height, pixelScale }) {
  * With a follow camera the player's box only changes because of effects like a dash's afterimage,
  * which stretch it without moving the player. Taking that as motion would add false steps.
  */
-function staysOnScreen(track, options) {
-  const centers = [...(track?.values() ?? [])].map(box => center(box, options)).filter(Boolean);
+export function staysOnScreen(tracks, options) {
+  const centers = tracks.flatMap(track => [...(track?.values() ?? [])]).map(box => center(box, options)).filter(Boolean);
   if (!centers.length) return false;
   const usualX = median(centers.map(point => point.x)), usualY = median(centers.map(point => point.y));
   return median(centers.map(point => Math.hypot(point.x - usualX, point.y - usualY))) < 1;
+}
+
+/**
+ * How the scenery moved this frame. Scenery pieces can look alike, so a tracker can jump from one
+ * to the next. Real scenery moves together, so the largest group that agrees wins, and a frame
+ * where nothing agrees is left out.
+ */
+function sceneryMotion(steps, needed) {
+  let best = [];
+  for (const step of steps) {
+    const group = steps.filter(other => Math.hypot(other.x - step.x, other.y - step.y) <= AGREEMENT);
+    if (group.length > best.length) best = group;
+  }
+  if (best.length < needed) return null;
+  return { x: median(best.map(step => step.x)), y: median(best.map(step => step.y)), landmarks: best.length };
 }
 
 /**
@@ -31,21 +48,22 @@ function staysOnScreen(track, options) {
  * player's own motion on screen minus how the scenery moved, so it works for a fixed camera (the
  * scenery stays still) and a camera that follows the player (the player stays still).
  */
-export function worldSteps(tracks, { playerId, width, height, pixelScale, frameOffset = 0 }) {
+export function worldSteps(tracks, { playerId, width, height, pixelScale, frameOffset = 0, followed }) {
   const frames = [...new Set([...tracks.values()].flatMap(track => [...track.keys()]))].sort((a, b) => a - b);
   const steps = [];
   const options = { width, height, pixelScale };
-  const followed = staysOnScreen(tracks.get(playerId), options);
+  const follows = followed ?? staysOnScreen([tracks.get(playerId)], options);
   for (const frame of frames) {
     const moved = id => {
       const before = center(tracks.get(id)?.get(frame - 1), options), after = center(tracks.get(id)?.get(frame), options);
       return before && after ? { x: after.x - before.x, y: after.y - before.y } : null;
     };
     const scenery = [...tracks.keys()].filter(id => id !== playerId).map(moved).filter(Boolean);
-    const player = followed ? { x: 0, y: 0 } : moved(playerId);
-    if (!player || !scenery.length) continue;
-    const scroll = { x: median(scenery.map(step => step.x)), y: median(scenery.map(step => step.y)) };
-    steps.push({ frame: frame + frameOffset, x: player.x - scroll.x, y: player.y - scroll.y, landmarks: scenery.length });
+    const player = follows ? { x: 0, y: 0 } : moved(playerId);
+    // A followed player gives no motion of its own, so one unconfirmed landmark isn't enough.
+    const scroll = sceneryMotion(scenery, follows ? 2 : 1);
+    if (!player || !scroll) continue;
+    steps.push({ frame: frame + frameOffset, x: player.x - scroll.x, y: player.y - scroll.y, landmarks: scroll.landmarks });
   }
   return steps;
 }
@@ -71,16 +89,20 @@ export function detectBursts(steps) {
     let end = index;
     while (end + 1 < steps.length && speeds[end + 1] > threshold && steps[end + 1].frame === steps[end].frame + 1) end += 1;
     const run = steps.slice(index, end + 1);
+    const start = index;
+    index = end;
+    // Only keep bursts seen from start to end. One with a missing frame beside it may be cut short.
+    const whole = steps[start - 1]?.frame === run[0].frame - 1 && steps[end + 1]?.frame === run.at(-1).frame + 1;
+    if (!whole || run.length < SHORTEST_BURST) continue;
     const dx = run.reduce((sum, step) => sum + step.x, 0), dy = run.reduce((sum, step) => sum + step.y, 0);
     const distance = Math.hypot(dx, dy);
-    const before = speeds.slice(Math.max(0, index - 3), index);
+    const before = speeds.slice(Math.max(0, start - 3), start);
     bursts.push({
       startFrame: run[0].frame, frames: run.length, distance: Number(distance.toFixed(2)),
       direction: [Number((dx / distance).toFixed(3)), Number((dy / distance).toFixed(3))],
       perFrame: run.map(step => Number(Math.hypot(step.x, step.y).toFixed(2))),
       startedFrom: before.length && before.every(speed => speed <= STILL) ? 'standing still' : 'moving',
     });
-    index = end;
   }
   return { bursts, walkSpeed };
 }

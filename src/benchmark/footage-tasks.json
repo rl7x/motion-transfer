@@ -1,6 +1,10 @@
 {
   "schemaVersion": 1,
-  "name": "footage-calibration-v1",
+  "name": "footage-calibration-v2",
+  "follows": {
+    "name": "footage-calibration-v1",
+    "outcome": "Failed. Sections of 120 frames lost landmarks during fast scrolling, so bursts reached the model in fragments."
+  },
   "question": "From footage alone, how close can SAM 3.1 and Muse Spark Open get to a move whose true behavior is known?",
   "tracker": "sam-3.1",
   "controllerModel": "meta-models/muse-spark-open-1026",
@@ -15,40 +19,8 @@
       12
     ],
     [
-      32,
-      10
-    ],
-    [
-      33,
-      1
-    ],
-    [
-      32,
-      7
-    ],
-    [
-      0,
-      20
-    ],
-    [
-      128,
-      10
-    ],
-    [
-      129,
-      1
-    ],
-    [
-      128,
-      7
-    ],
-    [
-      0,
-      20
-    ],
-    [
       16,
-      10
+      14
     ],
     [
       17,
@@ -56,63 +28,15 @@
     ],
     [
       16,
-      7
+      3
     ],
     [
       0,
-      20
-    ],
-    [
-      64,
-      10
-    ],
-    [
-      65,
-      1
-    ],
-    [
-      64,
-      7
-    ],
-    [
-      0,
-      20
-    ],
-    [
-      160,
-      10
-    ],
-    [
-      161,
-      1
-    ],
-    [
-      160,
-      7
-    ],
-    [
-      0,
-      20
-    ],
-    [
-      80,
-      10
-    ],
-    [
-      81,
-      1
-    ],
-    [
-      80,
-      7
-    ],
-    [
-      0,
-      20
+      26
     ],
     [
       96,
-      10
+      14
     ],
     [
       97,
@@ -120,15 +44,47 @@
     ],
     [
       96,
-      7
+      3
     ],
     [
       0,
-      20
+      26
+    ],
+    [
+      128,
+      14
+    ],
+    [
+      129,
+      1
+    ],
+    [
+      128,
+      3
+    ],
+    [
+      0,
+      26
+    ],
+    [
+      32,
+      14
+    ],
+    [
+      33,
+      1
+    ],
+    [
+      32,
+      3
+    ],
+    [
+      0,
+      26
     ],
     [
       144,
-      10
+      14
     ],
     [
       145,
@@ -136,19 +92,59 @@
     ],
     [
       144,
-      7
+      3
     ],
     [
       0,
-      20
+      26
     ],
     [
-      0,
-      30
+      64,
+      14
     ],
     [
-      1,
+      65,
       1
+    ],
+    [
+      64,
+      3
+    ],
+    [
+      0,
+      26
+    ],
+    [
+      80,
+      14
+    ],
+    [
+      81,
+      1
+    ],
+    [
+      80,
+      3
+    ],
+    [
+      0,
+      26
+    ],
+    [
+      160,
+      14
+    ],
+    [
+      161,
+      1
+    ],
+    [
+      160,
+      3
+    ],
+    [
+      0,
+      26
     ],
     [
       0,
@@ -160,41 +156,57 @@
     ],
     [
       0,
-      30
+      35
     ],
     [
-      33,
-      100
+      1,
+      1
     ],
     [
       0,
-      10
+      35
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      0,
+      20
+    ],
+    [
+      65,
+      90
+    ],
+    [
+      0,
+      12
+    ],
+    [
+      161,
+      90
+    ],
+    [
+      0,
+      12
     ],
     [
       17,
-      100
-    ],
-    [
-      0,
-      10
-    ],
-    [
-      129,
-      100
+      90
     ]
   ],
   "exam": "the existing 40-trace fidelity comparison, generated after the candidate is frozen",
   "disclosed": "Only tracker measurements of practice bursts. No source, binary, button log, true positions or timing defaults.",
   "sources": {
-    "src/footage/calibration.mjs": "d05edaf22ed1ae0d170c0d17ad7bf22a5c7a701ff9240fd9e021418c857e1ca5",
+    "src/footage/calibration.mjs": "00a214fc2a3e313d84c7c7019f3a3c6be8a520eb25b739fbf2d3ea3b416f927a",
     "src/footage/clip.mjs": "5bba1112533a0eba050047a0dd0a945651f315f2bcdac3444cdb779aee62302e",
     "src/footage/grade.mjs": "eb321014ba679d9f66c3618b5bc04e665758c1016f90f56a48a1db036cf1fa22",
     "src/footage/landmarks.mjs": "e03285b3abdc6cfb2f6e8be19bbc980a6096271de082620e5aa8e292a118df3e",
-    "src/footage/recover.mjs": "e1f5ad54c242871baf3383700ab69c88915254b980d8d920f1895c3a6dab5dee",
+    "src/footage/recover.mjs": "daa6bd29a8d2dfb4bf89a365fde42d299a24d0ee3e09c7d2d2f9db2b3799c5e0",
     "src/footage/request.mjs": "1ecfbacca4d9726d13c7847dbf50471c4130a13bd0b13e0b16bc5eab5ad38489",
     "src/footage/sam.mjs": "4f378485231f851488b11f5b53a13be5f6b92ce3aeb8544f0caa865ffbae2340",
-    "src/footage/trajectory.mjs": "c5595c1b79dc9cee16ab73d6ab7e1509170c2e2259ca2b6e7608b30535193f73",
+    "src/footage/trajectory.mjs": "048ec09ad9e0508933aa21423fce4d5b4849b7542326fb6292d81e7e4659b535",
     "src/agent/open-client.mjs": "34bc5a7d1d528af9368fc15c4857a830cf0cc9d1bb238d3b17b698c396c8cc75",
-    "scripts/footage-calibration.mjs": "83b965ce1529c4ae2d3d1f1fb1bf3cacece23e7a8142a5de9da63c049b92b1d9"
+    "scripts/footage-calibration.mjs": "97aa85f43b01c4bf313290115b5fb05150c90afe2fd0a5a6773b957e3afcfcfe"
   }
 }
