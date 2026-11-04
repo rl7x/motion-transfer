@@ -1,12 +1,14 @@
 # Recovery without state-location hints
 
-`motion-recovery-v6` adds counterexample feedback to binary recovery and removes the human map from model-visible investigation results. No paid v6 session has run. The offline tests use a mocked model and a supplied controller fixture; they establish harness behavior, not a new recovery result. The [frozen plan](../assets/benchmark/wonder-harness-v6/plan.json) requires separate spending approval.
+`motion-recovery-v6` adds counterexample feedback to binary recovery and removes the human map from model-visible investigation results. No paid v6 session has run. The offline tests use a mocked model and a supplied controller fixture; they establish harness behavior, not a new recovery result. The [active frozen plan](../assets/benchmark/wonder-harness-v6/plan-revision-1.json) requires separate spending approval.
 
 The default remains v5. Existing protocol bodies, frozen reports and acceptance cases are unchanged. V6 retains v5's request, token, session-time and attempt limits, with a $2.50 session ceiling. Its separately recorded deterministic gate timeout accommodates the exhaustive search within the existing session time limit.
 
 ## Investigation and disclosure
 
 The model is never told where state lives. Recursive filtering removes `motion`, `motionNotice`, `fieldHints`, observations derived from that map, and mapped target handles. Filtering runs before experiment-program SDK results are returned, at the shared API/MCP journal boundary, and before evidence selection and compaction. The pinned runtime files remain unchanged.
+
+Saved evidence from an older experiment engine remains readable and citable after integrity checks. Engine mismatches still block new execution, including replay, checkpoint preparation, experiment programs and candidate evaluation; reading old evidence never relabels it as a current execution.
 
 An empty watch list produces an empty target list. Raw watches chosen by the model can still create checkpoint-bound targets. Static inspection, writer tracing, fresh replays, sessions, forks, memory comparisons and branch comparisons remain available. Rendering and requested raw memory remain observable; scenery can reveal movement when the camera follows the player.
 
@@ -25,6 +27,8 @@ A successful exhaustive verdict supports: “matches the compiled binary on ever
 ## Frozen run and budget
 
 The plan binds an implementation commit, a Git source archive SHA-256, all recovery protocol source hashes, a unique backend workspace and output directory, and a 4 PM ET start cutoff. It plans **one fresh session at $2.50**, because the read-only cloud ledger shows $1.05135725 of other Meta work since midnight ET on November 4. Conservatively counting that spending against the $5 working limit leaves $3.94864275. No category allocation is changed.
+
+The [original plan](../assets/benchmark/wonder-harness-v6/plan.json) is preserved byte-for-byte. Before any request, full-suite checks exposed an older-session compatibility issue. The active revision binds the original plan's SHA-256, records that no session started, and freezes the corrected source under new workspace and output paths. The harness refuses the revision if the original backend output contains a started session. This revision does not add a session or increase the budget.
 
 After explicit approval, `wonder-harness.mjs` uploads the matching archive into the plan's isolated `/tmp/wonder-harness-v6-*` backend workspace, uses the backend's installed dependencies, and checks the source protocol identity before starting. It does not update the live backend application or deploy the website. The local run uses the isolated worktree; `--deployment-root` reads credentials and backend connection state from the original checkout without copying them into the archive.
 
