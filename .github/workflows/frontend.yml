@@ -40,5 +40,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run verify:evidence
+      - run: npm run verify:exhaustive
       - run: npx playwright install --with-deps chromium
       - run: npm run test:auto-port
