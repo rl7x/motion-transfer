@@ -181,6 +181,8 @@ export function SavedGamePlayer({
   useEffect(() => {
     const element = dialog.current;
     if (element && !element.open) element.showModal();
+    // Keys go to the game, so Space or Enter cannot press the Close button instead.
+    element?.querySelector<HTMLIFrameElement>('.game-frame--after iframe')?.focus();
     return () => element?.close();
   }, []);
   return (

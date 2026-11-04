@@ -9,6 +9,7 @@ import { acceptedJujumpComparison } from './accepted.mjs';
 import { buildFrontend } from '../../web/build.mjs';
 import { buildDonorFrame } from '../../web/donor-frame.mjs';
 import { normalizePublicOrigin } from './share.mjs';
+import { portedSite } from '../auto-port/publish.mjs';
 
 function taskMeasurements(report, componentId) {
   assert.equal(report.kind, 'frozen-live-mechanics-task-run');
@@ -89,6 +90,7 @@ export async function collectParallaxiaRelease({ liveDirectory, featuredId, base
     [`roadster/artifacts/${roadster.id}/adapter.ts`]:roadster.files['adapter.ts'],
     [`roadster/artifacts/${roadster.id}/notices.txt`]:roadster.files['notices.txt']};
   for(const [name,bytes]of Object.entries(practice.files))extras[`parallaxia/challenge/${baseline.id}/${name==='challenge.json'?'report.json':name}`]=bytes;
+  for(const [path,{bytes}]of Object.entries(await portedSite({component:baseline.component})))extras[path]=bytes;
   extras[`parallaxia/challenge/${baseline.id}/download.html`]=practice.files['play.html'];
   const base={id:baseline.id,componentId:baseline.componentId,componentRef:baseline.componentRef,intent:baseline.intent,recipient:baseline.recipient,provenance:baseline.provenance,
     play:`/parallaxia/artifacts/${baseline.id}/play.html`,download:`/parallaxia/artifacts/${baseline.id}/download.html`,report:`/parallaxia/artifacts/${baseline.id}/report.json`,

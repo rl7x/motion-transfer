@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import { Afterimage, useDashPulse } from './afterimage';
 import { MetaChip } from './meta-chip';
 import { PixelSprite } from './pixel-sprite';
+import { eligibleCount, portedCount } from './ported-games';
 import { Starfield } from './starfield';
 
 export const REPO_URL = 'https://github.com/rl7x/meta-ai-developer-hackathon';
@@ -121,6 +122,12 @@ export function Hero({ playback, savedCount }: { playback: boolean; savedCount: 
           </li>
         </ul>
         <dl className="hero__stats">
+          <div>
+            <dt>unseen games ported</dt>
+            <dd>
+              {portedCount} of {eligibleCount}
+            </dd>
+          </div>
           <div>
             <dt>prompt → playable</dt>
             <dd>~12 s</dd>

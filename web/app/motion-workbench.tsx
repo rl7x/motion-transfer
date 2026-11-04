@@ -23,6 +23,7 @@ import { Library, useCatalog } from './arcade/library';
 import { MetaChip } from './arcade/meta-chip';
 import { PipelineRibbon } from './arcade/pipeline-ribbon';
 import { PixelSprite } from './arcade/pixel-sprite';
+import { PortedGames, portedCount, portedPlayers } from './arcade/ported-games';
 import { RecoveryPanel } from './arcade/recovery-panel';
 
 interface Baseline {
@@ -307,7 +308,7 @@ export function MotionWorkbench() {
         })),
       ]
     : [];
-  const openGame = savedGames.find((game) => game.id === gameOpen) ?? null;
+  const openGame = [...savedGames, ...portedPlayers()].find((game) => game.id === gameOpen) ?? null;
   const badge = practice
     ? 'PRACTICE · SHIELD ON · BASELINE REUSE'
     : active
@@ -558,6 +559,7 @@ export function MotionWorkbench() {
             destinations={destinations}
             onPlayLive={() => scrollToId('stage')}
             onOpen={setGameOpen}
+            portedCount={portedCount}
           />
         </section>
         {error && base && (
@@ -613,6 +615,7 @@ export function MotionWorkbench() {
             )}
           </div>
         )}
+        <PortedGames onPlay={setGameOpen} />
         {base && (
           <Library
             baseline={base}

@@ -50,6 +50,8 @@ export function DonorPlayer({
   useEffect(() => {
     const element = dialog.current;
     if (element && !element.open) element.showModal();
+    // Keys go to the game, so Space or Enter cannot press the Close button instead.
+    frame.current?.focus();
     return () => element?.close();
   }, []);
   useEffect(() => {

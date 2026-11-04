@@ -21,11 +21,13 @@ export function DestinationPicker({
   destinations,
   onPlayLive,
   onOpen,
+  portedCount,
 }: {
   destinations: Destination[];
   onPlayLive(): void;
   /** Open a saved transfer in the in-page player. */
   onOpen(id: string): void;
+  portedCount: number;
 }) {
   return (
     <aside className="dest-picker" aria-labelledby="destinations-title">
@@ -78,6 +80,11 @@ export function DestinationPicker({
           );
         })}
       </ul>
+      {portedCount > 0 ? (
+        <a className="btn btn--light btn--small dest-picker__more" href="#ported">
+          + {portedCount} more, ported by Muse Spark ↓
+        </a>
+      ) : null}
       <p className="dest-picker__foot">
         Live Meta remixes run on PARALLAXIA. The other cartridges play saved, verified transfers of
         the same recovered component, before and after, right here.
