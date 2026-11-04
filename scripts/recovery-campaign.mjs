@@ -17,6 +17,7 @@ export async function main(args = process.argv.slice(2)) {
     console.log('Frozen campaign: omit --development and pass --development-report <accepted-development-directory>. Ten predeclared Contributor trials, one at a time; a started trial is never automatically repeated.');
     console.log('This command makes paid Meta calls. It requires the existing additional-spend ledger and preserves all historical ledgers.');
     console.log('New runs default to motion-recovery-v5 with bounded evidence context and host-run freeze and acceptance. Wonder reserves at most $8 per session. --protocol motion-recovery-v2 retains the earlier development suite; --max-cost-usd <amount> can lower the ceiling. Both controls are frozen before generation.');
+    console.log('motion-recovery-v6 removes state-location hints and requires exhaustive verification before freezing. Its ceiling is $2.50; use the committed wonder-harness v6 plan for the project working limit and fresh-session accounting.');
     return;
   }
   if (!values.out || !values['phase-ledger']) throw Error('--out and --phase-ledger are required');

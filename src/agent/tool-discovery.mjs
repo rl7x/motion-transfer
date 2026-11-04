@@ -1,6 +1,7 @@
 import {TOOLS} from './tool-schema.mjs';
 import {validateSchema} from './schema.mjs';
 import {recoveryPolicy} from './recovery-protocol.mjs';
+import {blindToolDefinition,isBlindRecovery} from './blind-output.mjs';
 
 const essential=['inspect_wasm','prepare_checkpoint','run_experiment','run_experiment_program','record_finding'];
 const recoveryEssential=[...essential,'list_functions','inspect_function','decompile_function',
@@ -28,7 +29,7 @@ export function createToolDiscovery({mode='none',model,state,profile='general',r
   if(profile==='recovery')record.profile='recovery';
   let available=profile==='recovery'?recoveryEssential:essential;
   if(record.mode!==mode||record.loadedNamespaces.some(name=>!Object.hasOwn(groups,name)))throw Error('Tool discovery state mismatch');
-  const byName=new Map(TOOLS.map(tool=>[tool.name,tool]));
+  const byName=new Map(TOOLS.map(tool=>[tool.name,blindToolDefinition(tool,recoveryProtocol)]));
   const policy=recoveryPolicy(recoveryProtocol);
   return{
     state:record,
@@ -44,6 +45,9 @@ export function createToolDiscovery({mode='none',model,state,profile='general',r
         if(!Object.hasOwn(recoveryStages,stage))throw Error('Unknown recovery stage');
         available=(stage==='select'&&reserveDevelopment?['select_component_evidence']:recoveryStages[stage])
           .filter(name=>programsRemaining||name!=='run_experiment_program');
+        if(isBlindRecovery(recoveryProtocol)&&['investigate','develop'].includes(stage))available=[...new Set([...available,
+          'run_original','session_observe','session_advance','session_reset','checkpoint_state','fork_checkpoint',
+          'read_memory','write_memory','diff_memory','compare_branches','capture_frame'])];
         return available.map(name=>{
           const tool=byName.get(name);
           return name==='submit_component_candidate'&&recoveryProtocol

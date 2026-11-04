@@ -5,6 +5,29 @@ import {createCartridgeTools} from '../src/agent/tools.mjs';
 import {investigate} from '../src/agent/investigate.mjs';
 
 const recording=async()=>JSON.parse(await readFile(new URL('../assets/lab/recordings/programmatic-investigation.json',import.meta.url),'utf8'));
+test('changed experiment engines expose immutable saved evidence but reject all new execution',async()=>{
+  const {report}=await recording(),tools=createCartridgeTools();
+  try{
+    const opened=await tools.open(report.session);
+    assert.match(opened.result.executionBlocked,/engine changed/);
+    const before=structuredClone(tools.sessionState),artifact=before.experimentWorkbench.artifacts.find(item=>item.payload.kind==='experiment');
+    const page=(await tools.run('read_experiment',{artifactId:artifact.id,startFrame:1,frameCount:1})).result;
+    assert.deepEqual(page.frames,artifact.payload.trace.slice(0,1));
+    assert.deepEqual(tools.sessionState.experimentWorkbench,before.experimentWorkbench);
+    const commands=[
+      ['session_advance',{branchId:'main',hypothesis:'Must not run.',steps:[{buttons:0,frames:1,checkpoint:'blocked'}],watches:[]}],
+      ['run_original',{hypothesis:'Must not run.',steps:[{buttons:0,frames:1,checkpoint:'blocked'}],watches:[]}],
+      ['run_experiment_program',{requestId:'blocked-old-engine',hypothesis:'Must not run.',language:'javascript',source:'return 7;'}],
+      ['prepare_checkpoint',{requestId:'blocked-old-prepare',hypothesis:'Must not run.',steps:[{buttons:0,frames:1,checkpoint:'blocked'}],watches:[]}],
+      ['run_experiment',report.session.experimentWorkbench.programs.flatMap(item=>item.operations).find(item=>item.name==='run_experiment').args],
+    ];
+    for(const [name,args]of commands)await assert.rejects(tools.run(name,args),/engine changed/);
+    assert.deepEqual(tools.sessionState,before,'Refused execution cannot alter the restored session');
+    const corrupt=structuredClone(report.session);corrupt.experimentWorkbench.artifacts[0].payload.hypothesis='Corrupted';
+    const refused=createCartridgeTools();try{await assert.rejects(refused.open(corrupt),/integrity mismatch/);}finally{await refused.close();}
+  }finally{await tools.close();}
+});
+
 test('the recorded rejected artifact citation now resolves to real experiment evidence without rerunning it',async()=>{
   const {report}=await recording(),rejected=report.toolCalls.find(call=>call.name==='record_finding'&&!call.ok),tools=createCartridgeTools();
   try{

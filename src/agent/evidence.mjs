@@ -1,4 +1,5 @@
 export function evidenceHistory(report,{includeDiscovery=true}={}) {
+  report = blindOutput(report, report.recoveryProtocol ?? report.session?.recovery?.protocol);
   const catalog = new Map();
   const captures=[...(report.session?.captures??[]),...(report.session?.experimentWorkbench?.artifacts??[]).flatMap(item=>item.payload.captures??[])];
   const selectedId=report.toolCalls.flatMap(call=>call.images??[]).at(-1)?.evidenceId;
@@ -16,7 +17,7 @@ export function evidenceHistory(report,{includeDiscovery=true}={}) {
       checkpoints: call.result.checkpoints.map(checkpoint => ({
         checkpoint: checkpoint.checkpoint,
         frame: checkpoint.frame,
-        motion: checkpoint.motion??null,
+        ...(isBlindRecovery(report.recoveryProtocol ?? report.session?.recovery?.protocol)?{}:{motion:checkpoint.motion??null}),
         framebufferFingerprint: checkpoint.framebufferHash.slice(0, 12),
         text: checkpoint.text,
         textTruncated: checkpoint.textTruncated,
@@ -53,3 +54,4 @@ export function evidenceHistory(report,{includeDiscovery=true}={}) {
 }
 import {discoveryReplay} from './tool-discovery.mjs';
 import {recoveryEvidenceHistory} from './recovery-context.mjs';
+import {blindOutput,isBlindRecovery} from './blind-output.mjs';

@@ -1,6 +1,7 @@
 import { managedExperiments, hasFollowup } from './investigation-completion.mjs';
 import { recoveryCitationRequirements } from './recovery-evidence.mjs';
 import { recoveryPolicy, reportRecoveryProtocol } from './recovery-protocol.mjs';
+import { isBlindRecovery } from './blind-output.mjs';
 
 export const RECOVERY_INSTRUCTIONS = `Recover a new standalone motion component from the registered compiled donor.
 You have the binary and restricted tools, not original source, a saved implementation, files, shell,
@@ -29,8 +30,15 @@ No automatic retries or budget extensions. All listed tools are directly callabl
 
 export function recoveryInstructions(protocol) {
   const policy = recoveryPolicy(protocol);
-  const instructions = protocol ? RECOVERY_INSTRUCTIONS.replace('Three behavioral development attempts', `${policy.maxDevelopmentAttempts} behavioral development attempts`)
+  let instructions = protocol ? RECOVERY_INSTRUCTIONS.replace('Three behavioral development attempts', `${policy.maxDevelopmentAttempts} behavioral development attempts`)
     : RECOVERY_INSTRUCTIONS;
+  if (isBlindRecovery(protocol)) instructions = instructions
+    .replace('Mapped motion fields and checkpoint targets are HUMAN assistance, not your discovery of memory layout.',
+      'The model is never told where state lives. Checkpoint targets come only from raw memory watches you choose; an empty watch list gives no targets.')
+    .replace('An unchanged pair is a reproducibility control. Use world-coordinate motion, timers and event traces;\nan inactive endpoint does not establish no prior activity. Do not confuse camera movement with world motion.',
+      'An unchanged pair is a reproducibility control. Inspect rendering, raw memory and bytecode. The camera follows the player; scenery can reveal movement.')
+    .replace('Targets bind to their returned checkpoint and previous bytes; never guess addresses or reuse stale handles.',
+      'Choose addresses from your own binary and raw-memory investigation. Requested watch targets bind to their checkpoint; do not reuse stale handles.');
   return instructions + (protocol?.completion ? `
 After development passes, the host freezes the exact source and runs separate acceptance automatically.
 No further model request is needed for these mechanical checks or the host's factual verification summary.
@@ -40,7 +48,15 @@ Read each failure's preceding AND following frames. A premature event and a miss
 Compare prior development failures before revising; do not alternate between previously disproven rules.
 Infer update order explicitly from consecutive timer samples and input levels before changing trigger conditions.
 Test hypotheses about direction history with changed input sequences; plausible conventions need measurements.
-Use record_finding to retain measured rules and remaining uncertainties with their actual evidence IDs.` : '');
+Use record_finding to retain measured rules and remaining uncertainties with their actual evidence IDs.` : '') + (isBlindRecovery(protocol) ? `
+Humans chose the mechanic and wrote the ABI and evaluators. A private grader uses human-mapped fields;
+its locations are never exposed. Development feedback still reveals expected positions and timers.
+After 32 development cases pass, the host searches every reachable dash state and input.
+A replay-confirmed counterexample consumes this attempt and returns normal development feedback.
+An inconclusive result is a failure: keep state to timers and direction so outputs do not depend on position.
+Module scope supports functions, literal constants and frozen Math aliases; keep mutable state in JSON.
+Only proved candidates proceed to host freezing and the unchanged 20 unseen acceptance checks.
+The state reader stretch goal is disabled. Do not claim that you found the state layout.` : '');
 }
 
 /** Public milestones describe evidence presence, never the truth of a hypothesis. */

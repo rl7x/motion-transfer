@@ -9,6 +9,7 @@ import { requireInvestigationConclusion } from './investigation-completion.mjs';
 import { createInvestigationToolRunner } from './investigation-tools.mjs';
 import { finishRecoveryVerification } from './recovery-verification.mjs';
 import { validateRecoveryProtocol, assertRecoveryProtocolSources, RECOVERY_REQUIREMENTS } from './recovery-protocol.mjs';
+import { BLIND_HUMAN_ASSISTANCE, isBlindRecovery } from './blind-output.mjs';
 
 export const DEFAULT_QUESTION = 'Determine whether holding the dash button behaves differently from pressing and releasing it. Choose controlled experiments and cite the observations supporting your conclusion.';
 
@@ -92,7 +93,7 @@ export async function investigate({
     toolCalls: [],
     conclusion: null,
     conclusionVerified: false,
-    humanAssistance: ['Registered and hash-guarded the compiled donor', 'Mapped read-only motion registry fields; this mapping is not a model discovery', 'Authored the experiment tools and completion checks'],
+    humanAssistance: isBlindRecovery(protocol) ? [...BLIND_HUMAN_ASSISTANCE] : ['Registered and hash-guarded the compiled donor', 'Mapped read-only motion registry fields; this mapping is not a model discovery', 'Authored the experiment tools and completion checks'],
     contextCompactions: [],
     requirements,
     ...(protocol ? { recoveryProtocol: protocol, reasoningEffort } : {}),

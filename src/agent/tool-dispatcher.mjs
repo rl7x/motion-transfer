@@ -11,12 +11,15 @@ import { createInvestigationSession } from '../runtime/investigation-session.mjs
 import { digest } from '../component/build.mjs';
 import { createExperimentWorkbench } from '../experiment/workbench.mjs';
 import { EXPERIMENT_TOOLS } from '../experiment/schema.mjs';
+import { blindOutput } from './blind-output.mjs';
 
 const SESSION_TOOLS = [
   'read_memory', 'checkpoint_state', 'fork_checkpoint', 'write_memory',
   'diff_memory', 'compare_branches', 'capture_frame', 'record_finding',
 ];
 const EVIDENCE_TOOLS = ['record_finding', 'annotate_function', 'select_component_evidence'];
+const ARCHIVE_TOOLS = [...EVIDENCE_TOOLS, 'read_experiment', 'inspect_wasm', 'list_functions',
+  'inspect_function', 'decompile_function', 'call_graph'];
 
 /**
  * Own all lazy tool state for one investigation. The transport supplies a durable
@@ -126,14 +129,16 @@ export function createToolDispatcher({ target, persistCheckpoint }) {
     };
   }
 
-  async function execute(name, args) {
+  async function executeRaw(name, args) {
     if (name === '$open') {
       if (session) throw Error('Investigation session is already open');
       session = await createInvestigationSession(target.bytes, args.sessionState, { recoveryProtocol: args.recoveryProtocol });
       if (args.sessionState?.experimentWorkbench) await experimentTools(args.sessionState.experimentWorkbench);
-      return { result: { sessionId: session.id, identity: session.identity, restored: Boolean(args.sessionState) } };
+      return { result: { sessionId: session.id, identity: session.identity, restored: Boolean(args.sessionState),
+        ...(experiments&&!experiments.executionCompatible?{executionBlocked:'Experiment engine changed; only saved evidence and static inspection are available.'}:{}) } };
     }
     validateToolInput(name, args);
+    if(experiments&&!ARCHIVE_TOOLS.includes(name))experiments.assertExecutionCompatible();
     if (EXPERIMENT_TOOLS.some(tool => tool.name === name)) return (await experimentTools()).execute(name, args);
     if (EVIDENCE_TOOLS.includes(name) && experiments) registerArtifactEvidence(args.evidenceIds);
 
@@ -155,5 +160,8 @@ export function createToolDispatcher({ target, persistCheckpoint }) {
     return inspectStatic(name, args);
   }
 
+  async function execute(name, args) {
+    return blindOutput(await executeRaw(name, args), session?.recovery.protocol);
+  }
   return { execute, snapshot };
 }

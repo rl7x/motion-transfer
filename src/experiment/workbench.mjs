@@ -4,21 +4,28 @@ import assert from 'node:assert/strict';
 import {digest} from '../component/build.mjs';
 import {readMemoryWatches,writeMemoryValue,validateMemoryEdit,memoryTypeSize} from '../runtime/memory.mjs';
 import {framebufferPng} from '../runtime/png.mjs';
-import {fingerprint,measure,normalized,behavior,equal} from './compare.mjs';
+import {fingerprint,measure as measureRuntime,normalized,behavior,equal} from './compare.mjs';
+import {blindOutput,isBlindRecovery} from '../agent/blind-output.mjs';
 import {validateExperimentInput} from './schema.mjs';
 import {executeExperimentProgram} from './interpreter.mjs';
 
 export const EXPERIMENT_LIMITS=Object.freeze({maxExperiments:4,maxOperations:24,maxFrames:7200,maxCaptures:4,maxEvidenceBytes:1024*1024});
 export async function createExperimentWorkbench(session,{saved,persist=async()=>{},dispatch,limits=EXPERIMENT_LIMITS}={}){
+  const protocol=session.recovery?.protocol,blind=isBlindRecovery(protocol);
+  const measure=(runtime,watches)=>measureRuntime(runtime,watches,protocol);
   for(const [key,ceiling]of Object.entries(EXPERIMENT_LIMITS))if(!Number.isSafeInteger(limits[key])||limits[key]<1||limits[key]>ceiling)throw Error('Invalid experiment limit: '+key);
   const engineSha256=digest((await Promise.all(['workbench.mjs','compare.mjs','schema.mjs','interpreter.mjs'].map(name=>readFile(new URL(name,import.meta.url),'utf8')))).join('\n'));
   let state=saved?structuredClone(saved):{schemaVersion:1,sessionId:session.id,identity:session.identity,engineSha256,requests:[],targets:[],artifacts:[],programs:[],usage:{operations:0,experiments:0,frames:0,captures:0,evidenceBytes:0}};
+  const executionCompatible=state.engineSha256===engineSha256;
+  function assertExecutionCompatible(){assert.ok(executionCompatible,'Experiment engine changed; old evidence remains readable but execution cannot resume');}
   if(saved){
-    assert.equal(state.schemaVersion,1);assert.equal(state.sessionId,session.id);assert.deepEqual(state.identity,session.identity,'Experiment runtime identity mismatch');assert.equal(state.engineSha256,engineSha256,'Experiment engine changed; old evidence remains readable but execution cannot resume');
+    assert.equal(state.schemaVersion,1);assert.equal(state.sessionId,session.id);assert.deepEqual(state.identity,session.identity,'Experiment runtime identity mismatch');
     for(const artifact of state.artifacts)if(digest(JSON.stringify(artifact.payload))!==artifact.id)throw Error('Experiment evidence integrity mismatch');
     for(const program of state.programs??[])if(typeof program.source!=='string'||digest(program.source)!==program.sourceSha256)throw Error('Experiment program source identity mismatch');
-    for(const request of state.requests)if(request.status==='running'){request.status='interrupted';request.error='Execution was interrupted; completed artifacts are retained. No interpreter stack or partial experiment is resumed.';}
-    for(const program of state.programs??[])if(program.status==='running'){program.status='interrupted';program.error='Interpreter stack was not restored. Completed experiment artifacts remain available.';}
+    if(executionCompatible){
+      for(const request of state.requests)if(request.status==='running'){request.status='interrupted';request.error='Execution was interrupted; completed artifacts are retained. No interpreter stack or partial experiment is resumed.';}
+      for(const program of state.programs??[])if(program.status==='running'){program.status='interrupted';program.error='Interpreter stack was not restored. Completed experiment artifacts remain available.';}
+    }
   }
   state.programs??=[];
   function checkpoint(id){const value=session.snapshot().checkpoints.find(item=>item.id===id);if(!value)throw Error('Unknown checkpoint');assert.deepEqual(value.identity,session.identity);return value;}
@@ -41,7 +48,7 @@ export async function createExperimentWorkbench(session,{saved,persist=async()=>
     const runtime=await session.reconstructCheckpoint(cp.id),observation=measure(runtime,args.watches),targets=[];
     for(const [name,hint]of Object.entries(observation.motion?.fieldHints??{}))if(name!=='source')targets.push(target(runtime,cp,hint.address,hint.type,name,'human-mapped-assistance'));
     for(const watch of args.watches)for(let index=0;index<watch.count;index++)targets.push(target(runtime,cp,watch.address+index*memoryTypeSize(watch.type),watch.type,watch.name+(watch.count>1?'['+index+']':''),'agent-requested-raw-watch'));
-    return{checkpointId:cp.id,sessionId:session.id,verification:cp.verification,observation,targets,notice:'Target handles bind to this checkpoint only. Human-mapped hints are assistance; raw watch names are hypotheses. An address may hold a different allocation later.'};
+    return{checkpointId:cp.id,sessionId:session.id,verification:cp.verification,observation,targets,notice:blind?'Targets come only from requested raw watches and bind to this checkpoint. Watch names are hypotheses; allocations may move.':'Target handles bind to this checkpoint only. Human-mapped hints are assistance; raw watch names are hypotheses. An address may hold a different allocation later.'};
   }
   async function idempotent(kind,args,operation){
     const canonical=value=>Array.isArray(value)?value.map(canonical):value&&typeof value==='object'?Object.fromEntries(Object.keys(value).sort().map(key=>[key,canonical(value[key])])):value;
@@ -133,6 +140,7 @@ export async function createExperimentWorkbench(session,{saved,persist=async()=>
             const frames=name==='trace_writers'?2*(checkpoint(input.checkpointId).actions.reduce((sum,action)=>sum+(action.frames??0),0)+input.steps.reduce((sum,step)=>sum+step.frames,0)):0;
             charge(frames);output=await dispatch(name,input);
           }else throw Error('Forbidden experiment capability');
+          output=blindOutput(output,protocol);
           operation.result=output.result;operation.status='completed';
           if(output.images)images.push(...output.images);
           await persist();
@@ -151,15 +159,17 @@ export async function createExperimentWorkbench(session,{saved,persist=async()=>
     return{result,images};
   });}
   const api={
+    executionCompatible,assertExecutionCompatible,
     snapshot:()=>structuredClone(state),
     async execute(name,args){
       validateExperimentInput(name,args);
+      if(name!=='read_experiment')assertExecutionCompatible();
       if(name==='run_experiment_program')return runProgram(args);
       if(name==='run_experiment')return runExperiment(args);
       if(name==='capture_experiment')return captureExperiment(args);
       if(name==='read_experiment'){
-        charge();const artifact=artifactById(args.artifactId),payload=artifact.payload;
-        const frames=payload.trace.slice(args.startFrame-1,args.startFrame-1+args.frameCount);await persist();
+        if(executionCompatible)charge();const artifact=artifactById(args.artifactId),payload=artifact.payload;
+        const frames=payload.trace.slice(args.startFrame-1,args.startFrame-1+args.frameCount);if(executionCompatible)await persist();
         return{result:{experimentId:payload.experimentId,artifactRef:{id:artifact.id,sessionId:session.id,bytes:artifact.bytes},initialEditDifference:payload.initialEditDifference,frames,final:payload.final,totalFrames:payload.trace.length,notice:'This is a bounded page of actual observations. Full evidence remains in the artifact.'}};
       }
       if(name==='read_checkpoint'){const result=await readCheckpoint(args);await persist();return{result};}

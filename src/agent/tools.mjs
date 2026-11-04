@@ -9,7 +9,7 @@ export function createCartridgeTools({signal,timeoutMs=10_000,onCheckpoint=async
     env: { PATH: process.env.PATH ?? '', ...(process.env.TMPDIR ? { TMPDIR: process.env.TMPDIR } : {}) },
     stdio:['pipe','pipe','pipe'],
   });
-  let pending=null,sequence=0,buffer='',closed=false,failure=null,lastState=null,stderrBytes=0;
+  let pending=null,sequence=0,buffer='',closed=false,failure=null,lastState=null,stderrBytes=0,protocol;
   child.stdout.setEncoding('utf8');
   function stop(error){failure??=error;closed=true;child.kill('SIGKILL');if(pending){pending.reject(error);pending=null;}}
   const aborted=()=>stop(Error('Cartridge experiment cancelled'));
@@ -48,14 +48,16 @@ export function createCartridgeTools({signal,timeoutMs=10_000,onCheckpoint=async
       const cancel=()=>stop(Error('Cartridge experiment cancelled'));
       callSignal?.addEventListener('abort',cancel,{once:true});
       if(callSignal?.aborted){cancel();throw failure;}
-      const timer=setTimeout(()=>stop(Error('Cartridge experiment exceeded its time limit')),timeoutMs);
+      const commandTimeout=name==='submit_component_candidate'&&protocol?.exhaustive
+        ? protocol.exhaustive.deterministicGateTimeoutMs:timeoutMs;
+      const timer=setTimeout(()=>stop(Error('Cartridge experiment exceeded its time limit')),commandTimeout);
       try{return await new Promise((resolve,reject)=>{pending={id:sequence,resolve,reject};child.stdin.write(input+'\n');});}
       finally{clearTimeout(timer);callSignal?.removeEventListener('abort',cancel);}
   }
   return{
     get pid(){return child.pid;},
     get sessionState(){return lastState;},
-    open(sessionState,recoveryProtocol){return request('$open',{sessionState,recoveryProtocol});},
+    open(sessionState,recoveryProtocol){protocol=recoveryProtocol??sessionState?.recovery?.protocol;return request('$open',{sessionState,recoveryProtocol});},
     async run(name,args,options){validateToolInput(name,args);return request(name,args,options);},
     async close(){
       signal?.removeEventListener('abort',aborted);

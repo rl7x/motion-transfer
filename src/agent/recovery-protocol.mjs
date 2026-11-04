@@ -28,11 +28,11 @@ const modelCeilings = Object.freeze({
 /** A new identity is required whenever any recorded recovery control changes. */
 export function createRecoveryProtocol({
   name = 'motion-recovery-v5', model = 'muse-spark-1.3-contributor',
-  maxCostUsd = ['motion-recovery-v4', 'motion-recovery-v5'].includes(name) && model === 'muse-wonder-1.0' ? 8 : modelCeilings[model], sourceHashes = {},
+  maxCostUsd = name === 'motion-recovery-v6' ? Math.min(2.5, modelCeilings[model]) : ['motion-recovery-v4', 'motion-recovery-v5'].includes(name) && model === 'muse-wonder-1.0' ? 8 : modelCeilings[model], sourceHashes = {},
 } = {}) {
   if (!Object.hasOwn(modelCeilings, model) || !Object.hasOwn(PRICES, model)) throw Error('Unsupported recovery model');
   if (typeof name !== 'string' || !/^[a-z0-9][a-z0-9-]{0,79}$/.test(name)) throw Error('Invalid recovery protocol name');
-  const ceiling = ['motion-recovery-v4', 'motion-recovery-v5'].includes(name) && model === 'muse-wonder-1.0' ? 8 : modelCeilings[model];
+  const ceiling = name === 'motion-recovery-v6' ? Math.min(2.5, modelCeilings[model]) : ['motion-recovery-v4', 'motion-recovery-v5'].includes(name) && model === 'muse-wonder-1.0' ? 8 : modelCeilings[model];
   if (!Number.isFinite(maxCostUsd) || maxCostUsd <= 0 || maxCostUsd > ceiling) throw Error('Invalid recovery protocol cost ceiling');
   if (!sourceHashes || Array.isArray(sourceHashes) || typeof sourceHashes !== 'object'
     || Object.entries(sourceHashes).some(([path, sha]) => !/^[a-z][a-z0-9/.-]+$/.test(path)
@@ -45,11 +45,19 @@ export function createRecoveryProtocol({
     pricingPerMillionTokens: { ...PRICES[model] },
     maxDevelopmentAttempts: 5, maxSelections: 3, developmentRequestReserve: 14,
     requestTimeoutMs: 120_000,
-    ...(['motion-recovery-v3', 'motion-recovery-v4', 'motion-recovery-v5'].includes(name) ? { development: {
+    ...(['motion-recovery-v3', 'motion-recovery-v4', 'motion-recovery-v5', 'motion-recovery-v6'].includes(name) ? { development: {
       suite: 'motion-development-v3', caseCount: 32, feedback: 'transition-windows-v1',
     } } : {}),
-    ...(['motion-recovery-v4', 'motion-recovery-v5'].includes(name) ? { completion: 'host-after-development-v1' } : {}),
-    ...(name === 'motion-recovery-v5' ? { context: { maxEvidenceBytes: 48000, retainedTracePages: 2 } } : {}),
+    ...(['motion-recovery-v4', 'motion-recovery-v5', 'motion-recovery-v6'].includes(name) ? { completion: 'host-after-development-v1' } : {}),
+    ...(['motion-recovery-v5', 'motion-recovery-v6'].includes(name) ? { context: { maxEvidenceBytes: 48000, retainedTracePages: 2 } } : {}),
+    ...(name === 'motion-recovery-v6' ? {
+      investigation: { observations: 'no-location-hints-v1', checkpointTargets: 'agent-requested-raw-watches-only',
+        developmentFeedback: 'expected-positions-and-timers-retained', stateReader: false },
+      exhaustive: { gate: 'after-development-before-freeze-v1', maxChecks: 12000000, displacementTolerance: 0.001,
+        deterministicGateTimeoutMs: 180000, success: 'proved-and-20-of-20-acceptance',
+        counterexampleFeedback: 'replay-with-12-idle-ticks', inconclusive: 'development-failure',
+        acceptanceDisagreement: 'stop-abstraction-conflict' },
+    } : {}),
     acceptance: { generator: 'acceptanceCases-v1', caseCount: 20, seedPolicy: 'generate-after-freeze-once' },
     limits: { maxModelCalls: 32, maxToolCalls: 48, maxInputTokens: 32_000,
       maxOutputTokens: 12_000, maxCostUsd, timeoutMs: 720_000 },
