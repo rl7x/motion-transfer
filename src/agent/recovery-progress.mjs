@@ -29,8 +29,18 @@ No automatic retries or budget extensions. All listed tools are directly callabl
 
 export function recoveryInstructions(protocol) {
   const policy = recoveryPolicy(protocol);
-  return protocol ? RECOVERY_INSTRUCTIONS.replace('Three behavioral development attempts', `${policy.maxDevelopmentAttempts} behavioral development attempts`)
+  const instructions = protocol ? RECOVERY_INSTRUCTIONS.replace('Three behavioral development attempts', `${policy.maxDevelopmentAttempts} behavioral development attempts`)
     : RECOVERY_INSTRUCTIONS;
+  return instructions + (protocol?.completion ? `
+After development passes, the host freezes the exact source and runs separate acceptance automatically.
+No further model request is needed for these mechanical checks or the host's factual verification summary.
+Your job is to choose evidence, write and revise the candidate until development passes.` : '') + (protocol?.development ? `
+Development starts immediately after one title-screen start update, not at your later experiment checkpoint.
+Read each failure's preceding AND following frames. A premature event and a missing event imply different bugs.
+Compare prior development failures before revising; do not alternate between previously disproven rules.
+Infer update order explicitly from consecutive timer samples and input levels before changing trigger conditions.
+Test hypotheses about direction history with changed input sequences; plausible conventions need measurements.
+Use record_finding to retain measured rules and remaining uncertainties with their actual evidence IDs.` : '');
 }
 
 /** Public milestones describe evidence presence, never the truth of a hypothesis. */
@@ -93,6 +103,8 @@ export function recoveryGuidance(report, { remainingRequests } = {}) {
     + '\nUnfinished milestones: ' + (missing.join('; ') || 'none; conclude with the actual experiment citations') + '.'
     + `\nCurrent stage: ${step.stage}. Next action: ${step.action}`
     + (citations ? '\nSelected evidence citation requirements: ' + JSON.stringify(citations) : '')
+    + (report.session?.experimentWorkbench?.usage ? '\nExperiment usage (shared across all programs and direct calls): '
+      + JSON.stringify(report.session.experimentWorkbench.usage) + '. At most four experiments total; reserve at least one for a development failure.' : '')
     + (remainingRequests === undefined ? '' : `\n${remainingRequests} generation requests remain, including this one. At least ${step.minimumRequests} are needed from this stage, excluding further investigation and repairs. Allow ${Math.max(0, remainingAttempts - 1)} additional requests for development revisions when possible.`)
     + (step.stage === 'select' && remainingRequests <= policy.developmentRequestReserve ? `\nThe remaining requests are reserved for evidence selection, ${policy.maxDevelopmentAttempts} development evaluations, freezing, acceptance and conclusion. Select your actual evidence now; no further browsing tools are offered at this stage.` : '')
     + '\nChoose scientific hypotheses, code and interventions yourself. Do not repeat satisfied milestones without a reason.'

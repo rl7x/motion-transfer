@@ -88,3 +88,19 @@ test('frozen trials require a checked development delivery and CLI requires an e
   assert.ok(interval.lower > 0.16 && interval.lower < 0.18);
   assert.ok(interval.upper > 0.68 && interval.upper < 0.70);
 });
+
+test('a lower Wonder ceiling is reserved before inference and cannot change on resume', async t => {
+  const fixture = await setup(t);
+  const options = { ...fixture, development: true, model: 'muse-wonder-1.0', maxCostUsd: 2.4,
+    protocolName: 'motion-recovery-v3', investigateRun: async ({ recoveryProtocol }) => {
+      assert.equal(recoveryProtocol.limits.maxCostUsd, 2.4);
+      assert.equal((await fixture.phaseBudget.status()).categories.wonder.reservedUsd, 2.4);
+      const error = Error('Local fixture; no inference.');
+      error.report = { status: 'failed', estimatedCostUsd: 0, reservedCostUsd: 0, requests: [] };
+      throw error;
+    } };
+  await runRecoveryCampaign(options);
+  assert.equal((await fixture.phaseBudget.status()).categories.wonder.reservedUsd, 0);
+  await assert.rejects(runRecoveryCampaign({ ...options, maxCostUsd: 3 }), /retain campaign cost ceiling/);
+  await assert.rejects(runRecoveryCampaign({ ...options, protocolName: 'motion-recovery-v2' }), /retain campaign protocol/);
+});

@@ -9,7 +9,7 @@ const recoveryStages={
   investigate:recoveryEssential,
   select:['select_component_evidence','inspect_function','decompile_function','read_experiment','trace_writers','call_graph'],
   develop:['submit_component_candidate','inspect_function','decompile_function','read_experiment',
-    'prepare_checkpoint','run_experiment','select_component_evidence'],
+    'prepare_checkpoint','run_experiment','select_component_evidence','record_finding'],
   freeze:['freeze_component'],accept:['accept_component'],conclude:[],
 };
 const groups={

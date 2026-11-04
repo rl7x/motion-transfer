@@ -2490,6 +2490,60 @@ html:has(.ai-lab) body {
   line-height: 1.45;
   color: var(--mute);
 }
+.ai-lab .recovery__repeats {
+  margin-top: 28px;
+}
+.ai-lab .recovery__repeats h3 {
+  margin: 22px 0 6px;
+  font: 800 22px var(--display);
+  letter-spacing: -0.02em;
+}
+.ai-lab .recovery__sessions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 14px 0 0;
+}
+.ai-lab .recovery__session {
+  min-width: 0;
+  padding: 14px;
+  background: var(--panel);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+}
+.ai-lab .recovery__session.is-accepted {
+  border-color: rgba(198, 244, 50, 0.55);
+}
+.ai-lab .recovery__session.is-rejected {
+  border-color: rgba(255, 93, 108, 0.5);
+}
+.ai-lab .recovery__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 6px;
+  font: 700 11px var(--mono);
+  letter-spacing: 0.08em;
+  color: var(--mute);
+}
+.ai-lab .recovery__top strong {
+  font: 800 15px var(--display);
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+.ai-lab .is-accepted .recovery__top span {
+  color: var(--lime);
+}
+.ai-lab .is-rejected .recovery__top span {
+  color: var(--red);
+}
+.ai-lab .recovery__stats {
+  margin: 0;
+  font: 600 12px/1.45 var(--mono);
+  color: var(--mute);
+}
 .ai-lab .recovery .recovery__foot {
   margin: 14px 0 0;
   font: 600 12px var(--mono);

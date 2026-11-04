@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "protocolId": "0c4a0d9463b9b6df2d2f37d49806001a1d3ef5fc9b95f1de2083be17873c0789",
+  "accepted": 1,
+  "interrupted": 1,
+  "estimatedCostUsd": 4.1923376,
+  "trials": [
+    {
+      "ordinal": 1,
+      "status": "delivered",
+      "failureCategory": null,
+      "error": null,
+      "sessionId": "82c921ce-c7ce-486f-9c78-c91fa00b424f",
+      "campaignId": "35b532fe-c8cf-4a8f-844c-270f666b41f7",
+      "reportFile": "report-1.json.gz",
+      "reportSha256": "a911a238cd20588879401b8df99cabc8ec49697a897a4ce910e0cff3d7c32b71",
+      "requests": 20,
+      "estimatedCostUsd": 1.984772,
+      "reservedCostUsd": 0,
+      "elapsedMs": 235832,
+      "attempts": [
+        {
+          "candidateId": "12cff8ea43be471d1a19d50ee93e201bdca7d86676598f7b090b8a27666e5166",
+          "developmentPassed": 9,
+          "acceptancePassed": null
+        },
+        {
+          "candidateId": "0238a13b94a9e5f8317ad5ba46afff87dc1ee97915d863ffb8f3cd6e652daa3e",
+          "developmentPassed": 32,
+          "acceptancePassed": 20
+        }
+      ],
+      "integration": {
+        "id": "3d8265cf184140b0e105d7600706d417f7e9667cbea10d6dbd7ef08f8b620559",
+        "componentId": "e9d00e2b2a5ebb3e121c66e6a6f8b46f0a71c7407babb8b2d2fe527310174916",
+        "candidateId": "0238a13b94a9e5f8317ad5ba46afff87dc1ee97915d863ffb8f3cd6e652daa3e",
+        "packageId": "2324a06399fd3f32a11dcf9f57872994fea8a6af377d74a799ec7ec0dd928ff1",
+        "zipSha256": "349eb1d84399611e92dba891f4baa11f21731efa0b8f1137d99e63ec2b8eaf8d",
+        "archiveBytes": 1664067,
+        "fileCount": 38
+      }
+    },
+    {
+      "ordinal": 2,
+      "status": "interrupted",
+      "failureCategory": "interrupted",
+      "error": "Previous runner stopped; this trial is retained without an automatic model retry.",
+      "sessionId": "234f6d13-7866-42ca-86ed-2db152c01b49",
+      "campaignId": "f5e29247-1545-4f45-ac52-09e50e480333",
+      "reportFile": "report-2.json.gz",
+      "reportSha256": "ffeab58cb3f5f036d06d9eeb0459163def394d17c592d6181145d77d499d1af1",
+      "requests": 1,
+      "estimatedCostUsd": 0.025357599999999998,
+      "reservedCostUsd": 0,
+      "elapsedMs": null,
+      "attempts": [],
+      "integration": null
+    },
+    {
+      "ordinal": 3,
+      "status": "failed",
+      "failureCategory": "recovery-incomplete",
+      "error": "Cost budget cannot cover the next request; generation was not started",
+      "sessionId": "43039f66-d332-48c2-b58f-4d34865ef65e",
+      "campaignId": "74fbce11-b866-4a8e-9927-1419a1d0eac8",
+      "reportFile": "report-3.json.gz",
+      "reportSha256": "c4eb5e454cb79db11dd728f5eb7a153fdb23f0afc63d21d762a6c6ca60f9daa3",
+      "requests": 19,
+      "estimatedCostUsd": 2.1822079999999997,
+      "reservedCostUsd": 0,
+      "elapsedMs": 287759,
+      "attempts": [
+        {
+          "candidateId": "9140bfc06dc949a14e141e445c10b26c8105ceae20e397995e2510693f7fd2e2",
+          "developmentPassed": 0,
+          "acceptancePassed": null
+        },
+        {
+          "candidateId": "69087bbd0a052f15f4587d72ef7d99a67ff8a4def68b00f76a5cb76b3abae134",
+          "developmentPassed": 27,
+          "acceptancePassed": null
+        },
+        {
+          "candidateId": "851be75aa66ee680a7621071879c385f99c6ff2228c9912ac37a324d87339043",
+          "developmentPassed": 32,
+          "acceptancePassed": null
+        }
+      ],
+      "integration": null
+    }
+  ]
+}

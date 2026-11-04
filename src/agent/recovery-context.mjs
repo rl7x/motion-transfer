@@ -1,8 +1,11 @@
 import { discoveryReplay } from './tool-discovery.mjs';
+import { developmentHistory } from './development-feedback.mjs';
 
 const pick = (object, keys) => Object.fromEntries(keys.filter(key => object?.[key] !== undefined).map(key => [key, object[key]]));
 function development(report, retainFailures) {
   if (!report) return report;
+  if (report.observedCases !== undefined) return retainFailures ? report
+    : pick(report, ['passed', 'error', 'suite', 'sourceSha256', 'observedCases', 'failedCases']);
   return { ...pick(report, ['passed', 'error', 'suite', 'sourceSha256', 'javascriptSha256']),
     observedCases: report.results?.length ?? 0, failedCases: report.results?.filter(result => !result.passed).length ?? 0,
     ...(retainFailures ? { firstFailures: report.results?.filter(result => !result.passed) ?? [] } : {}),
@@ -57,6 +60,46 @@ function compactResult(call, retainCode, latestCandidate) {
   return result;
 }
 
+function archiveObservation(observation) {
+  const result = observation.result;
+  if (!result) return observation;
+  return { ...observation, result: { ...pick(result, ['candidateId', 'attempt', 'sourceSha256',
+    'experimentId', 'artifactRef', 'artifactRefs', 'programId', 'status', 'error', 'evidenceId',
+    'index', 'functionIndex', 'nextLine', 'checkpointId', 'selectionId', 'totalFrames']),
+    archived: true, notice: 'Older detail remains in the saved report or immutable artifact. Re-read by the retained ID if needed.' } };
+}
+
+function boundLedger(ledger, policy) {
+  const observations = ledger.observations;
+  const latestCandidate = observations.findLast(item => item.tool === 'submit_component_candidate' && item.ok);
+  const tracePages = observations.filter(item => item.tool === 'read_experiment' && item.ok);
+  const recentPages = new Set(tracePages.slice(-policy.retainedTracePages));
+  for (let index = 0; index < observations.length; index++) {
+    const item = observations[index];
+    if (item.tool === 'read_experiment' && item.ok && !recentPages.has(item)) observations[index] = archiveObservation(item);
+    if (item.tool === 'trace_writers' && item.ok) {
+      const result = item.result, writers = new Map();
+      for (const hit of result.hits ?? []) {
+        const key = `${hit.functionIndex}:${hit.functionLine}:${hit.address}:${hit.width}`;
+        if (!writers.has(key)) writers.set(key, hit);
+      }
+      observations[index] = { ...item, result: { ...pick(result, ['checkpointId', 'evidenceId', 'address', 'byteLength',
+        'matchingWrites', 'behavioralComparison', 'notice']), writers: [...writers.values()],
+      scope: 'One actual hit per distinct writer/address; repeated hits and the instrumentation manifest remain in the saved report.' } };
+    }
+  }
+  const bytes = () => Buffer.byteLength(JSON.stringify(ledger));
+  // Archive oldest observations first, preserving the newest measurement and
+  // the latest candidate's complete bounded feedback and source.
+  for (let index = 0; index < observations.length - 1 && bytes() > policy.maxEvidenceBytes - 1024; index++) {
+    if (observations[index] !== latestCandidate) observations[index] = archiveObservation(observations[index]);
+  }
+  ledger.contextRetention = { maxEvidenceBytes: policy.maxEvidenceBytes,
+    archivedObservations: observations.filter(item => item.result?.archived).length,
+    notice: 'Only model context is shortened. Full journals, candidate source, recent failure windows and evidence IDs are retained.' };
+  return ledger;
+}
+
 /** One copy of actual managed evidence; full programs and traces stay in artifacts. */
 export function recoveryEvidenceHistory(report, capture, { includeDiscovery = true } = {}) {
   const session = report.session;
@@ -73,6 +116,7 @@ export function recoveryEvidenceHistory(report, capture, { includeDiscovery = tr
     annotations: session.annotations, findings: session.findings,
     latestDevelopmentCandidate: pick(session.recovery?.attempts.at(-1),
       ['attempt', 'candidateId', 'candidate', 'timerFields', 'selectionId', 'sourceSha256', 'frozenAt']),
+    ...(session.recovery?.protocol?.development ? { developmentHistory: developmentHistory(session.recovery.attempts) } : {}),
     frozenCandidateId: session.recovery?.frozenCandidateId,
     experimentPrograms: session.experimentWorkbench.programs.map(program => ({
       ...pick(program, ['id', 'sourceSha256', 'status', 'error', 'artifactId']),
@@ -80,6 +124,7 @@ export function recoveryEvidenceHistory(report, capture, { includeDiscovery = tr
         ...pick(operation.result, ['artifactRef', 'experimentId']) })),
     })), programStackRestored: false,
   } };
+  if (session.recovery?.protocol?.context) boundLedger(ledger, session.recovery.protocol.context);
   return [
     { role: 'user', content: [{ type: 'input_text', text: report.question }] },
     { role: 'user', content: [{ type: 'input_text', text:

@@ -7,6 +7,7 @@ import { createToolDiscovery } from './tool-discovery.mjs';
 import { requestInvestigationTurn } from './investigation-request.mjs';
 import { requireInvestigationConclusion } from './investigation-completion.mjs';
 import { createInvestigationToolRunner } from './investigation-tools.mjs';
+import { finishRecoveryVerification } from './recovery-verification.mjs';
 import { validateRecoveryProtocol, assertRecoveryProtocolSources, RECOVERY_REQUIREMENTS } from './recovery-protocol.mjs';
 
 export const DEFAULT_QUESTION = 'Determine whether holding the dash button behaves differently from pressing and releasing it. Choose controlled experiments and cite the observations supporting your conclusion.';
@@ -159,6 +160,7 @@ export async function investigate({
         return report;
       }
       for (const call of calls) await runToolCall(call, turn);
+      if (await finishRecoveryVerification({ report, catalog, runToolCall, turn, onUpdate })) return report;
     }
     throw new Error('Model call limit reached without a conclusion');
   } catch (error) {

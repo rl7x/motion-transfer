@@ -64,5 +64,32 @@ async function autoPort() {
   await write('auto-port.json', { name: results.name, commit: results.commit, model: manifest.generation.model, upstream: manifest.upstream, componentId: manifest.componentId, games });
 }
 
-await recovery(); await liveMechanics(); await autoPort();
+async function wonderRepeat() {
+  const plan = await json('src/benchmark/wonder-repeat-tasks.json');
+  const read = async (path, label, kind) => {
+    const trial = (await json(path)).trials[0], { report } = trial, { attempts, acceptedAttempt } = report.session.recovery;
+    const score = attempt => attempt.development.results.filter(result => result.passed).length;
+    const exam = attempts.find(attempt => attempt.acceptance)?.acceptance.results;
+    return { label, kind, status: acceptedAttempt ? 'accepted' : 'rejected', failureCategory: acceptedAttempt ? null : trial.failureCategory,
+      bestDevelopment: { passed: Math.max(...attempts.map(score)), total: attempts[0].development.results.length },
+      acceptance: exam ? { passed: exam.filter(result => result.passed).length, total: exam.length } : null,
+      stuckOn: [...new Set(attempts.at(-1).development.results.filter(result => !result.passed).map(result => result.name))],
+      candidates: attempts.length, requests: report.requests.length, elapsedMs: trial.elapsedMachineMs, estimatedCostUsd: report.estimatedCostUsd };
+  };
+  const repeats = [];
+  for (let ordinal = 1; ordinal <= plan.plannedTrials; ordinal += 1) {
+    const path = `reports/wonder-repeat/trial-${ordinal}/journal.json`;
+    repeats.push(existsSync(path) ? await read(path, `Repeat ${ordinal}`, 'repeat') : { label: `Repeat ${ordinal}`, kind: 'repeat', status: 'not-run' });
+  }
+  const run = repeats.filter(session => session.status !== 'not-run');
+  const repeatCostUsd = run.reduce((sum, session) => sum + session.estimatedCostUsd, 0);
+  const remainingUsd = plan.budget.remainingAtFreezeUsd - repeatCostUsd;
+  const sessions = [await read('reports/motion-transfer-phase/wonder-development-001/journal.json', 'First session', 'baseline'), ...repeats];
+  await write('wonder-repeat.json', { name: plan.name, model: plan.model, protocolId: plan.protocolId, plannedTrials: plan.plannedTrials,
+    repeatsRun: run.length, repeatsAccepted: run.filter(session => session.status === 'accepted').length,
+    fullSessions: run.length + 1, acceptedSessions: sessions.filter(session => session.status === 'accepted').length,
+    repeatCostUsd, remainingUsd, sessions });
+}
+
+await recovery(); await liveMechanics(); await autoPort(); await wonderRepeat();
 console.log(readdirSync(OUT).join(', '));

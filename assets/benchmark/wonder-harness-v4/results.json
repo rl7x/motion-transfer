@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "protocolId": "0bd5aa715d33218be8fd0eecfd733eabaedccb23ffdc56f68a1e057dea53b0d3",
+  "accepted": 0,
+  "interrupted": 0,
+  "estimatedCostUsd": 2.0425136,
+  "trials": [
+    {
+      "ordinal": 1,
+      "status": "failed",
+      "failureCategory": "context-limit",
+      "error": "Input token limit reached before generation",
+      "sessionId": "c4509baa-d6ef-4a03-9fd9-4c27a3a3b46b",
+      "campaignId": "99042875-2986-4a3d-bb53-2cc8af2c9861",
+      "reportFile": "report-1.json.gz",
+      "reportSha256": "ea617117107d057e7fd31c5ef22bf76cd119d7136acb775fc82db5cc4961ef24",
+      "requests": 20,
+      "estimatedCostUsd": 2.0425136,
+      "reservedCostUsd": 0,
+      "elapsedMs": 296955,
+      "attempts": [
+        {
+          "candidateId": "ae61ef8d5e92c8a3026827f8ff58871cb54223caa9a5ad21dc0cbd321936ad1c",
+          "developmentPassed": 0,
+          "acceptancePassed": null
+        },
+        {
+          "candidateId": "e21a245a1ae554fe9a195cebd30d1f8e06a2abd5a9e32a38b61814e2adf9a0e3",
+          "developmentPassed": 9,
+          "acceptancePassed": null
+        }
+      ],
+      "integration": null
+    },
+    {
+      "ordinal": 2,
+      "status": "not-run",
+      "reason": "Cancelled after session 1 exposed a reproducible evidence-context overflow. A separate v5 plan will evaluate the correction; these sessions are not replaced or counted as successes.",
+      "requests": 0,
+      "estimatedCostUsd": 0
+    },
+    {
+      "ordinal": 3,
+      "status": "not-run",
+      "reason": "Cancelled after session 1 exposed a reproducible evidence-context overflow. A separate v5 plan will evaluate the correction; these sessions are not replaced or counted as successes.",
+      "requests": 0,
+      "estimatedCostUsd": 0
+    }
+  ]
+}

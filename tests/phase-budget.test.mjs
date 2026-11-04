@@ -14,6 +14,32 @@ async function setup(t) {
   return { directory, budget: await createPhaseBudget(directory) };
 }
 
+test('reallocating unused allowance preserves the total, every reservation and a validated audit chain', async t => {
+  const { directory, budget } = await setup(t);
+  await budget.approveAllowanceIncrease({ maxCostUsd: 50, reason: 'Previously approved total' });
+  await budget.reserve({ id: 'prior', category: 'wonder', maxCostUsd: 6 });
+  await budget.settle({ id: 'prior', estimatedCostUsd: 2, uncertain: false });
+  const before = await budget.journal();
+  await budget.reallocate({ from: 'public', to: 'wonder', amountUsd: 12, reason: 'User authorized recovery sessions capped at $8' });
+  const reopened = await createPhaseBudget(directory), after = await reopened.journal();
+  assert.deepEqual(after.reservations, before.reservations);
+  assert.deepEqual(after.allocationTransfers[0].previousDefinition, before.definition);
+  assert.equal(after.definition.maxCostUsd, 50);
+  assert.equal(after.definition.allocations.wonder, 24);
+  assert.equal(after.definition.allocations.public, 3);
+  assert.equal((await reopened.status()).remainingUsd, 48);
+  await reopened.reserve({ id: 'larger', category: 'wonder', maxCostUsd: 8 });
+  await assert.rejects(reopened.reallocate({ from: 'wonder', to: 'public', amountUsd: 15, reason: 'Too much' }), /reserved spending/);
+  await assert.rejects(reopened.reallocate({ from: 'public', to: 'wonder', amountUsd: 1, reason: '' }), /reason/);
+  assert.equal((await reopened.approveAllowanceIncrease({ maxCostUsd: 50, reason: 'Repeated authorization' })).allocations.wonder, 24);
+  const path = join(directory, 'phase-budget.json');
+  const { integritySha256, ...edited } = JSON.parse(await readFile(path));
+  edited.allocationTransfers[0].amountUsd = 11;
+  const { createHash } = await import('node:crypto');
+  await writeFile(path, JSON.stringify({ ...edited, integritySha256: createHash('sha256').update(JSON.stringify(edited)).digest('hex') }));
+  await assert.rejects(reopened.status(), /transfer identity changed/);
+});
+
 test('additional spending is reserved before work and does not reset when another client opens the ledger', async t => {
   const { directory, budget } = await setup(t);
   const initial = await budget.status();

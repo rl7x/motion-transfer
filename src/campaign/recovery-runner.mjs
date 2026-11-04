@@ -99,6 +99,7 @@ async function developmentGate(path, protocol) {
 /** A frozen campaign never retries a started trial, including after restart. */
 export async function runRecoveryCampaign({
   directory, phaseBudget, development = false, developmentReport, model = 'muse-spark-1.3-contributor',
+  protocolName, maxCostUsd,
   apiKey, client, investigateRun = investigate, integrateRecovery = finishRecoveryIntegration,
   signal, onProgress = () => {},
 } = {}) {
@@ -155,8 +156,10 @@ export async function runRecoveryCampaign({
       campaign = await readCampaign(root);
       assert.equal(campaign.definition.mode, development ? 'development' : 'frozen', 'Resume must retain campaign mode');
       assert.equal(campaign.definition.protocol.model, model, 'Resume must retain campaign model');
+      if (protocolName !== undefined) assert.equal(campaign.definition.protocol.name, protocolName, 'Resume must retain campaign protocol');
+      if (maxCostUsd !== undefined) assert.equal(campaign.definition.protocol.limits.maxCostUsd, maxCostUsd, 'Resume must retain campaign cost ceiling');
     } else {
-      const protocol = await snapshotRecoveryProtocol({ model });
+      const protocol = await snapshotRecoveryProtocol({ model, name: protocolName, maxCostUsd });
       if (!development && !developmentReport) throw Error('Freeze requires --development-report with a checked accepted delivery');
       const gate = development ? null : await developmentGate(developmentReport, protocol);
       const id = randomUUID();
