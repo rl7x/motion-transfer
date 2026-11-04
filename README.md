@@ -1,6 +1,6 @@
 # Motion Transfer
 
-[![Checks](https://github.com/rl7x/meta-ai-developer-hackathon/actions/workflows/frontend.yml/badge.svg)](https://github.com/rl7x/meta-ai-developer-hackathon/actions/workflows/frontend.yml)
+[![Checks](https://github.com/rl7x/motion-transfer/actions/workflows/frontend.yml/badge.svg)](https://github.com/rl7x/motion-transfer/actions/workflows/frontend.yml)
 
 **Recover a move from a compiled game, or from a clip of it, then port it into games the model has never seen.**
 

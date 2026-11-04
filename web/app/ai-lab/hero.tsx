@@ -7,7 +7,7 @@ import { PixelSprite } from './pixel-sprite';
 import { eligibleCount, portedCount } from './ported-games';
 import { Starfield } from './starfield';
 
-export const REPO_URL = 'https://github.com/rl7x/meta-ai-developer-hackathon';
+export const REPO_URL = 'https://github.com/rl7x/motion-transfer';
 /** Set to an embeddable video address to show the demo button. */
 export const DEMO_VIDEO_URL = '';
 
