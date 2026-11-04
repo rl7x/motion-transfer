@@ -11,6 +11,7 @@ import { createInvestigationSession } from '../runtime/investigation-session.mjs
 import { digest } from '../component/build.mjs';
 import { createExperimentWorkbench } from '../experiment/workbench.mjs';
 import { EXPERIMENT_TOOLS } from '../experiment/schema.mjs';
+import { blindOutput } from './blind-output.mjs';
 
 const SESSION_TOOLS = [
   'read_memory', 'checkpoint_state', 'fork_checkpoint', 'write_memory',
@@ -126,7 +127,7 @@ export function createToolDispatcher({ target, persistCheckpoint }) {
     };
   }
 
-  async function execute(name, args) {
+  async function executeRaw(name, args) {
     if (name === '$open') {
       if (session) throw Error('Investigation session is already open');
       session = await createInvestigationSession(target.bytes, args.sessionState, { recoveryProtocol: args.recoveryProtocol });
@@ -155,5 +156,8 @@ export function createToolDispatcher({ target, persistCheckpoint }) {
     return inspectStatic(name, args);
   }
 
+  async function execute(name, args) {
+    return blindOutput(await executeRaw(name, args), session?.recovery.protocol);
+  }
   return { execute, snapshot };
 }

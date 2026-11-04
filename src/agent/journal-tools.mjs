@@ -5,6 +5,7 @@ import { createToolDiscovery } from './tool-discovery.mjs';
 import { recoveryStep } from './recovery-progress.mjs';
 import { recoveryPolicy, reportRecoveryProtocol, RECOVERY_REQUIREMENTS } from './recovery-protocol.mjs';
 import { requireInvestigationConclusion } from './investigation-completion.mjs';
+import { blindOutput } from './blind-output.mjs';
 
 /**
  * @typedef {object} ToolOutput
@@ -107,6 +108,7 @@ export function createJournalToolExecutor({
         entry.experimentId = `exp-${String(++experiments).padStart(3, '0')}`;
         entry.result = { experimentId: entry.experimentId, ...result };
       }
+      entry.result = blindOutput(entry.result, protocol);
       history.push({ type: 'function_call_output', call_id: call.call_id, output: JSON.stringify(entry.result) });
       if (images?.length) {
         selectedImages = images;
@@ -123,7 +125,7 @@ export function createJournalToolExecutor({
           { type: 'input_text', text: 'Local tool discovery failed: ' + entry.error },
         ] });
       } else {
-        output = { ...toolError(entry.error, report.session), ...experimentErrorHelp(call.name), ...(feedback ? { inputFeedback: feedback } : {}) };
+        output = blindOutput({ ...toolError(entry.error, report.session), ...experimentErrorHelp(call.name), ...(feedback ? { inputFeedback: feedback } : {}) }, protocol);
         history.push({ type: 'function_call_output', call_id: call.call_id,
           output: JSON.stringify(output) });
       }

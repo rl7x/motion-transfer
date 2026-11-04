@@ -1,5 +1,6 @@
 import { discoveryReplay } from './tool-discovery.mjs';
 import { developmentHistory } from './development-feedback.mjs';
+import { blindOutput } from './blind-output.mjs';
 
 const pick = (object, keys) => Object.fromEntries(keys.filter(key => object?.[key] !== undefined).map(key => [key, object[key]]));
 function development(report, retainFailures) {
@@ -102,6 +103,7 @@ function boundLedger(ledger, policy) {
 
 /** One copy of actual managed evidence; full programs and traces stay in artifacts. */
 export function recoveryEvidenceHistory(report, capture, { includeDiscovery = true } = {}) {
+  report = blindOutput(report, report.recoveryProtocol ?? report.session?.recovery?.protocol);
   const session = report.session;
   const codeWindows = new Set(report.toolCalls.filter(call => call.ok && ['inspect_function', 'decompile_function'].includes(call.name)).slice(-2));
   const latestCandidate = report.toolCalls.findLast(call => call.ok && call.name === 'submit_component_candidate');

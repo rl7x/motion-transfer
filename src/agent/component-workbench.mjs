@@ -7,6 +7,8 @@ import {DEVELOPMENT_CASES,MOTION_REGRESSIONS,acceptanceCases} from '../evaluator
 import {RECOVERY_DEVELOPMENT_CASES} from '../evaluator/recovery-cases.mjs';
 import {developmentFeedback} from './development-feedback.mjs';
 import {recoveryPolicy} from './recovery-protocol.mjs';
+import {BLIND_HUMAN_ASSISTANCE,blindOutput,isBlindRecovery} from './blind-output.mjs';
+import {verifyExhaustiveMotion} from '../evaluator/exhaustive.mjs';
 
 export const COMPONENT_TOOLS=[{
   type:'function',name:'select_component_evidence',strict:true,
@@ -20,7 +22,7 @@ export const COMPONENT_TOOLS=[{
   parameters:{type:'object',properties:{candidateId:{type:'string',pattern:'^[a-f0-9]{64}$'}},required:['candidateId'],additionalProperties:false},
 }))];
 
-export function createComponentWorkbench(session,{evaluate,seed=()=>randomBytes(4).readUInt32LE()}={}){
+export function createComponentWorkbench(session,{evaluate,verifyExhaustive=verifyExhaustiveMotion,seed=()=>randomBytes(4).readUInt32LE()}={}){
   const state=session.recovery;
   const policy=recoveryPolicy(state.protocol);
   evaluate??=policy.developmentSuite==='motion-development-v3'?evaluateRecoveryMotion:evaluateMotion;
@@ -37,7 +39,8 @@ export function createComponentWorkbench(session,{evaluate,seed=()=>randomBytes(
       if(args.evidenceIds.some(id=>!known.has(id)))throw Error('Selection cites unknown session execution evidence');
       const evidence={schemaVersion:1,cartridgeSha256:session.identity.cartridgeSha256,scope:args.scope,
         functions:args.functionIndices.map(functionIndex=>({id:`binary:func${functionIndex}`,functionIndex,origin:'Agent-selected WABT inspection of the hash-bound binary'})),traces:args.evidenceIds.map(id=>({id,observation:known.get(id)})),
-        humanAssistance:['Registered compiled donor and motion boundary','Mapped read-only motion fields; this layout is not an agent discovery','Authored the standalone motion ABI, development evaluator and acceptance generator']};
+        humanAssistance:isBlindRecovery(state.protocol)?[...BLIND_HUMAN_ASSISTANCE]:['Registered compiled donor and motion boundary','Mapped read-only motion fields; this layout is not an agent discovery','Authored the standalone motion ABI, development evaluator and acceptance generator']};
+      if(isBlindRecovery(state.protocol))evidence.traces=blindOutput(evidence.traces,state.protocol);
       evidence.sha256=digest(JSON.stringify(evidence));
       const selection={id:`selection-${state.selections.length+1}`,evidence};state.selections.push(selection);
       return{result:{selectionId:selection.id,evidence,interface:'init(config) -> JSON state; step(state,{buttons,sourceBodyWidth},config) -> {state,output:{ownsMotion,displacement:{x,y},events}}. config: walkingSpeed,dashDistance,cooldownTicks,initialCooldownTicks. Keep timers in state and declare their field names. Inputs use WASM-4 masks; exact dash-start/dash-end events, float32 accumulated positions, fixed 60 Hz. Defaults and rules must be inferred, not copied from another recovery.',development:'Finite human-authored rollouts compare normalized motion, cooldown, remaining and exact event timing. Development failures are available for repair. Acceptance cases remain hidden until freezing.'}};
@@ -53,11 +56,29 @@ export function createComponentWorkbench(session,{evaluate,seed=()=>randomBytes(
       const expanded=policy.developmentSuite==='motion-development-v3';
       try{entry.development=await evaluate(args.source,args.contract.defaults,expanded?RECOVERY_DEVELOPMENT_CASES:[...DEVELOPMENT_CASES,...MOTION_REGRESSIONS],{suite:'development',timerFields:args.timerFields});}
       catch(error){entry.development={passed:false,error:String(error.message).slice(0,1000)};}
-      return{result:{candidateId:entry.candidateId,attempt:entry.attempt,sourceSha256:entry.sourceSha256,development:expanded?developmentFeedback(entry.development):entry.development,canRevise:!entry.development.passed&&state.attempts.length<policy.maxDevelopmentAttempts,acceptanceRun:false}};
+      if(state.protocol?.exhaustive&&entry.development.passed){
+        try{
+          entry.exhaustive=await verifyExhaustive(args.source,args.contract.defaults,{timerFields:args.timerFields,maxChecks:state.protocol.exhaustive.maxChecks});
+          if(!['proved','counterexample','inconclusive'].includes(entry.exhaustive?.verdict))throw Error('Invalid exhaustive verdict');
+          if(entry.exhaustive.verdict==='counterexample'){
+            const confirmation=await evaluate(args.source,args.contract.defaults,[entry.exhaustive.counterexample.trace],{suite:'development',timerFields:args.timerFields});
+            if(confirmation.passed){entry.exhaustive={...entry.exhaustive,verdict:'inconclusive',reason:'counterexample-not-confirmed'};}
+            else entry.development={...entry.development,passed:false,results:[...entry.development.results,...confirmation.results]};
+          }
+        }catch(error){
+          entry.exhaustive={verdict:'inconclusive',reason:'verification-error',error:String(error.message).slice(0,1000)};
+        }
+        if(entry.exhaustive.verdict==='inconclusive')entry.development={...entry.development,passed:false,
+          error:'Exhaustive verification is inconclusive ('+entry.exhaustive.reason+'). Keep state to timers and direction so outputs and other state cannot depend on position.'};
+      }
+      return{result:{candidateId:entry.candidateId,attempt:entry.attempt,sourceSha256:entry.sourceSha256,development:expanded?developmentFeedback(entry.development):entry.development,
+        ...(entry.exhaustive?{exhaustive:{verdict:entry.exhaustive.verdict,reason:entry.exhaustive.reason,checked:entry.exhaustive.checked,pairs:entry.exhaustive.pairs}}:{}),
+        canRevise:!entry.development.passed&&state.attempts.length<policy.maxDevelopmentAttempts,acceptanceRun:false}};
     }
     const entry=candidate(args.candidateId);
     if(name==='freeze_component'){
       if(state.frozenCandidateId||!entry.development.passed)throw Error('Only one development-passed candidate can be frozen');
+      if(state.protocol?.exhaustive&&entry.exhaustive?.verdict!=='proved')throw Error('Exhaustive verification must be proved before freezing');
       const compiled=await compileMotion(entry.candidate.source);
       if(compiled.sourceSha256!==entry.sourceSha256||compiled.javascriptSha256!==entry.development.javascriptSha256)throw Error('Frozen candidate does not match development build');
       state.frozenCandidateId=entry.candidateId;entry.frozenAt=new Date().toISOString();entry.javascript=compiled.javascript;
@@ -70,6 +91,10 @@ export function createComponentWorkbench(session,{evaluate,seed=()=>randomBytes(
       if(compiled.sourceSha256!==entry.sourceSha256)throw Error('Frozen component source identity changed');
       try{entry.acceptance=await evaluate(entry.candidate.source,entry.candidate.contract.defaults,acceptanceCases(state.acceptanceSeed,policy.acceptanceCaseCount),{suite:'acceptance',timerFields:entry.timerFields});}
       catch(error){entry.acceptance={passed:false,error:error.message};}
+      if(state.protocol?.exhaustive&&!entry.acceptance.passed){
+        state.abstractionConflict={candidateId:entry.candidateId,reason:'A proved candidate failed unchanged acceptance. Stop: the state abstraction must be investigated.'};
+        throw Error(state.abstractionConflict.reason);
+      }
       if(entry.acceptance.passed)state.acceptedAttempt=entry.attempt;
       return{result:{candidateId:entry.candidateId,passed:entry.acceptance.passed,status:entry.acceptance.passed?'accepted':'acceptance-failed',canRevise:false,scope:'Finite separately generated motion/timer/event rollouts only. Recipient-specific integration gates have not run for this new component.'}};
     }

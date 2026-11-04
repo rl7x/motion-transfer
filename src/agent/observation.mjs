@@ -1,4 +1,6 @@
-export function summarizeObservation(observation) {
+import { blindOutput } from './blind-output.mjs';
+
+export function summarizeObservation(observation, protocol) {
   const groups = new Map();
   for (const call of observation.drawCalls) {
     if (call.name !== 'blit') continue;
@@ -12,7 +14,7 @@ export function summarizeObservation(observation) {
     if (group.positions.length < 4) group.positions.push({ x, y, flags });
   }
   const text = observation.drawCalls.filter(call => call.name === 'textUtf8').map(call => call.text);
-  return {
+  return blindOutput({
     checkpoint: observation.checkpoint,
     frame: observation.frame,
     framebufferHash: observation.framebufferHash,
@@ -28,5 +30,5 @@ export function summarizeObservation(observation) {
     tones: observation.tones,
     memory: observation.memory ?? [],
     motion: observation.motion??null,
-  };
+  }, protocol);
 }
