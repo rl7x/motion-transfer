@@ -20,7 +20,7 @@ const outputs = request => request.input.flatMap(item => {
 });
 
 test('v4 freezes and accepts through the real worker without another model request', async () => {
-  const protocol = createRecoveryProtocol({ model: 'muse-wonder-1.0' });
+  const protocol = createRecoveryProtocol({ name: 'motion-recovery-v4', model: 'muse-wonder-1.0' });
   assert.equal(protocol.limits.maxCostUsd, 8);
   assert.equal(createRecoveryProtocol({ name: 'motion-recovery-v3', model: protocol.model }).limits.maxCostUsd, 6);
   assert.throws(() => createRecoveryProtocol({ name: 'motion-recovery-v3', model: protocol.model, maxCostUsd: 8 }), /ceiling/);

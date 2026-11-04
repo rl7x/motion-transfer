@@ -2,9 +2,9 @@
 
 `npm run recover:campaign -- --development --out <new-directory> --phase-ledger <existing-ledger-directory>` starts one paid development trial. It freezes the protocol and executable inputs before inference. Use a detached, committed worktree while other implementation work continues. Pass `--env-file <path>` to load credentials without copying them into that worktree.
 
-The default model is Contributor Spark. `--model muse-wonder-1.0` selects the separate comparison allocation and an $8 trial ceiling under v4. Contributor trials reserve $0.50. A started trial is never automatically repeated; restart only reconciles its durable report. Use a new output directory for a deliberate new development attempt.
+The default model is Contributor Spark. `--model muse-wonder-1.0` selects the separate comparison allocation and an $8 trial ceiling under v4/v5. Contributor trials reserve $0.50. A started trial is never automatically repeated; restart only reconciles its durable report. Use a new output directory for a deliberate new development attempt.
 
-New runs use [the v4 recovery harness](wonder-harness.md), with 32 development cases, bounded transition feedback and host-run freeze/acceptance after development passes. `--protocol motion-recovery-v3` retains model-requested verification and its $6 Wonder ceiling; v2 also selects the earlier 13-case suite. `--max-cost-usd <amount>` can lower the trial ceiling. These choices are frozen before generation and cannot change on resume.
+New runs use [the v5 recovery harness](wonder-harness.md), with 32 development cases, bounded evidence context and host-run freeze/acceptance after development passes. V4 lacks the bounded context policy. `--protocol motion-recovery-v3` retains model-requested verification and its $6 Wonder ceiling; v2 also selects the earlier 13-case suite. `--max-cost-usd <amount>` can lower the trial ceiling. These choices are frozen before generation and cannot change on resume.
 
 Only a checked development delivery under the identical protocol can open the ten-trial Contributor campaign. Omit `--development` and supply `--development-report <accepted-development-directory>`. The report retains every result, cost, elapsed time and failure category; the Wilson interval is calculated only after all ten trials finish.
 

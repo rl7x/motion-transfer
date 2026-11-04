@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { gunzipSync } from 'node:zlib';
+import { createRecoveryProtocol } from '../src/agent/recovery-protocol.mjs';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
 import { evidenceHistory } from '../src/agent/evidence.mjs';
@@ -7,6 +9,26 @@ import { requestInvestigationTurn } from '../src/agent/investigation-request.mjs
 import { PRICES } from '../src/agent/accounting.mjs';
 import { experimentFeedback } from '../src/agent/experiment-feedback.mjs';
 import { inputDiagnostics, recoverySelectionHelp } from '../src/agent/input-diagnostics.mjs';
+
+test('v5 bounds the real v4 overflow while preserving the current source, failures and recent measurements', async () => {
+  const saved = JSON.parse(gunzipSync(await readFile(new URL('../assets/benchmark/wonder-harness-v4/report-1.json.gz', import.meta.url))));
+  const report = structuredClone(saved), protocol = createRecoveryProtocol({ model: saved.model });
+  report.recoveryProtocol = protocol; report.session.recovery.protocol = protocol;
+  const before = JSON.stringify(report);
+  const text = evidenceHistory(report)[1].content[0].text;
+  const ledger = JSON.parse(text.slice(text.indexOf('\n') + 1));
+  assert.ok(Buffer.byteLength(JSON.stringify(ledger)) <= protocol.context.maxEvidenceBytes);
+  assert.ok(ledger.contextRetention.archivedObservations > 0);
+  assert.deepEqual(ledger.currentSession.latestDevelopmentCandidate.candidate, report.session.recovery.attempts.at(-1).candidate);
+  const latest = ledger.observations.findLast(item => item.tool === 'submit_component_candidate');
+  assert.deepEqual(latest.result.development.firstFailures,
+    report.toolCalls.findLast(item => item.name === 'submit_component_candidate').result.development.firstFailures);
+  const pages = ledger.observations.filter(item => item.tool === 'read_experiment');
+  assert.ok(pages.filter(item => item.result.frames).length <= 2);
+  assert.ok(pages.every(item => item.result.artifactRef.id));
+  assert.deepEqual(ledger.observations.at(-1).result, report.toolCalls.at(-1).result);
+  assert.equal(JSON.stringify(report), before);
+});
 
 const recorded = async () => JSON.parse(await readFile(new URL('../assets/lab/recordings/benchmark-recovery-one.json', import.meta.url)));
 test('recorded context-limit failure compacts actual experiments once and keeps errors and identities', async () => {

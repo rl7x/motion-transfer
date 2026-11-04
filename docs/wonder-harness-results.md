@@ -23,3 +23,9 @@ The exact reports, source hashes and both plans are in [the v3 evidence director
 The user authorized a maximum of $8 per Wonder session. Three fresh sessions are declared in [the v4 plan](../assets/benchmark/wonder-harness-v4/plan.json), using the same frozen protocol. The host freezes and runs acceptance immediately after development passes, through the existing journaled tools. It does not request another model response to perform those mechanical checks.
 
 Twelve dollars of unused public-demo allocation was moved to Wonder through an audited ledger transfer. The overall phase ceiling remains $50 and prior spending/reservations remain intact. A session starts only when the ledger can reserve its full $8 ceiling and the sandbox has at least 16 minutes remaining. The results will report any planned session that cannot start.
+
+Session 1 failed at the input-token limit after 20 requests and two candidates (0/32, then 9/32), costing $2.042514. Its compacted evidence was still about 93 KB. Sessions 2 and 3 were cancelled before starting to fix this reproducible harness failure. They remain recorded as not run, with no spending. The frozen v4 protocol was not modified or resumed. `node scripts/verify-wonder-harness.mjs --v4` verifies the retained report and all planned outcomes.
+
+## v5: bounded evidence context
+
+V5 retains v4's host verification and $8 ceiling, and bounds the evidence ledger after compaction. The real v4 failure is a regression fixture: the new context retains current source, development failures, recent measurements and trace IDs while archiving older repeated detail. The full journal remains intact. The next validation uses a separate frozen plan; its results will not be merged with the earlier protocol's outcomes.

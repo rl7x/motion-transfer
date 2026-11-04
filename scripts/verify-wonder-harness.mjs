@@ -9,24 +9,33 @@ import { evaluateRecoveryMotion as evaluateMotion } from '../src/evaluator/recov
 import { acceptanceCases } from '../src/evaluator/cases.mjs';
 import { RECOVERY_DEVELOPMENT_CASES } from '../src/evaluator/recovery-cases.mjs';
 
-const root = new URL('../assets/benchmark/wonder-harness-v3/', import.meta.url);
-const json = async name => JSON.parse(await readFile(new URL(name, root), 'utf8'));
 const near = (actual, expected) => assert.ok(Math.abs(actual - expected) < 1e-8, `${actual} differs from ${expected}`);
 
 /** Verify every recorded start, including interruption. Optional replay uses no model. */
-export async function verifyWonderHarness({ replay = false } = {}) {
-  const plan = await json('plan.json'), followup = await json('followup-plan.json'), results = await json('results.json');
+export async function verifyWonderHarness({ replay = false, version = 'v3' } = {}) {
+  assert.ok(['v3', 'v4', 'v5'].includes(version));
+  const root = new URL(`../assets/benchmark/wonder-harness-${version}/`, import.meta.url);
+  const json = async name => JSON.parse(await readFile(new URL(name, root), 'utf8'));
+  const plan = await json('plan.json'), followup = version === 'v3' ? await json('followup-plan.json') : null, results = await json('results.json');
   validateRecoveryProtocol(plan.protocol);
-  assert.equal(plan.protocol.name, 'motion-recovery-v3');
-  assert.equal(followup.originalPlan, plan.name);
-  assert.equal(followup.protocolId, plan.protocol.id);
+  assert.equal(plan.protocol.name, 'motion-recovery-' + version);
+  if (followup) {
+    assert.equal(followup.originalPlan, plan.name);
+    assert.equal(followup.protocolId, plan.protocol.id);
+    assert.equal(followup.ordinal, plan.plannedTrials + 1);
+  }
   assert.equal(results.protocolId, plan.protocol.id);
-  assert.equal(results.trials.length, plan.plannedTrials + followup.plannedAdditionalTrials);
-  assert.equal(followup.ordinal, plan.plannedTrials + 1);
+  assert.equal(results.trials.length, plan.plannedTrials + (followup?.plannedAdditionalTrials ?? 0));
   const identities = new Set();
   let accepted = 0, interrupted = 0, cost = 0;
   for (const [index, trial] of results.trials.entries()) {
     assert.equal(trial.ordinal, index + 1);
+    if (trial.status === 'not-run') {
+      assert.ok(trial.reason);
+      assert.equal(trial.requests, 0);
+      assert.equal(trial.estimatedCostUsd, 0);
+      continue;
+    }
     assert.equal(trial.reportFile, `report-${trial.ordinal}.json.gz`);
     const bytes = gunzipSync(await readFile(new URL(trial.reportFile, root)));
     assert.equal(digest(bytes), trial.reportSha256, 'Exact saved report identity');
@@ -61,8 +70,9 @@ export async function verifyWonderHarness({ replay = false } = {}) {
       assert.equal(component, undefined);
       assert.equal(trial.reservedCostUsd, 0, 'This interrupted session has only completed, billed requests');
       assert.ok(report.requests.every(request => request.status === 'completed'));
-    } else if (trial.status === 'delivered') {
+    } else if (component?.acceptance?.passed) {
       accepted++;
+      assert.ok(['delivered', 'failed'].includes(trial.status));
       assert.equal(report.status, 'completed');
       assert.equal(report.conclusionVerified, false, 'Finite checks do not certify all model interpretations');
       assert.equal(component?.candidateId, recovery.frozenCandidateId);
@@ -72,7 +82,25 @@ export async function verifyWonderHarness({ replay = false } = {}) {
       assert.equal(component.acceptance.results.length, plan.protocol.acceptance.caseCount);
       assert.ok(component.development.results.every(result => result.passed));
       assert.ok(component.acceptance.results.every(result => result.passed));
-      assert.equal(trial.integration.candidateId, component.candidateId);
+      if (trial.status === 'delivered') assert.equal(trial.integration.candidateId, component.candidateId);
+      else assert.equal(trial.failureCategory, 'recipient-or-export');
+      if (['v4', 'v5'].includes(version)) {
+        assert.equal(report.completion.actor, 'host-verifier');
+        assert.equal(report.completion.candidateId, component.candidateId);
+        assert.equal(report.completion.modelConclusionRequested, false);
+        assert.deepEqual(report.toolCalls.slice(-2).map(call => [call.name, call.actor, call.ok]),
+          [['freeze_component', 'host-verifier', true], ['accept_component', 'host-verifier', true]]);
+        assert.equal(report.toolCalls.at(-1).requestAttempt, report.requests.length);
+      }
+      if (trial.verificationFile) {
+        const verificationBytes = await readFile(new URL(trial.verificationFile, root));
+        assert.equal(digest(verificationBytes), trial.verificationSha256);
+        const verification = JSON.parse(verificationBytes);
+        assert.equal(verification.passed, true);
+        assert.equal(verification.candidateId, component.candidateId);
+        assert.equal(verification.nodeChecks.count, 3);
+        assert.ok(verification.browser.results.every(result => result.passed));
+      }
       if (replay) {
         for (const [suite, cases] of [['development', RECOVERY_DEVELOPMENT_CASES],
           ['acceptance', acceptanceCases(recovery.acceptanceSeed, plan.protocol.acceptance.caseCount)]]) {
@@ -89,9 +117,10 @@ export async function verifyWonderHarness({ replay = false } = {}) {
   assert.equal(results.accepted, accepted);
   assert.equal(results.interrupted, interrupted);
   near(results.estimatedCostUsd, cost);
-  return `Wonder harness v3: ${accepted} accepted, ${interrupted} interrupted, ${results.trials.length} starts; $${cost.toFixed(6)}${replay ? '; accepted sources replayed successfully' : ''}.`;
+  return `Wonder harness ${version}: ${accepted} accepted, ${interrupted} interrupted, ${results.trials.filter(trial => trial.status !== 'not-run').length} starts; $${cost.toFixed(6)}${replay ? '; accepted sources replayed successfully' : ''}.`;
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-  console.log(await verifyWonderHarness({ replay: process.argv.includes('--replay') }));
+  console.log(await verifyWonderHarness({ replay: process.argv.includes('--replay'),
+    version: process.argv.includes('--v5') ? 'v5' : process.argv.includes('--v4') ? 'v4' : 'v3' }));
 }

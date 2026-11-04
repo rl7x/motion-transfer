@@ -12,9 +12,11 @@ The v3 harness adds the following changes. The model still chooses code to inspe
 
 Acceptance remains 20 separately generated cases, seeded only after the candidate is frozen. Acceptance failure ends the session. The old v2 protocol still validates and retains its 13-case development suite. Historical results and their frozen manifests are unchanged.
 
-New sessions default to `motion-recovery-v4`, which retains the v3 checks and gives the host responsibility for freezing, acceptance and a factual verification summary. These use the same journal executor and evaluator; the calls are explicitly recorded with `actor: host-verifier`. Model evidence selection and candidate generation still precede these gates. Acceptance failure is terminal. This avoids paying for model requests to perform deterministic verification after development has passed. Model interpretations remain unverified (`conclusionVerified: false`).
+The v4 protocol retains the v3 checks and gives the host responsibility for freezing, acceptance and a factual verification summary. These use the same journal executor and evaluator; the calls are explicitly recorded with `actor: host-verifier`. Model evidence selection and candidate generation still precede these gates. Acceptance failure is terminal. This avoids paying for model requests to perform deterministic verification after development has passed. Model interpretations remain unverified (`conclusionVerified: false`).
 
-The user authorized an $8 maximum per Wonder session. That ceiling applies to v4; the v2/v3 ceilings retain their original values so historical protocols remain valid. Source hashes still distinguish every executable change. Recovery evaluation lives in separate files so the earlier fidelity study keeps its pinned evaluator bytes.
+New sessions default to `motion-recovery-v5`, which also bounds the compacted evidence ledger. It keeps at most two recent trace pages, deduplicates repeated writer hits and archives older observations by ID when context grows. Current candidate source, the latest development feedback and a bounded history of earlier failures remain available. Full observations stay in the durable report. This addresses the actual v4 session that exceeded 32,000 input tokens even after compaction.
+
+The user authorized an $8 maximum per Wonder session. That ceiling applies to v4/v5; the v2/v3 ceilings retain their original values so historical protocols remain valid. Source hashes still distinguish every executable change. Recovery evaluation lives in separate files so the earlier fidelity study keeps its pinned evaluator bytes.
 
 ## Running a new development session
 
@@ -22,7 +24,7 @@ The user authorized an $8 maximum per Wonder session. That ceiling applies to v4
 npm run recover:campaign -- --development \
   --model muse-wonder-1.0 \
   --max-cost-usd 8 \
-  --out reports/wonder-v4-development-001 \
+  --out reports/wonder-v5-development-001 \
   --phase-ledger <existing-authoritative-ledger-directory>
 ```
 
