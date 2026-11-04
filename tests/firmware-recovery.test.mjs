@@ -186,4 +186,18 @@ test('the failed first session stays on the record exactly', async () => {
   assert.equal(FIRMWARE_PROTOCOL.name === plan.protocol.name, false, 'A changed control needs a new name');
 });
 
+test('the failed second session stays on the record exactly', async () => {
+  const root = new URL('../assets/benchmark/firmware-recovery/', import.meta.url);
+  const [plan, results, bytes] = await Promise.all([readFile(new URL('plan-2.json', root), 'utf8').then(JSON.parse),
+    readFile(new URL('results-2.json', root), 'utf8').then(JSON.parse), readFile(new URL('report-2.json.gz', root)).then(gunzipSync)]);
+  const report = JSON.parse(bytes);
+  assert.equal(createHash('sha256').update(bytes).digest('hex'), results.reportSha256);
+  assert.equal(plan.protocol.name, 'firmware-recovery-v2');
+  assert.deepEqual(report.protocol, plan.protocol);
+  assert.deepEqual([results.status, results.accepted, results.acceptedAttempt], ['failed', false, null]);
+  assert.equal(report.estimatedCostUsd, results.estimatedCostUsd);
+  assert.deepEqual(results.attempts.map(attempt => [attempt.verdict, attempt.counterexampleLength]), [['counterexample', 1], ['counterexample', 1]]);
+  assert.equal(report.requests.length, plan.protocol.limits.maxModelCalls);
+});
+
 test('every boot state is a declared root', () => assert.deepEqual([...BOOT_STATES], [0, 1, 2, 3, 4, 5]));

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "planName": "firmware-recovery-2026-11-04-19-56",
+  "reportSha256": "d803bef98fe31195f38c375234c98b758fe8da0cd8301938d2026c494f6a9788",
+  "status": "failed",
+  "accepted": false,
+  "acceptedAttempt": null,
+  "attempts": [
+    {
+      "attempt": 1,
+      "sourceSha256": "0f9dbaa086221640444e364306e36161a26e06d14a6e3a66dc3eeb31a409eb9f",
+      "verdict": "counterexample",
+      "reason": null,
+      "counterexampleLength": 1
+    },
+    {
+      "attempt": 2,
+      "sourceSha256": "5c57e0a5c255849e73d82b85e3bb9eb83136d6707eb74a1d7071ba61f6989e99",
+      "verdict": "counterexample",
+      "reason": null,
+      "counterexampleLength": 1
+    }
+  ],
+  "requests": 16,
+  "binaryRuns": 9,
+  "truncations": 1,
+  "estimatedCostUsd": 0.5550568,
+  "reservedCostUsd": 0,
+  "error": "Model call limit reached without a matching submission"
+}

@@ -1,6 +1,6 @@
 # Firmware recovery
 
-This applies the exhaustive check to code outside games: the logic that decides whether a PX4 flight controller may arm its motors. **No model has recovered it yet.** The first paid session failed, and the verifier below stands without one.
+This applies the exhaustive check to code outside games: the logic that decides whether a PX4 flight controller may arm its motors. **No model has recovered it yet.** Both paid sessions failed, and the verifier below stands without one.
 
 ## The target
 
@@ -33,10 +33,11 @@ A cap, a refusal or an unconfirmed trace returns `inconclusive`, which is never 
 | Session | Protocol | Result | Cost |
 | --- | --- | --- | ---: |
 | 1 | `firmware-recovery-v1` | Failed. No tool call and no submission | $0.25494 |
+| 2 | `firmware-recovery-v2` | Failed. 2 submissions, both rejected, then out of model calls | $0.55506 |
 
 Session 1 got the whole disassembly at high effort. Wonder used its full 12,000 token output limit reasoning, and the harness ended the session on the incomplete response. Its [plan](../assets/benchmark/firmware-recovery/plan.json), [result](../assets/benchmark/firmware-recovery/results.json) and exact report stay on the record. It ran from commit `233661e`.
 
-`firmware-recovery-v2` is built and has not run. The model reads the disassembly through a tool at medium effort with a 6,000 token limit, and a truncated response no longer ends the session. A started session is never repeated, so a change of control gets a new name.
+Session 2 changed those controls under a new name, because a started session is never repeated. The model read the disassembly through a tool at medium effort with a 6,000 token limit, and a truncated response no longer ended the session. It read the code, mapped most of the table and survived one truncation. Both submissions failed on a one-step counterexample, and it then spent its remaining requests on single probes and reached the 16 model call limit at $0.55506, well under its $1.19 ceiling. Its [plan](../assets/benchmark/firmware-recovery/plan-2.json) and [result](../assets/benchmark/firmware-recovery/results-2.json) are committed.
 
 ## What this does not show
 
