@@ -49,9 +49,9 @@ export function PipelineRibbon({ onPlayDonor }: { onPlayDonor?(): void }) {
         <p className="eyebrow">HOW IT WORKS</p>
         <h2 id="how-title">One move, recovered from a compiled game and carried into new ones.</h2>
         <p>
-          87% of classic US games released 1960–2009 are out of release, and often only the binary
-          survives. Motion Transfer recovers one behavior from a compiled cartridge and makes it
-          playable somewhere new.
+          The feel you want often lives in a compiled build, not in code you can read. Motion
+          Transfer recovers one behavior from a compiled cartridge and makes it playable in other
+          games, without rebuilding it by hand.
         </p>
       </div>
       <ol className="ribbon__stations">
