@@ -5,7 +5,7 @@ import { distanceTolerance, gradeController } from '../src/footage/grade.mjs';
 import { chooseLandmarks, findSprites, pointPrompt } from '../src/footage/landmarks.mjs';
 import { checkClipPath, checkRights, recoverMove } from '../src/footage/recover.mjs';
 import { parseTracks, samCostUsd, samRequest, textFromStream } from '../src/footage/sam.mjs';
-import { defaultDirection, detectBursts, motionSummary, shortestGap, splitBursts, worldSteps } from '../src/footage/trajectory.mjs';
+import { cameraFollows, defaultDirection, detectBursts, motionSummary, shortestGap, splitBursts, staysOnScreen, worldSteps } from '../src/footage/trajectory.mjs';
 
 // Real SAM 3.1 output for a 60-frame Dashy Dango clip at 4x, with masks removed to keep it small.
 const fixture = await readFile(new URL('./fixtures/sam-tracks.txt', import.meta.url), 'utf8');
@@ -229,4 +229,38 @@ test('one lost frame mid-burst is filled, but a lost frame at its edge drops the
   assert.equal(clip([18]).length, 0, 'The burst might have lasted one more frame');
   assert.equal(clip([9]).length, 0, 'The burst might have started one frame sooner');
   assert.equal(clip([12, 13]).length, 0, 'Two lost frames are too many to fill');
+});
+
+test('the camera is judged from normal-size boxes, even in a clip that is mostly dashes', () => {
+  const size = { width: 640, height: 640, pixelScale: 4 };
+  const dashing = new Map();
+  for (let frame = 0; frame < 100; frame++) {
+    const trail = frame % 10 < 7 ? 20 + (frame % 10) * 20 : 0;
+    dashing.set(frame, { x1: 304 - trail, y1: 308, x2: 335, y2: 336 });
+  }
+  assert.equal(staysOnScreen([dashing], size), true, 'Afterimages stretch the box, but the player stays put');
+  const wandering = new Map();
+  for (let frame = 0; frame < 100; frame++) wandering.set(frame, { x1: 100 + frame * 4, y1: 308, x2: 131 + frame * 4, y2: 336 });
+  assert.equal(staysOnScreen([wandering], size), false, 'A fixed camera shows the player moving at normal size');
+});
+
+test('the scenery decides the camera, even when the player track goes astray', () => {
+  const size = { width: 640, height: 640, pixelScale: 4 };
+  const box = (x, y = 300) => ({ x1: x, y1: y, x2: x + 27, y2: y + 27 });
+  const clip = (playerAt, sceneryAt) => {
+    const tracks = new Map([[1, new Map()], [2, new Map()], [3, new Map()]]);
+    for (let frame = 0; frame < 60; frame++) {
+      tracks.get(1).set(frame, box(playerAt(frame)));
+      tracks.get(2).set(frame, box(sceneryAt(frame), 120));
+      tracks.get(3).set(frame, box(sceneryAt(frame), 480));
+    }
+    return [tracks];
+  };
+  // SAM drifted off the player for a third of the clip, as it does in real footage.
+  const drifting = frame => (frame % 30 < 10 ? 304 + frame * 6 : 304);
+  assert.equal(cameraFollows(clip(drifting, frame => 500 - frame * 2), { playerId: 1, ...size }), true);
+  assert.equal(cameraFollows(clip(drifting, () => 500), { playerId: 1, ...size }), false, 'Still scenery means a fixed camera');
+  assert.equal(cameraFollows(clip(frame => 100 + frame * 8, frame => 500 - frame), { playerId: 1, ...size }), false, 'A loose camera has to use both motions');
+  const steps = worldSteps(clip(frame => 304, frame => 500 - frame * 2)[0], { playerId: 1, ...size });
+  assert.ok(steps.every(step => Math.abs(step.x - 0.5) < 1e-9), 'A followed player moves opposite to the scenery');
 });

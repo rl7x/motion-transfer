@@ -8,7 +8,7 @@ import { gradeController } from './grade.mjs';
 import { chooseLandmarks, findSprites, pointPrompt } from './landmarks.mjs';
 import { footageRequest, readController } from './request.mjs';
 import { parseTracks } from './sam.mjs';
-import { defaultDirection, detectBursts, motionSummary, shortestGap, splitBursts, staysOnScreen, worldSteps } from './trajectory.mjs';
+import { cameraFollows, defaultDirection, detectBursts, motionSummary, shortestGap, splitBursts, worldSteps } from './trajectory.mjs';
 
 export const RIGHTS = Object.freeze({
   own: 'This is my own game.',
@@ -58,12 +58,12 @@ async function measure({ clip, info, from, to, player, pixelScale, sam, work, lo
     const last = playerTrack?.get(Math.max(...(playerTrack?.keys() ?? [0])));
     if (!last) throw Error(`SAM lost the player in frames ${start}-${start + count - 1}. Try --player on a clearer frame.`);
     // A followed player doesn't move on screen, and a dash's afterimage would shift the box's center.
-    if (!staysOnScreen(tracked.map(section => section.tracks.get(PLAYER_ID)), options)) {
+    if (!cameraFollows(tracked.map(section => section.tracks), { playerId: PLAYER_ID, ...options })) {
       position = { x: Math.round((last.x1 + last.x2) / 2), y: Math.round((last.y1 + last.y2) / 2) };
     }
   }
   // The camera doesn't change mid-clip, so this is decided once, across every section.
-  const followed = staysOnScreen(tracked.map(section => section.tracks.get(PLAYER_ID)), options);
+  const followed = cameraFollows(tracked.map(section => section.tracks), { playerId: PLAYER_ID, ...options });
   const steps = tracked.flatMap(({ tracks, start }) => worldSteps(tracks, { playerId: PLAYER_ID, ...options, frameOffset: start, followed }));
   const unique = [...new Map(steps.map(step => [step.frame, step])).values()].sort((a, b) => a.frame - b.frame);
   const sections = tracked.map(({ tracks, start, count, landmarks }) => ({ from: start, count, landmarks, objectsTracked: tracks.size }));

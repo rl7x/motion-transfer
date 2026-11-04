@@ -15,9 +15,9 @@ const USAGE = `Recover a dash-like move from a gameplay clip, with no source cod
   <clip.mp4>          A local 60 fps clip showing the move at least twice. Web links are refused.
   --rights <basis>    ${Object.keys(RIGHTS).join(', ')}
   --source <text>     What the game is and who made it, so the result can credit it
-  --player <f:x,y>    A point on the player: frame number, then its pixel position in that frame
+  --player <f:x,y>    A point on the player: the frame to start tracking from, then its pixel position
   --pixel-scale <n>   For pixel art, how many video pixels make one game pixel. Defaults to 1
-  --from, --to <n>    Use only these frames, for example to skip a title screen
+  --to <n>            Stop tracking at this frame
   --play-start <n>    The first frame of play, if the clip shows it. Only use this if you held the
                       ability from that moment, so the first burst shows how soon it can be used
   --out <directory>   Where the result goes. Defaults to ./recovered-move
@@ -25,11 +25,12 @@ const USAGE = `Recover a dash-like move from a gameplay clip, with no source cod
 
 It keeps only motion numbers and generated code, never the clip's frames, art or sound.
 The result is a footage match. It shows how the move travels, not the game's hidden rules.
+If no controller matches the clip, nothing is saved.
 Use it with: npm run port -- <game> --core <file> --component <directory> --open --allow-paid`;
 
 const { values, positionals } = parseArgs({ allowPositionals: true, options: {
   rights: { type: 'string' }, source: { type: 'string' }, player: { type: 'string' }, 'pixel-scale': { type: 'string', default: '1' },
-  from: { type: 'string', default: '0' }, to: { type: 'string' }, 'play-start': { type: 'string' }, out: { type: 'string', default: './recovered-move' },
+  to: { type: 'string' }, 'play-start': { type: 'string' }, out: { type: 'string', default: './recovered-move' },
   'allow-paid': { type: 'boolean' }, help: { type: 'boolean' },
 } });
 const [clip] = positionals;
@@ -64,13 +65,14 @@ try {
   const result = await recoverMove({
     clip, out: resolve(values.out), rights: values.rights, source: values.source, sam, generate,
     model: OPEN_MODEL, modelName: OPEN_MODEL_NAME, log: line => console.log(line),
-    player: { x: point.x, y: point.y }, from: point.frame + Number(values.from), to: values.to ? Number(values.to) : null, pixelScale: Number(values['pixel-scale']),
+    player: { x: point.x, y: point.y }, from: point.frame, to: values.to ? Number(values.to) : null, pixelScale: Number(values['pixel-scale']),
     playStart: values['play-start'] ? Number(values['play-start']) : null,
   });
   console.log(`\n${OPEN_MODEL_NAME}: ${result.submission.summary}`);
   console.log(`Saved to ${result.out}. Label: footage match. Cost: $${result.report.estimatedCostUsd.total.toFixed(4)} estimated.`);
-  console.log('Checked: duration, distance and direction on bursts the model never saw, and the recharge timing.');
+  console.log('Checked: bursts the model never saw, walking speed, dashes with no direction held, and the recharge timing.');
   console.log('Not checked: hidden rules, what the button does, or anything the clip does not show.');
+  console.log('The recharge can only be as short as the shortest gap in the clip. Hold the button down to show the real one.');
 } catch (error) {
   console.error(`\n${error.message}`);
   process.exit(1);

@@ -4,6 +4,9 @@ const SMALLEST_BOX = 4;
 const STILL = 0.25;
 const SHORTEST_BURST = 3;
 const SPEED_WINDOW = 6;
+const NORMAL_SIZE = 1.3;
+const USUAL_SHARE = 0.4;
+const SCROLLING_SHARE = 0.1;
 const LOOK_BACK = 120;
 const AGREE_DEGREES = 10;
 
@@ -21,14 +24,17 @@ function center(box, { width, height, pixelScale }) {
 }
 
 /**
- * With a follow camera the player's box only changes because of effects like a dash's afterimage,
- * which stretch it without moving the player. Taking that as motion would add false steps.
+ * Whether the player keeps coming back to one spot on screen. Afterimages stretch the box and SAM
+ * can briefly follow something else, so this looks for the usual position, not an average.
  */
 export function staysOnScreen(tracks, options) {
-  const centers = tracks.flatMap(track => [...(track?.values() ?? [])]).map(box => center(box, options)).filter(Boolean);
+  const boxes = tracks.flatMap(track => [...(track?.values() ?? [])]);
+  const area = box => (box.x2 - box.x1 + 1) * (box.y2 - box.y1 + 1);
+  const smallest = [...boxes].map(area).sort((a, b) => a - b)[Math.floor(boxes.length / 10)];
+  const centers = boxes.filter(box => area(box) <= smallest * NORMAL_SIZE).map(box => center(box, options)).filter(Boolean);
   if (!centers.length) return false;
   const usualX = median(centers.map(point => point.x)), usualY = median(centers.map(point => point.y));
-  return median(centers.map(point => Math.hypot(point.x - usualX, point.y - usualY))) < 1;
+  return centers.filter(point => Math.hypot(point.x - usualX, point.y - usualY) < 1).length / centers.length >= USUAL_SHARE;
 }
 
 /**
@@ -46,22 +52,41 @@ function sceneryMotion(steps, needed) {
   return { x: median(best.map(step => step.x)), y: median(best.map(step => step.y)), landmarks: best.length };
 }
 
+const frameList = tracks => [...new Set([...tracks.values()].flatMap(track => [...track.keys()]))].sort((a, b) => a - b);
+const sceneryIds = (tracks, playerId) => [...tracks.keys()].filter(id => id !== playerId);
+const movedAt = (tracks, frame, options) => id => {
+  const before = center(tracks.get(id)?.get(frame - 1), options), after = center(tracks.get(id)?.get(frame), options);
+  return before && after ? { x: after.x - before.x, y: after.y - before.y } : null;
+};
+
+/**
+ * A follow camera needs two things: scenery that scrolls together, and a player who stays put on
+ * screen. Scenery that stays still means a fixed camera, however the player's box behaves.
+ */
+export function cameraFollows(sections, { playerId, ...options }) {
+  let seen = 0, scrolling = 0;
+  for (const tracks of sections) for (const frame of frameList(tracks)) {
+    const scroll = sceneryMotion(sceneryIds(tracks, playerId).map(movedAt(tracks, frame, options)).filter(Boolean), 2);
+    if (!scroll) continue;
+    seen += 1;
+    if (Math.hypot(scroll.x, scroll.y) > STILL) scrolling += 1;
+  }
+  if (!seen || scrolling / seen < SCROLLING_SHARE) return false;
+  return staysOnScreen(sections.map(tracks => tracks.get(playerId)), options);
+}
+
 /**
  * Turns SAM tracks into the player's motion through the world, one step per frame. The step is the
  * player's own motion on screen minus how the scenery moved, so it works for a fixed camera (the
  * scenery stays still) and a camera that follows the player (the player stays still).
  */
 export function worldSteps(tracks, { playerId, width, height, pixelScale, frameOffset = 0, followed }) {
-  const frames = [...new Set([...tracks.values()].flatMap(track => [...track.keys()]))].sort((a, b) => a - b);
   const steps = [];
   const options = { width, height, pixelScale };
-  const follows = followed ?? staysOnScreen([tracks.get(playerId)], options);
-  for (const frame of frames) {
-    const moved = id => {
-      const before = center(tracks.get(id)?.get(frame - 1), options), after = center(tracks.get(id)?.get(frame), options);
-      return before && after ? { x: after.x - before.x, y: after.y - before.y } : null;
-    };
-    const scenery = [...tracks.keys()].filter(id => id !== playerId).map(moved).filter(Boolean);
+  const follows = followed ?? cameraFollows([tracks], { playerId, ...options });
+  for (const frame of frameList(tracks)) {
+    const moved = movedAt(tracks, frame, options);
+    const scenery = sceneryIds(tracks, playerId).map(moved).filter(Boolean);
     const player = follows ? { x: 0, y: 0 } : moved(playerId);
     // A followed player gives no motion of its own, so one unconfirmed landmark isn't enough.
     const scroll = sceneryMotion(scenery, follows ? 2 : 1);
