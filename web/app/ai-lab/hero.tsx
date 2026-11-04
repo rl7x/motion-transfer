@@ -160,7 +160,8 @@ export function Hero({ playback, savedCount }: { playback: boolean; savedCount: 
           </div>
         </dl>
         <p className="hero__footnote">
-          The time is one timed run on this site. The cost is from the measured task campaign. Both use Standard Muse Spark on the Meta Model API.
+          The time is one timed run on this site. The cost is from the measured task campaign. Both
+          use Standard Muse Spark on the Meta Model API.
         </p>
       </div>
       <Courier />

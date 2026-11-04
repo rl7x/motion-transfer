@@ -20,7 +20,11 @@ const scores = [
 const measured = [
   { label: 'Walking speed', footage: summary.measured.walkingSpeed, real: truth.walkingSpeed },
   { label: 'Dash length, ticks', footage: summary.measured.dashTicks, real: summary.realDashTicks },
-  { label: 'Dash distance, pixels', footage: summary.measured.dashDistance, real: truth.dashDistance },
+  {
+    label: 'Dash distance, pixels',
+    footage: summary.measured.dashDistance,
+    real: truth.dashDistance,
+  },
   {
     label: 'Shortest repeat, ticks',
     footage: summary.measured.repeatGap,
@@ -104,13 +108,13 @@ export function FootagePanel({ playback }: { playback: boolean }) {
       </div>
       <p className="footage__note">
         With the final checks, every controller the tool accepted scored 40/40, and it refused the
-        other {summary.refused} sessions instead of guessing. That matters because a real clip has no exam
-        to catch a wrong answer. Six sessions is a small sample, and the rules changed between rows,
-        so each row stands alone.
+        other {summary.refused} sessions instead of guessing. That matters because a real clip has
+        no exam to catch a wrong answer. Six sessions is a small sample, and the rules changed
+        between rows, so each row stands alone.
       </p>
       <p className="footage__note">
-        Tracking worst case: {summary.worstError} pixels across {summary.framesCompared} frames,
-        and it kept only the bursts it saw whole, {summary.burstsFound} of {summary.burstsReal}. One
+        Tracking worst case: {summary.worstError} pixels across {summary.framesCompared} frames, and
+        it kept only the bursts it saw whole, {summary.burstsFound} of {summary.burstsReal}. One
         clip of one game, chosen to show the timing, and the first run failed outright:{' '}
         {summary.firstRun} This is a footage match. It shows how a move travels, not everything a
         game does, and it only works on games you have the right to use.
